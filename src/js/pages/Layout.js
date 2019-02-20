@@ -154,6 +154,7 @@ export default class Layout extends Component {
         }
 
         ipcRenderer.send('logined');
+        loading = false;
 
         return (
             <div>

@@ -27,7 +27,7 @@ export default class Home extends Component {
             <div className={classes.container}>
                 <Loader
                     fullscreen={true}
-                    show={this.props.loading} />
+                    show={false} />
                 <div className={clazz(classes.inner, {
                     [classes.hideConversation]: !this.props.showConversation
                 })}>
