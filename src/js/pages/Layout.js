@@ -6,7 +6,8 @@ import { ipcRenderer, remote } from 'electron';
 import classes from './Layout.css';
 import Header from './Header';
 import Footer from './Footer';
-import Login from './Login';
+// import Login from './Login';
+import Chats from './Home/Chats';
 import UserInfo from './UserInfo';
 import AddFriend from './AddFriend';
 import NewChat from './NewChat';
@@ -18,6 +19,7 @@ import ConfirmImagePaste from './ConfirmImagePaste';
 import Loader from 'components/Loader';
 import Snackbar from 'components/Snackbar';
 import Offline from 'components/Offline';
+import Login from './Login';
 
 @inject(stores => ({
     isLogin: () => !!stores.session.auth,
@@ -28,6 +30,7 @@ import Offline from 'components/Offline';
     reconnect: stores.session.checkTimeout,
     close: () => stores.snackbar.toggle(false),
     canidrag: () => !!stores.chat.user && !stores.batchsend.show,
+    connected: stores.session.connected,
 }))
 @observer
 export default class Layout extends Component {
@@ -137,16 +140,16 @@ export default class Layout extends Component {
     render() {
         var { isLogin, loading, show, close, message, location } = this.props;
 
-        if (!window.navigator.onLine) {
-            return (
-                <Offline show={true} style={{
-                    top: 0,
-                    paddingTop: 30
-                }} />
-            );
-        }
+        // if (!window.navigator.onLine) {
+        //     return (
+        //         <Offline show={true} style={{
+        //             top: 0,
+        //             paddingTop: 30
+        //         }} />
+        //     );
+        // }
 
-        if (!isLogin()) {
+        if (!this.props.connected) {
             return <Login />;
         }
 

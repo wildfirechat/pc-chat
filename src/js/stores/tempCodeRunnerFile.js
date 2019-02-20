@@ -1,0 +1,1 @@
+        if (self.auth) {

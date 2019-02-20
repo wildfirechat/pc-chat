@@ -8,8 +8,21 @@ import storage from 'utils/storage';
 import { normalize } from 'utils/emoji';
 import chat from './chat';
 import contacts from './contacts';
+import proto from 'node-loader!../../../node_modules/marswrapper.node';
 
 const CancelToken = axios.CancelToken;
+
+//  function loadMars() {
+//       // try {
+//         return require('../../../node_modules/marswrapper.node');
+//       // } catch (err) {
+//       //   return require('../addons/build/Debug/marswrapper.node');
+//       // }
+//     }
+
+//  const proto = loadMars();
+const HOST = 'wildfirechat.cn';
+const PORT = 80;
 
 class Session {
     @observable loading = true;
@@ -17,11 +30,35 @@ class Session {
     @observable code;
     @observable avatar;
     @observable user;
+    @observable connected;
 
     syncKey;
 
     genSyncKey(list) {
         return (self.syncKey = list.map(e => `${e.Key}_${e.Val}`).join('|'));
+    }
+
+    connectionChanged(status){
+        console.log('connection status ' );
+        console.log(status)
+        if(status === 1){
+            self.connected = true;
+            console.log('set connected to true');
+            console.log(proto.getConversationInfos([0,1,2], [0,1]));
+        }
+    }
+
+    @action async setupConnectionStatusListener(){
+        proto.setConnectionStatusListener(self.connectionChanged);
+        console.log('hello xxx');
+    }
+
+    @action async connect(userId, token){
+        proto.setServerAddress("wildfirechat.cn", 80);
+        console.log(userId);
+        console.log(token);
+        proto.protoConnect(userId, token);
+        console.log("proto connect end");
     }
 
     @action async getCode() {
@@ -301,6 +338,7 @@ class Session {
 
         self.auth = auth && Object.keys(auth).length ? auth : void 0;
 
+        console.log('-------------------------has Login');
         if (self.auth) {
             await self.initUser().catch(ex => self.logout());
             self.keepalive().catch(ex => self.logout());
