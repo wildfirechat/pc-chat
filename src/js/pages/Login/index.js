@@ -3,9 +3,11 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
 import classes from './style.css';
+const USER_ID = 'uiuJuJcc';
+const TOKEN = 'w3bgeLJJJWvViSJ7fvwz1LPTnCegDb11Q646P5gf9VVRPylImGthlarXlylz0Im1+uAg7Cx5rTuCFhTrAH8c9SJZ4S+bIFzm2RBgXf1RtzRvcLhIjL3XhG7B77YmUxjWhKGdk1mxKn/sGifCWCXdK9PnOCmVLJsdbMMzg2c/otQ=';
 
-const USER_ID = 'cgc8c8VV';
-const TOKEN = 'Gyeq585IjnfiYd3PzhU33XRTTCGAyaVUzBmdDQD3evJ4bpRHCN52m1An2Ea0x29zniRRWd4vcyFPUcefIz0zBiR32vkLNsuGH8USKZ1wbq8Rl0hhOQxphg3zZSquDJ/ByW0Y9BRTIbyLlx1qF+camOexoSfOV6cRqsnKbBSEGKI=';
+// const USER_ID = 'UZUWUWuu';
+// const TOKEN = 'mQyY7AF4EPLV6YgWUdypLlftbdauHjE1Nf+FNLTe+LFmMSylcoJlMYAJhK5fra50YqZRImBCf5S9rhyF7nUWIEl4p05l5vIrb0c+OfQmlm8/XBuGPCRmu2T52P66S0tcIPVvnKW9TRPaCEDLJfUfWTZqTANZvUMZnAkumf8zoB0=';
 @inject(stores => ({
     avatar: stores.session.avatar,
     code: stores.session.code,

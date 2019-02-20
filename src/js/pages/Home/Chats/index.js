@@ -21,7 +21,7 @@ moment.updateLocale('en', {
 });
 
 @inject(stores => ({
-    chats: stores.chat.sessions,
+    chats: stores.session.conversations,
     chatTo: stores.chat.chatTo,
     selected: stores.chat.user,
     messages: stores.chat.messages,
@@ -113,16 +113,16 @@ export default class Chats extends Component {
         console.log(this.props.connected);
 
         // if (loading) return false;
-        var msg = {};
-        msg.UserName = 'imndx';
-        chats.push(msg);
+        // var msg = {};
+        // msg.UserName = 'imndx';
+        // msg.from = 'from ';
+        // msg.content = {};
+        // msg.content.searchableContent = 'content';
+        // chats.push(msg);
+        console.log("chats size", chats.length);
 
         return (
             <div className={classes.container}>
-                <div className={classes.username}>
-                    <h3>This is a header</h3>
-                    <p>This is a paragraph.</p>
-                </div>
                 <div
                     className={classes.chats}
                     ref="container">
@@ -148,6 +148,7 @@ export default class Chats extends Component {
                                         })}>
                                             <img
                                                 className="disabledDrag"
+                                                // TODO portrait
                                                 src={e.HeadImgUrl}
                                                 onError={e => (e.target.src = 'assets/images/user-fallback.png')}
                                             />
@@ -156,17 +157,18 @@ export default class Chats extends Component {
                                         <div className={classes.info}>
                                             <p
                                                 className={classes.username}
-                                                dangerouslySetInnerHTML={{__html: e.RemarkName || e.NickName}} />
+                                                // TODO user name
+                                                dangerouslySetInnerHTML={{__html: e.lastMessage.from || e.NickName}} />
 
                                             <span
                                                 className={classes.message}
-                                                dangerouslySetInnerHTML={{__html: helper.getMessageContent(message) || 'No Message'}} />
+                                                dangerouslySetInnerHTML={{__html: e.lastMessage.content.searchableContent || 'No Messagexx'}} />
                                         </div>
                                     </div>
 
                                     <span className={classes.times}>
                                         {
-                                            message.CreateTime ? moment(message.CreateTime * 1000).fromNow() : ''
+                                            e.timestamp ? moment(e.timestamp).fromNow() : ''
                                         }
                                     </span>
                                 </div>

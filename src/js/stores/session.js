@@ -31,6 +31,7 @@ class Session {
     @observable avatar;
     @observable user;
     @observable connected;
+    @observable conversations = [];
 
     syncKey;
 
@@ -38,26 +39,32 @@ class Session {
         return (self.syncKey = list.map(e => `${e.Key}_${e.Val}`).join('|'));
     }
 
-    connectionChanged(status){
-        console.log('connection status ' );
-        console.log(status)
+    @action connectionChanged(status){
+        console.log('connection status ', status );
         if(status === 1){
             self.connected = true;
             console.log('set connected to true');
-            console.log(proto.getConversationInfos([0,1,2], [0,1]));
+            var conversationsStr = proto.getConversationInfos([0, 1, 2, 3], [0, 1]);
+            console.log(conversationsStr);
+            console.log(JSON.parse(conversationsStr));
+            self.conversations = JSON.parse(conversationsStr);
+            console.log(self.conversations);
+            // console.log(self.conversations[0]);
+            // console.log(self.conversations[0].timestamp);
         }
     }
 
     @action async setupConnectionStatusListener(){
         proto.setConnectionStatusListener(self.connectionChanged);
-        console.log('hello xxx');
+        proto.setReceiveMessageListener(function test(str, id){
+            console.log('recieve mesg', id);
+            console.log(str);
+        });
     }
 
     @action async connect(userId, token){
         proto.setServerAddress("wildfirechat.cn", 80);
-        console.log(userId);
-        console.log(token);
-        proto.protoConnect(userId, token);
+        proto.connect(userId, token);
         console.log("proto connect end");
     }
 
