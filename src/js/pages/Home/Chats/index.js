@@ -30,6 +30,7 @@ moment.updateLocale('en', {
     removeChat: stores.chat.removeChat,
     loading: stores.session.loading,
     searching: stores.search.searching,
+    connected:stores.session.connected,
 }))
 @observer
 export default class Chats extends Component {
@@ -88,6 +89,7 @@ export default class Chats extends Component {
     }
 
     componentDidUpdate() {
+        console.log('component did update');
         var container = this.refs.container;
         var active = container.querySelector(`.${classes.chat}.${classes.active}`);
 
@@ -104,12 +106,23 @@ export default class Chats extends Component {
     }
 
     render() {
+        console.log('-------------render');
         var { loading, chats, selected, chatTo, searching } = this.props;
 
-        if (loading) return false;
+        console.log("connected or not? ");
+        console.log(this.props.connected);
+
+        // if (loading) return false;
+        var msg = {};
+        msg.UserName = 'imndx';
+        chats.push(msg);
 
         return (
             <div className={classes.container}>
+                <div className={classes.username}>
+                    <h3>This is a header</h3>
+                    <p>This is a paragraph.</p>
+                </div>
                 <div
                     className={classes.chats}
                     ref="container">

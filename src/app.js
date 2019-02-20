@@ -14,9 +14,9 @@ import stores from './js/stores';
 class App extends Component {
     async componentWillMount() {
         if (window.navigator.onLine) {
-            await stores.session.hasLogin();
-            await stores.settings.init();
-            await stores.search.getHistory();
+            // await stores.session.hasLogin();
+            // await stores.settings.init();
+            // await stores.search.getHistory();
         }
     }
 
