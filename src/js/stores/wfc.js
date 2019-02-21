@@ -10,11 +10,12 @@ class WfcManager {
 
     @action onConnectionChanged(status){
         self.connectionStatus = status;
+        console.log('status', status);
     }
     onReceiveMessage(messages, hasMore){
         var msgs = JSON.parse(messages);
         console.log('on ReceiveMessage');
-        console.log(messages);
+        console.log(messages, hasMore);
         msgs.map(m => {
             self.onReceiveMessageListeners.forEach(listener => {
                 console.log(m);
@@ -80,7 +81,7 @@ class WfcManager {
      * @param {string} withUser 
      */
     @action async getMessageList(type, target, line, fromIndex, before, count, withUser){
-
+        return [];
     }
 
     @action async getMessageById(messageId){

@@ -22,7 +22,7 @@ moment.updateLocale('en', {
 
 @inject(stores => ({
     chats: stores.session.conversations,
-    chatTo: stores.chat.chatTo,
+    chatTo: stores.chat.chatToN,
     selected: stores.chat.user,
     messages: stores.chat.messages,
     markedRead: stores.chat.markedRead,
@@ -153,7 +153,7 @@ export default class Chats extends Component {
                                     })}
                                     key={index}
                                     onContextMenu={ev => this.showContextMenu(e)}
-                                    onClick={ev => chatTo(e)}>
+                                    onClick={ev => chatTo(e.conversationType, e.target, e.line)}>
                                     <div className={classes.inner}>
                                         <div className={clazz(classes.dot, {
                                             [classes.green]: !muted && this.hasUnreadMessage(e.UserName),
