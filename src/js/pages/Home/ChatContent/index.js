@@ -17,7 +17,7 @@ import { on, off } from 'utils/event';
     sticky: stores.chat.sticky,
     empty: stores.chat.empty,
     removeChat: stores.chat.removeChat,
-    messages: stores.chat.messages,
+    messages: stores.chat.messageList,
     loading: stores.session.loading,
     reset: () => {
         stores.chat.user = false;
@@ -258,8 +258,11 @@ export default class ChatContent extends Component {
     }
 
     renderMessages(list, from) {
-        return list.data.map((e, index) => {
-            var { message, user } = this.props.parseMessage(e, from);
+        //return list.data.map((e, index) => {
+        return list.map((e, index) => {
+            // var { message, user } = this.props.parseMessage(e, from);
+            var message = e;
+            var user = 'xxx';
             var type = message.MsgType;
 
             if ([
@@ -286,7 +289,8 @@ export default class ChatContent extends Component {
                     [classes.uploading]: message.uploading === true,
 
                     [classes.isme]: message.isme,
-                    [classes.isText]: type === 1 && !message.location,
+                    //[classes.isText]: type === 1 && !message.location,
+                    [classes.isText]: true,
                     [classes.isLocation]: type === 1 && message.location,
                     [classes.isImage]: type === 3,
                     [classes.isEmoji]: type === 47 || type === 49 + 8,
@@ -302,22 +306,25 @@ export default class ChatContent extends Component {
                 })} key={index}>
                     <div>
                         <Avatar
-                            src={message.isme ? message.HeadImgUrl : user.HeadImgUrl}
+                            //src={message.isme ? message.HeadImgUrl : user.HeadImgUrl}
+                            src={'http://img.hao661.com/qq.hao661.com/uploads/allimg/180822/0U61415T-0.jpg'}
                             className={classes.avatar}
                             onClick={ev => this.props.showUserinfo(message.isme, user)}
                         />
 
                         <p
                             className={classes.username}
-                            dangerouslySetInnerHTML={{__html: user.DisplayName || user.RemarkName || user.NickName}}
+                            //dangerouslySetInnerHTML={{__html: user.DisplayName || user.RemarkName || user.NickName}}
+                            dangerouslySetInnerHTML={{__html: message.from || user.RemarkName || user.NickName}}
                         />
 
                         <div className={classes.content}>
                             <p
                                 onContextMenu={e => this.showMessageAction(message)}
-                                dangerouslySetInnerHTML={{__html: this.getMessageContent(message)}} />
+                                //dangerouslySetInnerHTML={{__html: this.getMessageContent(message)}} />
+                                dangerouslySetInnerHTML={{__html: message.content.searchableContent}} />
 
-                            <span className={classes.times}>{ moment(message.CreateTime * 1000).fromNow() }</span>
+                            <span className={classes.times}>{ moment(message.timestamp).fromNow() }</span>
                         </div>
                     </div>
                 </div>
@@ -551,6 +558,7 @@ export default class ChatContent extends Component {
         var viewport = this.refs.viewport;
         var tips = this.refs.tips;
 
+        return;
         if (viewport) {
             let newestMessage = this.props.messages.get(this.props.user.UserName).data.slice(-1)[0];
             let images = viewport.querySelectorAll('img.unload');
@@ -619,7 +627,7 @@ export default class ChatContent extends Component {
         var title = user.RemarkName || user.NickName;
         var signature = user.Signature;
 
-        if (loading) return false;
+        // if (loading) return false;
 
         return (
             <div
@@ -653,7 +661,8 @@ export default class ChatContent extends Component {
                                 onScroll={e => this.handleScroll(e)}
                                 ref="viewport">
                                 {
-                                    this.renderMessages(messages.get(user.UserName), user)
+                                    //this.renderMessages(messages.get(user.UserName), user)
+                                    this.renderMessages(messages, user)
                                 }
                             </div>
                         </div>

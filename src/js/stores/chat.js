@@ -10,6 +10,7 @@ import settings from './settings';
 import session from './session';
 import members from './members';
 import snackbar from './snackbar';
+import wfc from './wfc'
 
 async function resolveMessage(message) {
     var auth = await storage.get('auth');
@@ -216,8 +217,36 @@ class Chat {
     @observable user = false;
     @observable showConversation = true;
 
+    type;
+    target;
+    line;
+
+    @observable messageList = [];
+
     @action toggleConversation(show = !self.showConversation) {
         self.showConversation = show;
+    }
+
+    onReceiveMessage(message, hasMore){
+        console.log('chat on receive message');
+        // TODO message id
+        if(message.content.searchableContent.length > 0 && message.conversationType === self.type && message.target === self.target && message.line == self.line){
+            // message conent type
+            self.messageList.push(message);
+        }
+    }
+
+    @action async chatToN(type, target, line){
+        self.type = type;
+        self.target = target;
+        self.line = line;
+        
+        self.messageList = await wfc.getMessageList(self.type, self.target, self.line, 0, false, 20);
+
+        wfc.setOnReceiveMessageListener(self.onReceiveMessage);
+
+        // TODO update observable for chat content
+        self.user = 'xx'
     }
 
     @action async loadChats(chatSet) {
