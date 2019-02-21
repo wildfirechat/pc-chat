@@ -17,6 +17,7 @@ class App extends Component {
             // await stores.session.hasLogin();
             // await stores.settings.init();
             // await stores.search.getHistory();
+            await stores.wfc.init();
         }
     }
 

@@ -8,7 +8,7 @@ import storage from 'utils/storage';
 import { normalize } from 'utils/emoji';
 import chat from './chat';
 import contacts from './contacts';
-import proto from 'node-loader!../../../node_modules/marswrapper.node';
+import wfc from './wfc';
 
 const CancelToken = axios.CancelToken;
 
@@ -21,8 +21,6 @@ const CancelToken = axios.CancelToken;
 //     }
 
 //  const proto = loadMars();
-const HOST = 'wildfirechat.cn';
-const PORT = 80;
 
 class Session {
     @observable loading = true;
@@ -39,33 +37,21 @@ class Session {
         return (self.syncKey = list.map(e => `${e.Key}_${e.Val}`).join('|'));
     }
 
-    @action connectionChanged(status){
-        console.log('connection status ', status );
-        if(status === 1){
-            self.connected = true;
-            console.log('set connected to true');
-            var conversationsStr = proto.getConversationInfos([0, 1, 2, 3], [0, 1]);
-            console.log(conversationsStr);
-            console.log(JSON.parse(conversationsStr));
-            self.conversations = JSON.parse(conversationsStr);
-            console.log(self.conversations);
-            // console.log(self.conversations[0]);
-            // console.log(self.conversations[0].timestamp);
-        }
+    async test(info){
+        console.log('test', info);
     }
 
-    @action async setupConnectionStatusListener(){
-        proto.setConnectionStatusListener(self.connectionChanged);
-        proto.setReceiveMessageListener(function test(str, id){
-            console.log('recieve mesg', id);
-            console.log(str);
+    @action setOnReceiveMessageListener(){
+        wfc.setOnReceiveMessageListener(()=>{
+            self.loadConversations();
         });
     }
 
-    @action async connect(userId, token){
-        proto.setServerAddress("wildfirechat.cn", 80);
-        proto.connect(userId, token);
-        console.log("proto connect end");
+    @action async loadConversations(){
+        let cl = await wfc.getConversationList([0, 1, 2, 3], [0, 1]);
+        // TODO 需要判断空吗？
+        console.log(cl);
+        self.conversations = cl;
     }
 
     @action async getCode() {
