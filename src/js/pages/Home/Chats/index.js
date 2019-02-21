@@ -54,6 +54,10 @@ export default class Chats extends Component {
         }
     }
 
+    userPortrait(userId){
+        return "http://img.hao661.com/qq.hao661.com/uploads/allimg/180822/0U61415T-0.jpg"
+    }
+
     showContextMenu(user) {
         var menu = new remote.Menu.buildFromTemplate([
             {
@@ -149,7 +153,7 @@ export default class Chats extends Component {
                                             <img
                                                 className="disabledDrag"
                                                 // TODO portrait
-                                                src={e.HeadImgUrl}
+                                                src={this.userPortrait(e.lastMessage.from)}
                                                 onError={e => (e.target.src = 'assets/images/user-fallback.png')}
                                             />
                                         </div>
