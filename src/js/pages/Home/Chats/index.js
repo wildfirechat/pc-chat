@@ -30,7 +30,9 @@ moment.updateLocale('en', {
     removeChat: stores.chat.removeChat,
     loading: stores.session.loading,
     searching: stores.search.searching,
-    connected:stores.session.connected,
+    connectionStatus:stores.wfc.connectionStatus,
+    loadConversations:stores.session.loadConversations,
+    setOnReceiveMessageListener:stores.session.setOnReceiveMessageListener,
 }))
 @observer
 export default class Chats extends Component {
@@ -92,6 +94,15 @@ export default class Chats extends Component {
         menu.popup(remote.getCurrentWindow());
     }
 
+    componentWillMount(){
+        this.props.setOnReceiveMessageListener();
+        this.props.loadConversations();
+    }
+
+    componentWillUnmount(){
+
+    }
+
     componentDidUpdate() {
         console.log('component did update');
         var container = this.refs.container;
@@ -113,8 +124,6 @@ export default class Chats extends Component {
         console.log('-------------render');
         var { loading, chats, selected, chatTo, searching } = this.props;
 
-        console.log("connected or not? ");
-        console.log(this.props.connected);
 
         // if (loading) return false;
         // var msg = {};

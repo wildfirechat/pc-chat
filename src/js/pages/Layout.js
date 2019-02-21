@@ -30,7 +30,7 @@ import Login from './Login';
     reconnect: stores.session.checkTimeout,
     close: () => stores.snackbar.toggle(false),
     canidrag: () => !!stores.chat.user && !stores.batchsend.show,
-    connected: stores.session.connected,
+    connectionStatus: stores.wfc.connectionStatus,
 }))
 @observer
 export default class Layout extends Component {
@@ -149,12 +149,12 @@ export default class Layout extends Component {
         //     );
         // }
 
-        if (!this.props.connected) {
+        if (!this.props.connectionStatus == 1) {
             return <Login />;
         }
 
         ipcRenderer.send('logined');
-        loading = false;
+        loading = this.props.connectionStatus === 0;
 
         return (
             <div>

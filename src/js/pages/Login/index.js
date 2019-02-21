@@ -13,15 +13,15 @@ const TOKEN = 'w3bgeLJJJWvViSJ7fvwz1LPTnCegDb11Q646P5gf9VVRPylImGthlarXlylz0Im1+
     code: stores.session.code,
     getCode: stores.session.getCode,
     setupConnectionStatusListener: stores.session.setupConnectionStatusListener,
-    connect: stores.session.connect,
+    connectionStatus: stores.wfc.connectionStatus,
+    test:stores.session.test,
+    connect: stores.wfc.connect,
 }))
 
 @observer
 export default class Login extends Component {
     componentDidMount() {
         //this.props.getCode();
-        this.props.setupConnectionStatusListener();
-
     }
 
     componentWillUnmount(){
@@ -51,6 +51,7 @@ export default class Login extends Component {
                             console.log('to connect');
                             this.props.connect(this.refs.userId.value, this.refs.token.value);
                             console.log('to connect end');
+                            this.props.test('hello world');
                         }
                     }>Connectxxx</button>
             </div>

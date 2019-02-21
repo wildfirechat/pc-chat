@@ -12,6 +12,7 @@ import search from './search';
 import batchsend from './batchsend';
 import settings from './settings';
 import snackbar from './snackbar';
+import wfc from './wfc'
 import confirmImagePaste from './confirmImagePaste';
 
 const stores = {
@@ -29,6 +30,7 @@ const stores = {
     forward,
     snackbar,
     confirmImagePaste,
+    wfc,
 };
 
 export default stores;
