@@ -1,54 +1,8 @@
 import { observable, action} from 'mobx';
 import proto from 'node-loader!../../../node_modules/marswrapper.node';
+import TextMessageContent from '../wfc/messages/text'
+import * as wfcMessage from '../wfc/message'
 
-const TextMessageContentType = 1;
-const PersitFlag_No_Persist = 0;
-const PersitFlag_Persist= 1;
-const PersitFlag_Persist_And_Count= 3;
-const PersitFlag_Transparent= 4;
-
-const MessageTypeAndFlag = [
-    {
-    name:'text',
-    flag:PersitFlag_Persist_And_Count,
-    type:1
-    },
-    {
-    name:'voice',
-    flag:PersitFlag_Persist_And_Count,
-    type:2
-    },
-    {
-    name:'image',
-    flag:PersitFlag_Persist_And_Count,
-    type:3
-    },
-    {
-    name:'location',
-    flag:PersitFlag_Persist_And_Count,
-    type:4
-    },
-    {
-    name:'file',
-    flag:PersitFlag_Persist_And_Count,
-    type:5
-    },
-    {
-    name:'video',
-    flag:PersitFlag_Persist_And_Count,
-    type:6
-    },
-    {
-    name:'sticker',
-    flag:PersitFlag_Persist_And_Count,
-    type:7
-    },
-    {
-    name:'imageText',
-    flag:PersitFlag_Persist_And_Count,
-    type:8
-    },
-];
 
 class WfcManager {
     @observable connectionStatus = 0;
@@ -56,6 +10,8 @@ class WfcManager {
     @observable token = '';
 
     onReceiveMessageListeners = [];
+
+    messageContentList = new Map();
 
     @action onConnectionChanged(status){
         self.connectionStatus = status;
@@ -76,7 +32,27 @@ class WfcManager {
     async init(){
         proto.setConnectionStatusListener(self.onConnectionChanged);
         proto.setReceiveMessageListener(self.onReceiveMessage);
-        self.registerMessageFlag();
+        self.registerDefaultMessageContents();
+
+
+        var json = '{"base":"jjjjjjjjj", "name":"indx", "content":"hello world content"}'
+        // let test = Object.assign(new self.abc(), JSON.parse(json));
+        console.log('test import');
+        var xxx = TextMessageContent;
+        var test = new xxx();
+
+        test.decode(json);
+
+        console.log(test.content);
+        console.log(test.base);
+    }
+
+    /**
+     * 
+     * @param {messagecontent} content 
+     */
+    registerMessageContent(type, content){
+        self.messageContentList[type] = content; 
     }
 
     async setServerAddress(host, port){
@@ -87,9 +63,10 @@ class WfcManager {
         proto.connect(userId, token);
     }
 
-    registerMessageFlag(){
-        MessageTypeAndFlag.map((e)=>{
+    registerDefaultMessageContents(){
+        wfcMessage.MessageContents.map((e)=>{
             proto.registerMessageFlag(e.type, e.flag);
+            self.registerMessageContent(e.type, e.content);
         });
     }
 
@@ -119,7 +96,8 @@ class WfcManager {
 
     @action async getConversationList(types, lines){
         var conversationListStr = proto.getConversationInfos(types, lines);
-        return JSON.parse(conversationListStr)
+        console.log(conversationListStr);
+        return JSON.parse(conversationListStr);
     }
 
     @action async getConversation(type, target, line = 0){
