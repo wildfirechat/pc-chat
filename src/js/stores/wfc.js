@@ -1,6 +1,55 @@
 import { observable, action} from 'mobx';
 import proto from 'node-loader!../../../node_modules/marswrapper.node';
 
+const TextMessageContentType = 1;
+const PersitFlag_No_Persist = 0;
+const PersitFlag_Persist= 1;
+const PersitFlag_Persist_And_Count= 3;
+const PersitFlag_Transparent= 4;
+
+const MessageTypeAndFlag = [
+    {
+    name:'text',
+    flag:PersitFlag_Persist_And_Count,
+    type:1
+    },
+    {
+    name:'voice',
+    flag:PersitFlag_Persist_And_Count,
+    type:2
+    },
+    {
+    name:'image',
+    flag:PersitFlag_Persist_And_Count,
+    type:3
+    },
+    {
+    name:'location',
+    flag:PersitFlag_Persist_And_Count,
+    type:4
+    },
+    {
+    name:'file',
+    flag:PersitFlag_Persist_And_Count,
+    type:5
+    },
+    {
+    name:'video',
+    flag:PersitFlag_Persist_And_Count,
+    type:6
+    },
+    {
+    name:'sticker',
+    flag:PersitFlag_Persist_And_Count,
+    type:7
+    },
+    {
+    name:'imageText',
+    flag:PersitFlag_Persist_And_Count,
+    type:8
+    },
+];
+
 class WfcManager {
     @observable connectionStatus = 0;
     @observable userId = '';
@@ -27,6 +76,7 @@ class WfcManager {
     async init(){
         proto.setConnectionStatusListener(self.onConnectionChanged);
         proto.setReceiveMessageListener(self.onReceiveMessage);
+        self.registerMessageFlag();
     }
 
     async setServerAddress(host, port){
@@ -35,6 +85,12 @@ class WfcManager {
 
     async connect(userId, token){
         proto.connect(userId, token);
+    }
+
+    registerMessageFlag(){
+        MessageTypeAndFlag.map((e)=>{
+            proto.registerMessageFlag(e.type, e.flag);
+        });
     }
 
     /**
