@@ -225,6 +225,7 @@ class Chat {
 
     @action toggleConversation(show = !self.showConversation) {
         self.showConversation = show;
+        console.log('show...........');
     }
 
     onReceiveMessage(message, hasMore){
@@ -237,6 +238,9 @@ class Chat {
     }
 
     @action async chatToN(type, target, line){
+        if(self.type === type && self.target === target && self.line === line){
+            return
+        }
         self.type = type;
         self.target = target;
         self.line = line;

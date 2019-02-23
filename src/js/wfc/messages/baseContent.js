@@ -16,11 +16,11 @@ export default class MessageContent{
 
     /**
      * 
-     * @param {object} content object json.parse from message#content 
+     * @param {object} payload object json.parse from message#content 
      */
-    decode(content){
-        this.type = content.type;
-        this.mentionedType = content.mentionedType;
-        this.mentionedTargets = content.mentionedTargets;
+    decode(payload){
+        this.type = payload.type;
+        this.mentionedType = payload.mentionedType;
+        this.mentionedTargets = payload.mentionedTargets;
     }
 }
