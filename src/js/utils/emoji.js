@@ -393,7 +393,6 @@ function normalize(text = '') {
     } catch (ex) {
         console.error('Failed decode %s: %o', text, ex);
     }
-
     return decodeText;
 }
 

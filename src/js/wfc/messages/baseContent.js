@@ -1,6 +1,5 @@
 export default class MessageContent{
     type;
-    persistFlag;
     mentionedType = 0;
     mentionedTargets = [];
 
@@ -20,6 +19,8 @@ export default class MessageContent{
      * @param {object} content object json.parse from message#content 
      */
     decode(content){
-        // TODO parse type etc.
+        this.type = content.type;
+        this.mentionedType = content.mentionedType;
+        this.mentionedTargets = content.mentionedTargets;
     }
 }
