@@ -11,6 +11,7 @@ import Avatar from 'components/Avatar';
 import helper from 'utils/helper';
 import { parser as emojiParse } from 'utils/emoji';
 import { on, off } from 'utils/event';
+import * as wfcMessage from '../../../wfc/messageConfig'
 
 @inject(stores => ({
     user: stores.chat.user,
@@ -89,8 +90,10 @@ export default class ChatContent extends Component {
     getMessageContent(message) {
         var uploading = message.uploading;
 
-        switch (message.MsgType) {
-            case 1:
+        console.log('getMessageContent');
+        console.log(message);
+        switch (message.content.type) {
+            case wfcMessage.ContentType_Text:
                 if (message.location) {
                     return `
                         <img class="open-map unload" data-map="${message.location.href}" src="${message.location.image}" />
@@ -98,7 +101,9 @@ export default class ChatContent extends Component {
                     `;
                 }
                 // Text message
-                return emojiParse(message.Content);
+                //let text = Object.assign(new TextMessageContent(), message.content);
+                let textMessageContent = message.content; 
+                return emojiParse(textMessageContent.content);
             case 3:
                 // Image
                 let image = message.image;
@@ -259,7 +264,7 @@ export default class ChatContent extends Component {
 
     renderMessages(list, from) {
         //return list.data.map((e, index) => {
-        return list.map((e, index) => {
+        return list.map((e) => {
             // var { message, user } = this.props.parseMessage(e, from);
             var message = e;
             var user = 'xxx';
@@ -303,7 +308,7 @@ export default class ChatContent extends Component {
                     [classes.isTransfer]: type === 49 + 2000,
                     [classes.isLocationSharing]: type === 49 + 17,
                     [classes.isFile]: type === 49 + 6,
-                })} key={index}>
+                })} key={message.messageId}>
                     <div>
                         <Avatar
                             //src={message.isme ? message.HeadImgUrl : user.HeadImgUrl}
@@ -321,8 +326,7 @@ export default class ChatContent extends Component {
                         <div className={classes.content}>
                             <p
                                 onContextMenu={e => this.showMessageAction(message)}
-                                //dangerouslySetInnerHTML={{__html: this.getMessageContent(message)}} />
-                                dangerouslySetInnerHTML={{__html: message.content.searchableContent}} />
+                                dangerouslySetInnerHTML={{__html: this.getMessageContent(message)}} />
 
                             <span className={classes.times}>{ moment(message.timestamp).fromNow() }</span>
                         </div>

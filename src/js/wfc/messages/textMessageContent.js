@@ -7,11 +7,7 @@ export default class TextMessageContent extends MessageContent{
     };
 
     decode(content){
-        // TODO
+        super.decode(content);
+        this.content = content.searchableContent;
     }
 }
-
-export const Type = 1;
-
-// const textMessageContent = new TextMessageContent();
-// export default textMessageContent;

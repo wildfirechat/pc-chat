@@ -230,7 +230,7 @@ class Chat {
     onReceiveMessage(message, hasMore){
         console.log('chat on receive message');
         // TODO message id
-        if(message.content.searchableContent.length > 0 && message.conversationType === self.type && message.target === self.target && message.line == self.line){
+        if(message.messageId > 0 && message.conversationType === self.type && message.target === self.target && message.line == self.line){
             // message conent type
             self.messageList.push(message);
         }

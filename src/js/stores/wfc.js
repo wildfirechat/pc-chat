@@ -1,7 +1,8 @@
 import { observable, action} from 'mobx';
 import proto from 'node-loader!../../../node_modules/marswrapper.node';
-import TextMessageContent from '../wfc/messages/text'
-import * as wfcMessage from '../wfc/message'
+import TextMessageContent from '../wfc/messages/textMessageContent'
+import * as wfcMessage from '../wfc/messageConfig'
+import Message from '../wfc/messages/message';
 
 
 class WfcManager {
@@ -23,8 +24,14 @@ class WfcManager {
         console.log(messages, hasMore);
         msgs.map(m => {
             self.onReceiveMessageListeners.forEach(listener => {
-                console.log(m);
-                listener(m, hasMore);
+                let msg = Object.assign(new Message(), m);
+                let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
+                if(contentClazz !== null){
+                    let content = new contentClazz();
+                    content.decode(msg.content);
+                    msg.content = content;
+                }
+                listener(msg, hasMore);
             });
         });
     }
@@ -35,16 +42,26 @@ class WfcManager {
         self.registerDefaultMessageContents();
 
 
-        var json = '{"base":"jjjjjjjjj", "name":"indx", "content":"hello world content"}'
-        // let test = Object.assign(new self.abc(), JSON.parse(json));
-        console.log('test import');
-        var xxx = TextMessageContent;
-        var test = new xxx();
+        // var json = '{"base":"jjjjjjjjj", "name":"indx", "content":"hello world content"}'
+        // // let test = Object.assign(new self.abc(), JSON.parse(json));
+        // console.log('test import');
+        // var xxx = TextMessageContent;
+        // var test = new xxx();
 
-        test.decode(json);
+        // test.decode(json);
 
-        console.log(test.content);
-        console.log(test.base);
+        // console.log(test.content);
+        // console.log(test.base);
+
+        var json = '    { "conversation":{ "conversationType": 0, "target": "UZUWUWuu", "line": 0 }, "from": "UZUWUWuu", "content": { "type": 1, "searchableContent": "1234", "pushContent": "", "content": "", "binaryContent": "", "localContent": "", "mediaType": 0, "remoteMediaUrl": "", "localMediaPath": "", "mentionedType": 0, "mentionedTargets": [ ] }, "messageId": 52, "direction": 1, "status": 5, "messageUid": 75735276990792720, "timestamp": 1550849394256, "to": "" } ';
+        let msg = Object.assign(new Message(), JSON.parse(json));
+        let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
+        let text = new contentClazz();
+        text.decode(msg.content);
+        console.log(text.content);
+        console.log(text instanceof TextMessageContent);
+        // console.log(msg.from);
+        // console.log(msg.content);
     }
 
     /**
