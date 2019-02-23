@@ -48,3 +48,4 @@ android/app/libs
 *.keystore
 wildfirechat
 .vscode
+log

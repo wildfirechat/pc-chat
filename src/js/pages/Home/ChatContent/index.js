@@ -104,9 +104,11 @@ export default class ChatContent extends Component {
                 //let text = Object.assign(new TextMessageContent(), message.content);
                 let textMessageContent = message.content; 
                 return emojiParse(textMessageContent.content);
-            case 3:
+            case wfcMessage.ContentType_Image:
                 // Image
-                let image = message.image;
+                let image = message.content;
+                console.log(image.localPath);
+                console.log(image.remotePath);
 
                 if (uploading) {
                     return `
@@ -116,7 +118,9 @@ export default class ChatContent extends Component {
                         </div>
                     `;
                 }
-                return `<img class="open-image unload" data-id="${message.MsgId}" src="${image.src}" data-fallback="${image.fallback}" />`;
+                return `<img class="open-image unload" data-id="${message.messageId}" src="${image.remotePath}" data-fallback="${image.fallback}" />`;
+                // TODO 图片数据，需要base64编码
+                return `<img class="open-image unload" data-id="${message.messageId}" src="data:image/jpeg;base64,${image.thumbnail}" data-fallback="${image.fallback}" />`;
             case 34:
                 /* eslint-disable */
                 // Voice

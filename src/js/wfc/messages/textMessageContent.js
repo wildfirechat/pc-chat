@@ -6,8 +6,8 @@ export default class TextMessageContent extends MessageContent{
         // TODO
     };
 
-    decode(content){
-        super.decode(content);
-        this.content = content.searchableContent;
+    decode(payload){
+        super.decode(payload);
+        this.content = payload.searchableContent;
     }
 }

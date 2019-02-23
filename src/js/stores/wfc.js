@@ -26,10 +26,13 @@ class WfcManager {
             self.onReceiveMessageListeners.forEach(listener => {
                 let msg = Object.assign(new Message(), m);
                 let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
-                if(contentClazz !== null){
+                if(contentClazz ){
+                    console.log(contentClazz);
                     let content = new contentClazz();
                     content.decode(msg.content);
                     msg.content = content;
+                }else{
+                    console.error('message content not register', m);
                 }
                 listener(msg, hasMore);
             });

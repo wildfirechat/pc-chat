@@ -1,4 +1,5 @@
 import TextMessageContent from './messages/textMessageContent'
+import ImageMessageContent from './messages/imageMessageContent';
 
 export const ContentType_Text= 1;
 export const ContentType_Voice= 2;
@@ -39,6 +40,7 @@ export const MessageContents = [
         name:'image',
         flag:PersitFlag_Persist_And_Count,
         type:ContentType_Image,
+        contentClazz: ImageMessageContent,
     },
     {
         name:'location',
