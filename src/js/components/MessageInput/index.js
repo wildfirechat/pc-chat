@@ -24,14 +24,14 @@ export default class MessageInput extends Component {
     canisend() {
         var user = this.props.user;
 
-        if (
-            true
-            && user.length === 1
-            && user.slice(-1).pop().UserName === this.props.me.UserName
-        ) {
-            this.props.showMessage('Can\'t send messages to yourself.');
-            return false;
-        }
+        // if (
+        //     true
+        //     && user.length === 1
+        //     && user.slice(-1).pop().UserName === this.props.me.UserName
+        // ) {
+        //     this.props.showMessage('Can\'t send messages to yourself.');
+        //     return false;
+        // }
 
         return true;
     }
@@ -43,11 +43,12 @@ export default class MessageInput extends Component {
 
         if (
             false
-            || !this.canisend()
-            || !message
+            // || !this.canisend()
+            // || !message
             || e.charCode !== 13
         ) return;
 
+        console.log();
         // You can not send message to yourself
         Promise.all(
             user.filter(e => e.UserName !== this.props.me.UserName).map(

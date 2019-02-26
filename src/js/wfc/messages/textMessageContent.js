@@ -1,9 +1,14 @@
 import MessageContent from './baseContent'
+import MessagePayload from './messagePayload';
 export default class TextMessageContent extends MessageContent{
     content;
 
     encode(){
-        // TODO
+        let payload = new MessagePayload();
+        payload.searchableContent = this.content;
+        payload.mentionedType = this.mentionedType;
+        payload.mentionedTargets = this.mentionedTargets;
+        return payload;
     };
 
     decode(payload){

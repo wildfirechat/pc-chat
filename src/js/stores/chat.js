@@ -217,9 +217,7 @@ class Chat {
     @observable user = false;
     @observable showConversation = true;
 
-    type;
-    target;
-    line;
+    conversation;
 
     @observable messageList = [];
 
@@ -237,15 +235,13 @@ class Chat {
         }
     }
 
-    @action async chatToN(type, target, line){
-        if(self.type === type && self.target === target && self.line === line){
+    @action async chatToN(conversation){
+        if(_.isEqual(self.conversation, conversation)){
             return
         }
-        self.type = type;
-        self.target = target;
-        self.line = line;
+        self.conversation = conversation;
         
-        self.messageList = await wfc.getMessageList(self.type, self.target, self.line, 0, false, 20);
+        self.messageList = await wfc.getMessageList(conversation, 0, false, 20);
 
         wfc.setOnReceiveMessageListener(self.onReceiveMessage);
 
@@ -714,6 +710,7 @@ class Chat {
         try {
             if (message.type === 1) {
                 // Send text
+                console.log('to send text message');
                 res = await self.sendTextMessage(auth, payload, isForward);
             } else if (message.type === 47) {
                 // Send emoji

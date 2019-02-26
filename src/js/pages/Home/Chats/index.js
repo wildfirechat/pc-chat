@@ -153,7 +153,7 @@ export default class Chats extends Component {
                                     })}
                                     key={index}
                                     onContextMenu={ev => this.showContextMenu(e)}
-                                    onClick={ev => chatTo(e.conversationType, e.target, e.line)}>
+                                    onClick={ev => chatTo(e)}>
                                     <div className={classes.inner}>
                                         <div className={clazz(classes.dot, {
                                             [classes.green]: !muted && this.hasUnreadMessage(e.UserName),
