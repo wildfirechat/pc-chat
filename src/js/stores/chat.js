@@ -11,6 +11,7 @@ import session from './session';
 import members from './members';
 import snackbar from './snackbar';
 import wfc from './wfc'
+import Message from '../wfc/messages/message';
 
 async function resolveMessage(message) {
     var auth = await storage.get('auth');
@@ -697,7 +698,13 @@ class Chat {
         return list;
     }
 
-    @action async sendMessage(user, message, isForward = false, transformMessages = self.transformMessages) {
+    @action async sendMessage(textMessgeContent, isForward = false ) {
+
+        let msg = new Message();
+        msg.conversation = self.conversation;
+        msg.messageContent = textMessgeContent;
+        wfc.sendMessage(msg);
+
         var id = (+new Date() * 1000) + Math.random().toString().substr(2, 4);
         var auth = await storage.get('auth');
         var payload = Object.assign({}, message, {
