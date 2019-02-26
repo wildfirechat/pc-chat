@@ -1,19 +1,19 @@
 import TextMessageContent from './messages/textMessageContent'
 import ImageMessageContent from './messages/imageMessageContent';
 
-export const ContentType_Text= 1;
-export const ContentType_Voice= 2;
-export const ContentType_Image= 3;
-export const ContentType_Location= 4;
-export const ContentType_File= 5;
-export const ContentType_Video= 6;
-export const ContentType_Sticker= 7;
-export const ContentType_ImageText = 8;
+import { ContentType_Text } from './messages/messageTypes';
+import { ContentType_Voice} from './messages/messageTypes';
+import { ContentType_Image } from './messages/messageTypes';
+import { ContentType_Location } from './messages/messageTypes';
+import { ContentType_File } from './messages/messageTypes';
+import { ContentType_Video } from './messages/messageTypes';
+import { ContentType_Sticker } from './messages/messageTypes';
+import { ContentType_ImageText } from './messages/messageTypes';
 
-export const PersitFlag_No_Persist = 0;
-export const PersitFlag_Persist= 1;
-export const PersitFlag_Persist_And_Count= 3;
-export const PersitFlag_Transparent= 4;
+import { PersitFlag_No_Persist } from './messages/persistFlags';
+import { PersitFlag_Persist } from './messages/persistFlags';
+import { PersitFlag_Transparent } from './messages/persistFlags';
+import { PersitFlag_Persist_And_Count } from './messages/persistFlags';
 
 export function getMessageContentClazz(type){
     for (const content of MessageContents) {

@@ -12,6 +12,7 @@ import helper from 'utils/helper';
 import { parser as emojiParse } from 'utils/emoji';
 import { on, off } from 'utils/event';
 import * as wfcMessage from '../../../wfc/messageConfig'
+import { ContentType_Text } from '../../../wfc/messages/messageTypes';
 
 @inject(stores => ({
     user: stores.chat.user,
@@ -93,7 +94,7 @@ export default class ChatContent extends Component {
         console.log('getMessageContent');
         console.log(message);
         switch (message.content.type) {
-            case wfcMessage.ContentType_Text:
+            case ContentType_Text:
                 if (message.location) {
                     return `
                         <img class="open-map unload" data-map="${message.location.href}" src="${message.location.image}" />

@@ -5,6 +5,7 @@ import * as wfcMessage from '../wfc/messageConfig'
 import Message from '../wfc/messages/message';
 import Conversation from '../wfc/conversation';
 import ConversationInfo from '../wfc/conversationInfo';
+import MessageContent from '../wfc/messages/baseContent';
 
 
 class WfcManager {
@@ -22,22 +23,10 @@ class WfcManager {
     }
     onReceiveMessage(messages, hasMore){
         var msgs = JSON.parse(messages);
-        console.log('on ReceiveMessage');
-        console.log(messages, hasMore);
         msgs.map(m => {
             self.onReceiveMessageListeners.forEach(listener => {
-                // let msg = Object.assign(new Message(), m);
-                // let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
-                // if(contentClazz ){
-                //     console.log(contentClazz);
-                //     let content = new contentClazz();
-                //     content.decode(msg.content);
-                //     msg.content = content;
-                // }else{
-                //     console.error('message content not register', m);
-                // }
                 let msg = Message.protoMessageToMessage(m);
-                console.log(msg);
+                console.log(msg.messagecontent);
                 listener(msg, hasMore);
             });
         });
@@ -70,17 +59,24 @@ class WfcManager {
         // console.log(msg.from);
         // console.log(msg.content);
 
-        let c1 = new Conversation();
-        c1.target = 'target';
-        c1.conversationType = 0;
-        c1.line = 0;
+        // let c1 = new Conversation();
+        // c1.target = 'target';
+        // c1.conversationType = 0;
+        // c1.line = 0;
 
-        let c2 = new Conversation();
-        c2.target = 'target';
-        c2.conversationType = 0;
-        c2.line = 0;
+        // let c2 = new Conversation();
+        // c2.target = 'target';
+        // c2.conversationType = 0;
+        // c2.line = 0;
 
-        console.log('conversation is same: ', _.isEqual(c1, c2));
+        // console.log('conversation is same: ', _.isEqual(c1, c2));
+
+        let a = new MessageContent(2, 2);
+        console.log(a.mentionedType);
+        // a = new MessageContent(null, 1);
+        // console.log(a.mentionedType);
+        // a = new MessageContent(null, 1, []);
+        // console.log(a.mentionedType);
     }
 
     /**
@@ -180,7 +176,8 @@ class WfcManager {
         // let conv = {conversationType:0,target:'5O5J5JOO',line:0}
         let strConv = JSON.stringify(message.conversation);
         // let strCont = '{"type":1,"searchableContent":"hello","pushContent":"","content":"","binaryContent":"","localContent":"","mediaType":0,"remoteMediaUrl":"","localMediaPath":"","mentionedType":0,"mentionedTargets":[]}';
-        let strContt = JSON.stringify(message.payload);
+        message.content = message.messagecontent.encode();
+        let strCont = JSON.stringify(message.messaget.content);
         let retValue = proto.sendMessage(strConv, strCont, "", 0, function(messageId, timestamp) { //preparedCB
           console.log("sendMessage prepared:", messageId, timestamp);
         }, function(uploaded, total) { //progressCB

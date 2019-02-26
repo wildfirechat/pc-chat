@@ -47,7 +47,7 @@ export default class Message{
         let msg = Object.assign(new Message(), obj);
         msg.conversation = new Conversation(obj.conversation.conversationType, obj.conversation.target, obj.conversation.line);
         let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
-        if(contentClazz ){
+        if(contentClazz){
             let content = new contentClazz();
             content.decode(msg.content);
             msg.messageContent = content;

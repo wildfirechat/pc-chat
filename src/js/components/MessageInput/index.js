@@ -6,6 +6,7 @@ import clazz from 'classname';
 
 import classes from './style.css';
 import Emoji from './Emoji';
+import TextMessageContent from '../../wfc/messages/textMessageContent';
 
 export default class MessageInput extends Component {
     static propTypes = {
@@ -54,12 +55,7 @@ export default class MessageInput extends Component {
             user.filter(e => e.UserName !== this.props.me.UserName).map(
                 async e => {
                     let res = await this.props.sendMessage(
-                        e,
-                        {
-                            content: message,
-                            type: 1,
-                        },
-                        true
+                        new TextMessageContent(message)
                     );
 
                     if (!res) {
