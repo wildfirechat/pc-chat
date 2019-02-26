@@ -101,7 +101,8 @@
     "react-addons-css-transition-group": "^15.6.2",
     "react-dom": "^16.0.0",
     "react-router-dom": "^4.2.2",
-    "tmp": "0.0.33"
+    "tmp": "0.0.33",
+    "underscore": "^1.9.1"
   },
   "devDependencies": {
     "acorn": "^6.0.0",
