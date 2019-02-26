@@ -37,6 +37,11 @@ class Session {
         return (self.syncKey = list.map(e => `${e.Key}_${e.Val}`).join('|'));
     }
 
+    @action genConversationKey(index){
+        let conversation = self.conversations[index]
+        return conversation.conversationType + conversation.target + conversation.line;
+    }
+
     async test(info){
         console.log('test', info);
     }

@@ -151,9 +151,10 @@ export default class Chats extends Component {
                                         [classes.sticky]: isTop,
                                         [classes.active]: selected && selected.UserName === e.UserName
                                     })}
+                                    // TODO key should be conversation
                                     key={index}
                                     onContextMenu={ev => this.showContextMenu(e)}
-                                    onClick={ev => chatTo(e)}>
+                                    onClick={ev => chatTo(e.conversation)}>
                                     <div className={classes.inner}>
                                         <div className={clazz(classes.dot, {
                                             [classes.green]: !muted && this.hasUnreadMessage(e.UserName),

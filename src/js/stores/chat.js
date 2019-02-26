@@ -236,6 +236,8 @@ class Chat {
     }
 
     @action async chatToN(conversation){
+        console.log('chat to ......');
+        console.log(conversation);
         if(_.isEqual(self.conversation, conversation)){
             return
         }

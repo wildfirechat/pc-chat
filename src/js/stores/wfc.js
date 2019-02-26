@@ -4,6 +4,7 @@ import TextMessageContent from '../wfc/messages/textMessageContent'
 import * as wfcMessage from '../wfc/messageConfig'
 import Message from '../wfc/messages/message';
 import Conversation from '../wfc/conversation';
+import ConversationInfo from '../wfc/conversationInfo';
 
 
 class WfcManager {
@@ -25,16 +26,18 @@ class WfcManager {
         console.log(messages, hasMore);
         msgs.map(m => {
             self.onReceiveMessageListeners.forEach(listener => {
-                let msg = Object.assign(new Message(), m);
-                let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
-                if(contentClazz ){
-                    console.log(contentClazz);
-                    let content = new contentClazz();
-                    content.decode(msg.content);
-                    msg.content = content;
-                }else{
-                    console.error('message content not register', m);
-                }
+                // let msg = Object.assign(new Message(), m);
+                // let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
+                // if(contentClazz ){
+                //     console.log(contentClazz);
+                //     let content = new contentClazz();
+                //     content.decode(msg.content);
+                //     msg.content = content;
+                // }else{
+                //     console.error('message content not register', m);
+                // }
+                let msg = Message.protoMessageToMessage(m);
+                console.log(msg);
                 listener(msg, hasMore);
             });
         });
@@ -130,7 +133,15 @@ class WfcManager {
     @action async getConversationList(types, lines){
         var conversationListStr = proto.getConversationInfos(types, lines);
         console.log(conversationListStr);
-        return JSON.parse(conversationListStr);
+        // TODO convert to conversationInfo, messageContent
+
+        let conversationInfoList = [];
+        let tmp = JSON.parse(conversationListStr);
+        tmp.forEach(c => {
+            conversationInfoList.push(ConversationInfo.protoConversationToConversationInfo(c));
+        });
+
+        return conversationInfoList;
     }
 
     @action async getConversation(type, target, line = 0){

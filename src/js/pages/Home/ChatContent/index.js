@@ -102,7 +102,7 @@ export default class ChatContent extends Component {
                 }
                 // Text message
                 //let text = Object.assign(new TextMessageContent(), message.content);
-                let textMessageContent = message.content; 
+                let textMessageContent = message.messageContent; 
                 return emojiParse(textMessageContent.content);
             case wfcMessage.ContentType_Image:
                 // Image

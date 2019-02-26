@@ -29,16 +29,32 @@
         "to": ""
     }
  */
-import MessagePayload from './messagePayload'
 import Conversation from '../conversation'
+import * as wfcMessage from '../messageConfig'
 export default class Message{
     conversation = {};
     from = '';
-    content = {}; // 解析之前是MessagePayload, 解析之后是具体的messageContent
+    content = {}; // 实际是payload
+    messageContent = {};
     messageId = 0;
     direction = 0;
     status = 0;
     messageUid = 0;
     timestamp  = 0;
     to = '';
+
+    static protoMessageToMessage(obj){
+        let msg = Object.assign(new Message(), obj);
+        msg.conversation = new Conversation(obj.conversation.conversationType, obj.conversation.target, obj.conversation.line);
+        let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
+        if(contentClazz ){
+            let content = new contentClazz();
+            content.decode(msg.content);
+            msg.messageContent = content;
+        }else{
+            console.error('message content not register', obj);
+        }
+
+        return msg;
+    }
 }
