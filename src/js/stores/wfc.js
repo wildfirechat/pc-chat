@@ -24,9 +24,9 @@ class WfcManager {
     onReceiveMessage(messages, hasMore){
         var msgs = JSON.parse(messages);
         msgs.map(m => {
+            let msg = Message.protoMessageToMessage(m);
+            console.log(msg.messagecontent);
             self.onReceiveMessageListeners.forEach(listener => {
-                let msg = Message.protoMessageToMessage(m);
-                console.log(msg.messagecontent);
                 listener(msg, hasMore);
             });
         });
@@ -140,7 +140,7 @@ class WfcManager {
         return conversationInfoList;
     }
 
-    @action async getConversation(type, target, line = 0){
+    @action async getConversationInfo(conversation){
 
     }
 
@@ -152,8 +152,19 @@ class WfcManager {
      * @param {number} count 
      * @param {string} withUser 
      */
-    @action async getMessageList(conversation, fromIndex, before, count, withUser){
-        return [];
+    @action async getMessages(conversation, fromIndex, before = true, count = 20, withUser = ''){
+        let protoMsgsStr = proto.getMessages(JSON.stringify(conversation), [], fromIndex, before, count, withUser);
+        // let protoMsgsStr = proto.getMessages('xxx', [0], fromIndex, before, count, withUser);
+        console.log(JSON.stringify(conversation));
+        console.log('getMessages', protoMsgsStr);
+        var protoMsgs = JSON.parse(protoMsgsStr);
+        let msgs = [];
+        protoMsgs.map(m => {
+            let msg = Message.protoMessageToMessage(m);
+            msgs.push(msg);
+        });
+
+        return msgs;
     }
 
     @action async getMessageById(messageId){
