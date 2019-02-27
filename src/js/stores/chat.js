@@ -237,19 +237,23 @@ class Chat {
     }
 
     @action async chatToN(conversation) {
-        console.log('chat to ......');
-        console.log(conversation);
+        console.log('chat to conversation', conversation);
         if (_.isEqual(self.conversation, conversation)) {
             return
         }
         self.conversation = conversation;
 
-        self.messageList = await wfc.getMessageList(conversation, 0, false, 20);
+        self.loadConversationMessages(conversation, 1000000);
 
         wfc.setOnReceiveMessageListener(self.onReceiveMessage);
 
         // TODO update observable for chat content
         self.user = 'xx'
+    }
+
+    //@action async getMessages(conversation, fromIndex, before = 'true', count = '20', withUser = ''){
+    @action async loadConversationMessages(conversation, fromIndex, before = true, count = 20){
+        self.messageList = await wfc.getMessages(conversation, fromIndex, before, count, '');
     }
 
     @action async loadChats(chatSet) {
