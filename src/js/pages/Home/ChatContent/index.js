@@ -298,9 +298,9 @@ export default class ChatContent extends Component {
                     // File is uploading
                     [classes.uploading]: message.uploading === true,
 
-                    [classes.isme]: message.isme,
+                    [classes.isme]: message.direction === 0,
                     //[classes.isText]: type === 1 && !message.location,
-                    [classes.isText]: true,
+                    [classes.isText]: message.messageContent.type == ContentType_Text,
                     [classes.isLocation]: type === 1 && message.location,
                     [classes.isImage]: type === 3,
                     [classes.isEmoji]: type === 47 || type === 49 + 8,
