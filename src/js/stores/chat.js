@@ -227,23 +227,23 @@ class Chat {
         console.log('show...........');
     }
 
-    onReceiveMessage(message, hasMore){
+    onReceiveMessage(message, hasMore) {
         console.log('chat on receive message');
         // TODO message id
-        if(message.messageId > 0 && message.conversationType === self.type && message.target === self.target && message.line == self.line){
+        if (message.messageId > 0 && message.conversationType === self.type && message.target === self.target && message.line == self.line) {
             // message conent type
             self.messageList.push(message);
         }
     }
 
-    @action async chatToN(conversation){
+    @action async chatToN(conversation) {
         console.log('chat to ......');
         console.log(conversation);
-        if(_.isEqual(self.conversation, conversation)){
+        if (_.isEqual(self.conversation, conversation)) {
             return
         }
         self.conversation = conversation;
-        
+
         self.messageList = await wfc.getMessageList(conversation, 0, false, 20);
 
         wfc.setOnReceiveMessageListener(self.onReceiveMessage);
@@ -698,14 +698,29 @@ class Chat {
         return list;
     }
 
-    @action async sendMessage(textMessgeContent, isForward = false ) {
+    @action async sendMessage(textMessgeContent, isForward = false) {
 
         console.log('to send message------------');
         let msg = new Message();
         msg.conversation = self.conversation;
         msg.messageContent = textMessgeContent;
-        wfc.sendMessage(msg);
-        self.messageList.push(msg);
+        wfc.sendMessage(msg,
+            function (messageId, timestamp) {
+                msg.messageId = messageId;
+                msg.timestamp = timestamp;
+                self.messageList.push(msg);
+            },
+            null,
+            function (messageUid, timestamp) {
+                msg.messageUid = messageUid;
+                msg.status = 1;
+                msg.timestamp = timestamp;
+
+            },
+            function (errorCode) {
+                console.log('send message failed', errorCode);
+            }
+        );
         return true;
     }
 
@@ -805,7 +820,7 @@ class Chat {
         }[mediaType];
         var chunks = Math.ceil(file.size / 524288);
         var payment = {};
-        var process = async(index) => {
+        var process = async (index) => {
             let formdata = new window.FormData();
             let start = index * 524288;
             let end = start + 524288;

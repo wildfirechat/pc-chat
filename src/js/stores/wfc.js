@@ -128,7 +128,7 @@ class WfcManager {
 
     @action async getConversationList(types, lines){
         var conversationListStr = proto.getConversationInfos(types, lines);
-        console.log(conversationListStr);
+        // console.log(conversationListStr);
         // TODO convert to conversationInfo, messageContent
 
         let conversationInfoList = [];
@@ -168,27 +168,28 @@ class WfcManager {
 
     }
 
-    async sendTextMessage(type, target, line, to, text){
 
-    }
-
-    async sendMessage(message){
-        console.log('send message, ', message);
-        // let conv = {conversationType:0,target:'5O5J5JOO',line:0}
+    async sendMessage(message, preparedCB, uploadedCB, successCB, failCB){
         let strConv = JSON.stringify(message.conversation);
-        // let strCont = '{"type":1,"searchableContent":"hello","pushContent":"","content":"","binaryContent":"","localContent":"","mediaType":0,"remoteMediaUrl":"","localMediaPath":"","mentionedType":0,"mentionedTargets":[]}';
         message.content = message.messageContent.encode();
         let strCont = JSON.stringify(message.content);
-        let retValue = proto.sendMessage(strConv, strCont, "", 0, function(messageId, timestamp) { //preparedCB
-          console.log("sendMessage prepared:", messageId, timestamp);
+        proto.sendMessage(strConv, strCont, "", 0, function(messageId, timestamp) { //preparedCB
+            if(typeof preparedCB === 'function'){
+                preparedCB(messageId, Number(timestamp));
+            }
         }, function(uploaded, total) { //progressCB
-          console.log("sendMessage progress:", uploaded, total);
+            if(typeof uploadedCB === 'function'){
+                uploadedCB(uploaded, total);
+            }
         }, function(messageUid, timestamp) { //successCB
-          console.log("sendMessage success:", messageUid, timestamp);
+            if(typeof successCB === 'function'){
+                successCB(Number(messageUid), timestamp);
+            }
         }, function(errorCode) { //errorCB
-          console.log("sendMessage failed:", errorCode);
+            if(typeof failCB === 'function'){
+                failCB(errorCode);
+            }
         });
-        console.log("call sendMessage return:", retValue);
     }
 }
 const self = new WfcManager();
