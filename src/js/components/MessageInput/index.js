@@ -51,21 +51,27 @@ export default class MessageInput extends Component {
 
         console.log();
         // You can not send message to yourself
-        Promise.all(
-            user.filter(e => e.UserName !== this.props.me.UserName).map(
-                async e => {
-                    let res = await this.props.sendMessage(
+                    await this.props.sendMessage(
                         new TextMessageContent(message)
-                    );
+                    )
+        // Promise.all(
+        //             await this.props.sendMessage(
+        //                 new TextMessageContent(message)
+        //             )
+            // user.filter(e => e.UserName !== this.props.me.UserName).map(
+            //     async e => {
+            //         let res = await this.props.sendMessage(
+            //             new TextMessageContent(message)
+            //         );
 
-                    if (!res) {
-                        await this.props.showMessage(batch ? `Sending message to ${e.NickName} has failed!` : 'Failed to send message.');
-                    }
+            //         if (!res) {
+            //             await this.props.showMessage(batch ? `Sending message to ${e.NickName} has failed!` : 'Failed to send message.');
+            //         }
 
-                    return true;
-                }
-            )
-        );
+            //         return true;
+            //     }
+            // )
+        // );
 
         this.refs.input.value = '';
     }

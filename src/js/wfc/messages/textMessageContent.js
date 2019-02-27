@@ -12,10 +12,8 @@ export default class TextMessageContent extends MessageContent{
     }
 
     encode(){
-        let payload = new MessagePayload();
+        let payload = super.encode();
         payload.searchableContent = this.content;
-        payload.mentionedType = this.mentionedType;
-        payload.mentionedTargets = this.mentionedTargets;
         return payload;
     };
 

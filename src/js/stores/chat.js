@@ -700,70 +700,13 @@ class Chat {
 
     @action async sendMessage(textMessgeContent, isForward = false ) {
 
+        console.log('to send message------------');
         let msg = new Message();
         msg.conversation = self.conversation;
         msg.messageContent = textMessgeContent;
         wfc.sendMessage(msg);
-
-        var id = (+new Date() * 1000) + Math.random().toString().substr(2, 4);
-        var auth = await storage.get('auth');
-        var payload = Object.assign({}, message, {
-            content: helper.decodeHTML(message.content),
-            from: session.user.User.UserName,
-            to: user.UserName,
-            ClientMsgId: id,
-            LocalID: id
-        });
-        var res;
-
-        try {
-            if (message.type === 1) {
-                // Send text
-                console.log('to send text message');
-                res = await self.sendTextMessage(auth, payload, isForward);
-            } else if (message.type === 47) {
-                // Send emoji
-                res = await self.sendEmojiMessage(auth, payload, isForward);
-            } else if (message.type === 3) {
-                // Send image
-                res = await self.sendImageMessage(auth, payload, isForward);
-            } else if (message.type === 49 + 6) {
-                // Send file
-                res = await self.sendFileMessage(auth, payload, isForward);
-            } else if (message.type === 43) {
-                // Send video
-                res = await self.sendVideoMessage(auth, payload, isForward);
-            } else {
-                return false;
-            }
-        } catch (ex) {
-            console.error('Failed to send message: %o', ex);
-            return false;
-        }
-
-        var { data, item } = res;
-
-        self.chatTo(user, isForward);
-
-        if (data.BaseResponse.Ret === 0) {
-            let list = transformMessages(payload.to, self.messages, item);
-
-            if (!helper.isChatRoom(user.UserName)
-                && !helper.isContact(user)) {
-                // The target is not your friend
-                list.data.push({
-                    Content: `${user.sex ? 'She' : 'He'} is not your friend, <a class="add-friend" data-userid="${user.UserName}">Send friend request</a>`,
-                    MsgType: 19999,
-                });
-            }
-
-            self.markedRead(payload.to);
-            self.messages.set(payload.to, list);
-
-            return list.data[list.data.length - 1];
-        }
-
-        return false;
+        self.messageList.push(msg);
+        return true;
     }
 
     @action async process(file, user = self.user) {

@@ -1,3 +1,5 @@
+import MessagePayload from "./messagePayload";
+
 export default class MessageContent{
     type;
     mentionedType = 0;
@@ -17,7 +19,11 @@ export default class MessageContent{
      * return MessagePayload in json format
      */
     encode(){
-        // TODO return a object
+        let payload = new MessagePayload();
+        payload.type = this.type;
+        payload.mentionedType = this.mentionedType;
+        payload.mentionedTargets = this.mentionedTargets;
+        return payload;
     };
 
     /**

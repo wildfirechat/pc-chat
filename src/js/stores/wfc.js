@@ -173,11 +173,12 @@ class WfcManager {
     }
 
     async sendMessage(message){
+        console.log('send message, ', message);
         // let conv = {conversationType:0,target:'5O5J5JOO',line:0}
         let strConv = JSON.stringify(message.conversation);
         // let strCont = '{"type":1,"searchableContent":"hello","pushContent":"","content":"","binaryContent":"","localContent":"","mediaType":0,"remoteMediaUrl":"","localMediaPath":"","mentionedType":0,"mentionedTargets":[]}';
-        message.content = message.messagecontent.encode();
-        let strCont = JSON.stringify(message.messaget.content);
+        message.content = message.messageContent.encode();
+        let strCont = JSON.stringify(message.content);
         let retValue = proto.sendMessage(strConv, strCont, "", 0, function(messageId, timestamp) { //preparedCB
           console.log("sendMessage prepared:", messageId, timestamp);
         }, function(uploaded, total) { //progressCB
