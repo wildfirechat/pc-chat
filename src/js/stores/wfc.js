@@ -92,6 +92,7 @@ class WfcManager {
     }
 
     async connect(userId, token){
+        proto.setServerAddress("wildfirechat.cn", 80);
         proto.connect(userId, token);
     }
 
