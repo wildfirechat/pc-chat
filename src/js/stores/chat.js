@@ -12,6 +12,7 @@ import members from './members';
 import snackbar from './snackbar';
 import wfc from './wfc'
 import Message from '../wfc/messages/message';
+import { EventReceiveMessage } from '../wfc/wfcEvents';
 
 async function resolveMessage(message) {
     var auth = await storage.get('auth');
@@ -226,7 +227,6 @@ class Chat {
 
     @action toggleConversation(show = !self.showConversation) {
         self.showConversation = show;
-        console.log('show...........');
     }
 
     onReceiveMessage(message, hasMore) {
@@ -245,9 +245,10 @@ class Chat {
         }
         self.conversation = conversation;
 
-        self.loadConversationMessages(conversation, 1000000);
+        self.loadConversationMessages(conversation, 10000000);
 
-        wfc.setOnReceiveMessageListener(self.onReceiveMessage);
+        //wfc.setOnReceiveMessageListener(self.onReceiveMessage);
+        wfc.eventEmitter.on(EventReceiveMessage, self.onReceiveMessage);
 
         // TODO update observable for chat content
         self.user = 'xx'

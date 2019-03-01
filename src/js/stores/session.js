@@ -46,16 +46,8 @@ class Session {
         console.log('test', info);
     }
 
-    @action setOnReceiveMessageListener(){
-        wfc.setOnReceiveMessageListener(()=>{
-            self.loadConversations();
-        });
-    }
-
     @action async loadConversations(){
         let cl = await wfc.getConversationList([0, 1, 2, 3], [0, 1]);
-        // TODO 需要判断空吗？
-        console.log(cl);
         self.conversations = cl;
     }
 
@@ -336,7 +328,6 @@ class Session {
 
         self.auth = auth && Object.keys(auth).length ? auth : void 0;
 
-        console.log('-------------------------has Login');
         if (self.auth) {
             await self.initUser().catch(ex => self.logout());
             self.keepalive().catch(ex => self.logout());
