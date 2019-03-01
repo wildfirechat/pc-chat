@@ -1,13 +1,16 @@
 import { observable, action} from 'mobx';
 import proto from 'node-loader!../../../node_modules/marswrapper.node';
-import TextMessageContent from '../wfc/messages/textMessageContent'
 import * as wfcMessage from '../wfc/messageConfig'
 import Message from '../wfc/messages/message';
 import Conversation from '../wfc/conversation';
 import ConversationInfo from '../wfc/conversationInfo';
 import MessageContent from '../wfc/messages/baseContent';
+import { EventEmitter } from 'events';
+import {EventReceiveMessage, EventSendMessage} from '../wfc/wfcEvents'
 
-
+// TODO remove mobx related code from this class
+// @observable
+// @action
 class WfcManager {
     @observable connectionStatus = 0;
     @observable userId = '';
@@ -16,6 +19,8 @@ class WfcManager {
     onReceiveMessageListeners = [];
 
     messageContentList = new Map();
+
+    eventEmitter = new EventEmitter();
 
     @action onConnectionChanged(status){
         self.connectionStatus = status;
@@ -29,6 +34,8 @@ class WfcManager {
             self.onReceiveMessageListeners.forEach(listener => {
                 listener(msg, hasMore);
             });
+
+            self.eventEmitter.emit(EventReceiveMessage, msg);
         });
     }
 
@@ -184,6 +191,7 @@ class WfcManager {
         let strConv = JSON.stringify(message.conversation);
         message.content = message.messageContent.encode();
         let strCont = JSON.stringify(message.content);
+
         proto.sendMessage(strConv, strCont, "", 0, function(messageId, timestamp) { //preparedCB
             if(typeof preparedCB === 'function'){
                 preparedCB(messageId, Number(timestamp));
@@ -201,6 +209,8 @@ class WfcManager {
                 failCB(errorCode);
             }
         });
+
+        self.eventEmitter.emit(EventSendMessage, message);
     }
 }
 const self = new WfcManager();

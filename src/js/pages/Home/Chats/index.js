@@ -7,6 +7,7 @@ import moment from 'moment';
 
 import classes from './style.css';
 import helper from 'utils/helper';
+import {EventReceiveMessage, EventSendMessage} from '../../../wfc/wfcEvents'
 
 moment.updateLocale('en', {
     relativeTime: {
@@ -31,6 +32,7 @@ moment.updateLocale('en', {
     loading: stores.session.loading,
     searching: stores.search.searching,
     connectionStatus:stores.wfc.connectionStatus,
+    event:stores.wfc.eventEmitter,
     loadConversations:stores.session.loadConversations,
     setOnReceiveMessageListener:stores.session.setOnReceiveMessageListener,
 }))
@@ -94,13 +96,23 @@ export default class Chats extends Component {
         menu.popup(remote.getCurrentWindow());
     }
 
-    componentWillMount(){
-        this.props.setOnReceiveMessageListener();
+    onSendMessage = (msg) =>{
         this.props.loadConversations();
     }
 
-    componentWillUnmount(){
+    onReceiveMessage = (msg) =>{
+        this.props.loadConversations();
+    }
 
+    componentWillMount(){
+        this.props.loadConversations();
+        this.props.event.on(EventReceiveMessage, this.onReceiveMessage);
+        this.props.event.on(EventSendMessage, (this.onSendMessage));
+    }
+
+    componentWillUnmount(){
+        this.props.event.removeListener(EventReceiveMessage, this.onReceiveMessage);
+        this.props.event.removeListener(EventSendMessage, this.onSendMessage);
     }
 
     componentDidUpdate() {
@@ -121,7 +133,6 @@ export default class Chats extends Component {
     }
 
     render() {
-        console.log('-------------render');
         var { loading, chats, selected, chatTo, searching } = this.props;
 
 
