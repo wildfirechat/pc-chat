@@ -156,14 +156,13 @@ class WfcManager {
     @action async getMessages(conversation, fromIndex, before = true, count = 20, withUser = ''){
         let protoMsgsStr = proto.getMessages(JSON.stringify(conversation), [], fromIndex, before, count, withUser);
         // let protoMsgsStr = proto.getMessages('xxx', [0], fromIndex, before, count, withUser);
-        console.log(JSON.stringify(conversation));
-        console.log('getMessages', protoMsgsStr);
         var protoMsgs = JSON.parse(protoMsgsStr);
         let msgs = [];
         protoMsgs.map(m => {
             let msg = Message.protoMessageToMessage(m);
             msgs.push(msg);
         });
+        console.log('getMessages', msgs.length);
 
         return msgs;
     }
