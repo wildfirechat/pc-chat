@@ -20,14 +20,15 @@ import { ContentType_Text, ContentType_Image } from '../../../wfc/messages/messa
     removeChat: stores.chat.removeChat,
     messages: stores.chat.messageList,
     loading: stores.session.loading,
+    loadOldMessages: stores.chat.loadOldMessages,
     reset: () => {
-        stores.chat.user = false;
+        //stores.chat.user = false;
     },
     isFriend: (id) => {
         var user = stores.contacts.memberList.find(e => e.UserName === id) || {};
         return helper.isContact(user);
     },
-    showUserinfo: async(isme, user) => {
+    showUserinfo: async (isme, user) => {
         var caniremove = helper.isChatRoomOwner(stores.chat.user);
 
         if (isme) {
@@ -102,7 +103,7 @@ export default class ChatContent extends Component {
                 }
                 // Text message
                 //let text = Object.assign(new TextMessageContent(), message.content);
-                let textMessageContent = message.messageContent; 
+                let textMessageContent = message.messageContent;
                 return emojiParse(textMessageContent.content);
             case ContentType_Image:
                 // Image
@@ -253,13 +254,13 @@ export default class ChatContent extends Component {
                         </div>
 
                         ${
-                            uploading
-                                ? '<i class="icon-ion-android-arrow-up"></i>'
-                                : (download.done ? '<i class="icon-ion-android-more-horizontal is-file"></i>' : '<i class="icon-ion-android-arrow-down is-download"></i>')
-                        }
+                    uploading
+                        ? '<i class="icon-ion-android-arrow-up"></i>'
+                        : (download.done ? '<i class="icon-ion-android-more-horizontal is-file"></i>' : '<i class="icon-ion-android-arrow-down is-download"></i>')
+                    }
                     </div>
                 `;
-                /* eslint-enable */
+            /* eslint-enable */
 
             case 49 + 17:
                 // Location sharing...
@@ -290,7 +291,7 @@ export default class ChatContent extends Component {
                     <div
                         key={index}
                         className={clazz('unread', classes.message, classes.system)}
-                        dangerouslySetInnerHTML={{__html: e.Content}} />
+                        dangerouslySetInnerHTML={{ __html: e.Content }} />
                 );
             }
 
@@ -330,14 +331,14 @@ export default class ChatContent extends Component {
                         <p
                             className={classes.username}
                             //dangerouslySetInnerHTML={{__html: user.DisplayName || user.RemarkName || user.NickName}}
-                            dangerouslySetInnerHTML={{__html: message.from || user.RemarkName || user.NickName}}
+                            dangerouslySetInnerHTML={{ __html: message.from || user.RemarkName || user.NickName }}
                         />
 
                         <div className={classes.content}>
                             <p
                                 onContextMenu={e => this.showMessageAction(message)}
-                                dangerouslySetInnerHTML={{__html: this.getMessageContent(message)}} />
-                            <span className={classes.times}>{ moment(message.timestamp).fromNow() }</span>
+                                dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
+                            <span className={classes.times}>{moment(message.timestamp).fromNow()}</span>
                         </div>
                     </div>
                 </div>
@@ -540,6 +541,12 @@ export default class ChatContent extends Component {
         var rect = viewport.getBoundingClientRect();
         var counter = 0;
 
+        const offset = 100 // 100 px before the request
+        if (viewport.scrollTop < offset) {
+            console.log(viewport.scrollTop);
+            this.props.loadOldMessages();
+        }
+
         Array.from(unread).map(e => {
             if (e.getBoundingClientRect().top > rect.bottom) {
                 counter += 1;
@@ -582,7 +589,7 @@ export default class ChatContent extends Component {
 
             // Scroll to bottom when you sent message
             if (newestMessage
-                    && newestMessage.isme) {
+                && newestMessage.isme) {
                 viewport.scrollTop = viewport.scrollHeight;
                 return;
             }
@@ -658,12 +665,12 @@ export default class ChatContent extends Component {
                             <header>
                                 <div className={classes.info}>
                                     <p
-                                        dangerouslySetInnerHTML={{__html: title}}
+                                        dangerouslySetInnerHTML={{ __html: title }}
                                         title={title} />
 
                                     <span
                                         className={classes.signature}
-                                        dangerouslySetInnerHTML={{__html: signature || 'No Signature'}}
+                                        dangerouslySetInnerHTML={{ __html: signature || 'No Signature' }}
                                         onClick={e => this.props.showMembers(user)}
                                         title={signature} />
                                 </div>
@@ -684,15 +691,15 @@ export default class ChatContent extends Component {
                             </div>
                         </div>
                     ) : (
-                        <div className={clazz({
-                            [classes.noselected]: !user,
-                        })}>
-                            <img
-                                className="disabledDrag"
-                                src="assets/images/noselected.png" />
-                            <h1>No Chat selected :(</h1>
-                        </div>
-                    )
+                            <div className={clazz({
+                                [classes.noselected]: !user,
+                            })}>
+                                <img
+                                    className="disabledDrag"
+                                    src="assets/images/noselected.png" />
+                                <h1>No Chat selected :(</h1>
+                            </div>
+                        )
                 }
 
                 <div
