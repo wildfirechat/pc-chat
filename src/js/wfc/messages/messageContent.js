@@ -12,7 +12,7 @@ export default class MessageContent{
     }
 
     digest(){
-        // do nothing
+        return null;
     };   
 
     /**
