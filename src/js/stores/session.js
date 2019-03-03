@@ -47,7 +47,7 @@ class Session {
     }
 
     @action async loadConversations(){
-        let cl = await wfc.getConversationList([0, 1, 2, 3], [0, 1]);
+        let cl = wfc.getConversationList([0, 1, 2, 3], [0, 1]);
         self.conversations = cl;
     }
 
@@ -157,7 +157,7 @@ class Session {
         self.user.ContactList.map(e => {
             e.HeadImgUrl = `${axios.defaults.baseURL}${e.HeadImgUrl.substr(1)}`;
         });
-        await contacts.getContats();
+        // await contacts.getContats();
         await chat.loadChats(self.user.ChatSet);
 
         return self.user;
