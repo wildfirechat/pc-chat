@@ -7,7 +7,7 @@ import moment from 'moment';
 
 import classes from './style.css';
 import helper from 'utils/helper';
-import {EventReceiveMessage, EventSendMessage} from '../../../wfc/wfcEvents'
+import {EventTypeReceiveMessage, EventTypeSendMessage} from '../../../wfc/wfcEvents'
 
 moment.updateLocale('en', {
     relativeTime: {
@@ -106,13 +106,13 @@ export default class Chats extends Component {
 
     componentWillMount(){
         this.props.loadConversations();
-        this.props.event.on(EventReceiveMessage, this.onReceiveMessage);
-        this.props.event.on(EventSendMessage, (this.onSendMessage));
+        this.props.event.on(EventTypeReceiveMessage, this.onReceiveMessage);
+        this.props.event.on(EventTypeSendMessage, (this.onSendMessage));
     }
 
     componentWillUnmount(){
-        this.props.event.removeListener(EventReceiveMessage, this.onReceiveMessage);
-        this.props.event.removeListener(EventSendMessage, this.onSendMessage);
+        this.props.event.removeListener(EventTypeReceiveMessage, this.onReceiveMessage);
+        this.props.event.removeListener(EventTypeSendMessage, this.onSendMessage);
     }
 
     componentDidUpdate() {
