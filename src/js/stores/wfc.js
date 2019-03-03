@@ -1,4 +1,4 @@
-import { observable, action} from 'mobx';
+import { observable, action } from 'mobx';
 import proto from 'node-loader!../../../node_modules/marswrapper.node';
 import * as wfcMessage from '../wfc/messageConfig'
 import Message from '../wfc/messages/message';
@@ -6,7 +6,8 @@ import Conversation from '../wfc/conversation';
 import ConversationInfo from '../wfc/conversationInfo';
 import MessageContent from '../wfc/messages/baseContent';
 import { EventEmitter } from 'events';
-import {EventReceiveMessage, EventSendMessage} from '../wfc/wfcEvents'
+import { EventTypeReceiveMessage, EventTypeSendMessage, EventTypeMessageStatusUpdate, EventTypeUserInfoUpdate } from '../wfc/wfcEvents'
+import UserInfo from '../wfc/userInfo';
 
 // TODO remove mobx related code from this class
 // @observable
@@ -22,11 +23,12 @@ class WfcManager {
 
     eventEmitter = new EventEmitter();
 
-    @action onConnectionChanged(status){
+    @action onConnectionChanged(status) {
         self.connectionStatus = status;
-        console.log('status', status);
+        console.log('connection status changed', status);
     }
-    onReceiveMessage(messages, hasMore){
+
+    onReceiveMessage(messages, hasMore) {
         var msgs = JSON.parse(messages);
         msgs.map(m => {
             let msg = Message.protoMessageToMessage(m);
@@ -35,13 +37,26 @@ class WfcManager {
                 listener(msg, hasMore);
             });
 
-            self.eventEmitter.emit(EventReceiveMessage, msg);
+            self.eventEmitter.emit(EventTypeReceiveMessage, msg);
         });
     }
 
-    async init(){
+    onUserInfoUpdate(userIds){
+        console.log('userIndo update, ids', userIds);
+        userIds.map((userId => {
+            self.eventEmitter.emit(EventTypeUserInfoUpdate, userId);
+        }))
+    }
+
+    onFriendListUpdate(friendListIds){
+        console.log('friendList update, ids', friendListIds);
+    }
+
+    async init() {
         proto.setConnectionStatusListener(self.onConnectionChanged);
         proto.setReceiveMessageListener(self.onReceiveMessage);
+        proto.setUserInfoUpdateListener(self.onUserInfoUpdate);
+        proto.setFriendUpdateListener(self.onFriendListUpdate);
         self.registerDefaultMessageContents();
 
 
@@ -78,44 +93,63 @@ class WfcManager {
 
         // console.log('conversation is same: ', _.isEqual(c1, c2));
 
-        let a = new MessageContent(2, 2);
-        console.log(a.mentionedType);
-        // a = new MessageContent(null, 1);
-        // console.log(a.mentionedType);
-        // a = new MessageContent(null, 1, []);
-        // console.log(a.mentionedType);
     }
 
     /**
      * 
      * @param {messagecontent} content 
      */
-    registerMessageContent(type, content){
-        self.messageContentList[type] = content; 
+    registerMessageContent(type, content) {
+        self.messageContentList[type] = content;
     }
 
-    async setServerAddress(host, port){
-        proto.setServerAddress("wildfirechat.cn", 80);
+    async setServerAddress(host, port) {
+        proto.setServerAddress(host, port);
     }
 
-    async connect(userId, token){
-        proto.setServerAddress("wildfirechat.cn", 80);
+    async connect(userId, token) {
+        await self.setServerAddress("wildfirechat.cn", 80);
         proto.connect(userId, token);
+
+        // let u = proto.getUserInfo('uiuJuJcc', true)
+        // let u1 = Object.assign(new UserInfo(), JSON.parse(u));
+        // u1.hello();
+
+        // let u = self.getUserInfo('uiuJuJcc', true);
+        // u.hello();
+        // console.log('user info', u);
     }
 
-    registerDefaultMessageContents(){
-        wfcMessage.MessageContents.map((e)=>{
+    registerDefaultMessageContents() {
+        wfcMessage.MessageContents.map((e) => {
             proto.registerMessageFlag(e.type, e.flag);
             self.registerMessageContent(e.type, e.content);
         });
     }
 
     /**
+     * @param {string} userId 
+     * @param {bool} fresh 
+     */
+    getUserInfo(userId, fresh = false) {
+        let userInfoStr = proto.getUserInfo(userId, fresh);
+        if (userInfoStr === '') {
+            return null;
+        } else {
+            return Object.assign(new UserInfo(), JSON.parse(userInfoStr));
+        }
+    }
+
+    getMyFriendList(fresh = false) {
+        return proto.getMyFriendList(fresh);
+    }
+
+    /**
      * 
      * @param {function} listener 
      */
-    setOnReceiveMessageListener(listener){
-        if (typeof listener !== 'function'){
+    setOnReceiveMessageListener(listener) {
+        if (typeof listener !== 'function') {
             console.log('listener should be a function');
             return;
         }
@@ -126,15 +160,15 @@ class WfcManager {
         self.onReceiveMessageListeners.push(listener);
     }
 
-    removeOnReceiMessageListener(listener){
-        if (typeof listener !== 'function'){
+    removeOnReceiMessageListener(listener) {
+        if (typeof listener !== 'function') {
             console.log('listener should be a function');
             return;
         }
         self.onReceiveMessageListeners.splice(self.onReceiveMessageListeners.indexOf(listener), 1);
     }
 
-    @action async getConversationList(types, lines){
+    @action async getConversationList(types, lines) {
         var conversationListStr = proto.getConversationInfos(types, lines);
         // console.log(conversationListStr);
         // TODO convert to conversationInfo, messageContent
@@ -148,7 +182,7 @@ class WfcManager {
         return conversationInfoList;
     }
 
-    @action async getConversationInfo(conversation){
+    @action async getConversationInfo(conversation) {
 
     }
 
@@ -160,7 +194,7 @@ class WfcManager {
      * @param {number} count 
      * @param {string} withUser 
      */
-    @action async getMessages(conversation, fromIndex, before = true, count = 20, withUser = ''){
+    @action async getMessages(conversation, fromIndex, before = true, count = 20, withUser = '') {
         let protoMsgsStr = proto.getMessages(JSON.stringify(conversation), [], fromIndex, before, count, withUser);
         // let protoMsgsStr = proto.getMessages('xxx', [0], fromIndex, before, count, withUser);
         var protoMsgs = JSON.parse(protoMsgsStr);
@@ -174,43 +208,39 @@ class WfcManager {
         return msgs;
     }
 
-    @action async getMessageById(messageId){
-
-    }
-    
-    @action async getMessageByUid(messageUid){
+    @action async getMessageById(messageId) {
 
     }
 
-    @action async getUserInfo(userId){
+    @action async getMessageByUid(messageUid) {
 
     }
 
 
-    async sendMessage(message, preparedCB, uploadedCB, successCB, failCB){
+    async sendMessage(message, preparedCB, uploadedCB, successCB, failCB) {
         let strConv = JSON.stringify(message.conversation);
         message.content = message.messageContent.encode();
         let strCont = JSON.stringify(message.content);
 
-        proto.sendMessage(strConv, strCont, "", 0, function(messageId, timestamp) { //preparedCB
-            if(typeof preparedCB === 'function'){
+        proto.sendMessage(strConv, strCont, "", 0, function (messageId, timestamp) { //preparedCB
+            if (typeof preparedCB === 'function') {
                 preparedCB(messageId, Number(timestamp));
             }
-        }, function(uploaded, total) { //progressCB
-            if(typeof uploadedCB === 'function'){
+        }, function (uploaded, total) { //progressCB
+            if (typeof uploadedCB === 'function') {
                 uploadedCB(uploaded, total);
             }
-        }, function(messageUid, timestamp) { //successCB
-            if(typeof successCB === 'function'){
+        }, function (messageUid, timestamp) { //successCB
+            if (typeof successCB === 'function') {
                 successCB(Number(messageUid), timestamp);
             }
-        }, function(errorCode) { //errorCB
-            if(typeof failCB === 'function'){
+        }, function (errorCode) { //errorCB
+            if (typeof failCB === 'function') {
                 failCB(errorCode);
             }
         });
 
-        self.eventEmitter.emit(EventSendMessage, message);
+        self.eventEmitter.emit(EventTypeSendMessage, message);
     }
 }
 const self = new WfcManager();
