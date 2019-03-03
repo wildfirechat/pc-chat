@@ -744,21 +744,20 @@ class Chat {
 
     @action async sendMessage(textMessgeContent, isForward = false) {
 
-        console.log('to send message------------');
         let msg = new Message();
         msg.conversation = self.conversation;
         msg.messageContent = textMessgeContent;
+        var m;
         wfc.sendMessage(msg,
             function (messageId, timestamp) {
-                msg.messageId = messageId;
-                msg.timestamp = timestamp;
-                self.messageList.push(msg);
+                m = wfc.getMessageById(messageId);
+                self.messageList.push(m);
             },
             null,
             function (messageUid, timestamp) {
-                msg.messageUid = messageUid;
-                msg.status = 1;
-                msg.timestamp = timestamp;
+                m.messageUid = messageUid;
+                m.status = 1;
+                m.timestamp = timestamp;
 
             },
             function (errorCode) {
