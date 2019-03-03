@@ -3,12 +3,12 @@ import * as wfcMessage from '../wfc/messageConfig'
 import Message from '../wfc/messages/message';
 import Conversation from '../wfc/model/conversation';
 import ConversationInfo from '../wfc/model/conversationInfo';
-import MessageContent from '../wfc/messages/messageContent';
 import { EventEmitter } from 'events';
 import { EventTypeReceiveMessage, EventTypeSendMessage, EventTypeMessageStatusUpdate, EventTypeUserInfoUpdate, EventTypeConnectionStatusChanged } from '../wfc/wfcEvents'
 import UserInfo from '../wfc/model/userInfo';
 import NullUserInfo from '../wfc/model/nullUserInfo';
 
+// 其实就是imclient，后续可能需要改下名字
 class WfcManager {
     connectionStatus = 0;
     userId = '';
@@ -50,7 +50,7 @@ class WfcManager {
         console.log('friendList update, ids', friendListIds);
     }
 
-    async init() {
+    init() {
         proto.setConnectionStatusListener(self.onConnectionChanged);
         proto.setReceiveMessageListener(self.onReceiveMessage);
         proto.setUserInfoUpdateListener(self.onUserInfoUpdate);
@@ -66,12 +66,12 @@ class WfcManager {
         self.messageContentList[type] = content;
     }
 
-    async setServerAddress(host, port) {
+    setServerAddress(host, port) {
         proto.setServerAddress(host, port);
     }
 
     async connect(userId, token) {
-        await self.setServerAddress("wildfirechat.cn", 80);
+        self.setServerAddress("wildfirechat.cn", 80);
         proto.connect(userId, token);
 
         // for testing your code
@@ -99,7 +99,11 @@ class WfcManager {
     }
 
     getMyFriendList(fresh = false) {
-        return proto.getMyFriendList(fresh);
+        let idsStr = proto.getMyFriendList(fresh);
+        if (idsStr !== '') {
+            return JSON.parse(idsStr);
+        }
+        return [];
     }
 
     /**
@@ -126,7 +130,7 @@ class WfcManager {
         self.onReceiveMessageListeners.splice(self.onReceiveMessageListeners.indexOf(listener), 1);
     }
 
-    async getConversationList(types, lines) {
+    getConversationList(types, lines) {
         var conversationListStr = proto.getConversationInfos(types, lines);
         // console.log(conversationListStr);
         // TODO convert to conversationInfo, messageContent

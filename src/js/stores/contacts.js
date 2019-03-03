@@ -9,6 +9,8 @@ import chat from './chat';
 import storage from 'utils/storage';
 import helper from 'utils/helper';
 import { normalize } from 'utils/emoji';
+import wfc from '../wfc/wfc'
+import UserInfo from '../wfc/model/userInfo';
 
 class Contacts {
     @observable loading = false;
@@ -30,11 +32,14 @@ class Contacts {
 
             // If 'showall' is false, just show your friends
             if (showall === false
-                && !helper.isContact(e)) {
+                && !(e instanceof UserInfo)) {
                 return;
             }
 
-            var prefix = ((e.RemarkPYInitial || e.PYInitial || pinyin.letter(e.NickName)).toString()[0] + '').replace('?', '#');
+            var prefix;
+            if (e instanceof UserInfo) {
+                prefix = (pinyin.letter(e.displayName).toString()[0] + '').replace('?', '#');
+            }
             var group = mappings[prefix];
 
             if (!group) {
@@ -42,6 +47,8 @@ class Contacts {
             }
             group.push(e);
         });
+
+
 
         for (let key in mappings) {
             sorted.push({
@@ -69,24 +76,19 @@ class Contacts {
     @action async getContats() {
         self.loading = true;
 
-        var auth = await storage.get('auth');
-        var me = session.user.User;
-        var response = await axios.get('/cgi-bin/mmwebwx-bin/webwxgetcontact', {
-            params: {
-                r: +new Date(),
-                seq: 0,
-                skey: auth.skey
-            }
-        });
-
-        // Remove all official account and brand account
-        self.memberList = response.data.MemberList.filter(e => helper.isContact(e) && !helper.isOfficial(e) && !helper.isBrand(e)).concat(me);
-        self.memberList.map(e => {
-            e.MemberList = [];
-            return self.resolveUser(auth, e);
-        });
+        self.memberList = [];
+        let friendListIds = wfc.getMyFriendList(false);
+        console.log('fi', friendListIds.length);
+        if (friendListIds.length > 0) {
+            friendListIds.map((e) => {
+                let u = wfc.getUserInfo(e);
+                console.log(u instanceof UserInfo);
+                self.memberList.push(u);
+            });
+        }
 
         self.loading = false;
+        console.log('yyyy', typeof self.memberList[0]);
         self.filtered.result = self.group(self.memberList);
 
         return (window.list = self.memberList);
@@ -136,77 +138,28 @@ class Contacts {
         return user;
     }
 
-    // Batch get the contacts
-    async batch(list) {
-        var auth = await storage.get('auth');
-        var response = await axios.post(`/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r=${+new Date()}`, {
-            BaseRequest: {
-                Sid: auth.wxsid,
-                Uin: auth.wxuin,
-                Skey: auth.skey,
-            },
-            Count: list.length,
-            List: list.map(e => ({
-                UserName: e,
-                ChatRoomId: ''
-            })),
-        });
-
-        if (response.data.BaseResponse.Ret === 0) {
-            var shouldUpdate = false;
-
-            response.data.ContactList.map(e => {
-                var index = self.memberList.findIndex(user => user.UserName === e.UserName);
-                var user = self.resolveUser(auth, e);
-
-                if (!user) return;
-
-                shouldUpdate = true;
-
-                if (index !== -1) {
-                    self.memberList[index] = user;
-                } else {
-                    // This contact is not in your contact list, eg: Temprary chat room
-                    self.memberList.push(user);
-                }
-            });
-
-            if (shouldUpdate) {
-                // Update contact in menu
-                ipcRenderer.send('menu-update', {
-                    contacts: JSON.stringify(self.memberList.filter(e => helper.isContact(e))),
-                    cookies: await helper.getCookie(),
-                });
-            }
-        } else {
-            throw new Error(`Failed to get user: ${list}`);
-        }
-
-        return response.data.ContactList;
-    }
-
     @action filter(text = '', showall = false) {
-        text = pinyin.letter(text.toLocaleLowerCase());
-        var list = self.memberList.filter(e => {
-            var res = pinyin.letter(e.NickName).toLowerCase().indexOf(text) > -1;
+        // text = pinyin.letter(text.toLocaleLowerCase());
+        // var list = self.memberList.filter(e => {
+        //     var res = pinyin.letter(e.NickName).toLowerCase().indexOf(text) > -1;
 
-            if (e.RemarkName) {
-                res = res || pinyin.letter(e.RemarkName).toLowerCase().indexOf(text) > -1;
-            }
+        //     if (e.RemarkName) {
+        //         res = res || pinyin.letter(e.RemarkName).toLowerCase().indexOf(text) > -1;
+        //     }
 
-            return res;
-        });
+        //     return res;
+        // });
 
-        if (!self.showGroup) {
-            list = list.filter(e => {
-                return !(e.ContactFlag === 3 && e.SnsFlag === 0);
-            });
-        }
+        // if (!self.showGroup) {
+        //     list = list.filter(e => {
+        //         return !(e.ContactFlag === 3 && e.SnsFlag === 0);
+        //     });
+        // }
 
-        self.filtered = {
-            query: text,
-            result: list.length ? self.group(list, showall) : [],
-        };
+        // self.filtered = {
+        //     query: text,
+        //     result: list.length ? self.group(list, showall) : [],
+        // };
     }
 
     @action toggleGroup(showGroup) {

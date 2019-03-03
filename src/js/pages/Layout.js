@@ -149,7 +149,6 @@ export default class Layout extends Component {
     }
 
     @action updateConnectionStatus(status) {
-        console.log('xxxxxxxxxx ..');
         this.connectionStatus = status;
     }
 

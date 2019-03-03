@@ -5,6 +5,7 @@ import clazz from 'classname';
 import randomColor from 'randomcolor';
 
 import classes from './style.css';
+import UserInfo from '../../wfc/model/userInfo';
 
 @inject(stores => ({
     filter: stores.contacts.filter,
@@ -15,8 +16,10 @@ import classes from './style.css';
 @observer
 export default class Contacts extends Component {
     renderColumns(data, index) {
+        console.log('render c', data);
         var list = data.filter((e, i) => i % 3 === index);
 
+        console.log('render', list.length);
         return list.map((e, index) => {
             return (
                 <div
@@ -46,7 +49,7 @@ export default class Contacts extends Component {
                                         onClick={() => this.props.showUserinfo(true, e)}>
                                         <div className={classes.avatar}>
                                             <img
-                                                src={e.HeadImgUrl}
+                                                src={this.itemPortrait(e)}
                                                 style={{
                                                     height: 32,
                                                     width: 32,
@@ -55,10 +58,10 @@ export default class Contacts extends Component {
                                         <div className={classes.info}>
                                             <p
                                                 className={classes.username}
-                                                dangerouslySetInnerHTML={{__html: e.RemarkName || e.NickName}} />
+                                                dangerouslySetInnerHTML={{ __html: this.itemName(e)}} />
                                             <p
                                                 className={classes.signature}
-                                                dangerouslySetInnerHTML={{__html: e.Signature || 'No Signature'}} />
+                                                dangerouslySetInnerHTML={{ __html: e.Signature || 'No Signature' }} />
                                         </div>
                                     </div>
                                 );
@@ -70,8 +73,24 @@ export default class Contacts extends Component {
         });
     }
 
+    itemName(e) {
+        let name = '';
+        if (e instanceof UserInfo) {
+            name = e.displayName;
+        // }else if(e instanceof GroupInfo){
+
+        }
+        return name;
+    }
+
+    itemPortrait(e) {
+        // 由于各种的名字都是portrait
+        return e.portrait;
+    }
+
     componentWillMount() {
-        this.props.filter();
+        this.props.getContats();
+        // this.props.filter();
     }
 
     render() {
