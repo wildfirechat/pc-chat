@@ -4,10 +4,11 @@ import * as wfcMessage from '../wfc/messageConfig'
 import Message from '../wfc/messages/message';
 import Conversation from '../wfc/conversation';
 import ConversationInfo from '../wfc/conversationInfo';
-import MessageContent from '../wfc/messages/baseContent';
+import MessageContent from '../wfc/messages/messageContent';
 import { EventEmitter } from 'events';
 import { EventTypeReceiveMessage, EventTypeSendMessage, EventTypeMessageStatusUpdate, EventTypeUserInfoUpdate } from '../wfc/wfcEvents'
-import UserInfo from '../wfc/userInfo';
+import UserInfo from '../wfc/model/userInfo';
+import NullUserInfo from '../wfc/model/nullUserInfo';
 
 // TODO remove mobx related code from this class
 // @observable
@@ -41,14 +42,14 @@ class WfcManager {
         });
     }
 
-    onUserInfoUpdate(userIds){
+    onUserInfoUpdate(userIds) {
         console.log('userIndo update, ids', userIds);
         userIds.map((userId => {
             self.eventEmitter.emit(EventTypeUserInfoUpdate, userId);
         }))
     }
 
-    onFriendListUpdate(friendListIds){
+    onFriendListUpdate(friendListIds) {
         console.log('friendList update, ids', friendListIds);
     }
 
@@ -58,41 +59,6 @@ class WfcManager {
         proto.setUserInfoUpdateListener(self.onUserInfoUpdate);
         proto.setFriendUpdateListener(self.onFriendListUpdate);
         self.registerDefaultMessageContents();
-
-
-        // var json = '{"base":"jjjjjjjjj", "name":"indx", "content":"hello world content"}'
-        // // let test = Object.assign(new self.abc(), JSON.parse(json));
-        // console.log('test import');
-        // var xxx = TextMessageContent;
-        // var test = new xxx();
-
-        // test.decode(json);
-
-        // console.log(test.content);
-        // console.log(test.base);
-
-        // var json = '    { "conversation":{ "conversationType": 0, "target": "UZUWUWuu", "line": 0 }, "from": "UZUWUWuu", "content": { "type": 1, "searchableContent": "1234", "pushContent": "", "content": "", "binaryContent": "", "localContent": "", "mediaType": 0, "remoteMediaUrl": "", "localMediaPath": "", "mentionedType": 0, "mentionedTargets": [ ] }, "messageId": 52, "direction": 1, "status": 5, "messageUid": 75735276990792720, "timestamp": 1550849394256, "to": "" } ';
-        // let msg = Object.assign(new Message(), JSON.parse(json));
-        // let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
-        // let text = new contentClazz();
-        // text.decode(msg.content);
-        // console.log(text.content);
-        // console.log(text instanceof TextMessageContent);
-        // console.log(msg.from);
-        // console.log(msg.content);
-
-        // let c1 = new Conversation();
-        // c1.target = 'target';
-        // c1.conversationType = 0;
-        // c1.line = 0;
-
-        // let c2 = new Conversation();
-        // c2.target = 'target';
-        // c2.conversationType = 0;
-        // c2.line = 0;
-
-        // console.log('conversation is same: ', _.isEqual(c1, c2));
-
     }
 
     /**
@@ -111,13 +77,8 @@ class WfcManager {
         await self.setServerAddress("wildfirechat.cn", 80);
         proto.connect(userId, token);
 
-        // let u = proto.getUserInfo('uiuJuJcc', true)
-        // let u1 = Object.assign(new UserInfo(), JSON.parse(u));
-        // u1.hello();
-
-        // let u = self.getUserInfo('uiuJuJcc', true);
-        // u.hello();
-        // console.log('user info', u);
+        // for testing your code
+        self.test();
     }
 
     registerDefaultMessageContents() {
@@ -134,7 +95,7 @@ class WfcManager {
     getUserInfo(userId, fresh = false) {
         let userInfoStr = proto.getUserInfo(userId, fresh);
         if (userInfoStr === '') {
-            return null;
+            return new NullUserInfo(userId);
         } else {
             return Object.assign(new UserInfo(), JSON.parse(userInfoStr));
         }
@@ -241,6 +202,18 @@ class WfcManager {
         });
 
         self.eventEmitter.emit(EventTypeSendMessage, message);
+    }
+
+    test() {
+
+        // let u = proto.getUserInfo('uiuJuJcc', true)
+        // let u1 = Object.assign(new UserInfo(), JSON.parse(u));
+        // u1.hello();
+
+        let u = self.getUserInfo('uiuJuJccj', true);
+        u.hello();
+        console.log('user info', u);
+
     }
 }
 const self = new WfcManager();

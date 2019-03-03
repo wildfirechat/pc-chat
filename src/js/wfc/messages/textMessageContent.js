@@ -1,4 +1,4 @@
-import MessageContent from './baseContent'
+import MessageContent from './messageContent'
 import MessagePayload from './messagePayload';
 import { ContentType_Text } from './messageTypes';
 // fixme 下面这行，不知道为什么，会有问题，可能是因为循环import
@@ -11,6 +11,10 @@ export default class TextMessageContent extends MessageContent{
         this.content = content;
     }
 
+    digest(){
+        return this.content;
+    }
+
     encode(){
         let payload = super.encode();
         payload.searchableContent = this.content;
@@ -21,4 +25,6 @@ export default class TextMessageContent extends MessageContent{
         super.decode(payload);
         this.content = payload.searchableContent;
     }
+
+
 }

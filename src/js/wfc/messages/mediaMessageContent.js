@@ -1,4 +1,4 @@
-import MessageContent from './baseContent'
+import MessageContent from './messageContent'
 export default class MediaMessageContent extends MessageContent{
     localPath;
     remotePath;

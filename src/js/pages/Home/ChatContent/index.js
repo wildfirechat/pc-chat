@@ -11,7 +11,8 @@ import Avatar from 'components/Avatar';
 import helper from 'utils/helper';
 import { parser as emojiParse } from 'utils/emoji';
 import { on, off } from 'utils/event';
-import { ContentType_Text, ContentType_Image } from '../../../wfc/messages/messageTypes';
+import { ContentType_Text, ContentType_Image, ContentType_Unknown } from '../../../wfc/messages/messageTypes';
+import UnsupportMessageContent from '../../../wfc/messages/unsupportMessageConten';
 
 @inject(stores => ({
     user: stores.chat.user,
@@ -91,7 +92,16 @@ export default class ChatContent extends Component {
     getMessageContent(message) {
         var uploading = message.uploading;
 
+        if(message.messageContent instanceof UnsupportMessageContent){
+            let unsupportMessageContent = message.messageContent;
+            return emojiParse(unsupportMessageContent.digest());
+        }
+
         switch (message.content.type) {
+            case ContentType_Unknown:
+                let unknownMessageContent = message.messageContent;
+                console.log('unknown', unknownMessageContent.digest());
+                return emojiParse(unknownMessageContent.digest());
             case ContentType_Text:
                 if (message.location) {
                     return `
@@ -298,7 +308,7 @@ export default class ChatContent extends Component {
 
                     [classes.isme]: message.direction === 0,
                     //[classes.isText]: type === 1 && !message.location,
-                    [classes.isText]: message.messageContent.type == ContentType_Text,
+                    [classes.isText]: message.messageContent.type === ContentType_Text || (message.messageContent instanceof UnsupportMessageContent),
                     [classes.isLocation]: type === 1 && message.location,
                     [classes.isImage]: type === 3,
                     [classes.isEmoji]: type === 47 || type === 49 + 8,
@@ -572,6 +582,7 @@ export default class ChatContent extends Component {
 
 
         // scroll to bottom
+        // 这儿有问题
         viewport.scrollTop = viewport.scrollHeight;
 
         return;
