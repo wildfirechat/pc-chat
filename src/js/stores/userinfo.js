@@ -13,9 +13,12 @@ class UserInfo {
     @observable pallet = [];
 
     @action async toggle(show = self.show, user = self.user, remove = false) {
-        if (user.UserName === session.user.User.UserName) {
-            remove = false;
-        }
+        // if (user.UserName === session.user.User.UserName) {
+        //     remove = false;
+        // }
+
+        user = {}
+        user.UserName = 'user Name';
 
         self.remove = remove;
         self.show = show;

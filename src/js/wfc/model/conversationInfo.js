@@ -1,6 +1,6 @@
 import Conversation from "./conversation";
 import Message from "../messages/message";
-import wfc from '../../stores/wfc'
+import wfc from '../wfc'
 
 import { ConversationType_Single, ConversationType_Group, ConversationType_Channel, ConversationType_ChatRoom } from "./conversationTypes";
 

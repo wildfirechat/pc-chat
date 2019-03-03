@@ -8,7 +8,7 @@ import storage from 'utils/storage';
 import { normalize } from 'utils/emoji';
 import chat from './chat';
 import contacts from './contacts';
-import wfc from './wfc';
+import wfc from '../wfc/wfc';
 
 const CancelToken = axios.CancelToken;
 
