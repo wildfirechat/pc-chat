@@ -10,7 +10,7 @@ import settings from './settings';
 import session from './session';
 import members from './members';
 import snackbar from './snackbar';
-import wfc from './wfc'
+import wfc from '../wfc/wfc'
 import Message from '../wfc/messages/message';
 import { EventTypeReceiveMessage } from '../wfc/wfcEvents';
 import { ConversationType_Single } from '../wfc/model/conversationTypes';
@@ -221,7 +221,7 @@ class Chat {
     @observable showConversation = true;
 
     // maybe userInfo, GroupInfo, ChannelInfo, ChatRoomInfo
-    @observable target = {};
+    @observable target = false;
 
     conversation;
     loading = false;

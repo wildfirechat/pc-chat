@@ -13,7 +13,6 @@ const TOKEN = 'w3bgeLJJJWvViSJ7fvwz1LPTnCegDb11Q646P5gf9VVRPylImGthlarXlylz0Im1+
     code: stores.session.code,
     getCode: stores.session.getCode,
     setupConnectionStatusListener: stores.session.setupConnectionStatusListener,
-    connectionStatus: stores.wfc.connectionStatus,
     test:stores.session.test,
     connect: stores.wfc.connect,
 }))

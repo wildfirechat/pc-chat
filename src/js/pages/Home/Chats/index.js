@@ -7,7 +7,7 @@ import moment from 'moment';
 
 import classes from './style.css';
 import helper from 'utils/helper';
-import wfc from '../../../stores/wfc'
+import wfc from '../../../wfc/wfc'
 import { EventTypeReceiveMessage, EventTypeSendMessage } from '../../../wfc/wfcEvents'
 import { ConversationType_Single, ConversationType_Group, ConversationType_ChatRoom, ConversationType_Channel } from '../../../wfc/model/conversationTypes';
 
@@ -33,7 +33,6 @@ moment.updateLocale('en', {
     removeChat: stores.chat.removeChat,
     loading: stores.session.loading,
     searching: stores.search.searching,
-    connectionStatus: stores.wfc.connectionStatus,
     event: stores.wfc.eventEmitter,
     loadConversations: stores.session.loadConversations,
     setOnReceiveMessageListener: stores.session.setOnReceiveMessageListener,

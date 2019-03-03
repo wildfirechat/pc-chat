@@ -13,7 +13,7 @@ import { parser as emojiParse } from 'utils/emoji';
 import { on, off } from 'utils/event';
 import { ContentType_Text, ContentType_Image, ContentType_Unknown } from '../../../wfc/messages/messageTypes';
 import UnsupportMessageContent from '../../../wfc/messages/unsupportMessageConten';
-import wfc from '../../../stores/wfc'
+import wfc from '../../../wfc/wfc'
 
 @inject(stores => ({
     user: stores.chat.user,

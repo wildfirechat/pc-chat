@@ -1,4 +1,3 @@
-import { observable, action } from 'mobx';
 import proto from 'node-loader!../../../node_modules/marswrapper.node';
 import * as wfcMessage from '../wfc/messageConfig'
 import Message from '../wfc/messages/message';
@@ -6,17 +5,14 @@ import Conversation from '../wfc/model/conversation';
 import ConversationInfo from '../wfc/model/conversationInfo';
 import MessageContent from '../wfc/messages/messageContent';
 import { EventEmitter } from 'events';
-import { EventTypeReceiveMessage, EventTypeSendMessage, EventTypeMessageStatusUpdate, EventTypeUserInfoUpdate } from '../wfc/wfcEvents'
+import { EventTypeReceiveMessage, EventTypeSendMessage, EventTypeMessageStatusUpdate, EventTypeUserInfoUpdate, EventTypeConnectionStatusChanged } from '../wfc/wfcEvents'
 import UserInfo from '../wfc/model/userInfo';
 import NullUserInfo from '../wfc/model/nullUserInfo';
 
-// TODO remove mobx related code from this class
-// @observable
-// @action
 class WfcManager {
-    @observable connectionStatus = 0;
-    @observable userId = '';
-    @observable token = '';
+    connectionStatus = 0;
+    userId = '';
+    token = '';
 
     onReceiveMessageListeners = [];
 
@@ -24,8 +20,9 @@ class WfcManager {
 
     eventEmitter = new EventEmitter();
 
-    @action onConnectionChanged(status) {
+    onConnectionChanged(status) {
         self.connectionStatus = status;
+        self.eventEmitter.emit(EventTypeConnectionStatusChanged, status);
         console.log('connection status changed', status);
     }
 
@@ -129,7 +126,7 @@ class WfcManager {
         self.onReceiveMessageListeners.splice(self.onReceiveMessageListeners.indexOf(listener), 1);
     }
 
-    @action async getConversationList(types, lines) {
+    async getConversationList(types, lines) {
         var conversationListStr = proto.getConversationInfos(types, lines);
         // console.log(conversationListStr);
         // TODO convert to conversationInfo, messageContent
@@ -143,7 +140,7 @@ class WfcManager {
         return conversationInfoList;
     }
 
-    @action async getConversationInfo(conversation) {
+    async getConversationInfo(conversation) {
 
     }
 
@@ -155,7 +152,7 @@ class WfcManager {
      * @param {number} count 
      * @param {string} withUser 
      */
-    @action async getMessages(conversation, fromIndex, before = true, count = 20, withUser = '') {
+    async getMessages(conversation, fromIndex, before = true, count = 20, withUser = '') {
         let protoMsgsStr = proto.getMessages(JSON.stringify(conversation), [], fromIndex, before, count, withUser);
         // let protoMsgsStr = proto.getMessages('xxx', [0], fromIndex, before, count, withUser);
         var protoMsgs = JSON.parse(protoMsgsStr);
@@ -169,11 +166,11 @@ class WfcManager {
         return msgs;
     }
 
-    @action async getMessageById(messageId) {
+    async getMessageById(messageId) {
 
     }
 
-    @action async getMessageByUid(messageUid) {
+    async getMessageByUid(messageUid) {
 
     }
 

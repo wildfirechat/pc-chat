@@ -20,6 +20,9 @@ import Loader from 'components/Loader';
 import Snackbar from 'components/Snackbar';
 import Offline from 'components/Offline';
 import Login from './Login';
+import wfc from '../wfc/wfc'
+import { observable, action } from 'mobx';
+import { EventTypeConnectionStatusChanged } from '../wfc/wfcEvents';
 
 @inject(stores => ({
     isLogin: () => !!stores.session.auth,
@@ -34,6 +37,8 @@ import Login from './Login';
 }))
 @observer
 export default class Layout extends Component {
+    @observable connectionStatus = 0;
+
     state = {
         offline: false,
     };
@@ -74,7 +79,7 @@ export default class Layout extends Component {
 
             while (node) {
                 if (node.nodeName.match(/^(input|textarea)$/i)
-                        || node.isContentEditable) {
+                    || node.isContentEditable) {
                     menu.popup(remote.getCurrentWindow());
                     break;
                 }
@@ -137,6 +142,17 @@ export default class Layout extends Component {
         };
     }
 
+    componentWillMount() {
+        wfc.eventEmitter.on(EventTypeConnectionStatusChanged, (status) => {
+            this.updateConnectionStatus(status);
+        });
+    }
+
+    @action updateConnectionStatus(status) {
+        console.log('xxxxxxxxxx ..');
+        this.connectionStatus = status;
+    }
+
     render() {
         var { isLogin, loading, show, close, message, location } = this.props;
 
@@ -149,12 +165,12 @@ export default class Layout extends Component {
         //     );
         // }
 
-        if (!this.props.connectionStatus == 1) {
+        if (!this.connectionStatus == 1) {
             return <Login />;
         }
 
         ipcRenderer.send('logined');
-        loading = this.props.connectionStatus === 0;
+        loading = this.connectionStatus === 0;
 
         return (
             <div>
