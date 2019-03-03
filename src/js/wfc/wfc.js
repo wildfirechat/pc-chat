@@ -140,7 +140,7 @@ class WfcManager {
         return conversationInfoList;
     }
 
-    async getConversationInfo(conversation) {
+    getConversationInfo(conversation) {
 
     }
 
@@ -166,14 +166,15 @@ class WfcManager {
         return msgs;
     }
 
-    async getMessageById(messageId) {
-
+    getMessageById(messageId) {
+        let mStr = proto.getMessage(messageId);
+        return Message.protoMessageToMessage(JSON.parse(mStr));
     }
 
-    async getMessageByUid(messageUid) {
-
+    getMessageByUid(messageUid) {
+        let mStr = proto.getMessageByUid(messageUid);
+        return Message.protoMessageToMessage(JSON.parse(mStr));
     }
-
 
     async sendMessage(message, preparedCB, uploadedCB, successCB, failCB) {
         let strConv = JSON.stringify(message.conversation);
@@ -210,6 +211,7 @@ class WfcManager {
         let u = self.getUserInfo('uiuJuJccj', true);
         u.hello();
         console.log('user info', u);
+        self.getMessageById(200);
 
     }
 }
