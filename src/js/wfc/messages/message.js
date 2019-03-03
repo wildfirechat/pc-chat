@@ -29,7 +29,7 @@
         "to": ""
     }
  */
-import Conversation from '../conversation'
+import Conversation from '../model/conversation'
 import * as wfcMessage from '../messageConfig'
 export default class Message{
     conversation = {};

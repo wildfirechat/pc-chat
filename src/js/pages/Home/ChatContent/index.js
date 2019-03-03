@@ -13,6 +13,7 @@ import { parser as emojiParse } from 'utils/emoji';
 import { on, off } from 'utils/event';
 import { ContentType_Text, ContentType_Image, ContentType_Unknown } from '../../../wfc/messages/messageTypes';
 import UnsupportMessageContent from '../../../wfc/messages/unsupportMessageConten';
+import wfc from '../../../stores/wfc'
 
 @inject(stores => ({
     user: stores.chat.user,
@@ -22,6 +23,7 @@ import UnsupportMessageContent from '../../../wfc/messages/unsupportMessageConte
     messages: stores.chat.messageList,
     loading: stores.session.loading,
     loadOldMessages: stores.chat.loadOldMessages,
+    target: stores.chat.target,
     reset: () => {
         //stores.chat.user = false;
     },
@@ -53,6 +55,8 @@ import UnsupportMessageContent from '../../../wfc/messages/unsupportMessageConte
         stores.chat.deleteMessage(stores.chat.user.UserName, messageid);
     },
     showMembers: (user) => {
+        // TODO show conversation info
+        console.log('show members click');
         if (helper.isChatRoom(user.UserName)) {
             stores.members.toggle(true, user);
         }
@@ -92,7 +96,7 @@ export default class ChatContent extends Component {
     getMessageContent(message) {
         var uploading = message.uploading;
 
-        if(message.messageContent instanceof UnsupportMessageContent){
+        if (message.messageContent instanceof UnsupportMessageContent) {
             let unsupportMessageContent = message.messageContent;
             return emojiParse(unsupportMessageContent.digest());
         }
@@ -280,7 +284,7 @@ export default class ChatContent extends Component {
         return list.map((e) => {
             // var { message, user } = this.props.parseMessage(e, from);
             var message = e;
-            var user = 'xxx';
+            var user = wfc.getUserInfo(message.from);
             var type = message.MsgType;
 
             if ([
@@ -325,7 +329,7 @@ export default class ChatContent extends Component {
                     <div>
                         <Avatar
                             //src={message.isme ? message.HeadImgUrl : user.HeadImgUrl}
-                            src={'http://img.hao661.com/qq.hao661.com/uploads/allimg/180822/0U61415T-0.jpg'}
+                            src={user.portrait ? user.portrait : 'assets/images/user-fallback.png'}
                             className={classes.avatar}
                             onClick={ev => this.props.showUserinfo(message.isme, user)}
                         />
@@ -333,7 +337,7 @@ export default class ChatContent extends Component {
                         <p
                             className={classes.username}
                             //dangerouslySetInnerHTML={{__html: user.DisplayName || user.RemarkName || user.NickName}}
-                            dangerouslySetInnerHTML={{ __html: message.from || user.RemarkName || user.NickName }}
+                            dangerouslySetInnerHTML={{ __html: user.displayName }}
                         />
 
                         <div className={classes.content}>
@@ -349,6 +353,7 @@ export default class ChatContent extends Component {
     }
 
     async handleClick(e) {
+        console.log('handle click');
         var target = e.target;
 
         // Open the image
@@ -547,6 +552,7 @@ export default class ChatContent extends Component {
         if (viewport.scrollTop < offset) {
             console.log(viewport.scrollTop);
             this.props.loadOldMessages();
+            
         }
 
         Array.from(unread).map(e => {
@@ -650,9 +656,11 @@ export default class ChatContent extends Component {
     }
 
     render() {
-        var { loading, showConversation, user, messages } = this.props;
+        var { loading, showConversation, user, messages, target } = this.props;
         var title = user.RemarkName || user.NickName;
-        var signature = user.Signature;
+
+        // maybe userName, groupName, ChannelName or ChatRoomName
+        var signature = target.displayName;
 
         // if (loading) return false;
 
@@ -663,7 +671,7 @@ export default class ChatContent extends Component {
                 })}
                 onClick={e => this.handleClick(e)}>
                 {
-                    user ? (
+                    target ? (
                         <div>
                             <header>
                                 <div className={classes.info}>
