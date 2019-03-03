@@ -13,6 +13,7 @@ import snackbar from './snackbar';
 import wfc from './wfc'
 import Message from '../wfc/messages/message';
 import { EventTypeReceiveMessage } from '../wfc/wfcEvents';
+import { ConversationType_Single } from '../wfc/model/conversationTypes';
 
 async function resolveMessage(message) {
     var auth = await storage.get('auth');
@@ -219,6 +220,9 @@ class Chat {
     @observable user = false;
     @observable showConversation = true;
 
+    // maybe userInfo, GroupInfo, ChannelInfo, ChatRoomInfo
+    @observable target = {};
+
     conversation;
     loading = false;
     hasMore = true;
@@ -253,29 +257,37 @@ class Chat {
         wfc.eventEmitter.on(EventTypeReceiveMessage, self.onReceiveMessage);
 
         // TODO update observable for chat content
+        switch (conversation.conversationType) {
+            case ConversationType_Single:
+                self.target = wfc.getUserInfo(conversation.target);
+                break
+            default:
+                break
+
+        }
         self.user = 'xx'
     }
 
     //@action async getMessages(conversation, fromIndex, before = 'true', count = '20', withUser = ''){
-    @action async loadConversationMessages(conversation, fromIndex, before = true, count = 20){
+    @action async loadConversationMessages(conversation, fromIndex, before = true, count = 20) {
         self.messageList = await wfc.getMessages(conversation, fromIndex, before, count, '');
     }
 
-    @action async loadOldMessages(){
-        if(self.loading || !self.hasMore){
+    @action async loadOldMessages() {
+        if (self.loading || !self.hasMore) {
             return;
         }
 
-        if(self.messageList.length <= 0){
+        if (self.messageList.length <= 0) {
             return;
         }
 
         let fromIndex = self.messageList[0].messageId;
 
-        wfc.getMessages(self.conversation, fromIndex).then((msgs) =>{
-            if(msgs.length > 0){
+        wfc.getMessages(self.conversation, fromIndex).then((msgs) => {
+            if (msgs.length > 0) {
                 self.messageList.unshift(...msgs);
-            }else{
+            } else {
                 self.hasMore = false;
             }
             self.loading = false;

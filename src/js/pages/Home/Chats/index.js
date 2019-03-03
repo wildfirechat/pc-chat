@@ -7,7 +7,9 @@ import moment from 'moment';
 
 import classes from './style.css';
 import helper from 'utils/helper';
-import {EventTypeReceiveMessage, EventTypeSendMessage} from '../../../wfc/wfcEvents'
+import wfc from '../../../stores/wfc'
+import { EventTypeReceiveMessage, EventTypeSendMessage } from '../../../wfc/wfcEvents'
+import { ConversationType_Single, ConversationType_Group, ConversationType_ChatRoom, ConversationType_Channel } from '../../../wfc/model/conversationTypes';
 
 moment.updateLocale('en', {
     relativeTime: {
@@ -31,10 +33,10 @@ moment.updateLocale('en', {
     removeChat: stores.chat.removeChat,
     loading: stores.session.loading,
     searching: stores.search.searching,
-    connectionStatus:stores.wfc.connectionStatus,
-    event:stores.wfc.eventEmitter,
-    loadConversations:stores.session.loadConversations,
-    setOnReceiveMessageListener:stores.session.setOnReceiveMessageListener,
+    connectionStatus: stores.wfc.connectionStatus,
+    event: stores.wfc.eventEmitter,
+    loadConversations: stores.session.loadConversations,
+    setOnReceiveMessageListener: stores.session.setOnReceiveMessageListener,
 }))
 @observer
 export default class Chats extends Component {
@@ -58,7 +60,7 @@ export default class Chats extends Component {
         }
     }
 
-    userPortrait(userId){
+    conversationPortrait(conversation) {
         return "http://img.hao661.com/qq.hao661.com/uploads/allimg/180822/0U61415T-0.jpg"
     }
 
@@ -96,21 +98,21 @@ export default class Chats extends Component {
         menu.popup(remote.getCurrentWindow());
     }
 
-    onSendMessage = (msg) =>{
+    onSendMessage = (msg) => {
         this.props.loadConversations();
     }
 
-    onReceiveMessage = (msg) =>{
+    onReceiveMessage = (msg) => {
         this.props.loadConversations();
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.props.loadConversations();
         this.props.event.on(EventTypeReceiveMessage, this.onReceiveMessage);
         this.props.event.on(EventTypeSendMessage, (this.onSendMessage));
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.props.event.removeListener(EventTypeReceiveMessage, this.onReceiveMessage);
         this.props.event.removeListener(EventTypeSendMessage, this.onSendMessage);
     }
@@ -174,7 +176,7 @@ export default class Chats extends Component {
                                             <img
                                                 className="disabledDrag"
                                                 // TODO portrait
-                                                src={this.userPortrait(e.lastMessage.from)}
+                                                src={e.portrait()}
                                                 onError={e => (e.target.src = 'assets/images/user-fallback.png')}
                                             />
                                         </div>
@@ -183,11 +185,12 @@ export default class Chats extends Component {
                                             <p
                                                 className={classes.username}
                                                 // TODO user name
-                                                dangerouslySetInnerHTML={{__html: e.lastMessage.from || e.NickName}} />
+                                                //dangerouslySetInnerHTML={{ __html: e.lastMessage.from || e.NickName }} />
+                                                dangerouslySetInnerHTML={{ __html: e.title() }} />
 
                                             <span
                                                 className={classes.message}
-                                                dangerouslySetInnerHTML={{__html: e.lastMessage.content.searchableContent || 'No Messagexx'}} />
+                                                dangerouslySetInnerHTML={{ __html: e.lastMessage.content.searchableContent || 'No Messagexx' }} />
                                         </div>
                                     </div>
 
@@ -204,4 +207,5 @@ export default class Chats extends Component {
             </div>
         );
     }
+
 }

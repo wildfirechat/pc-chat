@@ -2,8 +2,8 @@ import { observable, action } from 'mobx';
 import proto from 'node-loader!../../../node_modules/marswrapper.node';
 import * as wfcMessage from '../wfc/messageConfig'
 import Message from '../wfc/messages/message';
-import Conversation from '../wfc/conversation';
-import ConversationInfo from '../wfc/conversationInfo';
+import Conversation from '../wfc/model/conversation';
+import ConversationInfo from '../wfc/model/conversationInfo';
 import MessageContent from '../wfc/messages/messageContent';
 import { EventEmitter } from 'events';
 import { EventTypeReceiveMessage, EventTypeSendMessage, EventTypeMessageStatusUpdate, EventTypeUserInfoUpdate } from '../wfc/wfcEvents'

@@ -1,3 +1,5 @@
+import { ConversationType_Single } from "./conversationTypes";
+
 /**
  * 
         "conversation":{
@@ -7,7 +9,7 @@
         }
  */
 export default class Conversation{
-    conversationType = 0;
+    conversationType = ConversationType_Single;
     target = '';
     line = 0;
 
