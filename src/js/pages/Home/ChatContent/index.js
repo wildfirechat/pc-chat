@@ -14,6 +14,8 @@ import { on, off } from 'utils/event';
 import { ContentType_Text, ContentType_Image, ContentType_Unknown } from '../../../wfc/messages/messageTypes';
 import UnsupportMessageContent from '../../../wfc/messages/unsupportMessageConten';
 import wfc from '../../../wfc/wfc'
+import UserInfo from '../../../wfc/model/userInfo';
+import GroupInfo from '../../../wfc/model/groupInfo';
 
 @inject(stores => ({
     user: stores.chat.user,
@@ -23,6 +25,7 @@ import wfc from '../../../wfc/wfc'
     messages: stores.chat.messageList,
     loading: stores.session.loading,
     loadOldMessages: stores.chat.loadOldMessages,
+    conversation: stores.chat.conversation,
     target: stores.chat.target,
     reset: () => {
         //stores.chat.user = false;
@@ -552,7 +555,7 @@ export default class ChatContent extends Component {
         if (viewport.scrollTop < offset) {
             console.log(viewport.scrollTop);
             this.props.loadOldMessages();
-            
+
         }
 
         Array.from(unread).map(e => {
@@ -589,7 +592,9 @@ export default class ChatContent extends Component {
 
         // scroll to bottom
         // 这儿有问题
-        viewport.scrollTop = viewport.scrollHeight;
+        if (viewport) {
+            viewport.scrollTop = viewport.scrollHeight;
+        }
 
         return;
         if (viewport) {
@@ -655,14 +660,27 @@ export default class ChatContent extends Component {
         }
     }
 
+    title(){
+        var title;
+        let target = this.props.target;
+        if(target instanceof UserInfo){
+            title = this.props.target.displayName;
+        }else if(target instanceof GroupInfo){
+            title = target.name;
+        }else{
+            title = 'TODO';
+        }
+        return title;
+    }
+
     render() {
-        var { loading, showConversation, user, messages, target } = this.props;
-        var title = user.RemarkName || user.NickName;
+        var { loading, showConversation, user, messages, conversation, target } = this.props;
 
         // maybe userName, groupName, ChannelName or ChatRoomName
-        var signature = target.displayName;
+        var signature = 'TODO signature';
 
         // if (loading) return false;
+        let title = this.title();
 
         return (
             <div
@@ -671,12 +689,12 @@ export default class ChatContent extends Component {
                 })}
                 onClick={e => this.handleClick(e)}>
                 {
-                    target ? (
+                    conversation ? (
                         <div>
                             <header>
                                 <div className={classes.info}>
                                     <p
-                                        dangerouslySetInnerHTML={{ __html: title }}
+                                        dangerouslySetInnerHTML={{ __html: title}}
                                         title={title} />
 
                                     <span

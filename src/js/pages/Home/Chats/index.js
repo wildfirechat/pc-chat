@@ -26,6 +26,7 @@ moment.updateLocale('en', {
 @inject(stores => ({
     chats: stores.session.conversations,
     chatTo: stores.chat.chatToN,
+    conversation:stores.chat.conversation,
     selected: stores.chat.user,
     messages: stores.chat.messages,
     markedRead: stores.chat.markedRead,
@@ -134,7 +135,7 @@ export default class Chats extends Component {
     }
 
     render() {
-        var { loading, chats, selected, chatTo, searching } = this.props;
+        var { loading, chats, conversation, chatTo, searching } = this.props;
 
 
         // if (loading) return false;
@@ -161,7 +162,7 @@ export default class Chats extends Component {
                                 <div
                                     className={clazz(classes.chat, {
                                         [classes.sticky]: isTop,
-                                        [classes.active]: selected && selected.UserName === e.UserName
+                                        [classes.active]: conversation && conversation === e.conversation
                                     })}
                                     // TODO key should be conversation
                                     key={index}
@@ -183,8 +184,6 @@ export default class Chats extends Component {
                                         <div className={classes.info}>
                                             <p
                                                 className={classes.username}
-                                                // TODO user name
-                                                //dangerouslySetInnerHTML={{ __html: e.lastMessage.from || e.NickName }} />
                                                 dangerouslySetInnerHTML={{ __html: e.title() }} />
 
                                             <span

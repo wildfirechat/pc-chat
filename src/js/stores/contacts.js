@@ -138,6 +138,7 @@ class Contacts {
         return user;
     }
 
+    // TODO
     @action filter(text = '', showall = false) {
         // text = pinyin.letter(text.toLocaleLowerCase());
         // var list = self.memberList.filter(e => {

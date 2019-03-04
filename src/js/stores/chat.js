@@ -13,7 +13,7 @@ import snackbar from './snackbar';
 import wfc from '../wfc/wfc'
 import Message from '../wfc/messages/message';
 import { EventTypeReceiveMessage } from '../wfc/wfcEvents';
-import { ConversationType_Single } from '../wfc/model/conversationTypes';
+import { ConversationType_Single, ConversationType_Group } from '../wfc/model/conversationTypes';
 
 async function resolveMessage(message) {
     var auth = await storage.get('auth');
@@ -223,7 +223,7 @@ class Chat {
     // maybe userInfo, GroupInfo, ChannelInfo, ChatRoomInfo
     @observable target = false;
 
-    conversation;
+    @observable conversation;
     loading = false;
     hasMore = true;
 
@@ -261,6 +261,9 @@ class Chat {
             case ConversationType_Single:
                 self.target = wfc.getUserInfo(conversation.target);
                 break
+            case ConversationType_Group:
+                self.target = wfc.getGroupInfo(conversation.target);
+                break;
             default:
                 break
 
