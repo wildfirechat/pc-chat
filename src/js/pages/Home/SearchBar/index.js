@@ -3,6 +3,10 @@ import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 
 import classes from './style.css';
+import UserInfo from '../../../wfc/model/userInfo';
+import GroupInfo from '../../../wfc/model/groupInfo';
+import Conversation from '../../../wfc/model/conversation';
+import { ConversationType_Single, ConversationType_Group } from '../../../wfc/model/conversationTypes';
 
 @inject(stores => ({
     history: stores.search.history,
@@ -14,10 +18,16 @@ import classes from './style.css';
         stores.contacts.filter('', true);
         return stores.contacts.filtered.result;
     },
-    chat: async(user) => {
-        stores.chat.chatTo(user);
+    chat: async (target) => {
+        var conversation;
+        if (target instanceof UserInfo) {
+            conversation = new Conversation(ConversationType_Single, target.uid, 0);
+        } else if (target instanceof GroupInfo) {
+            conversation = new Conversation(ConversationType_Group, target.target, 0);
+        }
+        stores.chat.chatToN(conversation);
         stores.search.reset();
-        await stores.search.addHistory(user);
+        await stores.search.addHistory(target);
     },
     clear: (e) => {
         e.preventDefault();
@@ -25,7 +35,8 @@ import classes from './style.css';
 
         stores.search.clearHistory();
         stores.search.reset();
-    }
+    },
+    contactName: stores.contacts.contactItemName,
 }))
 @observer
 export default class SearchBar extends Component {
@@ -48,8 +59,8 @@ export default class SearchBar extends Component {
         }, 500);
     }
 
-    chatTo(user) {
-        this.props.chat(user);
+    chatTo(target) {
+        this.props.chat(target);
         this.refs.search.value = '';
         document.querySelector('#messageInput').focus();
     }
@@ -115,25 +126,48 @@ export default class SearchBar extends Component {
                 if (!active) {
                     break;
                 }
-                this.chatTo([...result.friend, ...result.groups, ...history, ...getPlaceholder()].find(e => e.UserName === active.dataset.userid));
+                let items = [...result.friend, ...result.groups];
+                if (items.length <= 0) {
+                    getPlaceholder().map(e => {
+                        e.list.map(a => {
+                            items.push(a);
+                        });
+                    });
+                }
+
+                this.chatTo(items.find(e => {
+                    if (e instanceof UserInfo) {
+                        return e.uid === active.dataset.userid;
+                    } else if (e instanceof GroupInfo) {
+                        return e.target === active.dataset.userid;
+                    }
+                    return false;
+                }));
         }
     }
 
-    renderUser(user) {
+    renderItem(item) {
+        let name = this.props.contactName(item);
+        var uid;
+        if (item instanceof UserInfo) {
+            uid = item.uid;
+        } else if (item instanceof GroupInfo) {
+            uid = item.target;
+        }
         return (
             <div
                 className={classes.user}
-                onClick={e => this.chatTo(user)} data-userid={user.UserName}>
-                <img src={user.HeadImgUrl} />
+                onClick={e => this.chatTo(item)} data-userid={uid}>
+                <img src={item.portrait} />
 
                 <div className={classes.info}>
                     <p
                         className={classes.username}
-                        dangerouslySetInnerHTML={{__html: user.RemarkName || user.NickName}} />
+                        dangerouslySetInnerHTML={{ __html: name }} />
 
                     <span
                         className={classes.signature}
-                        dangerouslySetInnerHTML={{__html: user.Signature || 'No Signature'}} />
+                        dangerouslySetInnerHTML={{ __html: item.Signature || 'No Signature' }} />
                 </div>
             </div>
         );
@@ -151,7 +185,7 @@ export default class SearchBar extends Component {
                     list.map((e, index) => {
                         return (
                             <div key={index}>
-                                {this.renderUser(e)}
+                                {this.renderItem(e)}
                             </div>
                         );
                     })
@@ -176,7 +210,7 @@ export default class SearchBar extends Component {
                     list.map((e, index) => {
                         return (
                             <div key={index}>
-                                {this.renderUser(e)}
+                                {this.renderItem(e)}
                             </div>
                         );
                     })
