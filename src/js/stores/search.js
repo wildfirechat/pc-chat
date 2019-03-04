@@ -4,7 +4,7 @@ import pinyin from 'han';
 
 import contacts from './contacts';
 import storage from 'utils/storage';
-import helper from 'utils/helper';
+import GroupInfo from '../wfc/model/groupInfo';
 
 class Search {
     @observable history = [];
@@ -23,17 +23,18 @@ class Search {
         text = pinyin.letter(text.toLocaleLowerCase());
 
         list = contacts.memberList.filter(e => {
-            var res = pinyin.letter(e.NickName).toLowerCase().indexOf(text) > -1;
+            let name = contacts.contactItemName(e);
+            var res = pinyin.letter(name).toLowerCase().indexOf(text) > -1;
 
-            if (e.RemarkName) {
-                res = res || pinyin.letter(e.RemarkName).toLowerCase().indexOf(text) > -1;
-            }
+            // if (e.RemarkName) {
+            //     res = res || pinyin.letter(e.RemarkName).toLowerCase().indexOf(text) > -1;
+            // }
 
             return res;
         });
 
         list.map(e => {
-            if (helper.isChatRoom(e.UserName)) {
+            if (e instanceof GroupInfo) {
                 return groups.push(e);
             }
 
@@ -83,16 +84,16 @@ class Search {
         var list = await storage.get('history');
         var history = [];
 
-        Array.from(list).map(e => {
-            var user = contacts.memberList.find(user => user.UserName === e.UserName);
+        // Array.from(list).map(e => {
+        //     var user = contacts.memberList.find(user => user.UserName === e.UserName);
 
-            if (user) {
-                history.push(user);
-            }
-        });
+        //     if (user) {
+        //         history.push(user);
+        //     }
+        // });
 
-        await storage.set('history', history);
-        self.history.replace(history);
+        // await storage.set('history', history);
+        // self.history.replace(history);
 
         return history;
     }
