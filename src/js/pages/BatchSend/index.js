@@ -163,9 +163,10 @@ export default class BatchSend extends Component {
                         me: me.User,
                         sendMessage,
                         showMessage,
-                        user: this.state.selected,
+                        // user: this.state.selected,
                         confirmSendImage,
                         process,
+                        // TODO conversation
                     }} />
                 </div>
             </div>
