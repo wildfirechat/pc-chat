@@ -553,7 +553,6 @@ export default class ChatContent extends Component {
 
         const offset = 100 // 100 px before the request
         if (viewport.scrollTop < offset) {
-            console.log(viewport.scrollTop);
             this.props.loadOldMessages();
 
         }

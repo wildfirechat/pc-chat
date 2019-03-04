@@ -142,14 +142,17 @@ export default class Layout extends Component {
         };
     }
 
-    componentWillMount() {
-        wfc.eventEmitter.on(EventTypeConnectionStatusChanged, (status) => {
-            this.updateConnectionStatus(status);
-        });
+    onConnectionStatusChange = (status) => {
+        this.connectionStatus = status;
     }
 
-    @action updateConnectionStatus(status) {
-        this.connectionStatus = status;
+
+    componentWillMount() {
+        wfc.eventEmitter.on(EventTypeConnectionStatusChanged, this.onConnectionStatusChange);
+    }
+
+    componentWillUnmount() {
+        wfc.eventEmitter.removeListener(EventTypeConnectionStatusChanged, this.onConnectionStatusChange);
     }
 
     render() {

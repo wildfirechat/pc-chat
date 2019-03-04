@@ -162,7 +162,7 @@ export default class Chats extends Component {
                                 <div
                                     className={clazz(classes.chat, {
                                         [classes.sticky]: isTop,
-                                        [classes.active]: conversation && conversation === e.conversation
+                                        [classes.active]: conversation && conversation.equal(e.conversation)
                                     })}
                                     // TODO key should be conversation
                                     key={index}
@@ -188,7 +188,7 @@ export default class Chats extends Component {
 
                                             <span
                                                 className={classes.message}
-                                                dangerouslySetInnerHTML={{ __html: e.lastMessage.content.searchableContent || 'No Messagexx' }} />
+                                                dangerouslySetInnerHTML={{ __html: e.lastMessage.messageContent.digest()|| 'No Messagexx' }} />
                                         </div>
                                     </div>
 

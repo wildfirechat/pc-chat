@@ -1,7 +1,7 @@
 import TextMessageContent from './messages/textMessageContent'
 import ImageMessageContent from './messages/imageMessageContent';
 
-import { ContentType_Text, ContentType_Tip_Notification, ContentType_Unknown } from './messages/messageTypes';
+import { ContentType_Text, ContentType_Tip_Notification, ContentType_Unknown, ContenType_ChangeGroupName_Notification } from './messages/messageTypes';
 import { ContentType_Voice } from './messages/messageTypes';
 import { ContentType_Image } from './messages/messageTypes';
 import { ContentType_Location } from './messages/messageTypes';
@@ -85,5 +85,10 @@ export const MessageContents = [
         flag: PersitFlag_Persist,
         type: ContentType_Tip_Notification,
         contentClazz: TipNotificationMessageContent,
+    },
+    {
+        name: 'changeGroupNameNotification',
+        flag: PersitFlag_Persist,
+        type: ContenType_ChangeGroupName_Notification,
     }
 ];
