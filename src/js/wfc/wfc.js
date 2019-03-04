@@ -7,6 +7,8 @@ import { EventEmitter } from 'events';
 import { EventTypeReceiveMessage, EventTypeSendMessage, EventTypeMessageStatusUpdate, EventTypeUserInfoUpdate, EventTypeConnectionStatusChanged } from '../wfc/wfcEvents'
 import UserInfo from '../wfc/model/userInfo';
 import NullUserInfo from '../wfc/model/nullUserInfo';
+import NullGroupInfo from './model/nullGroupInfo';
+import GroupInfo from './model/groupInfo';
 
 // 其实就是imclient，后续可能需要改下名字
 class WfcManager {
@@ -104,6 +106,15 @@ class WfcManager {
             return JSON.parse(idsStr);
         }
         return [];
+    }
+
+    getGroupInfo(groupId, fresh = false){
+        let groupInfoStr = proto.getGroupInfo(groupId, fresh);
+        if(groupInfoStr === ''){
+            return new NullGroupInfo(target);
+        }else{
+            return Object.assign(new GroupInfo(), JSON.parse(groupInfoStr));
+        }
     }
 
     /**
@@ -217,6 +228,8 @@ class WfcManager {
         console.log('user info', u);
         self.getMessageById(200);
 
+        let g = self.getGroupInfo('PHPSPS22');
+        console.log(g);
     }
 }
 const self = new WfcManager();

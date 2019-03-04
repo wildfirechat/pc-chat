@@ -13,6 +13,9 @@ export default class ConversationInfo {
     isTop = false;
     isSilent = false;
 
+    // TODO cache, maybe userInfo, groupInfo
+    target;
+
     static protoConversationToConversationInfo(obj) {
         let conversationInfo = Object.assign(new ConversationInfo(), obj);
         conversationInfo.conversation = new Conversation(obj.conversationType, obj.target, obj.line);
@@ -28,7 +31,8 @@ export default class ConversationInfo {
                 portrait = u.portrait;
                 break;
             case ConversationType_Group:
-                // TODO
+                let g = wfc.getGroupInfo(this.conversation.target, false);
+                portrait = g.portrait;
                 break;
             case ConversationType_Channel:
                 break;
@@ -50,6 +54,8 @@ export default class ConversationInfo {
                 targetName = u.displayName;
                 break
             case ConversationType_Group:
+                let g = wfc.getGroupInfo(this.conversation.target, false);
+                targetName = g.name;
                 break
             case ConversationType_ChatRoom:
                 break
