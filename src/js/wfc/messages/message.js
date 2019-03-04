@@ -31,7 +31,9 @@
  */
 import Conversation from '../model/conversation'
 import * as wfcMessage from '../messageConfig'
-export default class Message{
+import NotificationMessageContent from './notification/notificationMessageContent'
+import wfc from '../wfc'
+export default class Message {
     conversation = {};
     from = '';
     content = {}; // 实际是payload
@@ -40,18 +42,23 @@ export default class Message{
     direction = 0;
     status = 0;
     messageUid = 0;
-    timestamp  = 0;
+    timestamp = 0;
     to = '';
 
-    static protoMessageToMessage(obj){
+    static protoMessageToMessage(obj) {
         let msg = Object.assign(new Message(), obj);
         msg.conversation = new Conversation(obj.conversation.conversationType, obj.conversation.target, obj.conversation.line);
         let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
-        if(contentClazz){
+        if (contentClazz) {
             let content = new contentClazz();
             content.decode(msg.content);
             msg.messageContent = content;
-        }else{
+
+            if (content instanceof NotificationMessageContent) {
+                content.fromSelf = msg.from === wfc.getUserId();
+            }
+
+        } else {
             console.error('message content not register', obj);
         }
 

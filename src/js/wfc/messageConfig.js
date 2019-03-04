@@ -14,9 +14,10 @@ import { PersitFlag_No_Persist } from './messages/persistFlags';
 import { PersitFlag_Persist } from './messages/persistFlags';
 import { PersitFlag_Transparent } from './messages/persistFlags';
 import { PersitFlag_Persist_And_Count } from './messages/persistFlags';
-import TipNotificationMessageContent from './messages/notification/tipNotificationMessageContent';
+import TipNotificationMessageContent from './messages/notification/tipNotification';
 import UnknownMessageContent from './messages/unknownMessageContent';
 import UnsupportMessageContent from './messages/unsupportMessageConten';
+import ChangeGroupNameNotification from './messages/notification/changeGroupNameNotification';
 
 export function getMessageContentClazz(type) {
     for (const content of MessageContents) {
@@ -90,5 +91,6 @@ export const MessageContents = [
         name: 'changeGroupNameNotification',
         flag: PersitFlag_Persist,
         type: ContenType_ChangeGroupName_Notification,
+        contentClazz: ChangeGroupNameNotification,
     }
 ];

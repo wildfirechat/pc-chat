@@ -87,6 +87,11 @@ class WfcManager {
         });
     }
 
+    getUserId(){
+        // TODO
+        return 'UZUWUWuu';
+    }
+
     /**
      * @param {string} userId 
      * @param {bool} fresh 
