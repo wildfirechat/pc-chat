@@ -6,7 +6,7 @@ import MessageInput from 'components/MessageInput';
 
 @inject(stores => ({
     sendMessage: stores.chat.sendMessage,
-    user: stores.chat.user,
+    conversation: stores.chat.conversation,
     showMessage: stores.snackbar.showMessage,
     me: stores.session.user,
     confirmSendImage: async(image) => {
@@ -21,16 +21,16 @@ import MessageInput from 'components/MessageInput';
 }))
 export default class Message extends Component {
     render() {
-        var { sendMessage, showMessage, user, me = {}, confirmSendImage, process } = this.props;
+        var { sendMessage, showMessage, me = {}, confirmSendImage, process, conversation } = this.props;
 
         return (
             <MessageInput {...{
                 sendMessage,
                 showMessage,
-                user: user ? [user] : [],
                 me: me.User,
                 confirmSendImage,
                 process,
+                conversation,
             }} />
         );
     }

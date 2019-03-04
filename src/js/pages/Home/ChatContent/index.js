@@ -137,7 +137,7 @@ export default class ChatContent extends Component {
                     `;
                 }
                 // return `<img class="open-image unload" data-id="${message.messageId}" src="${image.remotePath}" data-fallback="${image.fallback}" />`;
-                // TODO 图片数据，需要base64编码
+                // TODO: 图片数据，需要base64编码
                 return `<img class="open-image unload" data-id="${message.messageId}" src="data:image/jpeg;base64, ${image.thumbnail}" data-fallback="${image.fallback}" />`;
             case 34:
                 /* eslint-disable */

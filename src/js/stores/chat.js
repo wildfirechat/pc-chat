@@ -217,7 +217,6 @@ async function updateMenus({ conversations = [], contacts = [] }) {
 class Chat {
     @observable sessions = [];
     @observable messages = new Map();
-    @observable user = false;
     @observable showConversation = true;
 
     // maybe userInfo, GroupInfo, ChannelInfo, ChatRoomInfo

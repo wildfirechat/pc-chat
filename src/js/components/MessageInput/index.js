@@ -13,9 +13,9 @@ export default class MessageInput extends Component {
         me: PropTypes.object,
         sendMessage: PropTypes.func.isRequired,
         showMessage: PropTypes.func.isRequired,
-        user: PropTypes.array.isRequired,
         confirmSendImage: PropTypes.func.isRequired,
         process: PropTypes.func.isRequired,
+        conversation: PropTypes.object,
     };
 
     static defaultProps = {
@@ -23,7 +23,7 @@ export default class MessageInput extends Component {
     };
 
     canisend() {
-        var user = this.props.user;
+        // var user = this.props.user;
 
         // if (
         //     true
@@ -34,43 +34,49 @@ export default class MessageInput extends Component {
         //     return false;
         // }
 
-        return true;
+        if (this.props.conversation) {
+            return true;
+        }
+
+        return false;
     }
 
     async handleEnter(e) {
         var message = this.refs.input.value.trim();
-        var user = this.props.user;
-        var batch = user.length > 1;
+        var conversation = this.props.conversation;
 
         if (
-            false
-            // || !this.canisend()
-            // || !message
+            !conversation
+            || !this.canisend()
+            || !message
             || e.charCode !== 13
         ) return;
 
+        // TODO batch
+        var batch = conversation.length > 1;
+
         console.log();
         // You can not send message to yourself
-                    await this.props.sendMessage(
-                        new TextMessageContent(message)
-                    )
+        await this.props.sendMessage(
+            new TextMessageContent(message)
+        )
         // Promise.all(
         //             await this.props.sendMessage(
         //                 new TextMessageContent(message)
         //             )
-            // user.filter(e => e.UserName !== this.props.me.UserName).map(
-            //     async e => {
-            //         let res = await this.props.sendMessage(
-            //             new TextMessageContent(message)
-            //         );
+        // user.filter(e => e.UserName !== this.props.me.UserName).map(
+        //     async e => {
+        //         let res = await this.props.sendMessage(
+        //             new TextMessageContent(message)
+        //         );
 
-            //         if (!res) {
-            //             await this.props.showMessage(batch ? `Sending message to ${e.NickName} has failed!` : 'Failed to send message.');
-            //         }
+        //         if (!res) {
+        //             await this.props.showMessage(batch ? `Sending message to ${e.NickName} has failed!` : 'Failed to send message.');
+        //         }
 
-            //         return true;
-            //     }
-            // )
+        //         return true;
+        //     }
+        // )
         // );
 
         this.refs.input.value = '';
@@ -148,19 +154,20 @@ export default class MessageInput extends Component {
         var input = this.refs.input;
 
         // When user has changed clear the input
+        // TODO save draft
         if (
             true
             && input
             && input.value
-            && this.props.user.map(e => e.UserName).join() !== nextProps.user.map(e => e.UserName).join()
+            && this.props.conversation
+            && !this.props.conversation.equal(nextProps.conversation)
         ) {
             input.value = '';
         }
     }
 
     render() {
-        //var canisend = !!this.props.user.length;
-        var canisend = true;
+        var canisend = this.canisend();
 
         return (
             <div
