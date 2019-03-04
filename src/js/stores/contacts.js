@@ -11,6 +11,7 @@ import helper from 'utils/helper';
 import { normalize } from 'utils/emoji';
 import wfc from '../wfc/wfc'
 import UserInfo from '../wfc/model/userInfo';
+import GroupInfo from '../wfc/model/groupInfo';
 
 class Contacts {
     @observable loading = false;
@@ -31,15 +32,13 @@ class Contacts {
             }
 
             // If 'showall' is false, just show your friends
-            if (showall === false
-                && !(e instanceof UserInfo)) {
-                return;
-            }
+            // if (showall === false
+            //     && !(e instanceof UserInfo)) {
+            //     return;
+            // }
 
-            var prefix;
-            if (e instanceof UserInfo) {
-                prefix = (pinyin.letter(e.displayName).toString()[0] + '').replace('?', '#');
-            }
+            let name = self.contactItemName(e);
+            var prefix = (pinyin.letter(name).toString()[0] + '').replace('?', '#');
             var group = mappings[prefix];
 
             if (!group) {
@@ -47,8 +46,6 @@ class Contacts {
             }
             group.push(e);
         });
-
-
 
         for (let key in mappings) {
             sorted.push({
@@ -61,6 +58,17 @@ class Contacts {
         return sorted;
     }
 
+    contactItemName(item) {
+        var name = '';
+        if (item instanceof UserInfo) {
+            name = item.displayName;
+        } else if (item instanceof GroupInfo) {
+            name = item.name;
+        }
+        return name;
+    }
+
+    // TODO remove
     @action async getUser(userid) {
         var user = self.memberList.find(e => e.UserName === userid);
 
@@ -82,18 +90,26 @@ class Contacts {
         if (friendListIds.length > 0) {
             friendListIds.map((e) => {
                 let u = wfc.getUserInfo(e);
-                console.log(u instanceof UserInfo);
                 self.memberList.push(u);
             });
         }
 
+        if (self.showGroup) {
+            let groupList = wfc.getMyGroupList();
+            groupList.map(e => {
+                let g = wfc.getGroupInfo(e);
+                self.memberList.push(g);
+            });
+        }
+
+        console.log('contacts lenght', self.memberList.length);
         self.loading = false;
-        console.log('yyyy', typeof self.memberList[0]);
-        self.filtered.result = self.group(self.memberList);
+        self.filtered.result = self.group(self.memberList, true);
 
         return (window.list = self.memberList);
     }
 
+    // TODO remove
     resolveUser(auth, user) {
         if (helper.isOfficial(user)
             && !helper.isFileHelper(user)) {
@@ -138,29 +154,29 @@ class Contacts {
         return user;
     }
 
-    // TODO
     @action filter(text = '', showall = false) {
-        // text = pinyin.letter(text.toLocaleLowerCase());
-        // var list = self.memberList.filter(e => {
-        //     var res = pinyin.letter(e.NickName).toLowerCase().indexOf(text) > -1;
+        text = pinyin.letter(text.toLocaleLowerCase());
+        var list = self.memberList.filter(e => {
+            let name = self.contactItemName(e);
+            var res = pinyin.letter(name).toLowerCase().indexOf(text) > -1;
 
-        //     if (e.RemarkName) {
-        //         res = res || pinyin.letter(e.RemarkName).toLowerCase().indexOf(text) > -1;
-        //     }
+            // if (e.RemarkName) {
+            //     res = res || pinyin.letter(e.RemarkName).toLowerCase().indexOf(text) > -1;
+            // }
 
-        //     return res;
-        // });
+            return res;
+        });
 
-        // if (!self.showGroup) {
-        //     list = list.filter(e => {
-        //         return !(e.ContactFlag === 3 && e.SnsFlag === 0);
-        //     });
-        // }
+        if (!self.showGroup) {
+            list = list.filter(e => {
+                return !(e instanceof GroupInfo);
+            });
+        }
 
-        // self.filtered = {
-        //     query: text,
-        //     result: list.length ? self.group(list, showall) : [],
-        // };
+        self.filtered = {
+            query: text,
+            result: list.length ? self.group(list, showall) : [],
+        };
     }
 
     @action toggleGroup(showGroup) {
