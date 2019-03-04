@@ -6,6 +6,9 @@ import { inject, observer } from 'mobx-react';
 import classes from './style.css';
 import UserList from 'components/UserList';
 import helper from 'utils/helper';
+import wfc from '../../wfc/wfc'
+import Conversation from '../../wfc/model/conversation';
+import { ConversationType_Single } from '../../wfc/model/conversationTypes';
 
 @inject(stores => ({
     show: stores.newchat.show,
@@ -20,7 +23,7 @@ import helper from 'utils/helper';
         return contacts.memberList;
     },
     getUser: (userid) => {
-        return stores.contacts.memberList.find(e => e.UserName === userid);
+        return wfc.getUserInfo(userid);
     },
     search: stores.newchat.search,
     createChatRoom: stores.newchat.createChatRoom,
@@ -28,7 +31,7 @@ import helper from 'utils/helper';
         stores.newchat.reset();
         stores.newchat.toggle(false);
     },
-    chatTo: (user) => stores.chat.chatTo(user),
+    chatTo: (conversation) => stores.chat.chatToN(conversation),
 }))
 @observer
 export default class NewChat extends Component {
@@ -40,9 +43,11 @@ export default class NewChat extends Component {
         var selected = this.state.selected;
 
         if (selected.length === 1) {
-            this.props.chatTo(this.props.getUser(selected[0]));
+            let conversation = new Conversation(ConversationType_Single, selected[0], 0);
+            this.props.chatTo(conversation);
         } else {
             // You can not create a chat room by another chat room
+            // TODO create group
             let user = await this.props.createChatRoom(selected.filter(e => !helper.isChatRoom(e)));
             this.props.chatTo(user);
         }
@@ -102,7 +107,7 @@ export default class NewChat extends Component {
                                     <img
                                         key={index}
                                         onClick={ev => this.refs.users.removeSelected(e)}
-                                        src={user.HeadImgUrl} />
+                                        src={user.portrait} />
                                 );
                             })
                         }

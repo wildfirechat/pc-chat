@@ -27,6 +27,7 @@ import { EventTypeConnectionStatusChanged } from '../wfc/wfcEvents';
 @inject(stores => ({
     isLogin: () => !!stores.session.auth,
     loading: stores.session.loading,
+    getContacts: stores.contacts.getContacts,
     message: stores.snackbar.text,
     show: stores.snackbar.show,
     process: stores.chat.process,
@@ -38,6 +39,8 @@ import { EventTypeConnectionStatusChanged } from '../wfc/wfcEvents';
 @observer
 export default class Layout extends Component {
     @observable connectionStatus = 0;
+
+    contactsLoaded = false;
 
     state = {
         offline: false,
@@ -144,6 +147,11 @@ export default class Layout extends Component {
 
     onConnectionStatusChange = (status) => {
         this.connectionStatus = status;
+        // 
+        if(status === 1 && !this.contactsLoaded){
+            this.props.getContacts();
+            this.contactsLoaded = true;
+        }
     }
 
 

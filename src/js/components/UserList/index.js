@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import clazz from 'classname';
 
 import classes from './style.css';
+import UserInfo from '../../wfc/model/userInfo';
 
 export default class UserList extends Component {
     static propTypes = {
@@ -149,6 +150,7 @@ export default class UserList extends Component {
                 </li>
             );
         }
+        list = list.filter(e => e instanceof UserInfo);
 
         return list.map((e, index) => {
             return (
@@ -157,15 +159,15 @@ export default class UserList extends Component {
                         [classes.selected]: this.state.selected.includes(e.UserName),
                         [classes.active]: this.state.active === e.UserName,
                     })}
-                    data-userid={e.UserName}
+                    data-userid={e.uid}
                     key={index}
-                    onClick={ev => this.toggleSelected(e.UserName)}>
+                    onClick={ev => this.toggleSelected(e.uid)}>
                     <img
                         className={classes.avatar}
-                        src={e.HeadImgUrl} />
+                        src={e.portrait} />
                     <span
                         className={classes.username}
-                        dangerouslySetInnerHTML={{__html: e.RemarkName || e.NickName}} />
+                        dangerouslySetInnerHTML={{ __html: e.displayName }} />
 
                     <i className="icon-ion-android-done-all" />
                 </li>
