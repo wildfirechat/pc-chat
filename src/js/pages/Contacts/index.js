@@ -5,13 +5,13 @@ import clazz from 'classname';
 import randomColor from 'randomcolor';
 
 import classes from './style.css';
-import UserInfo from '../../wfc/model/userInfo';
 
 @inject(stores => ({
     filter: stores.contacts.filter,
     filtered: stores.contacts.filtered,
     getContats: stores.contacts.getContats,
     showUserinfo: stores.userinfo.toggle,
+    contactItemName: stores.contacts.contactItemName,
 }))
 @observer
 export default class Contacts extends Component {
@@ -58,7 +58,7 @@ export default class Contacts extends Component {
                                         <div className={classes.info}>
                                             <p
                                                 className={classes.username}
-                                                dangerouslySetInnerHTML={{ __html: this.itemName(e)}} />
+                                                dangerouslySetInnerHTML={{ __html: this.props.contactItemName(e) }} />
                                             <p
                                                 className={classes.signature}
                                                 dangerouslySetInnerHTML={{ __html: e.Signature || 'No Signature' }} />
@@ -71,16 +71,6 @@ export default class Contacts extends Component {
                 </div>
             );
         });
-    }
-
-    itemName(e) {
-        let name = '';
-        if (e instanceof UserInfo) {
-            name = e.displayName;
-        // }else if(e instanceof GroupInfo){
-
-        }
-        return name;
     }
 
     itemPortrait(e) {

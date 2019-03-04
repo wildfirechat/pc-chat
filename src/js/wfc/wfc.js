@@ -9,6 +9,7 @@ import UserInfo from '../wfc/model/userInfo';
 import NullUserInfo from '../wfc/model/nullUserInfo';
 import NullGroupInfo from './model/nullGroupInfo';
 import GroupInfo from './model/groupInfo';
+import { UserSettingScope_FavoriteGroup } from './userSettingScopes';
 
 // 其实就是imclient，后续可能需要改下名字
 class WfcManager {
@@ -87,9 +88,21 @@ class WfcManager {
         });
     }
 
-    getUserId(){
-        // TODO
+    getUserId() {
+        // TODO login的时候确定
         return 'UZUWUWuu';
+    }
+
+    getMyGroupList() {
+        let str = proto.getUserSettings(UserSettingScope_FavoriteGroup);
+        let arr = JSON.parse(str);
+        var groupList = [];
+        arr.map(e => {
+            if (e['value'] === '1') {
+                groupList.push(e['key']);
+            }
+        });
+        return groupList;
     }
 
     /**
@@ -113,11 +126,11 @@ class WfcManager {
         return [];
     }
 
-    getGroupInfo(groupId, fresh = false){
+    getGroupInfo(groupId, fresh = false) {
         let groupInfoStr = proto.getGroupInfo(groupId, fresh);
-        if(groupInfoStr === ''){
+        if (groupInfoStr === '') {
             return new NullGroupInfo(target);
-        }else{
+        } else {
             return Object.assign(new GroupInfo(), JSON.parse(groupInfoStr));
         }
     }
@@ -235,6 +248,8 @@ class WfcManager {
 
         let g = self.getGroupInfo('PHPSPS22');
         console.log(g);
+
+        self.getMyGroupList();
     }
 }
 const self = new WfcManager();
