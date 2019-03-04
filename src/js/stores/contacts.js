@@ -81,7 +81,7 @@ class Contacts {
         return user;
     }
 
-    @action async getContats() {
+    @action async getContacts() {
         self.loading = true;
 
         self.memberList = [];

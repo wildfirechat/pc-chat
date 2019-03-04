@@ -9,7 +9,7 @@ import classes from './style.css';
 @inject(stores => ({
     filter: stores.contacts.filter,
     filtered: stores.contacts.filtered,
-    getContats: stores.contacts.getContats,
+    getContacts: stores.contacts.getContacts,
     showUserinfo: stores.userinfo.toggle,
     contactItemName: stores.contacts.contactItemName,
 }))
@@ -79,7 +79,7 @@ export default class Contacts extends Component {
     }
 
     componentWillMount() {
-        this.props.getContats();
+        this.props.getContacts();
         // this.props.filter();
     }
 

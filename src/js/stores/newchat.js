@@ -6,6 +6,7 @@ import pinyin from 'han';
 import contacts from './contacts';
 import storage from 'utils/storage';
 import helper from 'utils/helper';
+import UserInfo from '../pages/UserInfo';
 
 class NewChat {
     @observable show = false;
@@ -19,13 +20,15 @@ class NewChat {
     @action search(text) {
         text = pinyin.letter(text.toLocaleLowerCase());
         var list = contacts.memberList.filter(e => {
-            var res = pinyin.letter(e.NickName).toLowerCase().indexOf(text) > -1;
+            let name = contacts.contactItemName(e);
+            var res = pinyin.letter(name).toLowerCase().indexOf(text) > -1;
 
-            if (e.RemarkName) {
-                res = res || pinyin.letter(e.RemarkName).toLowerCase().indexOf(text) > -1;
-            }
+            // if (e.RemarkName) {
+            //     res = res || pinyin.letter(e.RemarkName).toLowerCase().indexOf(text) > -1;
+            // }
 
-            return helper.isContact(e) && res;
+            // return helper.isContact(e) && res;
+            return e instanceof UserInfo && res;
         });
 
         self.query = text;
