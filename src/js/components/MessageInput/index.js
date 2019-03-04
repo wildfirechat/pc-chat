@@ -159,7 +159,8 @@ export default class MessageInput extends Component {
     }
 
     render() {
-        var canisend = !!this.props.user.length;
+        //var canisend = !!this.props.user.length;
+        var canisend = true;
 
         return (
             <div

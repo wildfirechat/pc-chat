@@ -11,11 +11,13 @@ import Avatar from 'components/Avatar';
 import helper from 'utils/helper';
 import { parser as emojiParse } from 'utils/emoji';
 import { on, off } from 'utils/event';
-import { ContentType_Text, ContentType_Image, ContentType_Unknown } from '../../../wfc/messages/messageTypes';
+import { ContentType_Text, ContentType_Image, ContentType_Unknown, ContenType_ChangeGroupName_Notification } from '../../../wfc/messages/messageTypes';
 import UnsupportMessageContent from '../../../wfc/messages/unsupportMessageConten';
 import wfc from '../../../wfc/wfc'
 import UserInfo from '../../../wfc/model/userInfo';
 import GroupInfo from '../../../wfc/model/groupInfo';
+import NotificationMessageContent from '../../../wfc/messages/notification/notificationMessageContent';
+import TextMessageContent from '../../../wfc/messages/textMessageContent';
 
 @inject(stores => ({
     user: stores.chat.user,
@@ -288,25 +290,22 @@ export default class ChatContent extends Component {
             // var { message, user } = this.props.parseMessage(e, from);
             var message = e;
             var user = wfc.getUserInfo(message.from);
+            // TODO type = message.messageContent.type;
             var type = message.MsgType;
 
-            if ([
-                // WeChat system message
-                10000,
-                // Custome message
-                19999
-            ].includes(type)) {
+            if(message.messageContent instanceof NotificationMessageContent){
                 return (
                     <div
-                        key={index}
+                        key={message.messageId}
                         className={clazz('unread', classes.message, classes.system)}
-                        dangerouslySetInnerHTML={{ __html: e.Content }} />
+                        dangerouslySetInnerHTML={{ __html: message.messageContent.formatNotification() }} />
                 );
             }
 
-            if (!user) {
-                return false;
-            }
+
+            // if (!user) {
+            //     return false;
+            // }
 
             return (
                 <div className={clazz('unread', classes.message, {
@@ -588,26 +587,19 @@ export default class ChatContent extends Component {
         var viewport = this.refs.viewport;
         var tips = this.refs.tips;
 
-
-        // scroll to bottom
-        // 这儿有问题
         if (viewport) {
-            viewport.scrollTop = viewport.scrollHeight;
-        }
-
-        return;
-        if (viewport) {
-            let newestMessage = this.props.messages.get(this.props.user.UserName).data.slice(-1)[0];
+            let newestMessage = this.props.messages[this.props.messages.length - 1];
             let images = viewport.querySelectorAll('img.unload');
 
             // Scroll to bottom when you sent message
             if (newestMessage
-                && newestMessage.isme) {
+                && newestMessage.direction === 0) {
                 viewport.scrollTop = viewport.scrollHeight;
                 return;
             }
 
             // Show the unread messages count
+            // TODO unread logic
             if (viewport.scrollTop < this.scrollTop) {
                 let counter = viewport.querySelectorAll(`.${classes.message}.unread`).length;
 
@@ -655,6 +647,11 @@ export default class ChatContent extends Component {
         // When the chat user has been changed, show the last message in viewport
         if (this.props.user && nextProps.user
             && this.props.user.UserName !== nextProps.user.UserName) {
+            this.scrollTop = -1;
+        }
+
+        if(this.props.conversation && nextProps.conversation && !this.props.conversation.equal(nextProps.conversation)){
+            console.log('componentWillReceiveProps');
             this.scrollTop = -1;
         }
     }
