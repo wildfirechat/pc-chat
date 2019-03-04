@@ -236,7 +236,7 @@ class Chat {
     onReceiveMessage(message, hasMore) {
         console.log('chat on receive message');
         // TODO message id
-        if (message.messageId > 0 && message.conversationType === self.type && message.target === self.target && message.line == self.line) {
+        if (message.messageId > 0 && self.conversation.equal(message.conversation)) {
             // message conent type
             self.messageList.push(message);
         }
@@ -247,14 +247,18 @@ class Chat {
         if (_.isEqual(self.conversation, conversation)) {
             return
         }
+
+        // 第一次进入的时候订阅
+        if (self.conversation === undefined) {
+            wfc.eventEmitter.on(EventTypeReceiveMessage, self.onReceiveMessage);
+        }
+
         self.conversation = conversation;
         self.loading = false;
         self.hasMore = true;
 
         self.loadConversationMessages(conversation, 10000000);
 
-        //wfc.setOnReceiveMessageListener(self.onReceiveMessage);
-        wfc.eventEmitter.on(EventTypeReceiveMessage, self.onReceiveMessage);
 
         // TODO update observable for chat content
         switch (conversation.conversationType) {
@@ -268,7 +272,7 @@ class Chat {
                 break
 
         }
-        self.user = 'xx'
+        // self.user = 'xx'
     }
 
     //@action async getMessages(conversation, fromIndex, before = 'true', count = '20', withUser = ''){

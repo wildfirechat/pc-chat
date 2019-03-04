@@ -11,3 +11,5 @@ export const ContentType_ImageText = 8;
 
 // 提醒消息
 export const ContentType_Tip_Notification = 90;
+
+export const ContenType_ChangeGroupName_Notification = 110;
