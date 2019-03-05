@@ -102,6 +102,7 @@
     "react-dom": "^16.0.0",
     "react-router-dom": "^4.2.2",
     "tmp": "0.0.33",
+    "tributejs": "^3.6.0",
     "underscore": "^1.9.1"
   },
   "devDependencies": {

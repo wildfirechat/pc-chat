@@ -21,6 +21,44 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 }
 
+.tribute-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: auto;
+    max-height: 300px;
+    max-width: 500px;
+    min-width: 150px;
+    overflow: auto;
+    display: block;
+    z-index: 999999; 
+  }
+    .tribute-container ul {
+      margin: 0;
+      margin-top: 2px;
+      padding: 0;
+      list-style: none;
+      background: #efefef; 
+    }
+    .tribute-container li {
+      padding: 5px 5px;
+      cursor: pointer; 
+      color:#000;
+    }
+      .tribute-container li.highlight {
+        background: rgb(229, 165, 165);
+    }
+      .tribute-container li span {
+        font-weight: bold; 
+    }
+      .tribute-container li.no-match {
+        cursor: default; 
+    }
+    .tribute-container .menu-highlighted {
+      font-weight: bold; 
+    }
+
+
 label {
     padding: 0;
     margin: 0;

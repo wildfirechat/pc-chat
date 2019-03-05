@@ -95,6 +95,11 @@ export default {
                 test: /\.(png|jpg|jpeg|gif)$/,
                 loader: 'url-loader'
             },
+            {
+                test: /\.js$/,
+                loader: 'babel',
+                exclude: /node_modules\/(?!tributejs)/
+            },
         ]
     },
 

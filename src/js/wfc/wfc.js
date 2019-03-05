@@ -10,6 +10,7 @@ import NullUserInfo from '../wfc/model/nullUserInfo';
 import NullGroupInfo from './model/nullGroupInfo';
 import GroupInfo from './model/groupInfo';
 import { UserSettingScope_FavoriteGroup } from './userSettingScopes';
+import GroupMember from './model/groupMember';
 
 // 其实就是imclient，后续可能需要改下名字
 class WfcManager {
@@ -135,6 +136,16 @@ class WfcManager {
         }
     }
 
+    getGroupMembers(groupId, fresh = false) {
+        let memberIdsStr = proto.getGroupMembers(groupId, fresh);
+        var members = [];
+        let arr = JSON.parse(memberIdsStr);
+        arr.forEach(e => {
+            members.push(Object.assign(new GroupMember(), e));
+        });
+        return members;
+    }
+
     /**
      * 
      * @param {function} listener 
@@ -248,6 +259,9 @@ class WfcManager {
 
         let g = self.getGroupInfo('PHPSPS22');
         console.log(g);
+
+        let m = self.getGroupMembers('PHPSPS22');
+        console.log(m);
 
         self.getMyGroupList();
     }

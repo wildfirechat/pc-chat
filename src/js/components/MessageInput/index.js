@@ -6,7 +6,10 @@ import clazz from 'classname';
 
 import classes from './style.css';
 import Emoji from './Emoji';
+import Tribute from "tributejs";
 import TextMessageContent from '../../wfc/messages/textMessageContent';
+import { ConversationType_Group, ConversationType_Single, ConversationType_ChatRoom } from '../../wfc/model/conversationTypes';
+import wfc from '../../wfc/wfc'
 
 export default class MessageInput extends Component {
     static propTypes = {
@@ -21,6 +24,65 @@ export default class MessageInput extends Component {
     static defaultProps = {
         me: {},
     };
+
+    tribute;
+    mentions = [];
+
+    initMention(conversation) {
+        // TODO group, channel
+        console.log('initMention');
+        let type = conversation.conversationType;
+        if (type === ConversationType_Single
+            || type === ConversationType_ChatRoom) {
+            return
+        }
+
+        let values = [];
+        if (type === ConversationType_Group) {
+            let members = wfc.getGroupMembers(conversation.target);
+            values.push({ key: "所有人", value: '@' + conversation.target });
+            members.forEach(e => {
+                values.push({ key: e.getName(), value: '@' + e.memberId });
+            });
+        }
+
+        this.tribute = new Tribute({
+            // menuContainer: document.getElementById('content'),
+            values: values,
+            selectTemplate: (item) => {
+                console.log('TODO set selectTemplate');
+                // if (typeof item === 'undefined') return null;
+                // if (this.range.isContentEditable(this.current.element)) {
+                //     return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
+                // }
+                this.mentions.push({ key: item.original.key, value: item.original.value });
+
+                return '@' + item.original.key;
+            },
+            menuContainer: document.body,
+        });
+        this.tribute.attach(document.getElementById('messageInput'));
+    }
+
+    handleMention(text) {
+        let textMessageContent = new TextMessageContent();
+        textMessageContent.content = text;
+        this.mentions.map(e => {
+            if (text.indexOf(e.key) > -1) {
+                if (e.value === '@' + this.props.conversation.target) {
+                    textMessageContent.mentionedType = 2;
+                } else {
+                    if (textMessageContent.mentionedType !== 2) {
+                        textMessageContent.mentionedType = 1;
+                        textMessageContent.mentionedTargets.push(e.value.substring(1));
+                    }
+                }
+            }
+        });
+
+        this.mentions.length = 0;
+        return textMessageContent;
+    }
 
     canisend() {
         // var user = this.props.user;
@@ -55,11 +117,13 @@ export default class MessageInput extends Component {
         // TODO batch
         var batch = conversation.length > 1;
 
-        console.log();
         // You can not send message to yourself
-        await this.props.sendMessage(
-            new TextMessageContent(message)
-        )
+        // await this.props.sendMessage(
+        //     new TextMessageContent(message)
+        // )
+        let textMessageContent = this.handleMention(message);
+        console.log('TODO send message, just clear ', textMessageContent);
+        this.props.sendMessage(textMessageContent);
         // Promise.all(
         //             await this.props.sendMessage(
         //                 new TextMessageContent(message)
@@ -163,6 +227,14 @@ export default class MessageInput extends Component {
             && !this.props.conversation.equal(nextProps.conversation)
         ) {
             input.value = '';
+        }
+
+        if (this.tribute) {
+            this.tribute.detach(document.getElementById('messageInput'));
+        }
+
+        if (nextProps.conversation) {
+            this.initMention(nextProps.conversation);
         }
     }
 
