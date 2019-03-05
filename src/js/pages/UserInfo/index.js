@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import {withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 import pinyin from 'han';
 import clazz from 'classname';
@@ -21,14 +21,14 @@ import helper from 'utils/helper';
     remove: stores.userinfo.remove,
     toggle: stores.userinfo.toggle,
     setRemarkName: stores.userinfo.setRemarkName,
-    removeMember: async(user) => {
+    removeMember: async (user) => {
         var roomid = (stores.members.show && stores.members.user.UserName)
             || stores.chat.user.UserName;
 
         await stores.userinfo.removeMember(roomid, user.UserName);
         stores.userinfo.toggle(false);
     },
-    refreshContacts: async(user) => {
+    refreshContacts: async (user) => {
         var { updateUser, filter, filtered } = stores.contacts;
 
         stores.userinfo.updateUser(user);
@@ -96,7 +96,7 @@ class UserInfo extends Component {
     }
 
     render() {
-        var { UserName, HeadImgUrl, NickName, RemarkName, Signature, City, Province } = this.props.user;
+        var { UserName, portrait, displayName, RemarkName = 'remarkName', Signature = 'signature', City = 'city', Province = 'province'} = this.props.user;
         var isFriend = helper.isContact(this.props.user);
         var pallet = this.props.pallet;
         var isme = this.props.isme();
@@ -168,17 +168,17 @@ class UserInfo extends Component {
                                 style={{
                                     background: gradient
                                 }} />
-                            <Avatar src={HeadImgUrl} />
+                            <Avatar src={portrait} />
                         </div>
 
                         <div
                             className={classes.username}
-                            dangerouslySetInnerHTML={{__html: NickName}} />
+                            dangerouslySetInnerHTML={{ __html: displayName }} />
 
                         {
                             !this.props.remove ? (
                                 <div className={classes.wrap}>
-                                    <p dangerouslySetInnerHTML={{__html: Signature || 'No Signature'}} />
+                                    <p dangerouslySetInnerHTML={{ __html: Signature || 'No Signature' }} />
 
                                     <div className={classes.address}>
                                         <i
@@ -189,18 +189,18 @@ class UserInfo extends Component {
                                     </div>
                                 </div>
                             ) : (
-                                <div
-                                    className={classes.action}
-                                    onClick={() => this.props.removeMember(this.props.user)}
-                                    style={{
-                                        color: buttonColor,
-                                        opacity: .6,
-                                        marginTop: 20,
-                                        marginBottom: -30,
-                                    }}>
-                                    Delete
+                                    <div
+                                        className={classes.action}
+                                        onClick={() => this.props.removeMember(this.props.user)}
+                                        style={{
+                                            color: buttonColor,
+                                            opacity: .6,
+                                            marginTop: 20,
+                                            marginBottom: -30,
+                                        }}>
+                                        Delete
                                 </div>
-                            )
+                                )
                         }
 
                         <div
