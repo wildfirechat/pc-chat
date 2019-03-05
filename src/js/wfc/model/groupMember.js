@@ -10,4 +10,9 @@ export default class GroupMember {
         let u = wfc.getUserInfo(this.memberId);
         return u.displayName;
     }
+
+    getPortrait() {
+        let u = wfc.getUserInfo(this.memberId);
+        return u.portrait;
+    }
 }
