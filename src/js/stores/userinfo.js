@@ -17,8 +17,8 @@ class UserInfo {
         //     remove = false;
         // }
 
-        user = {}
-        user.UserName = 'user Name';
+        // user = {}
+        // user.UserName = 'user Name';
 
         self.remove = remove;
         self.show = show;
@@ -31,7 +31,9 @@ class UserInfo {
             if (pallet) {
                 self.pallet = user.pallet;
             } else {
-                pallet = await helper.getPallet(user.HeadImgUrl);
+                // TODO 取消注释，控制用户界面背景颜色
+                // pallet = await helper.getPallet(user.portrait);
+                pallet = await helper.getPallet(user.xxx);
 
                 // Cache the pallet
                 self.user.pallet = pallet;

@@ -20,7 +20,6 @@ import NotificationMessageContent from '../../../wfc/messages/notification/notif
 import TextMessageContent from '../../../wfc/messages/textMessageContent';
 
 @inject(stores => ({
-    user: stores.chat.user,
     sticky: stores.chat.sticky,
     empty: stores.chat.empty,
     removeChat: stores.chat.removeChat,
@@ -37,20 +36,21 @@ import TextMessageContent from '../../../wfc/messages/textMessageContent';
         return helper.isContact(user);
     },
     showUserinfo: async (isme, user) => {
-        var caniremove = helper.isChatRoomOwner(stores.chat.user);
+        // TODO check it group owner
+        // var caniremove = helper.isChatRoomOwner(stores.chat.user);
 
-        if (isme) {
-            user = stores.session.user.User;
-        } else {
-            stores.contacts.memberList.find(e => {
-                // Try to find contact in your contacts
-                if (e.UserName === user.UserName) {
-                    return (user = e);
-                }
-            });
-        }
+        // if (isme) {
+        //     user = stores.session.user.User;
+        // } else {
+        //     stores.contacts.memberList.find(e => {
+        //         // Try to find contact in your contacts
+        //         if (e.UserName === user.UserName) {
+        //             return (user = e);
+        //         }
+        //     });
+        // }
 
-        stores.userinfo.toggle(true, user, caniremove);
+        stores.userinfo.toggle(true, user, false);
     },
     getMessage: (messageid) => {
         var list = stores.chat.messages.get(stores.chat.user.UserName);
@@ -333,7 +333,7 @@ export default class ChatContent extends Component {
                             //src={message.isme ? message.HeadImgUrl : user.HeadImgUrl}
                             src={user.portrait ? user.portrait : 'assets/images/user-fallback.png'}
                             className={classes.avatar}
-                            onClick={ev => this.props.showUserinfo(message.isme, user)}
+                            onClick={ev => this.props.showUserinfo(message.direction === 0, user)}
                         />
 
                         <p
