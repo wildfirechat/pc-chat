@@ -354,6 +354,7 @@ export default class ChatContent extends Component {
         });
     }
 
+    // 点击消息的响应
     async handleClick(e) {
         console.log('handle click');
         var target = e.target;

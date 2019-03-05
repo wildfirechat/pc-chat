@@ -5,8 +5,7 @@ import pinyin from 'han';
 
 import contacts from './contacts';
 import storage from 'utils/storage';
-import helper from 'utils/helper';
-import UserInfo from '../pages/UserInfo';
+import UserInfo from '../wfc/model/userInfo'
 
 class NewChat {
     @observable show = false;
