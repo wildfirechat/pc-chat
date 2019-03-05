@@ -42,7 +42,7 @@ export default class MessageInput extends Component {
             let members = wfc.getGroupMembers(conversation.target);
             values.push({ key: "所有人", value: '@' + conversation.target });
             members.forEach(e => {
-                values.push({ key: e.getName(), value: '@' + e.memberId });
+                values.push({ key: e.getName(), value: '@' + e.memberId, avatar: e.getPortrait() });
             });
         }
 
@@ -51,7 +51,7 @@ export default class MessageInput extends Component {
             values: values,
             selectTemplate: (item) => {
                 console.log('TODO set selectTemplate');
-                // if (typeof item === 'undefined') return null;
+                if (typeof item === 'undefined') return null;
                 // if (this.range.isContentEditable(this.current.element)) {
                 //     return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
                 // }
@@ -59,6 +59,12 @@ export default class MessageInput extends Component {
 
                 return '@' + item.original.key;
             },
+            menuItemTemplate: function (item) {
+                return '<img width="24" height="24" src="' + item.original.avatar + ' "> ' + item.string;
+            },
+            // lookup: (a, b) =>{
+            //     return 'xx';
+            // },
             menuContainer: document.body,
         });
         this.tribute.attach(document.getElementById('messageInput'));
