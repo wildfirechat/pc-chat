@@ -3,21 +3,34 @@ import { observable, action } from 'mobx';
 import pinyin from 'han';
 
 import helper from 'utils/helper';
+import GroupInfo from '../wfc/model/groupInfo';
+import wfc from '../wfc/wfc'
 
 class Members {
     @observable show = false;
-    @observable user = {
-        MemberList: [],
-    };
+    // 可能是groupInfo，或者channelInfo
+    @observable target;
     @observable list = [];
     @observable filtered = [];
     @observable query = '';
 
-    @action async toggle(show = self.show, user = self.user) {
-        var list = [];
+    @action async toggle(show = self.show, target = self.target) {
+        let users = [];
+        if (target instanceof GroupInfo) {
+            let members = wfc.getGroupMembers(target.target);
+            members.forEach(m => {
+                let u = wfc.getUserInfo(m.memberId);
+                // member alias
+                if (m.alias !== '') {
+                    u.displayName = m.alias;
+                }
+                users.push(u);
+            });
+        }
 
+        var list = [];
         self.show = show;
-        self.user = user;
+        self.target = target;
 
         if (show === false) {
             self.query = '';
@@ -25,14 +38,14 @@ class Members {
             return;
         }
 
-        self.list.replace(user.MemberList);
+        self.list.replace(users);
 
         Promise.all(
-            user.MemberList.map(async e => {
+            users.map(async e => {
                 var pallet = e.pallet;
 
                 if (!pallet) {
-                    e.pallet = await helper.getPallet(e.HeadImgUrl);
+                    e.pallet = await helper.getPallet(e.portrait);
                 }
                 list.push(e);
             })
@@ -48,7 +61,7 @@ class Members {
 
         if (text) {
             list = self.list.filter(e => {
-                return pinyin.letter(e.NickName).toLowerCase().indexOf(pinyin.letter(text.toLocaleLowerCase())) > -1;
+                return pinyin.letter(e.displayName).toLowerCase().indexOf(pinyin.letter(text.toLocaleLowerCase())) > -1;
             });
             self.filtered.replace(list);
 

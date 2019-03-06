@@ -4,20 +4,22 @@ import { observer, inject } from 'mobx-react';
 
 import classes from './style.css';
 import helper from 'utils/helper';
+import GroupInfo from '../../wfc/model/groupInfo';
 
 @inject(stores => ({
     show: stores.members.show,
     close: () => stores.members.toggle(false),
-    user: stores.members.user,
+    target: stores.members.target,
     list: stores.members.list,
     search: stores.members.search,
     searching: stores.members.query,
     filtered: stores.members.filtered,
-    showUserinfo: async(user) => {
+    showUserinfo: async (user) => {
+        // TODO
         var me = stores.session.user.User;
         var caniremove = helper.isChatRoomOwner(stores.members.user);
 
-        if (user.UserName === me.UserName) {
+        if (user.uid === UserName) {
             user = me;
         } else {
             stores.contacts.memberList.find(e => {
@@ -38,16 +40,22 @@ import helper from 'utils/helper';
 @observer
 export default class Members extends Component {
     render() {
-        var { user, searching, list, filtered } = this.props;
+        var { target, searching, list, filtered } = this.props;
+
 
         if (!this.props.show) {
             return false;
         }
 
+        let targetName = '';
+        if (target instanceof GroupInfo) {
+            targetName = target.name;
+        }
+
         return (
             <div className={classes.container}>
                 <header>
-                    <span dangerouslySetInnerHTML={{ __html: `Group '${user.NickName}' has ${list.length} members` }} />
+                    <span dangerouslySetInnerHTML={{ __html: `Group '${targetName}' has ${list.length} members` }} />
 
                     <span>
                         <i
@@ -92,11 +100,11 @@ export default class Members extends Component {
                                     <div
                                         className={classes.cover}
                                         style={{
-                                            backgroundImage: `url(${e.HeadImgUrl})`,
+                                            backgroundImage: `url(${e.portrait})`,
                                         }} />
                                     <span
                                         className={classes.username}
-                                        dangerouslySetInnerHTML={{ __html: e.NickName }} />
+                                        dangerouslySetInnerHTML={{ __html: e.displayName }} />
                                 </li>
                             );
                         })
