@@ -32,6 +32,7 @@ body {
     overflow: auto;
     display: block;
     z-index: 999999; 
+    box-shadow: 0 6px 28px 0 rgba(230, 230, 230, 100);
   }
 .tribute-container ul {
     margin: 0;
