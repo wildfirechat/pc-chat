@@ -18,6 +18,7 @@ import UserInfo from '../../../wfc/model/userInfo';
 import GroupInfo from '../../../wfc/model/groupInfo';
 import NotificationMessageContent from '../../../wfc/messages/notification/notificationMessageContent';
 import TextMessageContent from '../../../wfc/messages/textMessageContent';
+import { ConversationType_Group } from '../../../wfc/model/conversationTypes';
 
 @inject(stores => ({
     sticky: stores.chat.sticky,
@@ -59,11 +60,10 @@ import TextMessageContent from '../../../wfc/messages/textMessageContent';
     deleteMessage: (messageid) => {
         stores.chat.deleteMessage(stores.chat.user.UserName, messageid);
     },
-    showMembers: (user) => {
-        // TODO show conversation info
-        console.log('show members click');
-        if (helper.isChatRoom(user.UserName)) {
-            stores.members.toggle(true, user);
+    showMembers: (target) => {
+        // TODO show channel members
+        if (target instanceof GroupInfo) {
+            stores.members.toggle(true, target);
         }
     },
     showContact: (userid) => {
@@ -293,7 +293,7 @@ export default class ChatContent extends Component {
             // TODO type = message.messageContent.type;
             var type = message.MsgType;
 
-            if(message.messageContent instanceof NotificationMessageContent){
+            if (message.messageContent instanceof NotificationMessageContent) {
                 return (
                     <div
                         key={message.messageId}
@@ -651,32 +651,34 @@ export default class ChatContent extends Component {
             this.scrollTop = -1;
         }
 
-        if(this.props.conversation && nextProps.conversation && !this.props.conversation.equal(nextProps.conversation)){
+        if (this.props.conversation && nextProps.conversation && !this.props.conversation.equal(nextProps.conversation)) {
             console.log('componentWillReceiveProps');
             this.scrollTop = -1;
         }
     }
 
-    title(){
+    title() {
         var title;
         let target = this.props.target;
-        if(target instanceof UserInfo){
+        if (target instanceof UserInfo) {
             title = this.props.target.displayName;
-        }else if(target instanceof GroupInfo){
+        } else if (target instanceof GroupInfo) {
             title = target.name;
-        }else{
+        } else {
             title = 'TODO';
         }
         return title;
     }
 
     render() {
-        var { loading, showConversation, user, messages, conversation, target } = this.props;
+        var { loading, showConversation, messages, conversation, target } = this.props;
+
+        var signature = 'Click to show members';
+        if(target instanceof UserInfo){
+            signature = 'TODO signature';
+        }
 
         // maybe userName, groupName, ChannelName or ChatRoomName
-        var signature = 'TODO signature';
-
-        // if (loading) return false;
         let title = this.title();
 
         return (
@@ -691,13 +693,13 @@ export default class ChatContent extends Component {
                             <header>
                                 <div className={classes.info}>
                                     <p
-                                        dangerouslySetInnerHTML={{ __html: title}}
+                                        dangerouslySetInnerHTML={{ __html: title }}
                                         title={title} />
 
                                     <span
                                         className={classes.signature}
                                         dangerouslySetInnerHTML={{ __html: signature || 'No Signature' }}
-                                        onClick={e => this.props.showMembers(user)}
+                                        onClick={e => this.props.showMembers(target)}
                                         title={signature} />
                                 </div>
 
@@ -712,13 +714,13 @@ export default class ChatContent extends Component {
                                 ref="viewport">
                                 {
                                     //this.renderMessages(messages.get(user.UserName), user)
-                                    this.renderMessages(messages, user)
+                                    this.renderMessages(messages, target)
                                 }
                             </div>
                         </div>
                     ) : (
                             <div className={clazz({
-                                [classes.noselected]: !user,
+                                [classes.noselected]: !target,
                             })}>
                                 <img
                                     className="disabledDrag"

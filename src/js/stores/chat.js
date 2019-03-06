@@ -165,7 +165,7 @@ async function resolveMessage(message) {
                 }
 
                 if (members.show
-                    && members.user.UserName === userid) {
+                    && members.users.UserName === userid) {
                     members.toggle(true, user);
                 }
             }
