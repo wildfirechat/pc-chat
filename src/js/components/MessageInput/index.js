@@ -10,6 +10,7 @@ import Tribute from "tributejs";
 import TextMessageContent from '../../wfc/messages/textMessageContent';
 import { ConversationType_Group, ConversationType_Single, ConversationType_ChatRoom } from '../../wfc/model/conversationTypes';
 import wfc from '../../wfc/wfc'
+import pinyin from 'han';
 
 export default class MessageInput extends Component {
     static propTypes = {
@@ -37,20 +38,20 @@ export default class MessageInput extends Component {
             return
         }
 
-        let values = [];
+        let mentionMenuItems = [];
         if (type === ConversationType_Group) {
+            let groupInfo = wfc.getGroupInfo(conversation.target);
             let members = wfc.getGroupMembers(conversation.target);
-            values.push({ key: "所有人", value: '@' + conversation.target });
+            mentionMenuItems.push({ key: "所有人", value: '@' + conversation.target, avatar: groupInfo.portrait, searchKey: '所有人' + pinyin.letter('所有人') });
             members.forEach(e => {
-                values.push({ key: e.getName(), value: '@' + e.memberId, avatar: e.getPortrait() });
+                mentionMenuItems.push({ key: e.getName(), value: '@' + e.memberId, avatar: e.getPortrait(), searchKey: e.getName() + pinyin.letter(e.getName()) });
             });
         }
 
         this.tribute = new Tribute({
             // menuContainer: document.getElementById('content'),
-            values: values,
+            values: mentionMenuItems,
             selectTemplate: (item) => {
-                console.log('TODO set selectTemplate');
                 if (typeof item === 'undefined') return null;
                 // if (this.range.isContentEditable(this.current.element)) {
                 //     return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
@@ -60,11 +61,11 @@ export default class MessageInput extends Component {
                 return '@' + item.original.key;
             },
             menuItemTemplate: function (item) {
-                return '<img width="24" height="24" src="' + item.original.avatar + ' "> ' + item.string;
+                return '<img width="24" height="24" src="' + item.original.avatar + ' "> ' + item.original.key;
             },
-            // lookup: (a, b) =>{
-            //     return 'xx';
-            // },
+            lookup: (item) => {
+                return item.searchKey;
+            },
             menuContainer: document.body,
         });
         this.tribute.attach(document.getElementById('messageInput'));
@@ -128,7 +129,6 @@ export default class MessageInput extends Component {
         //     new TextMessageContent(message)
         // )
         let textMessageContent = this.handleMention(message);
-        console.log('TODO send message, just clear ', textMessageContent);
         this.props.sendMessage(textMessageContent);
         // Promise.all(
         //             await this.props.sendMessage(
@@ -220,6 +220,12 @@ export default class MessageInput extends Component {
         }
     }
 
+    componentDidMount() {
+        if (this.props.conversation && !this.tribute) {
+            this.initMention(this.props.conversation);
+        }
+    }
+
     componentWillReceiveProps(nextProps) {
         var input = this.refs.input;
 
@@ -237,6 +243,7 @@ export default class MessageInput extends Component {
 
         if (this.tribute) {
             this.tribute.detach(document.getElementById('messageInput'));
+            this.tribute = null;
         }
 
         if (nextProps.conversation) {
