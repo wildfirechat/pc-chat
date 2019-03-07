@@ -118,7 +118,6 @@ export default class Chats extends Component {
     }
 
     componentDidUpdate() {
-        console.log('component did update');
         var container = this.refs.container;
         var active = container.querySelector(`.${classes.chat}.${classes.active}`);
 

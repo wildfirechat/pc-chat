@@ -9,7 +9,7 @@ export default {
             {
                 test: /\.jsx?$/,
                 // loader: ['babel-loader', 'eslint-loader'],
-                loader: ['babel-loader' ],
+                loader: ['babel-loader'],
                 exclude: /node_modules/,
             },
             {
@@ -97,7 +97,8 @@ export default {
             },
             {
                 test: /\.js$/,
-                loader: 'babel',
+                //loader: 'babel',
+                loader: ['babel-loader'],
                 exclude: /node_modules\/(?!tributejs)/
             },
         ]

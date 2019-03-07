@@ -652,7 +652,6 @@ export default class ChatContent extends Component {
         }
 
         if (this.props.conversation && nextProps.conversation && !this.props.conversation.equal(nextProps.conversation)) {
-            console.log('componentWillReceiveProps');
             this.scrollTop = -1;
         }
     }
