@@ -21,7 +21,7 @@ import TextMessageContent from '../../../wfc/messages/textMessageContent';
 import { ConversationType_Group } from '../../../wfc/model/conversationTypes';
 
 @inject(stores => ({
-    sticky: stores.chat.sticky,
+    sticky: stores.session.sticky,
     empty: stores.chat.empty,
     removeChat: stores.chat.removeChat,
     messages: stores.chat.messageList,
@@ -508,6 +508,7 @@ export default class ChatContent extends Component {
 
     showMenu() {
         var user = this.props.user;
+        let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
         var menu = new remote.Menu.buildFromTemplate([
             {
                 label: 'Toggle the conversation',
@@ -528,9 +529,9 @@ export default class ChatContent extends Component {
                 type: 'separator'
             },
             {
-                label: helper.isTop(user) ? 'Unsticky' : 'Sticky on Top',
+                label: covnersationInfo.isTop ? 'Unsticky' : 'Sticky on Top',
                 click: () => {
-                    this.props.sticky(user);
+                    this.props.sticky(covnersationInfo);
                 }
             },
             {
@@ -673,7 +674,7 @@ export default class ChatContent extends Component {
         var { loading, showConversation, messages, conversation, target } = this.props;
 
         var signature = 'Click to show members';
-        if(target instanceof UserInfo){
+        if (target instanceof UserInfo) {
             signature = 'TODO signature';
         }
 

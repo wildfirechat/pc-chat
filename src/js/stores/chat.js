@@ -1076,41 +1076,6 @@ class Chat {
         self.messages.set(userid, list);
     }
 
-    @action async sticky(user) {
-        var auth = await storage.get('auth');
-        var sticky = +!helper.isTop(user);
-        var response = await axios.post('/cgi-bin/mmwebwx-bin/webwxoplog', {
-            BaseRequest: {
-                Sid: auth.wxsid,
-                Uin: auth.wxuin,
-                Skey: auth.skey,
-            },
-            CmdId: 3,
-            OP: sticky,
-            RemarkName: user.RemarkName || user.NickName,
-            UserName: user.UserName
-        });
-        var sorted = [];
-
-        if (+response.data.BaseResponse.Ret === 0) {
-            self.sessions.find(e => e.UserName === user.UserName).isTop = !!sticky;
-            self.sessions.sort((a, b) => a.index - b.index).map(e => {
-                if (helper.isTop(e)) {
-                    sorted.unshift(e);
-                } else {
-                    sorted.push(e);
-                }
-            });
-            self.sessions.replace(sorted);
-
-            updateMenus({
-                conversations: sorted.slice(0, 10)
-            });
-            return true;
-        }
-
-        return false;
-    }
 
     @action removeChat(user) {
         var sessions = self.sessions.filter(e => e.UserName !== user.UserName);
