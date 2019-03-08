@@ -4,7 +4,7 @@ import Message from '../wfc/messages/message';
 import Conversation from '../wfc/model/conversation';
 import ConversationInfo from '../wfc/model/conversationInfo';
 import { EventEmitter } from 'events';
-import { EventTypeReceiveMessage, EventTypeSendMessage, EventTypeMessageStatusUpdate, EventTypeUserInfoUpdate, EventTypeConnectionStatusChanged } from '../wfc/wfcEvents'
+import { EventTypeReceiveMessage, EventTypeSendMessage, EventTypeMessageStatusUpdate, EventTypeUserInfoUpdate, EventTypeConnectionStatusChanged, EventTypeConversationInfoUpdate } from '../wfc/wfcEvents'
 import UserInfo from '../wfc/model/userInfo';
 import NullUserInfo from '../wfc/model/nullUserInfo';
 import NullGroupInfo from './model/nullGroupInfo';
@@ -185,7 +185,23 @@ class WfcManager {
     }
 
     getConversationInfo(conversation) {
+        let convStr = proto.getConversationInfo(JSON.stringify(conversation));
+        return ConversationInfo.protoConversationToConversationInfo(JSON.parse(convStr));
+    }
 
+    setConversationTop(conversation, top, successCB, failCB) {
+        proto.setConversationTop(JSON.stringify(conversation), top, () => {
+            let conversationInfo = self.getConversationInfo(conversation);
+            self.eventEmitter.emit(EventTypeConversationInfoUpdate, conversationInfo);
+
+            if (successCB) {
+                successCB();
+            }
+        }, (errorCode) => {
+            if (failCB) {
+                failCB(errorCode);
+            }
+        });
     }
 
     /**

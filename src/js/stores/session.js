@@ -2,6 +2,7 @@
 /* eslint-disable no-eval */
 import axios from 'axios';
 import { observable, action } from 'mobx';
+import { ipcRenderer } from 'electron';
 
 import helper from 'utils/helper';
 import storage from 'utils/storage';
@@ -22,6 +23,23 @@ const CancelToken = axios.CancelToken;
 
 //  const proto = loadMars();
 
+
+
+async function updateMenus({ conversations = [], contacts = [] }) {
+    ipcRenderer.send('menu-update', {
+        conversations: conversations.map(e => ({
+            id: e.UserName,
+            name: e.RemarkName || e.NickName,
+            avatar: e.HeadImgUrl,
+        })),
+        contacts: contacts.map(e => ({
+            id: e.UserName,
+            name: e.RemarkName || e.NickName,
+            avatar: e.HeadImgUrl,
+        })),
+        cookies: await helper.getCookie(),
+    });
+}
 class Session {
     @observable loading = true;
     @observable auth;
@@ -37,18 +55,28 @@ class Session {
         return (self.syncKey = list.map(e => `${e.Key}_${e.Val}`).join('|'));
     }
 
-    @action genConversationKey(index){
+    @action genConversationKey(index) {
         let conversation = self.conversations[index]
         return conversation.conversationType + conversation.target + conversation.line;
     }
 
-    async test(info){
+    async test(info) {
         console.log('test', info);
     }
 
-    @action async loadConversations(){
+    @action async loadConversations() {
         let cl = wfc.getConversationList([0, 1, 2, 3], [0, 1]);
         self.conversations = cl;
+    }
+
+    @action async sticky(conversationInfo) {
+        wfc.setConversationTop(conversationInfo.conversation, !conversationInfo.isTop, () => {
+            updateMenus({
+                conversations: self.conversations.slice(0, 10)
+            });
+        }, (errorCode) => {
+            // do nothing
+        });
     }
 
     @action async getCode() {
@@ -259,7 +287,7 @@ class Session {
             rr: ~new Date(),
         });
         var host = axios.defaults.baseURL.replace('//', '//webpush.');
-        var loop = async() => {
+        var loop = async () => {
             // Start detect timeout
             self.checkTimeout();
 

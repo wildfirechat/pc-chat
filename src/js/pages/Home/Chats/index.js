@@ -8,7 +8,7 @@ import moment from 'moment';
 import classes from './style.css';
 import helper from 'utils/helper';
 import wfc from '../../../wfc/wfc'
-import { EventTypeReceiveMessage, EventTypeSendMessage } from '../../../wfc/wfcEvents'
+import { EventTypeReceiveMessage, EventTypeSendMessage, EventTypeConversationInfoUpdate } from '../../../wfc/wfcEvents'
 import { ConversationType_Single, ConversationType_Group, ConversationType_ChatRoom, ConversationType_Channel } from '../../../wfc/model/conversationTypes';
 
 moment.updateLocale('en', {
@@ -26,11 +26,11 @@ moment.updateLocale('en', {
 @inject(stores => ({
     chats: stores.session.conversations,
     chatTo: stores.chat.chatToN,
-    conversation:stores.chat.conversation,
+    conversation: stores.chat.conversation,
     selected: stores.chat.user,
     messages: stores.chat.messages,
     markedRead: stores.chat.markedRead,
-    sticky: stores.chat.sticky,
+    sticky: stores.session.sticky,
     removeChat: stores.chat.removeChat,
     loading: stores.session.loading,
     searching: stores.search.searching,
@@ -60,37 +60,33 @@ export default class Chats extends Component {
         }
     }
 
-    conversationPortrait(conversation) {
-        return "http://img.hao661.com/qq.hao661.com/uploads/allimg/180822/0U61415T-0.jpg"
-    }
-
-    showContextMenu(user) {
+    showContextMenu(conversationInfo) {
         var menu = new remote.Menu.buildFromTemplate([
             {
                 label: 'Send Message',
                 click: () => {
-                    this.props.chatTo(user);
+                    this.props.chatTo(conversationInfo.conversation);
                 }
             },
             {
                 type: 'separator'
             },
             {
-                label: helper.isTop(user) ? 'Unsticky' : 'Sticky on Top',
+                label: conversationInfo.isTop ? 'Unsticky' : 'Sticky on Top',
                 click: () => {
-                    this.props.sticky(user);
+                    this.props.sticky(conversationInfo);
                 }
             },
             {
                 label: 'Delete',
                 click: () => {
-                    this.props.removeChat(user);
+                    this.props.removeChat(conversationInfo);
                 }
             },
             {
                 label: 'Mark as Read',
                 click: () => {
-                    this.props.markedRead(user.UserName);
+                    this.props.markedRead(conversationInfo.UserName);
                 }
             },
         ]);
@@ -106,15 +102,21 @@ export default class Chats extends Component {
         this.props.loadConversations();
     }
 
+    onConversationInfoUpdate = (covnersationInfo) => {
+        this.props.loadConversations();
+    }
+
     componentWillMount() {
         this.props.loadConversations();
         this.props.event.on(EventTypeReceiveMessage, this.onReceiveMessage);
-        this.props.event.on(EventTypeSendMessage, (this.onSendMessage));
+        this.props.event.on(EventTypeSendMessage, this.onSendMessage);
+        this.props.event.on(EventTypeConversationInfoUpdate, this.onConversationInfoUpdate);
     }
 
     componentWillUnmount() {
         this.props.event.removeListener(EventTypeReceiveMessage, this.onReceiveMessage);
         this.props.event.removeListener(EventTypeSendMessage, this.onSendMessage);
+        this.props.event.removeListener(EventTypeConversationInfoUpdate, this.onConversationInfoUpdate);
     }
 
     componentDidUpdate() {
@@ -153,9 +155,10 @@ export default class Chats extends Component {
                     ref="container">
                     {
                         !searching && chats.map((e, index) => {
-                            var message = this.getTheLastestMessage(e.UserName) || {};
+                            let covnersationInfo = wfc.getConversationInfo(e);
                             var muted = helper.isMuted(e);
-                            var isTop = helper.isTop(e);
+                            var isTop = covnersationInfo.isTop;
+                            // console.log(e);
 
                             return (
                                 <div
@@ -187,7 +190,7 @@ export default class Chats extends Component {
 
                                             <span
                                                 className={classes.message}
-                                                dangerouslySetInnerHTML={{ __html: e.lastMessage.messageContent.digest()|| 'No Messagexx' }} />
+                                                dangerouslySetInnerHTML={{ __html: e.lastMessage.messageContent.digest() || 'No Messagexx' }} />
                                         </div>
                                     </div>
 
