@@ -155,10 +155,11 @@ export default class Chats extends Component {
                     ref="container">
                     {
                         !searching && chats.map((e, index) => {
-                            let covnersationInfo = wfc.getConversationInfo(e);
-                            var muted = helper.isMuted(e);
-                            var isTop = covnersationInfo.isTop;
-                            // console.log(e);
+                            let conversationInfo = wfc.getConversationInfo(e);
+                            var muted = conversationInfo.isSilent;
+                            var isTop = conversationInfo.isTop;
+                            let unreadCount = conversationInfo.unreadCount;
+                            let hasUnread = unreadCount.unread > 0 || unreadCount.unreadMention > 0 || unreadCount.unreadMentionAll > 0;
 
                             return (
                                 <div
@@ -172,8 +173,8 @@ export default class Chats extends Component {
                                     onClick={ev => chatTo(e.conversation)}>
                                     <div className={classes.inner}>
                                         <div className={clazz(classes.dot, {
-                                            [classes.green]: !muted && this.hasUnreadMessage(e.UserName),
-                                            [classes.red]: muted && this.hasUnreadMessage(e.UserName)
+                                            [classes.green]: !muted && hasUnread,
+                                            [classes.red]: muted && hasUnread
                                         })}>
                                             <img
                                                 className="disabledDrag"
