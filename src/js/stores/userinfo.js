@@ -9,10 +9,12 @@ import storage from 'utils/storage';
 class UserInfo {
     @observable show = false;
     @observable remove = false;
+    @observable conversation;
     @observable user = {};
     @observable pallet = [];
 
-    @action async toggle(show = self.show, user = self.user, remove = false) {
+    // remove表示，是否有权限将其从group、channel、chatroom中删除
+    @action async toggle(show = self.show, conversation = self.conversation, user = self.user, remove = false) {
         // if (user.UserName === session.user.User.UserName) {
         //     remove = false;
         // }
@@ -23,6 +25,7 @@ class UserInfo {
         self.remove = remove;
         self.show = show;
         self.user = user;
+        self.conversation = conversation;
 
         // Try to get from cache
         var pallet = user.pallet;

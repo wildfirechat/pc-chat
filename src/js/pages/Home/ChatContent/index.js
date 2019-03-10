@@ -37,21 +37,17 @@ import { ConversationType_Group } from '../../../wfc/model/conversationTypes';
         return helper.isContact(user);
     },
     showUserinfo: async (isme, user) => {
-        // TODO check it group owner
-        // var caniremove = helper.isChatRoomOwner(stores.chat.user);
 
-        // if (isme) {
-        //     user = stores.session.user.User;
-        // } else {
-        //     stores.contacts.memberList.find(e => {
-        //         // Try to find contact in your contacts
-        //         if (e.UserName === user.UserName) {
-        //             return (user = e);
-        //         }
-        //     });
-        // }
+        var caniremove = false;
+        if (stores.chat.target instanceof GroupInfo) {
+            let groupInfo = stores.chat.target;
+            if (groupInfo.owner === 'UZUWUWuu') {
+                // if (groupInfo.target === wfc.getUserId()) {
+                caniremove = true;
+            }
+        }
 
-        stores.userinfo.toggle(true, user, false);
+        stores.userinfo.toggle(true, stores.chat.conversation, user, caniremove);
     },
     getMessage: (messageid) => {
         var list = stores.chat.messages.get(stores.chat.user.UserName);

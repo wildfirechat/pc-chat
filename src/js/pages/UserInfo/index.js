@@ -10,7 +10,8 @@ import Avatar from 'components/Avatar';
 import { Modal, ModalBody } from 'components/Modal';
 import wfc from '../../wfc/wfc'
 import Conversation from '../../wfc/model/conversation';
-import { ConversationType_Single } from '../../wfc/model/conversationTypes';
+import { ConversationType_Single, ConversationType_Group } from '../../wfc/model/conversationTypes';
+import KickoffGroupMemberNotification from '../../wfc/messages/notification/kickoffGroupMemberNotification';
 
 @inject(stores => ({
     chatTo: (conversation) => {
@@ -19,14 +20,25 @@ import { ConversationType_Single } from '../../wfc/model/conversationTypes';
     pallet: stores.userinfo.pallet,
     show: stores.userinfo.show,
     user: stores.userinfo.user,
+    conversation: stores.userinfo.conversation,
     remove: stores.userinfo.remove,
     toggle: stores.userinfo.toggle,
     setRemarkName: stores.userinfo.setRemarkName,
     removeMember: async (user) => {
-        var roomid = (stores.members.show && stores.members.user.UserName)
-            || stores.chat.user.UserName;
 
-        await stores.userinfo.removeMember(roomid, user.UserName);
+        let conversation = stores.userinfo.conversation;
+        if (conversation.conversationType === ConversationType_Group) {
+            let kickOffNotify = new KickoffGroupMemberNotification(wfc.getUserId(), [user.uid]);
+            wfc.removeGroupMembers(conversation.target, [user.uid], [0], kickOffNotify,
+                () => {
+                    console.log('kick off group member success');
+                },
+                (errorCode) => {
+                    console.log('kick off group member failed', errorCode);
+                }
+            );
+        }
+
         stores.userinfo.toggle(false);
     },
     refreshContacts: async (user) => {
@@ -65,6 +77,8 @@ class UserInfo extends Component {
     }
 
     async handleEnter(e) {
+        // 设置好友昵称
+        // TODO
         if (e.charCode !== 13) return;
 
         var value = e.target.value.trim();

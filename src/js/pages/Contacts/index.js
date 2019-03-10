@@ -46,7 +46,7 @@ export default class Contacts extends Component {
                                     <div
                                         className={classes.item}
                                         key={index}
-                                        onClick={() => this.props.showUserinfo(true, e)}>
+                                        onClick={() => this.props.showUserinfo(true, null, e)}>
                                         <div className={classes.avatar}>
                                             <img
                                                 src={this.itemPortrait(e)}

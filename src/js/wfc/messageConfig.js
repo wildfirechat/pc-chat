@@ -1,7 +1,7 @@
 import TextMessageContent from './messages/textMessageContent'
 import ImageMessageContent from './messages/imageMessageContent';
 
-import { ContentType_Text, ContentType_Tip_Notification, ContentType_Unknown, ContenType_ChangeGroupName_Notification } from './messages/messageTypes';
+import { ContentType_Text, ContentType_Tip_Notification, ContentType_Unknown, ContenType_ChangeGroupName_Notification, ContenType_KiffOffGroupMember_Notification as ContenType_KickOffGroupMember_Notification } from './messages/messageTypes';
 import { ContentType_Voice } from './messages/messageTypes';
 import { ContentType_Image } from './messages/messageTypes';
 import { ContentType_Location } from './messages/messageTypes';
@@ -18,6 +18,7 @@ import TipNotificationMessageContent from './messages/notification/tipNotificati
 import UnknownMessageContent from './messages/unknownMessageContent';
 import UnsupportMessageContent from './messages/unsupportMessageConten';
 import ChangeGroupNameNotification from './messages/notification/changeGroupNameNotification';
+import KickoffGroupMemberNotification from './messages/notification/kickoffGroupMemberNotification';
 
 export function getMessageContentClazz(type) {
     for (const content of MessageContents) {
@@ -92,5 +93,11 @@ export const MessageContents = [
         flag: PersitFlag_Persist,
         type: ContenType_ChangeGroupName_Notification,
         contentClazz: ChangeGroupNameNotification,
+    },
+    {
+        name: 'kickoffGroupMemberNotification',
+        flag: PersitFlag_Persist,
+        type: ContenType_KickOffGroupMember_Notification,
+        contentClazz: KickoffGroupMemberNotification,
     }
 ];
