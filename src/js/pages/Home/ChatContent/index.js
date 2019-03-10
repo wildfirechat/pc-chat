@@ -590,8 +590,13 @@ export default class ChatContent extends Component {
             let images = viewport.querySelectorAll('img.unload');
 
             // Scroll to bottom when you sent message
-            if (newestMessage
-                && newestMessage.direction === 0) {
+            if (newestMessage && newestMessage.direction === 0) {
+                viewport.scrollTop = viewport.scrollHeight;
+                return;
+            }
+
+            // Scroll to bottom when you receive message and you alread at the bottom
+            if (viewport.clientHeight + viewport.scrollTop === viewport.scrollHeight) {
                 viewport.scrollTop = viewport.scrollHeight;
                 return;
             }
