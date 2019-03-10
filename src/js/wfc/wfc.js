@@ -204,6 +204,12 @@ class WfcManager {
         });
     }
 
+    clearConversationUnreadStatus(conversation) {
+        proto.clearUnreadStatus(JSON.stringify(conversation));
+        let conversationInfo = self.getConversationInfo(conversation);
+        self.eventEmitter.emit(EventTypeConversationInfoUpdate, conversationInfo);
+    }
+
     /**
      * 
      * @param {Conversation} conversation
