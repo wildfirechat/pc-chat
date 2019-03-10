@@ -146,6 +146,22 @@ class WfcManager {
         return members;
     }
 
+    removeGroupMembers(groupId, memberIds, notifyLines, notifyMsg, successCB, failCB) {
+        notifyMsg.encode();
+        let strCont = JSON.stringify(notifyMsg);
+        proto.kickoffMembers(groupId, memberIds, notifyLines, strCont,
+            () => {
+                if (successCB) {
+                    successCB();
+                }
+
+            }, (errorCode) => {
+                if (failCB) {
+                    failCB(errorCode);
+                }
+            });
+    }
+
     /**
      * 
      * @param {function} listener 

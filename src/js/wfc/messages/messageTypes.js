@@ -13,3 +13,4 @@ export const ContentType_ImageText = 8;
 export const ContentType_Tip_Notification = 90;
 
 export const ContenType_ChangeGroupName_Notification = 110;
+export const ContenType_KiffOffGroupMember_Notification = 106;
