@@ -2,11 +2,11 @@
 import React, { Component } from 'react';
 import { Modal, ModalBody } from 'components/Modal';
 import { inject, observer } from 'mobx-react';
+import wfc from '../../wfc/wfc'
 
 import classes from './style.css';
 
 @inject(stores => ({
-    me: stores.session.user,
     show: stores.addfriend.show,
     close: () => stores.addfriend.toggle(false),
     sendRequest: stores.addfriend.sendRequest,
@@ -19,7 +19,8 @@ export default class AddFriend extends Component {
     }
 
     render() {
-        var { me, show, close } = this.props;
+        var { show, close } = this.props;
+        let me = wfc.getUserInfo(wfc.getUserId());
 
         return (
             <Modal
@@ -31,7 +32,7 @@ export default class AddFriend extends Component {
 
                     <input
                         autoFocus={true}
-                        defaultValue={`Hallo, im ${me && me.User.NickName}`}
+                        defaultValue={`Hallo, im ${me && me.displayName}`}
                         ref="input"
                         type="text" />
 

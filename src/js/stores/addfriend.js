@@ -1,8 +1,6 @@
 
 import { observable, action } from 'mobx';
-import axios from 'axios';
-
-import storage from 'utils/storage';
+import wfc from '../wfc/wfc'
 
 class AddFriend {
     @observable show = false;
@@ -14,26 +12,7 @@ class AddFriend {
     }
 
     @action async sendRequest(message) {
-        var auth = await storage.get('auth');
-        var response = await axios.post(`/cgi-bin/mmwebwx-bin/webwxverifyuser?r=${+new Date()}`, {
-            BaseRequest: {
-                Sid: auth.wxsid,
-                Uin: auth.wxuin,
-                Skey: auth.skey,
-            },
-            Opcode: 2,
-            SceneList: [33],
-            SceneListCount: 1,
-            VerifyContent: message,
-            VerifyUserList: [{
-                Value: self.user.UserName,
-                VerifyUserTicket: '',
-            }],
-            VerifyUserListSize: 1,
-            skey: auth.skey,
-        });
-
-        return +response.data.BaseResponse.Ret === 0;
+        wfc.sendFriendRequest(self.user.uid, message, null, null);
     }
 }
 

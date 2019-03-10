@@ -644,8 +644,8 @@ export default class ChatContent extends Component {
     componentWillReceiveProps(nextProps) {
         // When the chat target has been changed, show the last message in viewport
 
-        if (!this.props.conversation) {
-            wfc.clearConversationUnreadStatus(nextProps.conversation);
+        if (!!this.props.conversation) {
+            wfc.clearConversationUnreadStatus(this.props.conversation);
         }
 
         if (this.props.conversation && nextProps.conversation && !this.props.conversation.equal(nextProps.conversation)) {
