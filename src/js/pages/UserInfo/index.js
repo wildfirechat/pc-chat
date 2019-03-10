@@ -8,12 +8,13 @@ import clazz from 'classname';
 import classes from './style.css';
 import Avatar from 'components/Avatar';
 import { Modal, ModalBody } from 'components/Modal';
-import helper from 'utils/helper';
+import wfc from '../../wfc/wfc'
+import Conversation from '../../wfc/model/conversation';
+import { ConversationType_Single } from '../../wfc/model/conversationTypes';
 
 @inject(stores => ({
-    chatTo: (userid) => {
-        var user = stores.contacts.memberList.find(e => e.UserName === userid);
-        stores.chat.chatTo(user);
+    chatTo: (conversation) => {
+        stores.chat.chatToN(conversation);
     },
     pallet: stores.userinfo.pallet,
     show: stores.userinfo.show,
@@ -38,8 +39,10 @@ import helper from 'utils/helper';
     showAddFriend: (user) => stores.addfriend.toggle(true, user),
     showMessage: stores.snackbar.showMessage,
     isme: () => {
-        return stores.session.user
-            && stores.userinfo.user.UserName === stores.session.user.User.UserName;
+        console.log(stores.userinfo.user, wfc.getUserId());
+        let isMe = stores.userinfo.user.uid === wfc.getUserId();
+        console.log('is me', isMe);
+        return isMe;
     },
 }))
 @observer
@@ -85,9 +88,11 @@ class UserInfo extends Component {
         }
 
         setTimeout(() => {
-            if (helper.isContact(user) || helper.isChatRoom(user.UserName)) {
+            //if (helper.isContact(user) || helper.isChatRoom(user.UserName)) {
+            if (wfc.isMyFriend(user.uid)) {
                 this.props.toggle(false);
-                this.props.chatTo(user.UserName);
+                let conversation = new Conversation(ConversationType_Single, user.uid, 0);
+                this.props.chatTo(conversation);
                 document.querySelector('#messageInput').focus();
             } else {
                 this.props.showAddFriend(user);
@@ -96,8 +101,8 @@ class UserInfo extends Component {
     }
 
     render() {
-        var { UserName, portrait, displayName, RemarkName = 'remarkName', Signature = 'signature', City = 'city', Province = 'province'} = this.props.user;
-        var isFriend = helper.isContact(this.props.user);
+        var { uid, UserName, portrait, displayName, RemarkName = 'remarkName', Signature = 'signature', City = 'city', Province = 'province' } = this.props.user;
+        var isFriend = uid ? wfc.isMyFriend(uid) : false;
         var pallet = this.props.pallet;
         var isme = this.props.isme();
         var background = pallet[0];
@@ -210,7 +215,7 @@ class UserInfo extends Component {
                                 color: buttonColor,
                                 opacity: .6,
                             }}>
-                            {helper.isChatRoom(UserName) || isFriend ? 'Send Message' : 'Add Friend'}
+                            {isFriend ? 'Send Message' : 'Add Friend'}
                         </div>
                     </div>
 

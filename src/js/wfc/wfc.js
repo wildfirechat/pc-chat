@@ -210,6 +210,23 @@ class WfcManager {
         self.eventEmitter.emit(EventTypeConversationInfoUpdate, conversationInfo);
     }
 
+    isMyFriend(userId) {
+        return proto.isMyFriend(userId);
+    }
+
+    sendFriendRequest(userId, reason, successCB, failCB) {
+        proto.sendFriendRequest(userId, reason, () => {
+            if (successCB) {
+                successCB();
+            }
+
+        }, (errorCode) => {
+            if(failCB){
+failCB(errorCode);
+            }
+        });
+    }
+
     /**
      * 
      * @param {Conversation} conversation
