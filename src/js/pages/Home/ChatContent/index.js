@@ -555,7 +555,10 @@ export default class ChatContent extends Component {
         const offset = 100 // 100 px before the request
         if (viewport.scrollTop < offset) {
             this.props.loadOldMessages();
+        }
 
+        if (viewport.clientHeight + viewport.scrollTop === viewport.scrollHeight) {
+            wfc.clearConversationUnreadStatus(this.props.conversation);
         }
 
         Array.from(unread).map(e => {
@@ -572,13 +575,6 @@ export default class ChatContent extends Component {
         } else {
             tips.classList.remove(classes.show);
         }
-    }
-
-    scrollBottomWhenSentMessage() {
-        var { user, messages } = this.props;
-        var list = messages.get(user.id);
-
-        return list.slice(-1).isme;
     }
 
     componentWillUnmount() {
@@ -646,13 +642,14 @@ export default class ChatContent extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        // When the chat user has been changed, show the last message in viewport
-        if (this.props.user && nextProps.user
-            && this.props.user.UserName !== nextProps.user.UserName) {
-            this.scrollTop = -1;
+        // When the chat target has been changed, show the last message in viewport
+
+        if (!this.props.conversation) {
+            wfc.clearConversationUnreadStatus(nextProps.conversation);
         }
 
         if (this.props.conversation && nextProps.conversation && !this.props.conversation.equal(nextProps.conversation)) {
+            wfc.clearConversationUnreadStatus(nextProps.conversation);
             this.scrollTop = -1;
         }
     }
