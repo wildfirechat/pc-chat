@@ -1,9 +1,8 @@
 import NotificationMessageContent from './notificationMessageContent'
-export default class TipNotificationMessageContent extends NotificationMessageContent {
+export default class TemplateNotification extends NotificationMessageContent {
     tip = '';
 
     constructor(tip) {
-        super();
         this.tip = tip;
     }
 

@@ -12,5 +12,6 @@ export const ContentType_ImageText = 8;
 // 提醒消息
 export const ContentType_Tip_Notification = 90;
 
+export const ContenType_AddGroupMember_Notification = 105;
+export const ContenType_KickOffGroupMember_Notification = 106;
 export const ContenType_ChangeGroupName_Notification = 110;
-export const ContenType_KiffOffGroupMember_Notification = 106;
