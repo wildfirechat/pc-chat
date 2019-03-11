@@ -27,15 +27,15 @@ export default class ChangeGroupNameNotification extends NotificationMessageCont
             n: this.name,
             o: this.operator,
         };
-        payload.binaryContent = btoa(obj);
+        payload.binaryContent = btoa(JSON.stringify(obj));
     }
 
     decode(payload) {
         super.decode(payload);
         let json = atob(payload.binaryContent)
-        let n = JSON.parse(json);
-        this.operator = n.o;
-        this.name = n.n;
+        let obj = JSON.parse(json);
+        this.operator = obj.o;
+        this.name = obj.n;
     }
 
 }

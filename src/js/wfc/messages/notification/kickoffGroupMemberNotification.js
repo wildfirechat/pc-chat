@@ -36,14 +36,14 @@ export default class KickoffGroupMemberNotification extends NotificationMessageC
             ms: this.kickedMembers,
             o: this.operateUser,
         };
-        payload.binaryContent = btoa(obj);
+        payload.binaryContent = btoa(JSON.stringify(obj));
     }
 
     decode(payload) {
         super.decode(payload);
         let json = atob(payload.binaryContent)
-        let n = JSON.parse(json);
-        this.operator = n.o;
-        this.kickedMembers = n.ms;
+        let obj = JSON.parse(json);
+        this.operator = obj.o;
+        this.kickedMembers = obj.ms;
     }
 }
