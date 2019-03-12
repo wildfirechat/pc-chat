@@ -1,30 +1,30 @@
-import NotificationMessageContent from "./notificationMessageContent";
+import NotificationMessageContent from './notificationMessageContent'
 import wfc from '../../wfc'
-
-export default class ChangeGroupNameNotification extends NotificationMessageContent {
+export default class TransferGroupOwnerNotification extends NotificationMessageContent {
     operator = '';
-    name = '';
+    newOwner = '';
 
-    constructor(operator, name) {
+    constructor(operator, newOwner) {
         super();
         this.operator = operator;
-        this.name = name;
+        this.newOwner = newOwner;
     }
 
     formatNotification() {
+        let nu = wfc.getUserInfo(this.newOwner);
         if (this.fromSelf) {
-            return '您修改群名称为：' + this.name;
+            return '您把群转让给了 ' + nu.displayName;
         } else {
             let u = wfc.getUserInfo(this.operator);
-            return u.displayName + '修改群名称为：' + this.name;
+            return u.displayName + '把群转让给了 ' + nu.displayName;
         }
     }
 
     encode() {
         let payload = super.encode();
         let obj = {
-            n: this.name,
             o: this.operator,
+            m: this.newOwner,
         };
         payload.binaryContent = btoa(JSON.stringify(obj));
     }
@@ -34,7 +34,6 @@ export default class ChangeGroupNameNotification extends NotificationMessageCont
         let json = atob(payload.binaryContent)
         let obj = JSON.parse(json);
         this.operator = obj.o;
-        this.name = obj.n;
+        this.newOwner = obj.m;
     }
-
 }

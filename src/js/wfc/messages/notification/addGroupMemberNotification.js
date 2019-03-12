@@ -1,4 +1,5 @@
 import NotificationMessageContent from './notificationMessageContent'
+import wfc from '../../wfc'
 export default class AddGroupMemberNotification extends NotificationMessageContent {
     invitor = '';
     invitees = [];
