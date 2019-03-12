@@ -1,29 +1,25 @@
-import NotificationMessageContent from "./notificationMessageContent";
+import NotificationMessageContent from './notificationMessageContent'
 import wfc from '../../wfc'
-
-export default class ChangeGroupNameNotification extends NotificationMessageContent {
+export default class DismissGroupNotification extends NotificationMessageContent {
     operator = '';
-    name = '';
 
-    constructor(operator, name) {
+    constructor(operator) {
         super();
         this.operator = operator;
-        this.name = name;
     }
 
     formatNotification() {
         if (this.fromSelf) {
-            return '您修改群名称为：' + this.name;
+            return '您解散了群组';
         } else {
             let u = wfc.getUserInfo(this.operator);
-            return u.displayName + '修改群名称为：' + this.name;
+            return u.displayName + '解散了群组';
         }
     }
 
     encode() {
         let payload = super.encode();
         let obj = {
-            n: this.name,
             o: this.operator,
         };
         payload.binaryContent = btoa(JSON.stringify(obj));
@@ -34,7 +30,5 @@ export default class ChangeGroupNameNotification extends NotificationMessageCont
         let json = atob(payload.binaryContent)
         let obj = JSON.parse(json);
         this.operator = obj.o;
-        this.name = obj.n;
     }
-
 }

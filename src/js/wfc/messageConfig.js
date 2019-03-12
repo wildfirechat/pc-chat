@@ -1,7 +1,21 @@
 import TextMessageContent from './messages/textMessageContent'
 import ImageMessageContent from './messages/imageMessageContent';
 
-import { ContentType_Text, ContentType_Tip_Notification, ContentType_Unknown, ContenType_ChangeGroupName_Notification, ContenType_KickOffGroupMember_Notification as ContenType_KickOffGroupMember_Notification, ContenType_AddGroupMember_Notification } from './messages/messageTypes';
+import {
+    ContentType_Text,
+    ContentType_Tip_Notification,
+    ContentType_Unknown,
+    ContenType_ChangeGroupName_Notification,
+    ContenType_KickOffGroupMember_Notification,
+    ContenType_AddGroupMember_Notification,
+    ContenType_CreateGroupMember_Notification,
+    ContenType_DismissGroup_Notification,
+    ContenType_ModifyGroupAlias_Notification,
+    ContenType_QuitGroup_Notification,
+    ContenType_TransferGroupOwner_Notification,
+    ContenType_ChangeGroupPortrait_Notification
+} from './messages/messageTypes';
+
 import { ContentType_Voice } from './messages/messageTypes';
 import { ContentType_Image } from './messages/messageTypes';
 import { ContentType_Location } from './messages/messageTypes';
@@ -20,6 +34,12 @@ import UnsupportMessageContent from './messages/unsupportMessageConten';
 import ChangeGroupNameNotification from './messages/notification/changeGroupNameNotification';
 import KickoffGroupMemberNotification from './messages/notification/kickoffGroupMemberNotification';
 import AddGroupMemberNotification from './messages/notification/addGroupMemberNotification';
+import ChangeGroupPortraitNotification from './messages/notification/changeGroupPortraitNotification';
+import CreateGroupNotification from './messages/notification/createGroupNotification';
+import DismissGroupNotification from './messages/notification/dismissGroupNotification';
+import ModifyGroupAliasNotification from './messages/notification/modifyGroupAliasNotification';
+import QuitGroupNotification from './messages/notification/quitGroupNotification';
+import TransferGroupOwnerNotification from './messages/notification/transferGroupOwnerNotification';
 
 export function getMessageContentClazz(type) {
     for (const content of MessageContents) {
@@ -104,10 +124,34 @@ export const MessageContents = [
         contentClazz: TipNotificationMessageContent,
     },
     {
+        name: 'addGroupMemberNotification',
+        flag: PersitFlag_Persist,
+        type: ContenType_AddGroupMember_Notification,
+        contentClazz: AddGroupMemberNotification,
+    },
+    {
         name: 'changeGroupNameNotification',
         flag: PersitFlag_Persist,
         type: ContenType_ChangeGroupName_Notification,
         contentClazz: ChangeGroupNameNotification,
+    },
+    {
+        name: 'changeGroupPortraitNotification',
+        flag: PersitFlag_Persist,
+        type: ContenType_ChangeGroupPortrait_Notification,
+        contentClazz: ChangeGroupPortraitNotification,
+    },
+    {
+        name: 'createGroupNotification',
+        flag: PersitFlag_Persist,
+        type: ContenType_CreateGroupMember_Notification,
+        contentClazz: CreateGroupNotification,
+    },
+    {
+        name: 'dismissGroupNotification',
+        flag: PersitFlag_Persist,
+        type: ContenType_DismissGroup_Notification,
+        contentClazz: DismissGroupNotification,
     },
     {
         name: 'kickoffGroupMemberNotification',
@@ -116,9 +160,21 @@ export const MessageContents = [
         contentClazz: KickoffGroupMemberNotification,
     },
     {
-        name: 'addGroupMemberNotification',
+        name: 'modifyGroupAliasNotification',
         flag: PersitFlag_Persist,
-        type: ContenType_AddGroupMember_Notification,
-        contentClazz: AddGroupMemberNotification,
+        type: ContenType_ModifyGroupAlias_Notification,
+        contentClazz: ModifyGroupAliasNotification,
+    },
+    {
+        name: 'quitGroupNotification',
+        flag: PersitFlag_Persist,
+        type: ContenType_QuitGroup_Notification,
+        contentClazz: QuitGroupNotification,
+    },
+    {
+        name: 'transferGroupOwnerNotification',
+        flag: PersitFlag_Persist,
+        type: ContenType_TransferGroupOwner_Notification,
+        contentClazz: TransferGroupOwnerNotification,
     },
 ];

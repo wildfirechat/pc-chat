@@ -1,5 +1,4 @@
 import NotificationMessageContent from "./notificationMessageContent";
-import MessagePayload from "../messagePayload";
 import wfc from '../../wfc'
 
 export default class KickoffGroupMemberNotification extends NotificationMessageContent {
@@ -31,7 +30,7 @@ export default class KickoffGroupMemberNotification extends NotificationMessageC
     }
 
     encode() {
-        let payload = new MessagePayload();
+        let payload = super.encode();
         let obj = {
             ms: this.kickedMembers,
             o: this.operateUser,
