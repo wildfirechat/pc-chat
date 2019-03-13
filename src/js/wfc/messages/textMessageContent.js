@@ -1,6 +1,6 @@
 import MessageContent from './messageContent'
 import MessagePayload from './messagePayload';
-import { ContentType_Text } from './messageTypes';
+import { ContentType_Text } from './messageContentTypes';
 // fixme 下面这行，不知道为什么，会有问题，可能是因为循环import
 // import { ContentType_Text } from '../messageConfig';
 export default class TextMessageContent extends MessageContent{

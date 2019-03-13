@@ -11,7 +11,7 @@ import Avatar from 'components/Avatar';
 import helper from 'utils/helper';
 import { parser as emojiParse } from 'utils/emoji';
 import { on, off } from 'utils/event';
-import { ContentType_Text, ContentType_Image, ContentType_Unknown, ContenType_ChangeGroupName_Notification } from '../../../wfc/messages/messageTypes';
+import { ContentType_Text, ContentType_Image, ContentType_Unknown, ContenType_ChangeGroupName_Notification } from '../../../wfc/messages/messageContentTypes';
 import UnsupportMessageContent from '../../../wfc/messages/unsupportMessageConten';
 import wfc from '../../../wfc/wfc'
 import UserInfo from '../../../wfc/model/userInfo';
