@@ -14,15 +14,15 @@ import {
     ContenType_QuitGroup_Notification,
     ContenType_TransferGroupOwner_Notification,
     ContenType_ChangeGroupPortrait_Notification
-} from './messages/messageTypes';
+} from './messages/messageContentTypes';
 
-import { ContentType_Voice } from './messages/messageTypes';
-import { ContentType_Image } from './messages/messageTypes';
-import { ContentType_Location } from './messages/messageTypes';
-import { ContentType_File } from './messages/messageTypes';
-import { ContentType_Video } from './messages/messageTypes';
-import { ContentType_Sticker } from './messages/messageTypes';
-import { ContentType_ImageText } from './messages/messageTypes';
+import { ContentType_Voice } from './messages/messageContentTypes';
+import { ContentType_Image } from './messages/messageContentTypes';
+import { ContentType_Location } from './messages/messageContentTypes';
+import { ContentType_File } from './messages/messageContentTypes';
+import { ContentType_Video } from './messages/messageContentTypes';
+import { ContentType_Sticker } from './messages/messageContentTypes';
+import { ContentType_ImageText } from './messages/messageContentTypes';
 
 import { PersitFlag_No_Persist } from './messages/persistFlags';
 import { PersitFlag_Persist } from './messages/persistFlags';
@@ -40,6 +40,10 @@ import DismissGroupNotification from './messages/notification/dismissGroupNotifi
 import ModifyGroupAliasNotification from './messages/notification/modifyGroupAliasNotification';
 import QuitGroupNotification from './messages/notification/quitGroupNotification';
 import TransferGroupOwnerNotification from './messages/notification/transferGroupOwnerNotification';
+import FileMessageContent from './messages/fileMessageContent';
+import VideoMessageContent from './messages/videoMessageContent';
+import StickerMessageContent from './messages/stickerMessageContent';
+import SoundMessageContent from './messages/soundMessageContent';
 
 export function getMessageContentClazz(type) {
     for (const content of MessageContents) {
@@ -85,6 +89,7 @@ export const MessageContents = [
         name: 'voice',
         flag: PersitFlag_Persist_And_Count,
         type: ContentType_Voice,
+        contentClazz: SoundMessageContent,
     },
     {
         name: 'image',
@@ -101,16 +106,19 @@ export const MessageContents = [
         name: 'file',
         flag: PersitFlag_Persist_And_Count,
         type: ContentType_File,
+        contentClazz: FileMessageContent,
     },
     {
         name: 'video',
         flag: PersitFlag_Persist_And_Count,
         type: ContentType_Video,
+        contentClazz: VideoMessageContent,
     },
     {
         name: 'sticker',
         flag: PersitFlag_Persist_And_Count,
         type: ContentType_Sticker,
+        contentClazz: StickerMessageContent,
     },
     {
         name: 'imageText',
