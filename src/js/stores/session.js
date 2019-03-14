@@ -69,6 +69,19 @@ class Session {
         self.conversations = cl;
     }
 
+
+    @action removeConversation(conversation) {
+
+        let conversations = self.conversations.filter(e => !e.conversation.equal(conversation));
+        self.conversations.replace(conversations);
+
+        wfc.removeConversation(conversation, true);
+
+        updateMenus({
+            conversations: conversations.slice(0, 10)
+        });
+    }
+
     @action async sticky(conversationInfo) {
         wfc.setConversationTop(conversationInfo.conversation, !conversationInfo.isTop, () => {
             updateMenus({

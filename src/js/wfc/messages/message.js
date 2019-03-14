@@ -51,12 +51,15 @@ export default class Message {
         let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
         if (contentClazz) {
             let content = new contentClazz();
-            content.decode(msg.content);
-            msg.messageContent = content;
-
-            if (content instanceof NotificationMessageContent) {
-                content.fromSelf = msg.from === wfc.getUserId();
+            try {
+                content.decode(msg.content);
+                if (content instanceof NotificationMessageContent) {
+                    content.fromSelf = msg.from === wfc.getUserId();
+                }
+            } catch (error) {
+                console.log('protoMessageToMessage', error);
             }
+            msg.messageContent = content;
 
         } else {
             console.error('message content not register', obj);

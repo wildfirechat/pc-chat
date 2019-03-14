@@ -47,10 +47,16 @@ export default class NewChat extends Component {
             this.props.chatTo(conversation);
         } else {
             // You can not create a chat room by another chat room
-            // TODO create group
-            let user = await this.props.createChatRoom(selected.filter(e => !helper.isChatRoom(e)));
-            this.props.chatTo(user);
-        }
+            // createChatroom()
+            wfc.createGroup(null, 'TestGroupName1', '', selected, [0], null,
+                (groupId) => {
+                    let conversation = new Conversation(ConversationType.Group, groupId);
+                    this.props.chatTo(conversation);
+                },
+                (errorCode) => {
+                    console.log('create group error', errorCode);
+                });
+        };
 
         this.close();
         setTimeout(() => {

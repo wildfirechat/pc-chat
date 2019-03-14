@@ -27,6 +27,7 @@ export default class ModifyGroupAliasNotification extends NotificationMessageCon
             o: this.operator,
         };
         payload.binaryContent = btoa(JSON.stringify(obj));
+        return payload;
     }
 
     decode(payload) {

@@ -28,6 +28,7 @@ export default class ChangeGroupNameNotification extends NotificationMessageCont
             o: this.operator,
         };
         payload.binaryContent = btoa(JSON.stringify(obj));
+        return payload;
     }
 
     decode(payload) {

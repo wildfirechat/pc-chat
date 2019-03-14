@@ -1076,16 +1076,6 @@ class Chat {
         self.messages.set(userid, list);
     }
 
-
-    @action removeChat(user) {
-        var sessions = self.sessions.filter(e => e.UserName !== user.UserName);
-        self.sessions.replace(sessions);
-
-        updateMenus({
-            conversations: sessions.slice(0, 10)
-        });
-    }
-
     @action empty(user) {
         // Empty the chat content
         self.messages.set(user.UserName, {

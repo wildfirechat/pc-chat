@@ -30,7 +30,7 @@ moment.updateLocale('en', {
     messages: stores.chat.messages,
     markedRead: stores.chat.markedRead,
     sticky: stores.session.sticky,
-    removeChat: stores.chat.removeChat,
+    removeChat: stores.session.removeConversation,
     loading: stores.session.loading,
     searching: stores.search.searching,
     event: stores.wfc.eventEmitter,
@@ -145,7 +145,6 @@ export default class Chats extends Component {
         // msg.content = {};
         // msg.content.searchableContent = 'content';
         // chats.push(msg);
-        console.log("chats size", chats.length);
 
         return (
             <div className={classes.container}>
