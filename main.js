@@ -547,6 +547,7 @@ const createMainWindow = () => {
         }
     });
 
+    // TODO 不明白这儿是做什么？
     ipcMain.on('menu-update', async(event, args) => {
         var { cookies, contacts = [], conversations = [] } = args;
         var conversationsMenu = mainMenu.find(e => e.label === 'Conversations');

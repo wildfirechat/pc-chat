@@ -1,8 +1,10 @@
-export const MessageStatus_Sending = 0;
-export const MessageStatus_Sent = 1;
-export const MessageStatus_SendFailure = 2;
-export const MessageStatus_Mentioned = 3;
-export const MessageStatus_AllMentioned = 4;
-export const MessageStatus_Unread = 5;
-export const MessageStatus_Readed = 6;
-export const MessageStatus_Played = 7;
+export default class MessageStatus {
+    static Sending = 0;
+    static Sent = 1;
+    static SendFailure = 2;
+    static Mentioned = 3;
+    static AllMentioned = 4;
+    static Unread = 5;
+    static Readed = 6;
+    static Played = 7;
+}

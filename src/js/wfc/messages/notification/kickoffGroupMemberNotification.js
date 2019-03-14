@@ -1,12 +1,13 @@
 import NotificationMessageContent from "./notificationMessageContent";
 import wfc from '../../wfc'
+import MessageContentType from "../messageContentType";
 
 export default class KickoffGroupMemberNotification extends NotificationMessageContent {
     operator = '';
     kickedMembers = [];
 
     constructor(operator, kickedMembers) {
-        super();
+        super(MessageContentType.KickOffGroupMember_Notification);
         this.operator = operator;
         this.kickedMembers = kickedMembers;
     }

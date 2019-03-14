@@ -9,8 +9,8 @@ import UserInfo from '../wfc/model/userInfo';
 import NullUserInfo from '../wfc/model/nullUserInfo';
 import NullGroupInfo from './model/nullGroupInfo';
 import GroupInfo from './model/groupInfo';
-import { UserSettingScope_FavoriteGroup } from './userSettingScopes';
 import GroupMember from './model/groupMember';
+import { UserSettingScope } from './userSettingScope';
 
 // 其实就是imclient，后续可能需要改下名字
 class WfcManager {
@@ -90,12 +90,12 @@ class WfcManager {
     }
 
     getUserId() {
-        // TODO login的时候确定
-        return 'UZUWUWuu';
+        // TODO login的时候确定, localstorage
+        return 'uiuJuJcc';
     }
 
     getMyGroupList() {
-        let str = proto.getUserSettings(UserSettingScope_FavoriteGroup);
+        let str = proto.getUserSettings(UserSettingScope.FavoriteGroup);
         let arr = JSON.parse(str);
         var groupList = [];
         arr.map(e => {
@@ -237,8 +237,8 @@ class WfcManager {
             }
 
         }, (errorCode) => {
-            if(failCB){
-failCB(errorCode);
+            if (failCB) {
+                failCB(errorCode);
             }
         });
     }
@@ -307,6 +307,7 @@ failCB(errorCode);
         // let u1 = Object.assign(new UserInfo(), JSON.parse(u));
         // u1.hello();
 
+        console.log('---------------test start----------------------');
         let u = self.getUserInfo('uiuJuJccj', true);
         u.hello();
         console.log('user info', u);
@@ -319,6 +320,13 @@ failCB(errorCode);
         console.log(m);
 
         self.getMyGroupList();
+
+        console.log('localStorage', localStorage.getItem('test'));
+        localStorage.setItem('test', 'hello world');
+        console.log('localStorage', localStorage.getItem('test'));
+
+        console.log('atob', btoa('hello world'));
+        console.log('---------------test end----------------------');
     }
 }
 const self = new WfcManager();

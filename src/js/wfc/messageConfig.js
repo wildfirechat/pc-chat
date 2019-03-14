@@ -1,33 +1,9 @@
 import TextMessageContent from './messages/textMessageContent'
 import ImageMessageContent from './messages/imageMessageContent';
 
-import {
-    ContentType_Text,
-    ContentType_Tip_Notification,
-    ContentType_Unknown,
-    ContenType_ChangeGroupName_Notification,
-    ContenType_KickOffGroupMember_Notification,
-    ContenType_AddGroupMember_Notification,
-    ContenType_CreateGroupMember_Notification,
-    ContenType_DismissGroup_Notification,
-    ContenType_ModifyGroupAlias_Notification,
-    ContenType_QuitGroup_Notification,
-    ContenType_TransferGroupOwner_Notification,
-    ContenType_ChangeGroupPortrait_Notification
-} from './messages/messageContentTypes';
+import MessageContentType from './messages/messageContentType';
 
-import { ContentType_Voice } from './messages/messageContentTypes';
-import { ContentType_Image } from './messages/messageContentTypes';
-import { ContentType_Location } from './messages/messageContentTypes';
-import { ContentType_File } from './messages/messageContentTypes';
-import { ContentType_Video } from './messages/messageContentTypes';
-import { ContentType_Sticker } from './messages/messageContentTypes';
-import { ContentType_ImageText } from './messages/messageContentTypes';
-
-import { PersitFlag_No_Persist } from './messages/persistFlags';
-import { PersitFlag_Persist } from './messages/persistFlags';
-import { PersitFlag_Transparent } from './messages/persistFlags';
-import { PersitFlag_Persist_And_Count } from './messages/persistFlags';
+import PersistFlag from './messages/persistFlag';
 import TipNotificationMessageContent from './messages/notification/tipNotification';
 import UnknownMessageContent from './messages/unknownMessageContent';
 import UnsupportMessageContent from './messages/unsupportMessageConten';
@@ -75,114 +51,114 @@ export function registerMessageContent(name, flag, type, clazz) {
 export const MessageContents = [
     {
         name: 'unknown',
-        flag: PersitFlag_Persist,
-        type: ContentType_Unknown,
+        flag: PersistFlag.Persist,
+        type: MessageContentType.Unknown,
         contentClazz: UnknownMessageContent,
     },
     {
         name: 'text',
-        flag: PersitFlag_Persist_And_Count,
-        type: ContentType_Text,
+        flag: PersistFlag.Persist_And_Count,
+        type: MessageContentType.Text,
         contentClazz: TextMessageContent,
     },
     {
         name: 'voice',
-        flag: PersitFlag_Persist_And_Count,
-        type: ContentType_Voice,
+        flag: PersistFlag.Persist_And_Count,
+        type: MessageContentType.Voice,
         contentClazz: SoundMessageContent,
     },
     {
         name: 'image',
-        flag: PersitFlag_Persist_And_Count,
-        type: ContentType_Image,
+        flag: PersistFlag.Persist_And_Count,
+        type: MessageContentType.Image,
         contentClazz: ImageMessageContent,
     },
     {
         name: 'location',
-        flag: PersitFlag_Persist_And_Count,
-        type: ContentType_Location,
+        flag: PersistFlag.Persist_And_Count,
+        type: MessageContentType.Location,
     },
     {
         name: 'file',
-        flag: PersitFlag_Persist_And_Count,
-        type: ContentType_File,
+        flag: PersistFlag.Persist_And_Count,
+        type: MessageContentType.File,
         contentClazz: FileMessageContent,
     },
     {
         name: 'video',
-        flag: PersitFlag_Persist_And_Count,
-        type: ContentType_Video,
+        flag: PersistFlag.Persist_And_Count,
+        type: MessageContentType.Video,
         contentClazz: VideoMessageContent,
     },
     {
         name: 'sticker',
-        flag: PersitFlag_Persist_And_Count,
-        type: ContentType_Sticker,
+        flag: PersistFlag.Persist_And_Count,
+        type: MessageContentType.Sticker,
         contentClazz: StickerMessageContent,
     },
     {
         name: 'imageText',
-        flag: PersitFlag_Persist_And_Count,
-        type: ContentType_ImageText,
+        flag: PersistFlag.Persist_And_Count,
+        type: MessageContentType.ImageText,
     },
     {
         name: 'tip',
-        flag: PersitFlag_Persist,
-        type: ContentType_Tip_Notification,
+        flag: PersistFlag.Persist,
+        type: MessageContentType.Tip_Notification,
         contentClazz: TipNotificationMessageContent,
     },
     {
         name: 'addGroupMemberNotification',
-        flag: PersitFlag_Persist,
-        type: ContenType_AddGroupMember_Notification,
+        flag: PersistFlag.Persist,
+        type: MessageContentType.AddGroupMember_Notification,
         contentClazz: AddGroupMemberNotification,
     },
     {
         name: 'changeGroupNameNotification',
-        flag: PersitFlag_Persist,
-        type: ContenType_ChangeGroupName_Notification,
+        flag: PersistFlag.Persist,
+        type: MessageContentType.ChangeGroupName_Notification,
         contentClazz: ChangeGroupNameNotification,
     },
     {
         name: 'changeGroupPortraitNotification',
-        flag: PersitFlag_Persist,
-        type: ContenType_ChangeGroupPortrait_Notification,
+        flag: PersistFlag.Persist,
+        type: MessageContentType.ChangeGroupPortrait_Notification,
         contentClazz: ChangeGroupPortraitNotification,
     },
     {
         name: 'createGroupNotification',
-        flag: PersitFlag_Persist,
-        type: ContenType_CreateGroupMember_Notification,
+        flag: PersistFlag.Persist,
+        type: MessageContentType.CreateGroup_Notification,
         contentClazz: CreateGroupNotification,
     },
     {
         name: 'dismissGroupNotification',
-        flag: PersitFlag_Persist,
-        type: ContenType_DismissGroup_Notification,
+        flag: PersistFlag.Persist,
+        type: MessageContentType.DismissGroup_Notification,
         contentClazz: DismissGroupNotification,
     },
     {
         name: 'kickoffGroupMemberNotification',
-        flag: PersitFlag_Persist,
-        type: ContenType_KickOffGroupMember_Notification,
+        flag: PersistFlag.Persist,
+        type: MessageContentType.KickOffGroupMember_Notification,
         contentClazz: KickoffGroupMemberNotification,
     },
     {
         name: 'modifyGroupAliasNotification',
-        flag: PersitFlag_Persist,
-        type: ContenType_ModifyGroupAlias_Notification,
+        flag: PersistFlag.Persist,
+        type: MessageContentType.ModifyGroupAlias_Notification,
         contentClazz: ModifyGroupAliasNotification,
     },
     {
         name: 'quitGroupNotification',
-        flag: PersitFlag_Persist,
-        type: ContenType_QuitGroup_Notification,
+        flag: PersistFlag.Persist,
+        type: MessageContentType.QuitGroup_Notification,
         contentClazz: QuitGroupNotification,
     },
     {
         name: 'transferGroupOwnerNotification',
-        flag: PersitFlag_Persist,
-        type: ContenType_TransferGroupOwner_Notification,
+        flag: PersistFlag.Persist,
+        type: MessageContentType.TransferGroupOwner_Notification,
         contentClazz: TransferGroupOwnerNotification,
     },
 ];
