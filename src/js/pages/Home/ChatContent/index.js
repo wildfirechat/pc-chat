@@ -39,8 +39,7 @@ import NotificationMessageContent from '../../../wfc/messages/notification/notif
         var caniremove = false;
         if (stores.chat.target instanceof GroupInfo) {
             let groupInfo = stores.chat.target;
-            if (groupInfo.owner === 'UZUWUWuu') {
-                // if (groupInfo.target === wfc.getUserId()) {
+            if (groupInfo.target === wfc.getUserId()) {
                 caniremove = true;
             }
         }

@@ -175,8 +175,8 @@ class WfcManager {
     }
 
     removeGroupMembers(groupId, memberIds, notifyLines, notifyMsg, successCB, failCB) {
-        notifyMsg.encode();
-        let strCont = JSON.stringify(notifyMsg);
+        let payload = notifyMsg.encode();
+        let strCont = JSON.stringify(payload);
         proto.kickoffMembers(groupId, memberIds, notifyLines, strCont,
             () => {
                 if (successCB) {
