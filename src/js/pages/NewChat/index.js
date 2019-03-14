@@ -8,7 +8,7 @@ import UserList from 'components/UserList';
 import helper from 'utils/helper';
 import wfc from '../../wfc/wfc'
 import Conversation from '../../wfc/model/conversation';
-import { ConversationType_Single } from '../../wfc/model/conversationTypes';
+import ConversationType from '../../wfc/model/conversationType';
 
 @inject(stores => ({
     show: stores.newchat.show,
@@ -43,7 +43,7 @@ export default class NewChat extends Component {
         var selected = this.state.selected;
 
         if (selected.length === 1) {
-            let conversation = new Conversation(ConversationType_Single, selected[0], 0);
+            let conversation = new Conversation(ConversationType.Single, selected[0], 0);
             this.props.chatTo(conversation);
         } else {
             // You can not create a chat room by another chat room

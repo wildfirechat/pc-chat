@@ -8,7 +8,7 @@ import classes from './style.css';
 import Emoji from './Emoji';
 import Tribute from "tributejs";
 import TextMessageContent from '../../wfc/messages/textMessageContent';
-import { ConversationType_Group, ConversationType_Single, ConversationType_ChatRoom } from '../../wfc/model/conversationTypes';
+import ConversationType from '../../wfc/model/conversationType';
 import wfc from '../../wfc/wfc'
 import pinyin from 'han';
 
@@ -33,13 +33,13 @@ export default class MessageInput extends Component {
         // TODO group, channel
         console.log('initMention');
         let type = conversation.conversationType;
-        if (type === ConversationType_Single
-            || type === ConversationType_ChatRoom) {
+        if (type === ConversationType.Single
+            || type === ConversationType.ChatRoom) {
             return
         }
 
         let mentionMenuItems = [];
-        if (type === ConversationType_Group) {
+        if (type === ConversationType.Group) {
             let groupInfo = wfc.getGroupInfo(conversation.target);
             let members = wfc.getGroupMembers(conversation.target);
             mentionMenuItems.push({ key: "所有人", value: '@' + conversation.target, avatar: groupInfo.portrait, searchKey: '所有人' + pinyin.letter('所有人') });

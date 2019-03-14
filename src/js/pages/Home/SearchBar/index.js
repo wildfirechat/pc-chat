@@ -6,7 +6,7 @@ import classes from './style.css';
 import UserInfo from '../../../wfc/model/userInfo';
 import GroupInfo from '../../../wfc/model/groupInfo';
 import Conversation from '../../../wfc/model/conversation';
-import { ConversationType_Single, ConversationType_Group } from '../../../wfc/model/conversationTypes';
+import ConversationType from '../../../wfc/model/conversationType';
 
 @inject(stores => ({
     history: stores.search.history,
@@ -21,9 +21,9 @@ import { ConversationType_Single, ConversationType_Group } from '../../../wfc/mo
     chat: async (target) => {
         var conversation;
         if (target instanceof UserInfo) {
-            conversation = new Conversation(ConversationType_Single, target.uid, 0);
+            conversation = new Conversation(ConversationType.Single, target.uid, 0);
         } else if (target instanceof GroupInfo) {
-            conversation = new Conversation(ConversationType_Group, target.target, 0);
+            conversation = new Conversation(ConversationType.Group, target.target, 0);
         }
         stores.chat.chatToN(conversation);
         stores.search.reset();

@@ -4,7 +4,7 @@ import Message from '../wfc/messages/message';
 import Conversation from '../wfc/model/conversation';
 import ConversationInfo from '../wfc/model/conversationInfo';
 import { EventEmitter } from 'events';
-import { EventTypeReceiveMessage, EventTypeSendMessage, EventTypeMessageStatusUpdate, EventTypeUserInfoUpdate, EventTypeConnectionStatusChanged, EventTypeConversationInfoUpdate } from '../wfc/wfcEvents'
+import EventType from './wfcEvent'
 import UserInfo from '../wfc/model/userInfo';
 import NullUserInfo from '../wfc/model/nullUserInfo';
 import NullGroupInfo from './model/nullGroupInfo';
@@ -26,7 +26,7 @@ class WfcManager {
 
     onConnectionChanged(status) {
         self.connectionStatus = status;
-        self.eventEmitter.emit(EventTypeConnectionStatusChanged, status);
+        self.eventEmitter.emit(EventType.ConnectionStatusChanged, status);
         console.log('connection status changed', status);
     }
 
@@ -39,14 +39,14 @@ class WfcManager {
                 listener(msg, hasMore);
             });
 
-            self.eventEmitter.emit(EventTypeReceiveMessage, msg);
+            self.eventEmitter.emit(EventType.ReceiveMessage, msg);
         });
     }
 
     onUserInfoUpdate(userIds) {
         console.log('userIndo update, ids', userIds);
         userIds.map((userId => {
-            self.eventEmitter.emit(EventTypeUserInfoUpdate, userId);
+            self.eventEmitter.emit(EventType.UserInfoUpdate, userId);
         }))
     }
 
@@ -208,7 +208,7 @@ class WfcManager {
     setConversationTop(conversation, top, successCB, failCB) {
         proto.setConversationTop(JSON.stringify(conversation), top, () => {
             let conversationInfo = self.getConversationInfo(conversation);
-            self.eventEmitter.emit(EventTypeConversationInfoUpdate, conversationInfo);
+            self.eventEmitter.emit(EventType.ConversationInfoUpdate, conversationInfo);
 
             if (successCB) {
                 successCB();
@@ -223,7 +223,7 @@ class WfcManager {
     clearConversationUnreadStatus(conversation) {
         proto.clearUnreadStatus(JSON.stringify(conversation));
         let conversationInfo = self.getConversationInfo(conversation);
-        self.eventEmitter.emit(EventTypeConversationInfoUpdate, conversationInfo);
+        self.eventEmitter.emit(EventType.ConversationInfoUpdate, conversationInfo);
     }
 
     isMyFriend(userId) {
@@ -298,7 +298,7 @@ class WfcManager {
             }
         });
 
-        self.eventEmitter.emit(EventTypeSendMessage, message);
+        self.eventEmitter.emit(EventType.SendMessage, message);
     }
 
     test() {

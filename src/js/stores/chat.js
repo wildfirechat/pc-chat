@@ -12,8 +12,8 @@ import members from './members';
 import snackbar from './snackbar';
 import wfc from '../wfc/wfc'
 import Message from '../wfc/messages/message';
-import { EventTypeReceiveMessage } from '../wfc/wfcEvents';
-import { ConversationType_Single, ConversationType_Group } from '../wfc/model/conversationTypes';
+import EventType from '../wfc/wfcEvent';
+import ConversationType from '../wfc/model/conversationType';
 
 async function resolveMessage(message) {
     var auth = await storage.get('auth');
@@ -249,7 +249,7 @@ class Chat {
 
         // 第一次进入的时候订阅
         if (self.conversation === undefined) {
-            wfc.eventEmitter.on(EventTypeReceiveMessage, self.onReceiveMessage);
+            wfc.eventEmitter.on(EventType.ReceiveMessage, self.onReceiveMessage);
         }
 
         self.conversation = conversation;
@@ -261,10 +261,10 @@ class Chat {
 
         // TODO update observable for chat content
         switch (conversation.conversationType) {
-            case ConversationType_Single:
+            case ConversationType.Single:
                 self.target = wfc.getUserInfo(conversation.target);
                 break
-            case ConversationType_Group:
+            case ConversationType.Group:
                 self.target = wfc.getGroupInfo(conversation.target);
                 break;
             default:
