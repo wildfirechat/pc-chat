@@ -28,6 +28,7 @@ export default class TransferGroupOwnerNotification extends NotificationMessageC
             m: this.newOwner,
         };
         payload.binaryContent = btoa(JSON.stringify(obj));
+        return payload;
     }
 
     decode(payload) {

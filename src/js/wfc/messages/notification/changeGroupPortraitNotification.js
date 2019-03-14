@@ -25,6 +25,7 @@ export default class ChangeGroupPortraitNotification extends NotificationMessage
             n: this.name,
         };
         payload.binaryContent = btoa(JSON.stringify(obj));
+        return payload;
     }
 
     decode(payload) {

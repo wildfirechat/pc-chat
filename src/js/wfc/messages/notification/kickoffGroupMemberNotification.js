@@ -37,6 +37,7 @@ export default class KickoffGroupMemberNotification extends NotificationMessageC
             o: this.operateUser,
         };
         payload.binaryContent = btoa(JSON.stringify(obj));
+        return payload;
     }
 
     decode(payload) {

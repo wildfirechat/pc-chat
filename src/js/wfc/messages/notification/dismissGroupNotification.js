@@ -24,6 +24,7 @@ export default class DismissGroupNotification extends NotificationMessageContent
             o: this.operator,
         };
         payload.binaryContent = btoa(JSON.stringify(obj));
+        return payload;
     }
 
     decode(payload) {

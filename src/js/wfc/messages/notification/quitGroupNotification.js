@@ -24,6 +24,7 @@ export default class QuitGroupNotification extends NotificationMessageContent {
             o: this.operator,
         };
         payload.binaryContent = btoa(JSON.stringify(obj));
+        return payload;
     }
 
     decode(payload) {

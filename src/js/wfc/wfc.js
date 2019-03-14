@@ -11,6 +11,7 @@ import NullGroupInfo from './model/nullGroupInfo';
 import GroupInfo from './model/groupInfo';
 import GroupMember from './model/groupMember';
 import { UserSettingScope } from './userSettingScope';
+import CreateGroupNotification from './messages/notification/createGroupNotification';
 
 // 其实就是imclient，后续可能需要改下名字
 class WfcManager {
@@ -32,9 +33,9 @@ class WfcManager {
 
     onReceiveMessage(messages, hasMore) {
         var msgs = JSON.parse(messages);
+        console.log(messages);
         msgs.map(m => {
             let msg = Message.protoMessageToMessage(m);
-            console.log(msg.messagecontent);
             self.onReceiveMessageListeners.forEach(listener => {
                 listener(msg, hasMore);
             });
@@ -127,10 +128,37 @@ class WfcManager {
         return [];
     }
 
+    async createGroup(groupId, name, portrait, memberIds = [], lines = [0], notifyContent, successCB, failCB) {
+        groupId = !groupId ? '' : groupId;
+        let myUid = self.getUserId();
+
+        if (!notifyContent) {
+            notifyContent = new CreateGroupNotification(myUid, name);
+        }
+
+        if (!memberIds.includes(myUid)) {
+            memberIds.push(myUid);
+        }
+
+        let payload = notifyContent.encode();
+        let notifyContentStr = JSON.stringify(payload);
+        proto.createGroup(groupId, name, portrait, memberIds, lines, notifyContentStr,
+            (groupId) => {
+                if (successCB) {
+                    successCB(groupId);
+                }
+            },
+            (errorCode) => {
+                if (failCB) {
+                    failCB();
+                }
+            });
+    }
+
     getGroupInfo(groupId, fresh = false) {
         let groupInfoStr = proto.getGroupInfo(groupId, fresh);
         if (groupInfoStr === '') {
-            return new NullGroupInfo(target);
+            return new NullGroupInfo(groupId);
         } else {
             return Object.assign(new GroupInfo(), JSON.parse(groupInfoStr));
         }
@@ -203,6 +231,11 @@ class WfcManager {
     getConversationInfo(conversation) {
         let convStr = proto.getConversationInfo(JSON.stringify(conversation));
         return ConversationInfo.protoConversationToConversationInfo(JSON.parse(convStr));
+    }
+
+
+    async removeConversation(conversation, clearMsg) {
+        proto.removeConversation(JSON.stringify(conversation), clearMsg);
     }
 
     setConversationTop(conversation, top, successCB, failCB) {

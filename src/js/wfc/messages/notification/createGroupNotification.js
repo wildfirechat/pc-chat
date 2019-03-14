@@ -27,6 +27,7 @@ export default class CreateGroupNotification extends NotificationMessageContent 
             o: this.creator,
         };
         payload.binaryContent = btoa(JSON.stringify(obj));
+        return payload;
     }
 
     decode(payload) {
