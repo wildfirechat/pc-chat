@@ -15,19 +15,19 @@ export default class KickoffGroupMemberNotification extends NotificationMessageC
     formatNotification() {
         let notifyStr;
         if (this.fromSelf) {
-            notifyStr = '您把:';
+            notifyStr = '您把 ';
         } else {
             let u = wfc.getUserInfo(this.operator);
-            return u.displayName + '把:';
+            return u.displayName + '把 ';
         }
 
         let kickedMembersStr = '';
-        kickedMembers.forEach(m => {
+        this.kickedMembers.forEach(m => {
             let u = wfc.getUserInfo(m);
             kickedMembersStr += ' ' + u.displayName;
         });
 
-        return notifyStr + kickedMembersStr + '移除了群组';
+        return notifyStr + kickedMembersStr + ' 移除了群组';
     }
 
     encode() {
