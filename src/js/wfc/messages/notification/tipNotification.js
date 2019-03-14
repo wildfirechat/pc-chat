@@ -1,9 +1,10 @@
 import NotificationMessageContent from './notificationMessageContent'
+import MessageContentType from '../messageContentType';
 export default class TipNotificationMessageContent extends NotificationMessageContent {
     tip = '';
 
     constructor(tip) {
-        super();
+        super(MessageContentType.Tip_Notification);
         this.tip = tip;
     }
 

@@ -1,11 +1,12 @@
 import NotificationMessageContent from './notificationMessageContent'
 import wfc from '../../wfc'
+import MessageContentType from '../messageContentType';
 export default class TransferGroupOwnerNotification extends NotificationMessageContent {
     operator = '';
     newOwner = '';
 
     constructor(operator, newOwner) {
-        super();
+        super(MessageContentType.TransferGroupOwner_Notification);
         this.operator = operator;
         this.newOwner = newOwner;
     }

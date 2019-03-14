@@ -1,11 +1,12 @@
 import NotificationMessageContent from './notificationMessageContent'
 import wfc from '../../wfc'
+import MessageContentType from '../messageContentType';
 export default class ModifyGroupAliasNotification extends NotificationMessageContent {
     operator = '';
     alias = '';
 
     constructor(creator, alias) {
-        super();
+        super(MessageContentType.ModifyGroupAlias_Notification);
         this.operator = creator;
         this.alias = alias;
     }

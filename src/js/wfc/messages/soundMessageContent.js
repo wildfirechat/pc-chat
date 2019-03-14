@@ -1,5 +1,5 @@
 import MediaMessageContent from './mediaMessageContent'
-import { ContentMediaType_Voice } from './messageContentMediaTypes';
+import MessageContentMediaType from './messageContentMediaType';
 export default class SoundMessageContent extends MediaMessageContent {
     duration;
 
@@ -9,7 +9,7 @@ export default class SoundMessageContent extends MediaMessageContent {
 
     encode() {
         let payload = super.encode();
-        payload.mediaType = ContentMediaType_Voice;
+        payload.mediaType = MessageContentMediaType.Voice;
         let obj = {
             duration: this.duration,
         }

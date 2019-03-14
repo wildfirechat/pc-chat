@@ -1,11 +1,12 @@
 import NotificationMessageContent from "./notificationMessageContent";
 import wfc from '../../wfc'
+import MessageContentType from "../messageContentType";
 
 export default class ChangeGroupPortraitNotification extends NotificationMessageContent {
     operator = '';
 
     constructor(operator) {
-        super();
+        super(MessageContentType.ChangeGroupPortrait_Notification);
         this.operator = operator;
     }
 

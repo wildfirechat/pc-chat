@@ -11,7 +11,7 @@ import Avatar from 'components/Avatar';
 import helper from 'utils/helper';
 import { parser as emojiParse } from 'utils/emoji';
 import { on, off } from 'utils/event';
-import { ContentType_Text, ContentType_Image, ContentType_Unknown, ContenType_ChangeGroupName_Notification } from '../../../wfc/messages/messageContentTypes';
+import MessageContentType from '../../../wfc/messages/messageContentType';
 import UnsupportMessageContent from '../../../wfc/messages/unsupportMessageConten';
 import wfc from '../../../wfc/wfc'
 import UserInfo from '../../../wfc/model/userInfo';
@@ -103,11 +103,11 @@ export default class ChatContent extends Component {
         }
 
         switch (message.content.type) {
-            case ContentType_Unknown:
+            case MessageContentType.Unknown:
                 let unknownMessageContent = message.messageContent;
                 console.log('unknown', unknownMessageContent.digest());
                 return emojiParse(unknownMessageContent.digest());
-            case ContentType_Text:
+            case MessageContentType.Text:
                 if (message.location) {
                     return `
                         <img class="open-map unload" data-map="${message.location.href}" src="${message.location.image}" />
@@ -118,7 +118,7 @@ export default class ChatContent extends Component {
                 //let text = Object.assign(new TextMessageContent(), message.content);
                 let textMessageContent = message.messageContent;
                 return emojiParse(textMessageContent.content);
-            case ContentType_Image:
+            case MessageContentType.Image:
                 // Image
                 let image = message.messageContent;
                 console.log(image.localPath);
@@ -310,7 +310,7 @@ export default class ChatContent extends Component {
 
                     [classes.isme]: message.direction === 0,
                     //[classes.isText]: type === 1 && !message.location,
-                    [classes.isText]: message.messageContent.type === ContentType_Text || (message.messageContent instanceof UnsupportMessageContent),
+                    [classes.isText]: message.messageContent.type === MessageContentType.Text || (message.messageContent instanceof UnsupportMessageContent),
                     [classes.isLocation]: type === 1 && message.location,
                     [classes.isImage]: type === 3,
                     [classes.isEmoji]: type === 47 || type === 49 + 8,

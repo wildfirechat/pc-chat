@@ -1,12 +1,13 @@
 import NotificationMessageContent from "./notificationMessageContent";
 import wfc from '../../wfc'
+import MessageContentType from "../messageContentType";
 
 export default class ChangeGroupNameNotification extends NotificationMessageContent {
     operator = '';
     name = '';
 
     constructor(operator, name) {
-        super();
+        super(MessageContentType.ChangeGroupName_Notification);
         this.operator = operator;
         this.name = name;
     }

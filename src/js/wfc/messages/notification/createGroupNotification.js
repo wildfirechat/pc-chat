@@ -1,11 +1,12 @@
 import NotificationMessageContent from './notificationMessageContent'
 import wfc from '../../wfc'
+import MessageContentType from '../messageContentType';
 export default class CreateGroupNotification extends NotificationMessageContent {
     creator = '';
     groupName = '';
 
     constructor(creator, groupName) {
-        super();
+        super(MessageContentType.CreateGroup_Notification);
         this.creator = creator;
         this.groupName = groupName;
     }

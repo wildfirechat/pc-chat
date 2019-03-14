@@ -1,9 +1,16 @@
-import { ContentMediaType_File } from "./messageContentMediaTypes";
+import MessageContentMediaType from "./messageContentMediaType";
 import MediaMessageContent from "./mediaMessageContent";
+import MessageContentType from "./messageContentType";
 
 export default class FileMessageContent extends MediaMessageContent {
     name = '';
     size = 0;
+
+    constructor(name, size) {
+        super(MessageContentType.File);
+        this.name = name;
+        this.size = size;
+    }
 
     digest() {
         return '[文件]';
@@ -12,7 +19,7 @@ export default class FileMessageContent extends MediaMessageContent {
     encode() {
         let payload = super.encode();
         payload.searchableContent = name;
-        payload.mediaType = ContentMediaType_File;
+        payload.mediaType = MessageContentMediaType.File;
         payload.content = size + '';
     };
 

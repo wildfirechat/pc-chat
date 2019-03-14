@@ -1,10 +1,11 @@
 import NotificationMessageContent from './notificationMessageContent'
 import wfc from '../../wfc'
+import MessageContentType from '../messageContentType';
 export default class QuitGroupNotification extends NotificationMessageContent {
     operator = '';
 
     constructor(operator) {
-        super();
+        super(MessageContentType.QuitGroup_Notification);
         this.operator = operator;
     }
 
