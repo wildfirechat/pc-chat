@@ -22,7 +22,7 @@ import Offline from 'components/Offline';
 import Login from './Login';
 import wfc from '../wfc/wfc'
 import { observable, action } from 'mobx';
-import { EventTypeConnectionStatusChanged } from '../wfc/wfcEvents';
+import EventType from '../wfc/wfcEvent';
 
 @inject(stores => ({
     isLogin: () => !!stores.session.auth,
@@ -148,7 +148,7 @@ export default class Layout extends Component {
     onConnectionStatusChange = (status) => {
         this.connectionStatus = status;
         // 
-        if(status === 1 && !this.contactsLoaded){
+        if (status === 1 && !this.contactsLoaded) {
             this.props.getContacts();
             this.contactsLoaded = true;
         }
@@ -156,11 +156,11 @@ export default class Layout extends Component {
 
 
     componentWillMount() {
-        wfc.eventEmitter.on(EventTypeConnectionStatusChanged, this.onConnectionStatusChange);
+        wfc.eventEmitter.on(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
     }
 
     componentWillUnmount() {
-        wfc.eventEmitter.removeListener(EventTypeConnectionStatusChanged, this.onConnectionStatusChange);
+        wfc.eventEmitter.removeListener(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
     }
 
     render() {

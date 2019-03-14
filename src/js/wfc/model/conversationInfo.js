@@ -2,7 +2,7 @@ import Conversation from "./conversation";
 import Message from "../messages/message";
 import wfc from '../wfc'
 
-import { ConversationType_Single, ConversationType_Group, ConversationType_Channel, ConversationType_ChatRoom } from "./conversationTypes";
+import ConversationType from "./conversationType";
 
 export default class ConversationInfo {
     conversation = {};
@@ -26,17 +26,17 @@ export default class ConversationInfo {
     portrait() {
         let portrait = '';
         switch (this.conversation.conversationType) {
-            case ConversationType_Single:
+            case ConversationType.Single:
                 let u = wfc.getUserInfo(this.conversation.target, false);
                 portrait = u.portrait;
                 break;
-            case ConversationType_Group:
+            case ConversationType.Group:
                 let g = wfc.getGroupInfo(this.conversation.target, false);
                 portrait = g.portrait;
                 break;
-            case ConversationType_Channel:
+            case ConversationType.Channel:
                 break;
-            case ConversationType_ChatRoom:
+            case ConversationType.ChatRoom:
                 break;
             default:
                 break;
@@ -49,17 +49,17 @@ export default class ConversationInfo {
         let targetName = this.conversation.target;
         let title = targetName;
         switch (this.conversation.conversationType) {
-            case ConversationType_Single:
+            case ConversationType.Single:
                 let u = wfc.getUserInfo(this.conversation.target, false);
                 targetName = u.displayName;
                 break
-            case ConversationType_Group:
+            case ConversationType.Group:
                 let g = wfc.getGroupInfo(this.conversation.target, false);
                 targetName = g.name;
                 break
-            case ConversationType_ChatRoom:
+            case ConversationType.ChatRoom:
                 break
-            case ConversationType_Channel:
+            case ConversationType.Channel:
                 break
             default:
                 break;

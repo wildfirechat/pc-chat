@@ -1,4 +1,4 @@
-import { GroupType_Normal } from "./groupTypes";
+import GroupType from "./groupType";
 
 /*
 public String target;
@@ -16,7 +16,7 @@ export default class GroupInfo {
     name = '';
     portrait = '';
     owner = '';
-    type = GroupType_Normal;
+    type = GroupType.Normal;
     memberCount = 0;
     extra = '';
     updateDt;

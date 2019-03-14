@@ -17,8 +17,6 @@ import wfc from '../../../wfc/wfc'
 import UserInfo from '../../../wfc/model/userInfo';
 import GroupInfo from '../../../wfc/model/groupInfo';
 import NotificationMessageContent from '../../../wfc/messages/notification/notificationMessageContent';
-import TextMessageContent from '../../../wfc/messages/textMessageContent';
-import { ConversationType_Group } from '../../../wfc/model/conversationTypes';
 
 @inject(stores => ({
     sticky: stores.session.sticky,

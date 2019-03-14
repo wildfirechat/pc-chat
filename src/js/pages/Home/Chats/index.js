@@ -8,8 +8,7 @@ import moment from 'moment';
 import classes from './style.css';
 import helper from 'utils/helper';
 import wfc from '../../../wfc/wfc'
-import { EventTypeReceiveMessage, EventTypeSendMessage, EventTypeConversationInfoUpdate } from '../../../wfc/wfcEvents'
-import { ConversationType_Single, ConversationType_Group, ConversationType_ChatRoom, ConversationType_Channel } from '../../../wfc/model/conversationTypes';
+import EventType from '../../../wfc/wfcEvent'
 
 moment.updateLocale('en', {
     relativeTime: {
@@ -108,15 +107,15 @@ export default class Chats extends Component {
 
     componentWillMount() {
         this.props.loadConversations();
-        this.props.event.on(EventTypeReceiveMessage, this.onReceiveMessage);
-        this.props.event.on(EventTypeSendMessage, this.onSendMessage);
-        this.props.event.on(EventTypeConversationInfoUpdate, this.onConversationInfoUpdate);
+        this.props.event.on(EventType.ReceiveMessage, this.onReceiveMessage);
+        this.props.event.on(EventType.SendMessage, this.onSendMessage);
+        this.props.event.on(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
     }
 
     componentWillUnmount() {
-        this.props.event.removeListener(EventTypeReceiveMessage, this.onReceiveMessage);
-        this.props.event.removeListener(EventTypeSendMessage, this.onSendMessage);
-        this.props.event.removeListener(EventTypeConversationInfoUpdate, this.onConversationInfoUpdate);
+        this.props.event.removeListener(EventType.ReceiveMessage, this.onReceiveMessage);
+        this.props.event.removeListener(EventType.SendMessage, this.onSendMessage);
+        this.props.event.removeListener(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
     }
 
     componentDidUpdate() {

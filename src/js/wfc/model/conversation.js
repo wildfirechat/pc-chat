@@ -1,4 +1,4 @@
-import { ConversationType_Single } from "./conversationTypes";
+import ConversationType from "./conversationType";
 
 /**
  * 
@@ -9,7 +9,7 @@ import { ConversationType_Single } from "./conversationTypes";
         }
  */
 export default class Conversation {
-    conversationType = ConversationType_Single;
+    conversationType = ConversationType.Single;
     target = '';
     line = 0;
 

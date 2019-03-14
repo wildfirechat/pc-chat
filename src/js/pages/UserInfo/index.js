@@ -10,7 +10,7 @@ import Avatar from 'components/Avatar';
 import { Modal, ModalBody } from 'components/Modal';
 import wfc from '../../wfc/wfc'
 import Conversation from '../../wfc/model/conversation';
-import { ConversationType_Single, ConversationType_Group } from '../../wfc/model/conversationTypes';
+import ConversationType from '../../wfc/model/conversationType';
 import KickoffGroupMemberNotification from '../../wfc/messages/notification/kickoffGroupMemberNotification';
 
 @inject(stores => ({
@@ -27,7 +27,7 @@ import KickoffGroupMemberNotification from '../../wfc/messages/notification/kick
     removeMember: async (user) => {
 
         let conversation = stores.userinfo.conversation;
-        if (conversation.conversationType === ConversationType_Group) {
+        if (conversation.conversationType === ConversationType.Group) {
             let kickOffNotify = new KickoffGroupMemberNotification(wfc.getUserId(), [user.uid]);
             wfc.removeGroupMembers(conversation.target, [user.uid], [0], kickOffNotify,
                 () => {
@@ -105,7 +105,7 @@ class UserInfo extends Component {
             //if (helper.isContact(user) || helper.isChatRoom(user.UserName)) {
             if (wfc.isMyFriend(user.uid)) {
                 this.props.toggle(false);
-                let conversation = new Conversation(ConversationType_Single, user.uid, 0);
+                let conversation = new Conversation(ConversationType.Single, user.uid, 0);
                 this.props.chatTo(conversation);
                 document.querySelector('#messageInput').focus();
             } else {
