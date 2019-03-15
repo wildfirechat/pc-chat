@@ -18,6 +18,7 @@ export default class ImageMessageContent extends MediaMessageContent {
         let payload = super.encode();
         payload.mediaType = MessageContentMediaType.Image;
         payload.binaryContent = thumbnail;
+        return payload;
     };
 
     decode(payload) {

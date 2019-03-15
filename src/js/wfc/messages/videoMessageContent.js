@@ -17,6 +17,7 @@ export default class VideoMessageContent extends MediaMessageContent {
         let payload = super.encode();
         payload.mediaType = MessageContentMediaType.Video;
         payload.binaryContent = thumbnail;
+        return payload;
     };
 
     decode(payload) {

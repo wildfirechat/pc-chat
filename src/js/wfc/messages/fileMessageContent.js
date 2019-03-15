@@ -21,6 +21,7 @@ export default class FileMessageContent extends MediaMessageContent {
         payload.searchableContent = name;
         payload.mediaType = MessageContentMediaType.File;
         payload.content = size + '';
+        return payload;
     };
 
     decode(payload) {

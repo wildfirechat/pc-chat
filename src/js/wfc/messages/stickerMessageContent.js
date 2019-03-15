@@ -23,6 +23,7 @@ export default class StickerMessageContent extends MediaMessageContent {
             y: this.height,
         }
         payload.binaryContent = btoa(JSON.stringify(obj));
+        return payload;
     };
 
     decode(payload) {
