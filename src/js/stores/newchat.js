@@ -39,26 +39,6 @@ class NewChat {
         self.list.replace([]);
     }
 
-    @action async createChatRoom(userids) {
-        var auth = await storage.get('auth');
-        var response = await axios.post(`/cgi-bin/mmwebwx-bin/webwxcreatechatroom?r=${+new Date()}`, {
-            BaseRequest: {
-                Sid: auth.wxsid,
-                Uin: auth.wxuin,
-                Skey: auth.skey,
-            },
-            MemberCount: userids.length,
-            MemberList: userids.map(e => ({ UserName: e }))
-        });
-
-        if (+response.data.BaseResponse.Ret === 0) {
-            // Load the new contact infomation
-            let user = await contacts.getUser(response.data.ChatRoomName);
-            return user;
-        }
-
-        return false;
-    }
 }
 
 const self = new NewChat();

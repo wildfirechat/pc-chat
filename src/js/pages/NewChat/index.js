@@ -26,7 +26,6 @@ import ConversationType from '../../wfc/model/conversationType';
         return wfc.getUserInfo(userid);
     },
     search: stores.newchat.search,
-    createChatRoom: stores.newchat.createChatRoom,
     close: () => {
         stores.newchat.reset();
         stores.newchat.toggle(false);
