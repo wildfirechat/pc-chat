@@ -132,11 +132,11 @@ export default class ChatContent extends Component {
                 // return `<img class="open-image unload" data-id="${message.messageId}" src="${image.remotePath}" data-fallback="${image.fallback}" />`;
                 // TODO: 图片数据，需要base64编码
                 return `<img class="open-image unload" data-id="${message.messageId}" src="data:image/jpeg;base64, ${image.thumbnail}" data-fallback="${image.fallback}" />`;
-            case 34:
+            case MessageContentType.Voice:
                 /* eslint-disable */
                 // Voice
-                let voice = message.voice;
-                let times = message.VoiceLength;
+                let voice = message.messageContent;
+                let times = voice.duration * 1000;
                 let width = 40 + 7 * (times / 2000);
                 let seconds = 0;
                 /* eslint-enable */
@@ -145,22 +145,24 @@ export default class ChatContent extends Component {
                     seconds = Math.ceil(times / 1000);
                 }
 
+                // TODO
+                console.log('render voice message content', voice.duration);
                 return `
-                    <div class="play-voice" style="width: ${width}px" data-voice="${voice.src}">
+                    <div class="play-voice" style="width: ${width}px" data-voice="${voice.remotePath}">
                         <i class="icon-ion-android-volume-up"></i>
                         <span>
                             ${seconds || '60+'}"
                         </span>
 
                         <audio controls="controls">
-                            <source src="${voice.src}" />
+                            <source src="${voice.remotePath}"  type="audio/AMR" />
                         </audio>
                     </div>
                 `;
             case 47:
-            case 49 + 8:
+            case MessageContentType.Sticker:
                 // External emoji
-                let emoji = message.emoji;
+                let emoji = message.messageContent;
 
                 if (emoji) {
                     if (uploading) {
@@ -171,7 +173,7 @@ export default class ChatContent extends Component {
                             </div>
                         `;
                     }
-                    return `<img src="${emoji.src}" class="unload disabledDrag" data-fallback="${emoji.fallback}" />`;
+                    return `<img src="${emoji.remotePath}" class="unload disabledDrag" data-fallback="${emoji.fallback}" />`;
                 }
                 return `
                     <div class="${classes.invalidEmoji}">
@@ -204,14 +206,14 @@ export default class ChatContent extends Component {
 
                 return html;
 
-            case 43:
+            case MessageContentType.Video:
                 // Video message
-                let video = message.video;
+                let video = message.messageContent;
 
                 if (uploading) {
                     return `
                         <div>
-                            <video preload="metadata" controls src="${video.src}"></video>
+                            <video preload="metadata" controls src="${video.localPath}"></video>
 
                             <i class="icon-ion-android-arrow-up"></i>
                         </div>
@@ -227,7 +229,7 @@ export default class ChatContent extends Component {
                 }
 
                 return `
-                    <video preload="metadata" poster="${video.cover}" controls src="${video.src}" />
+                    <video preload="metadata" poster="data:image/jpeg;base64, ${video.thumbnail}" controls src="${video.remotePath}" />
                 `;
 
             case 49 + 2000:
@@ -244,7 +246,7 @@ export default class ChatContent extends Component {
 
             case 49 + 6:
                 // File message
-                let file = message.file;
+                let file = message.messageContent;
                 let download = message.download;
 
                 /* eslint-disable */
@@ -283,8 +285,7 @@ export default class ChatContent extends Component {
             // var { message, user } = this.props.parseMessage(e, from);
             var message = e;
             var user = wfc.getUserInfo(message.from);
-            // TODO type = message.messageContent.type;
-            var type = message.MsgType;
+            let type = message.messageContent.type;
 
             if (message.messageContent instanceof NotificationMessageContent) {
                 return (
@@ -307,13 +308,14 @@ export default class ChatContent extends Component {
 
                     [classes.isme]: message.direction === 0,
                     //[classes.isText]: type === 1 && !message.location,
-                    [classes.isText]: message.messageContent.type === MessageContentType.Text || (message.messageContent instanceof UnsupportMessageContent),
-                    [classes.isLocation]: type === 1 && message.location,
-                    [classes.isImage]: type === 3,
-                    [classes.isEmoji]: type === 47 || type === 49 + 8,
-                    [classes.isVoice]: type === 34,
+                    [classes.isText]: type === MessageContentType.Text || (message.messageContent instanceof UnsupportMessageContent),
+                    [classes.isLocation]: type === MessageContentType.Location,
+                    [classes.isImage]: type === MessageContentType.Image,
+                    //[classes.isEmoji]: type === 47 || type === 49 + 8,
+                    [classes.isEmoji]: type === MessageContentType.Sticker,
+                    [classes.isVoice]: type === MessageContentType.Voice,
                     [classes.isContact]: type === 42,
-                    [classes.isVideo]: type === 43,
+                    [classes.isVideo]: type === MessageContentType.Video,
 
                     // App messages
                     [classes.appMessage]: [49 + 2000, 49 + 17, 49 + 6].includes(type),
@@ -349,7 +351,7 @@ export default class ChatContent extends Component {
 
     // 点击消息的响应
     async handleClick(e) {
-        console.log('handle click');
+        console.log('handle click', e.target.tagName);
         var target = e.target;
 
         // Open the image
@@ -371,10 +373,20 @@ export default class ChatContent extends Component {
         // Play the voice message
         if (target.tagName === 'DIV'
             && target.classList.contains('play-voice')) {
+            console.log('play voice');
             let audio = target.querySelector('audio');
 
-            audio.onplay = () => target.classList.add(classes.playing);
-            audio.onended = () => target.classList.remove(classes.playing);
+            audio.onplay = () => {
+                console.log('on play');
+                target.classList.add(classes.playing)
+            };
+            audio.onended = () => {
+                console.log('onended');
+                target.classList.remove(classes.playing)
+            };
+            audio.onerror = (e) => {
+                console.log('on error', e);
+            }
             audio.play();
 
             return;
