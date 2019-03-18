@@ -6,10 +6,12 @@ export default class FileMessageContent extends MediaMessageContent {
     name = '';
     size = 0;
 
-    constructor(name, size) {
-        super(MessageContentType.File);
-        this.name = name;
-        this.size = size;
+    constructor(file) {
+        super(file, MessageContentType.File);
+        if (file) {
+            this.name = file.name;
+            this.size = file.size;
+        }
     }
 
     digest() {
@@ -18,9 +20,9 @@ export default class FileMessageContent extends MediaMessageContent {
 
     encode() {
         let payload = super.encode();
-        payload.searchableContent = name;
+        payload.searchableContent = this.name;
         payload.mediaType = MessageContentMediaType.File;
-        payload.content = size + '';
+        payload.content = this.size + '';
         return payload;
     };
 

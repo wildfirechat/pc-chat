@@ -296,7 +296,7 @@ const helper = {
 
     md5: (file) => {
         return new Promise((resolve, reject) => {
-            MD5(file, (err, md5) => {
+            new MD5().md5(file, (err, md5) => {
                 resolve(err ? false : md5);
             });
         });

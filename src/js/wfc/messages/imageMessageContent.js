@@ -5,9 +5,12 @@ export default class ImageMessageContent extends MediaMessageContent {
     // base64 encoded
     thumbnail;
 
-    constructor(thumbnail) {
-        super(MessageContentType.Image);
-        this.thumbnail = thumbnail;
+    constructor(file) {
+        super(MessageContentType.Image, file);
+        if (file) {
+            // TODO thumbnail from image file
+            // this.thumbnail = thumbnail;
+        }
     }
 
     digest() {
@@ -17,7 +20,7 @@ export default class ImageMessageContent extends MediaMessageContent {
     encode() {
         let payload = super.encode();
         payload.mediaType = MessageContentMediaType.Image;
-        payload.binaryContent = thumbnail;
+        payload.binaryContent = this.thumbnail;
         return payload;
     };
 
@@ -25,4 +28,5 @@ export default class ImageMessageContent extends MediaMessageContent {
         super.decode(payload);
         this.thumbnail = payload.binaryContent;
     }
+
 }
