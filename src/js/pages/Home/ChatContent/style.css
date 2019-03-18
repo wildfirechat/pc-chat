@@ -378,6 +378,8 @@
 .message.isVideo {
     & video {
         max-width: 90%;
+        height: auto;
+        max-height: 500px;
         box-shadow: 0 0 10px 0 rgba(0, 0, 0, .5);
     }
 }
@@ -852,7 +854,7 @@
 
     .message.isVideo {
         & video {
-            max-width: 80%;
+            max-width: 100%;
         }
     }
 
