@@ -4,9 +4,12 @@ import MessageContentType from './messageContentType';
 export default class VideoMessageContent extends MediaMessageContent {
     // base64 encoded
     thumbnail;
-    constructor(thumbnail) {
-        super(MessageContentType.Video);
-        this.thumbnail = thumbnail;
+    constructor(file) {
+        super(file, MessageContentType.Video);
+        if (file) {
+            // TODO thumbnail from video file
+            //this.thumbnail = thumbnail;
+        }
     }
 
     digest() {
@@ -16,7 +19,7 @@ export default class VideoMessageContent extends MediaMessageContent {
     encode() {
         let payload = super.encode();
         payload.mediaType = MessageContentMediaType.Video;
-        payload.binaryContent = thumbnail;
+        payload.binaryContent = this.thumbnail;
         return payload;
     };
 
