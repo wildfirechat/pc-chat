@@ -4,7 +4,7 @@ import axios from 'axios';
 import pinyin from 'han';
 
 import contacts from './contacts';
-import session from './sessions';
+import sessions from './sessions';
 import storage from 'utils/storage';
 import helper from 'utils/helper';
 import wfc from '../wfc/wfc'
@@ -24,7 +24,7 @@ class AddMember {
         var list = contacts.memberList.filter(e => {
             var res = pinyin.letter(e.NickName).toLowerCase().indexOf(text) > -1;
 
-            if (e.UserName === session.user.User.UserName
+            if (e.UserName === sessions.user.User.UserName
                 || !helper.isContact(e)
                 || helper.isChatRoom(e.UserName)
                 || helper.isFileHelper(e)) {

@@ -8,7 +8,7 @@ import MessageInput from 'components/MessageInput';
     sendMessage: stores.chat.sendMessage,
     conversation: stores.chat.conversation,
     showMessage: stores.snackbar.showMessage,
-    me: stores.session.user,
+    me: stores.sessions.user,
     confirmSendImage: async(image) => {
         if (!stores.settings.confirmImagePaste) {
             return true;

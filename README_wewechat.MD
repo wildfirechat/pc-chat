@@ -109,7 +109,7 @@ Preferences            | <kbd>Cmd</kbd> <kbd>,</kbd>
 - [x] Windows support
 - [x] Linux support
 - [x] Sticky on top
-- [x] Delete chat session
+- [x] Delete chat sessions
 - [x] Mark as Read
 - [x] Chat Room
   - [x] Show correct contact

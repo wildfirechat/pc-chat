@@ -2,7 +2,7 @@
 import { observable, action } from 'mobx';
 import axios from 'axios';
 
-import session from './sessions';
+import sessions from './sessions';
 import helper from 'utils/helper';
 import storage from 'utils/storage';
 
@@ -15,7 +15,7 @@ class UserInfo {
 
     // remove表示，是否有权限将其从group、channel、chatroom中删除
     @action async toggle(show = self.show, conversation = self.conversation, user = self.user, remove = false) {
-        // if (user.UserName === session.user.User.UserName) {
+        // if (user.UserName === sessions.user.User.UserName) {
         //     remove = false;
         // }
 

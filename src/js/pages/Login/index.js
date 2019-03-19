@@ -9,11 +9,11 @@ const TOKEN = 'w3bgeLJJJWvViSJ7fvwz1LPTnCegDb11Q646P5gf9VVRPylImGthlarXlylz0Im1+
 // const USER_ID = 'UZUWUWuu';
 // const TOKEN = 'mQyY7AF4EPLV6YgWUdypLlftbdauHjE1Nf+FNLTe+LFmMSylcoJlMYAJhK5fra50YqZRImBCf5S9rhyF7nUWIEl4p05l5vIrb0c+OfQmlm8/XBuGPCRmu2T52P66S0tcIPVvnKW9TRPaCEDLJfUfWTZqTANZvUMZnAkumf8zoB0=';
 @inject(stores => ({
-    avatar: stores.session.avatar,
-    code: stores.session.code,
-    getCode: stores.session.getCode,
-    setupConnectionStatusListener: stores.session.setupConnectionStatusListener,
-    test:stores.session.test,
+    avatar: stores.sessions.avatar,
+    code: stores.sessions.code,
+    getCode: stores.sessions.getCode,
+    setupConnectionStatusListener: stores.sessions.setupConnectionStatusListener,
+    test:stores.sessions.test,
     connect: stores.wfc.connect,
 }))
 

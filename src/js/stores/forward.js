@@ -3,7 +3,7 @@ import { observable, action } from 'mobx';
 import pinyin from 'han';
 
 import contacts from './contacts';
-import session from './sessions';
+import sessions from './sessions';
 import chat from './chat';
 
 class Forward {
@@ -29,7 +29,7 @@ class Forward {
 
         if (text) {
             list = contacts.memberList.filter(e => {
-                if (e.UserName === session.user.User.UserName) {
+                if (e.UserName === sessions.user.User.UserName) {
                     return false;
                 }
 

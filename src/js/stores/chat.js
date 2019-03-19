@@ -7,7 +7,7 @@ import storage from 'utils/storage';
 import helper from 'utils/helper';
 import contacts from './contacts';
 import settings from './settings';
-import session from './sessions';
+import sessions from './sessions';
 import members from './members';
 import snackbar from './snackbar';
 import wfc from '../wfc/wfc'
@@ -219,7 +219,7 @@ async function updateMenus({ conversations = [], contacts = [] }) {
 }
 
 class Chat {
-    @observable sessions = [];
+    @observable sessions  = [];
     @observable messages = new Map();
     @observable showConversation = true;
 
@@ -363,7 +363,7 @@ class Chat {
     }
 
     @action chatToPrev() {
-        var sessions = self.sessions;
+        var sessions  = self.sessions ;
         var index = self.user ? sessions.findIndex(e => e.UserName === self.user.UserName) : 0;
 
         --index;
@@ -372,11 +372,11 @@ class Chat {
             index = sessions.length - 1;
         }
 
-        self.chatTo(sessions[index]);
+        self.chatTo(sessions [index]);
     }
 
     @action chatToNext() {
-        var sessions = self.sessions;
+        var sessions  = self.sessions ;
         var index = self.user ? sessions.findIndex(e => e.UserName === self.user.UserName) : -1;
 
         ++index;
@@ -385,18 +385,18 @@ class Chat {
             index = 0;
         }
 
-        self.chatTo(sessions[index]);
+        self.chatTo(sessions [index]);
     }
 
     @action chatTo(user, onTop) {
-        var sessions = self.sessions;
+        var sessions  = self.sessions ;
         var stickyed = [];
         var normaled = [];
         var index = self.sessions.findIndex(e => e.UserName === user.UserName);
 
         if (index === -1) {
             // User not in chatset
-            sessions = [user, ...self.sessions];
+            sessions  = [user, ...self.sessions ];
 
             self.messages.set(user.UserName, {
                 data: [],
@@ -404,7 +404,7 @@ class Chat {
             });
         } else {
             if (onTop === true) {
-                sessions = [
+                sessions  = [
                     ...self.sessions.slice(index, index + 1),
                     ...self.sessions.slice(0, index),
                     ...self.sessions.slice(index + 1, self.sessions.length)
@@ -432,7 +432,7 @@ class Chat {
         var from = message.FromUserName;
         var user = await contacts.getUser(from);
         var list = self.messages.get(from);
-        var sessions = self.sessions;
+        var sessions  = self.sessions ;
         var stickyed = [];
         var normaled = [];
         /* eslint-enable */
@@ -448,7 +448,7 @@ class Chat {
             user = contacts.memberList.find(e => e.UserName === from);
 
             message.isme = true;
-            message.HeadImgUrl = session.user.User.HeadImgUrl;
+            message.HeadImgUrl = sessions.user.User.HeadImgUrl;
             message.FromUserName = message.ToUserName;
             message.ToUserName = user.UserName;
         }
@@ -459,14 +459,14 @@ class Chat {
             let index = self.sessions.findIndex(e => e.UserName === from);
 
             if (index !== -1) {
-                sessions = [
+                sessions  = [
                     ...self.sessions.slice(index, index + 1),
                     ...self.sessions.slice(0, index),
                     ...self.sessions.slice(index + 1, self.sessions.length)
                 ];
             } else {
                 // When user has removed should add to chat set
-                sessions = [user, ...self.sessions];
+                sessions  = [user, ...self.sessions ];
             }
 
             // Drop the duplicate message
@@ -492,7 +492,7 @@ class Chat {
             }
         } else {
             // User is not in chat set
-            sessions = [user, ...self.sessions];
+            sessions  = [user, ...self.sessions ];
             list = {
                 data: [message],
                 unread: 0,
@@ -505,7 +505,7 @@ class Chat {
             list.unread = list.data.length;
         }
 
-        sessions = sessions.map(e => {
+        sessions  = sessions.map(e => {
             // Catch the contact update, eg: MsgType = 10000, chat room name has changed
             var user = contacts.memberList.find(user => user.UserName === e.UserName);
 
@@ -551,7 +551,7 @@ class Chat {
                 Content: message.content,
                 MsgType: 1,
                 CreateTime: +new Date() / 1000,
-                HeadImgUrl: session.user.User.HeadImgUrl,
+                HeadImgUrl: sessions.user.User.HeadImgUrl,
             },
         };
 
@@ -587,7 +587,7 @@ class Chat {
                 MsgId: response.data.MsgID,
                 MsgType: 47,
                 CreateTime: +new Date() / 1000,
-                HeadImgUrl: session.user.User.HeadImgUrl,
+                HeadImgUrl: sessions.user.User.HeadImgUrl,
 
                 emoji: {
                     // Update the image src
@@ -629,7 +629,7 @@ class Chat {
                 isme: true,
                 CreateTime: +new Date() / 1000,
                 MsgId: response.data.MsgID,
-                HeadImgUrl: session.user.User.HeadImgUrl,
+                HeadImgUrl: sessions.user.User.HeadImgUrl,
 
                 MsgType: 3,
                 image: {
@@ -690,7 +690,7 @@ class Chat {
                 CreateTime: +new Date() / 1000,
                 MsgId: response.data.MsgID,
                 MsgType: 49 + 6,
-                HeadImgUrl: session.user.User.HeadImgUrl,
+                HeadImgUrl: sessions.user.User.HeadImgUrl,
             }),
         };
 
@@ -727,7 +727,7 @@ class Chat {
                 isme: true,
                 CreateTime: +new Date() / 1000,
                 MsgId: response.data.MsgID,
-                HeadImgUrl: session.user.User.HeadImgUrl,
+                HeadImgUrl: sessions.user.User.HeadImgUrl,
                 MsgType: 43,
 
                 video: {
@@ -945,7 +945,7 @@ class Chat {
         var item = {
             isme: true,
             CreateTime: +new Date() / 1000,
-            HeadImgUrl: session.user.User.HeadImgUrl,
+            HeadImgUrl: sessions.user.User.HeadImgUrl,
             MsgType: type,
             uploading: true,
             uploaderid,

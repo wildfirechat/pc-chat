@@ -27,8 +27,8 @@ import helper from 'utils/helper';
     showRedIcon: stores.settings.showRedIcon,
     setShowRedIcon: stores.settings.setShowRedIcon,
 
-    user: stores.session.user,
-    logout: stores.session.logout,
+    user: stores.sessions.user,
+    logout: stores.sessions.logout,
 }))
 @observer
 export default class Settings extends Component {

@@ -14,7 +14,7 @@ import stores from './js/stores';
 class App extends Component {
     async componentWillMount() {
         if (window.navigator.onLine) {
-            // await stores.session.hasLogin();
+            // await stores.sessions.hasLogin();
             // await stores.settings.init();
             // await stores.search.getHistory();
             await stores.wfc.init();
@@ -113,11 +113,11 @@ class App extends Component {
 
         // When the system resume reconnet to WeChat
         ipcRenderer.on('os-resume', async() => {
-            var session = stores.session;
+            var sessions = stores.sessions ;
 
             console.log('os-resume' + new Date());
             setTimeout(() => {
-                session.checkTimeout(true);
+                sessions.checkTimeout(true);
             }, 3000);
         });
 
