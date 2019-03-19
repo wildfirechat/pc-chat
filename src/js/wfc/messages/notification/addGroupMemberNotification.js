@@ -21,7 +21,7 @@ export default class AddGroupMemberNotification extends NotificationMessageConte
         }
 
         let membersStr = '';
-        kickedMembers.forEach(m => {
+        this.invitees.forEach(m => {
             let u = wfc.getUserInfo(m);
             membersStr += ' ' + u.displayName;
         });

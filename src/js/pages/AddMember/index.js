@@ -18,19 +18,21 @@ import wfc from '../../wfc/wfc'
             return addmember.list;
         }
 
+        let groupMemberIds = wfc.getGroupMemberIds(stores.chat.target.target);
+        console.log('groupMemberIds', groupMemberIds);
+        let myUid = wfc.getUserId();
         return contacts.memberList.filter(
-            e => !helper.isChatRoom(e.UserName)
-                && !helper.isFileHelper(e)
-                && e.UserName !== stores.session.user.User.UserName
+            e => groupMemberIds.indexOf(e.uid) < 0
+                || e.uid === myUid
         );
     },
     addMember: async (userids) => {
-        var roomid = stores.chat.user.UserName;
+        var groupId = stores.chat.conversation.target;
 
-        return stores.addmember.addMember(roomid, userids);
+        return stores.addmember.addMember(groupId, userids);
     },
     getUser: (userid) => {
-        return stores.contacts.memberList.find(e => e.UserName === userid);
+        return stores.contacts.memberList.find(e => e.uid === userid);
     },
     search: stores.addmember.search,
     close: () => {
@@ -99,7 +101,7 @@ export default class AddMember extends Component {
                                     <img
                                         key={index}
                                         onClick={ev => this.refs.users.removeSelected(e)}
-                                        src={user.HeadImgUrl} />
+                                        src={user.portrait} />
                                 );
                             })
                         }

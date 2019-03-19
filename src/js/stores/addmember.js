@@ -7,6 +7,7 @@ import contacts from './contacts';
 import session from './sessions';
 import storage from 'utils/storage';
 import helper from 'utils/helper';
+import wfc from '../wfc/wfc'
 
 class AddMember {
     @observable show = false;
@@ -46,19 +47,11 @@ class AddMember {
         self.list.replace([]);
     }
 
-    @action async addMember(roomId, userids) {
-        var auth = await storage.get('auth');
-        var response = await axios.post('/cgi-bin/mmwebwx-bin/webwxupdatechatroom?fun=addmember', {
-            BaseRequest: {
-                Sid: auth.wxsid,
-                Uin: auth.wxuin,
-                Skey: auth.skey,
-            },
-            ChatRoomName: roomId,
-            AddMemberList: userids.join(','),
-        });
-
-        return +response.data.BaseResponse.Ret === 0;
+    @action async addMember(groupId, userids) {
+        // TODO
+        wfc.addGroupMembers(groupId, userids, [0], null, null, (errorCode) => {
+            console.log('add group member failed', errorCode);
+        })
     }
 }
 
