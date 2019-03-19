@@ -17,6 +17,7 @@ import wfc from '../../../wfc/wfc'
 import UserInfo from '../../../wfc/model/userInfo';
 import GroupInfo from '../../../wfc/model/groupInfo';
 import NotificationMessageContent from '../../../wfc/messages/notification/notificationMessageContent';
+import MessageStatus from '../../../wfc/messages/messageStatus';
 
 @inject(stores => ({
     sticky: stores.session.sticky,
@@ -92,7 +93,7 @@ import NotificationMessageContent from '../../../wfc/messages/notification/notif
 @observer
 export default class ChatContent extends Component {
     getMessageContent(message) {
-        var uploading = message.uploading;
+        var uploading = message.status === MessageStatus.Sending;
 
         if (message.messageContent instanceof UnsupportMessageContent) {
             let unsupportMessageContent = message.messageContent;
@@ -124,7 +125,7 @@ export default class ChatContent extends Component {
                 if (uploading) {
                     return `
                         <div>
-                            <img class="open-image unload" data-id="${message.MsgId}" src="${image.src}" data-fallback="${image.fallback}" />
+                            <img class="open-image unload" data-id="${message.messageId}" src="${image.localPath}" data-fallback="${image.fallback}" />
                             <i class="icon-ion-android-arrow-up"></i>
                         </div>
                     `;
@@ -244,14 +245,15 @@ export default class ChatContent extends Component {
                     </div>
                 `;
 
-            case 49 + 6:
+            case MessageContentType.File:
                 // File message
                 let file = message.messageContent;
+                // TODO check downloaded or not?
                 let download = message.download;
 
                 /* eslint-disable */
                 return `
-                    <div class="${classes.file}" data-id="${message.MsgId}">
+                    <div class="${classes.file}" data-id="${message.messageId}">
                         <img src="assets/images/filetypes/${helper.getFiletypeIcon(file.extension)}" class="disabledDrag" />
 
                         <div>
@@ -304,7 +306,7 @@ export default class ChatContent extends Component {
             return (
                 <div className={clazz('unread', classes.message, {
                     // File is uploading
-                    [classes.uploading]: message.uploading === true,
+                    [classes.uploading]: message.status === MessageStatus.Sending,
 
                     [classes.isme]: message.direction === 0,
                     //[classes.isText]: type === 1 && !message.location,
