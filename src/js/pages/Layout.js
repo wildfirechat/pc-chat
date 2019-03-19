@@ -33,7 +33,7 @@ import EventType from '../wfc/wfcEvent';
     process: stores.chat.process,
     reconnect: stores.session.checkTimeout,
     close: () => stores.snackbar.toggle(false),
-    canidrag: () => !!stores.chat.user && !stores.batchsend.show,
+    canidrag: () => !!stores.chat.conversation && !stores.batchsend.show,
     connectionStatus: stores.wfc.connectionStatus,
 }))
 @observer
@@ -131,6 +131,7 @@ export default class Layout extends Component {
         };
 
         window.ondrop = e => {
+            console.log('on drop');
             var files = e.dataTransfer.files;
             e.preventDefault();
             e.stopPropagation();

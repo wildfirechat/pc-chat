@@ -14,6 +14,10 @@ import wfc from '../wfc/wfc'
 import Message from '../wfc/messages/message';
 import EventType from '../wfc/wfcEvent';
 import ConversationType from '../wfc/model/conversationType';
+import MessageContentMediaType from '../wfc/messages/messageContentMediaType';
+import ImageMessageContent from '../wfc/messages/imageMessageContent';
+import VideoMessageContent from '../wfc/messages/videoMessageContent';
+import FileMessageContent from '../wfc/messages/fileMessageContent';
 
 async function resolveMessage(message) {
     var auth = await storage.get('auth');
@@ -787,6 +791,58 @@ class Chat {
             return false;
         }
 
+        console.log('------------', xxx);
+        console.log('----------- file', file);
+
+        let msg = new Message();
+        msg.conversation = self.conversation;
+
+        var mediaType = helper.getMediaType(file.name.split('.').slice(-1).pop());
+        var type = {
+            'pic': MessageContentMediaType.Image,
+            'video': MessageContentMediaType.Video,
+            'doc': MessageContentMediaType.File,
+        }[mediaType];
+
+        var messageContent;
+        switch (mediaType) {
+            case MessageContentMediaType.Image:
+                messageContent = new ImageMessageContent(file);
+                break;
+            case MessageContentMediaType.Video:
+                messageContent = new VideoMessageContent(file);
+                break;
+            case MessageContentMediaType.File:
+                messageContent = new FileMessageContent(file);
+                break;
+            default:
+                break;
+        }
+        msg.messageContent = messageContent;
+        var m;
+        wfc.sendMessage(msg,
+            function (messageId, timestamp) {
+                console.log('-----------prepared');
+                m = wfc.getMessageById(messageId);
+                self.messageList.push(m);
+            },
+            (remoteUrl) => {
+                console.log('-------------uploaded', remoteUrl);
+            },
+            function (messageUid, timestamp) {
+                console.log('----------- success');
+                m.messageUid = messageUid;
+                m.status = 1;
+                m.timestamp = timestamp;
+
+            },
+            function (errorCode) {
+                console.log('----------- failed');
+                console.log('send message failed', errorCode);
+            }
+        );
+        return true;
+
         var { mediaId, signature, type, uploaderid } = await self.upload(file, user);
         var res = await self.sendMessage(user, {
             type,
@@ -856,104 +912,27 @@ class Chat {
     }
 
     @action async upload(file, user = self.user) {
-        var id = (+new Date() * 1000) + Math.random().toString().substr(2, 4);
-        var md5 = await helper.md5(file);
-        var auth = await storage.get('auth');
-        var ticket = await helper.getCookie('webwx_data_ticket');
-        var server = axios.defaults.baseURL.replace(/https:\/\//, 'https://file.') + 'cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json';
         var mediaType = helper.getMediaType(file.name.split('.').slice(-1).pop());
         var type = {
-            'pic': 3,
-            'video': 43,
-            'doc': 49 + 6,
+            'pic': MessageContentMediaType.Image,
+            'video': MessageContentMediaType.Video,
+            'doc': MessageContentMediaType.File,
         }[mediaType];
-        var chunks = Math.ceil(file.size / 524288);
-        var payment = {};
-        var process = async (index) => {
-            let formdata = new window.FormData();
-            let start = index * 524288;
-            let end = start + 524288;
 
-            formdata.append('id', `WU_FILE_${self.upload.counter}`);
-            formdata.append('name', file.name);
-            formdata.append('type', file.type);
-            formdata.append('lastModifieDate', new Date(file.lastModified).toString());
-            formdata.append('size', file.size);
-            formdata.append('mediatype', mediaType);
-            formdata.append('chunks', chunks);
-            formdata.append('chunk', index);
-            formdata.append('uploadmediarequest', JSON.stringify(Object.assign({
-                BaseRequest: {
-                    Sid: auth.wxsid,
-                    Uin: auth.wxuin,
-                    Skey: auth.skey,
-                },
-                ClientMediaId: id,
-                DataLen: file.size,
-                FromUserName: session.user.User.UserName,
-                ToUserName: user.UserName,
-                MediaType: 4,
-                StartPos: 0,
-                TotalLen: file.size,
-                FileMd5: md5,
-            }, file.size > 1048576 * 10 ? {
-                AESKey: payment.AESKey,
-                Signature: payment.Signature,
-            } : {})));
-            formdata.append('webwx_data_ticket', ticket);
-            formdata.append('pass_ticket', auth.passTicket);
-            formdata.append('filename', file.slice(start, end <= file.size ? end : file.size));
-
-            var response = await axios.post(server, formdata);
-            return response;
-        };
-
-        // Increase the counter
-        self.upload.counter = self.upload.counter ? self.upload.counter + 1 : 0;
-
-        type = file.name.toLowerCase().endsWith('.gif') ? 47 : type;
+        // type = file.name.toLowerCase().endsWith('.gif') ? MessageContentMediaType.Sticker: type;
         var uploaderid = self.addUploadPreview(file, type, user);
 
-        if (file.size > 1048576 * 10) {
-            let response = await axios.post('/cgi-bin/mmwebwx-bin/webwxcheckupload', {
-                BaseRequest: {
-                    Sid: auth.wxsid,
-                    Uin: auth.wxuin,
-                    Skey: auth.skey,
-                },
-                FileSize: file.size,
-                FileName: file.name,
-                FileMd5: md5,
-                FileType: 7,
-                FromUserName: session.user.User.UserName,
-                ToUserName: user.UserName,
+        await wfc.uploadMedia(file, type,
+            (remoteUrl) => {
+
+            },
+            (errorCode) => {
+
+            },
+            (current, total) => {
+
             });
-            let data = response.data;
 
-            if (data.BaseResponse.Ret === 0) {
-                payment.AESKey = data.AESKey;
-                payment.Signature = data.Signature;
-                payment.MediaId = data.MediaId;
-            }
-        }
-
-        var response;
-
-        for (let i = 0; !payment.MediaId && i < chunks; ++i) {
-            response = await process(i);
-        }
-
-        if (!response
-            || response.data.BaseResponse.Ret === 0) {
-            return {
-                type,
-                mediaId: payment.MediaId || response.data.MediaId,
-                signature: payment.Signature,
-                uploaderid,
-            };
-        }
-
-        return false;
     }
 
     @action addUploadPreview(file, type, user = self.user) {

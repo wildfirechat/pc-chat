@@ -12,6 +12,7 @@ import GroupInfo from './model/groupInfo';
 import GroupMember from './model/groupMember';
 import { UserSettingScope } from './userSettingScope';
 import CreateGroupNotification from './messages/notification/createGroupNotification';
+import MessageContentMediaType from './messages/messageContentMediaType';
 
 // 其实就是imclient，后续可能需要改下名字
 class WfcManager {
@@ -72,7 +73,7 @@ class WfcManager {
     }
 
     setServerAddress(host, port) {
-        proto.setServerAddress(host, port);
+        // proto.setServerAddress(host, port);
     }
 
     async connect(userId, token) {
@@ -334,6 +335,26 @@ class WfcManager {
         self.eventEmitter.emit(EventType.SendMessage, message);
     }
 
+    async uploadMedia(data, mediaType, successCB, failCB, progressCB) {
+        // var data = file.slile(0, file.size);
+        proto.uploadMedia(data, mediaType,
+            (remoteUrl) => {
+                if (successCB) {
+                    successCB(remoteUrl);
+                }
+            },
+            (errorCode) => {
+                if (failCB) {
+                    failCB(errorCode);
+                }
+            },
+            (current, total) => {
+                if (progressCB) {
+                    progressCB(current, total);
+                }
+            });
+    }
+
     test() {
 
         // let u = proto.getUserInfo('uiuJuJcc', true)
@@ -359,6 +380,16 @@ class WfcManager {
         console.log('localStorage', localStorage.getItem('test'));
 
         console.log('atob', btoa('hello world'));
+        self.uploadMedia('hello world', MessageContentMediaType.Image,
+            (remoteUrl) => {
+                console.log('----------------upload success', remoteUrl);
+            },
+            (errorCode) => {
+                console.log('-------------upload error', errorCode);
+            },
+            (current, total) => {
+
+            });
         console.log('---------------test end----------------------');
     }
 }
