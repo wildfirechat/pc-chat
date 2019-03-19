@@ -13,6 +13,7 @@ import GroupMember from './model/groupMember';
 import { UserSettingScope } from './userSettingScope';
 import CreateGroupNotification from './messages/notification/createGroupNotification';
 import MessageContentMediaType from './messages/messageContentMediaType';
+import AddGroupMemberNotification from './messages/notification/addGroupMemberNotification';
 
 // 其实就是imclient，后续可能需要改下名字
 class WfcManager {
@@ -163,6 +164,34 @@ class WfcManager {
         } else {
             return Object.assign(new GroupInfo(), JSON.parse(groupInfoStr));
         }
+    }
+
+    addGroupMembers(groupId, memberIds, notifyLines, notifyMessageContent, successCB, failCB) {
+        if (!notifyMessageContent) {
+            notifyMessageContent = new AddGroupMemberNotification(this.getUserId(), memberIds);
+        }
+        let payload = notifyMessageContent.encode();
+        let notifyContentStr = JSON.stringify(payload);
+        proto.addMembers(memberIds, groupId, notifyLines, notifyContentStr,
+            () => {
+                if (successCB) {
+                    successCB();
+                }
+            },
+            (errorCode) => {
+                if (failCB) {
+                    failCB(errorCode);
+                }
+            });
+    }
+
+    getGroupMemberIds(groupId, fresh = false) {
+        let groupMembers = this.getGroupMembers(groupId, fresh);
+        var groupMemberIds = [];
+        groupMembers.forEach(e => {
+            groupMemberIds.push(e.memberId);
+        });
+        return groupMemberIds;
     }
 
     getGroupMembers(groupId, fresh = false) {
