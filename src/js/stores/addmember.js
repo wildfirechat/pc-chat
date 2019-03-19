@@ -4,7 +4,7 @@ import axios from 'axios';
 import pinyin from 'han';
 
 import contacts from './contacts';
-import session from './session';
+import session from './sessions';
 import storage from 'utils/storage';
 import helper from 'utils/helper';
 

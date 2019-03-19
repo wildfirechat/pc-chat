@@ -132,7 +132,11 @@ export default class ChatContent extends Component {
                 }
                 // return `<img class="open-image unload" data-id="${message.messageId}" src="${image.remotePath}" data-fallback="${image.fallback}" />`;
                 // TODO: 图片数据，需要base64编码
-                return `<img class="open-image unload" data-id="${message.messageId}" src="data:image/jpeg;base64, ${image.thumbnail}" data-fallback="${image.fallback}" />`;
+                if (image.localPath) {
+                    return `<img class="open-image unload" data-id="${message.messageId}" src="${image.localPath}" data-fallback="${image.fallback}" />`;
+                } else {
+                    return `<img class="open-image unload" data-id="${message.messageId}" src="data:image/jpeg;base64, ${image.thumbnail}" data-fallback="${image.fallback}" />`;
+                }
             case MessageContentType.Voice:
                 /* eslint-disable */
                 // Voice

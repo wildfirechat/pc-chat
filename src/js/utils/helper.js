@@ -3,7 +3,7 @@ import { remote, ipcRenderer } from 'electron';
 import axios from 'axios';
 import MD5 from 'browser-md5-file';
 
-import session from '../stores/session';
+import session from '../stores/sessions';
 
 const CHATROOM_NOTIFY_CLOSE = 0;
 const CONTACTFLAG_NOTIFYCLOSECONTACT = 512;

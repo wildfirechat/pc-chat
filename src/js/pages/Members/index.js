@@ -16,22 +16,6 @@ import wfc from '../../wfc/wfc'
     searching: stores.members.query,
     filtered: stores.members.filtered,
     showUserinfo: async (user) => {
-        // // TODO
-        // var me = stores.session.user.User;
-        // var caniremove = helper.isChatRoomOwner(stores.members.user);
-
-        // if (user.uid === UserName) {
-        //     user = me;
-        // } else {
-        //     stores.contacts.memberList.find(e => {
-        //         // Try to find contact in contacts
-        //         if (e.UserName === user.UserName) {
-        //             return (user = e);
-        //         }
-        //     });
-        // }
-
-        // stores.userinfo.toggle(true, user, caniremove);
         var caniremove = false;
         if (stores.chat.target instanceof GroupInfo) {
             let groupInfo = stores.chat.target;

@@ -7,7 +7,7 @@ import storage from 'utils/storage';
 import helper from 'utils/helper';
 import contacts from './contacts';
 import settings from './settings';
-import session from './session';
+import session from './sessions';
 import members from './members';
 import snackbar from './snackbar';
 import wfc from '../wfc/wfc'

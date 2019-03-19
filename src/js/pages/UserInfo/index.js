@@ -15,6 +15,7 @@ import KickoffGroupMemberNotification from '../../wfc/messages/notification/kick
 
 @inject(stores => ({
     chatTo: (conversation) => {
+        stores.members.show = false;
         stores.chat.chatToN(conversation);
     },
     pallet: stores.userinfo.pallet,
