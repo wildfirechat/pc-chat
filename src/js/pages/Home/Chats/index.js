@@ -23,19 +23,19 @@ moment.updateLocale('en', {
 });
 
 @inject(stores => ({
-    chats: stores.session.conversations,
+    chats: stores.sessions.conversations,
     chatTo: stores.chat.chatToN,
     conversation: stores.chat.conversation,
     selected: stores.chat.user,
     messages: stores.chat.messages,
     markedRead: stores.chat.markedRead,
-    sticky: stores.session.sticky,
-    removeChat: stores.session.removeConversation,
-    loading: stores.session.loading,
+    sticky: stores.sessions.sticky,
+    removeChat: stores.sessions.removeConversation,
+    loading: stores.sessions.loading,
     searching: stores.search.searching,
     event: stores.wfc.eventEmitter,
-    loadConversations: stores.session.loadConversations,
-    setOnReceiveMessageListener: stores.session.setOnReceiveMessageListener,
+    loadConversations: stores.sessions.loadConversations,
+    setOnReceiveMessageListener: stores.sessions.setOnReceiveMessageListener,
 }))
 @observer
 export default class Chats extends Component {

@@ -15,7 +15,7 @@ import MessageInput from 'components/MessageInput';
     filtered: stores.batchsend.filtered,
     sendMessage: stores.chat.sendMessage,
     showMessage: stores.snackbar.showMessage,
-    me: stores.session.user,
+    me: stores.sessions.user,
     confirmSendImage: async(image) => {
         if (!stores.settings.confirmImagePaste) {
             return true;

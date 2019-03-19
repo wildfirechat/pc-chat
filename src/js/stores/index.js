@@ -1,5 +1,5 @@
 
-import session from './sessions';
+import sessions  from './sessions';
 import chat from './chat';
 import addfriend from './addfriend';
 import addmember from './addmember';
@@ -16,7 +16,7 @@ import wfc from '../wfc/wfc'
 import confirmImagePaste from './confirmImagePaste';
 
 const stores = {
-    session,
+    sessions ,
     chat,
     addfriend,
     addmember,

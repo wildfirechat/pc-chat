@@ -35,7 +35,6 @@ class WfcManager {
 
     onReceiveMessage(messages, hasMore) {
         var msgs = JSON.parse(messages);
-        console.log(messages);
         msgs.map(m => {
             let msg = Message.protoMessageToMessage(m);
             self.onReceiveMessageListeners.forEach(listener => {

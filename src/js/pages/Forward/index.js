@@ -16,7 +16,7 @@ import UserList from 'components/UserList';
             return forward.list;
         }
 
-        return contacts.memberList.filter(e => e.UserName !== stores.session.user.User.UserName);
+        return contacts.memberList.filter(e => e.UserName !== stores.sessions.user.User.UserName);
     },
     getUser: (userid) => {
         return stores.contacts.memberList.find(e => e.UserName === userid);

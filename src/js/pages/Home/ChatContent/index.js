@@ -20,11 +20,11 @@ import NotificationMessageContent from '../../../wfc/messages/notification/notif
 import MessageStatus from '../../../wfc/messages/messageStatus';
 
 @inject(stores => ({
-    sticky: stores.session.sticky,
+    sticky: stores.sessions.sticky,
     empty: stores.chat.empty,
     removeChat: stores.chat.removeChat,
     messages: stores.chat.messageList,
-    loading: stores.session.loading,
+    loading: stores.sessions.loading,
     loadOldMessages: stores.chat.loadOldMessages,
     conversation: stores.chat.conversation,
     target: stores.chat.target,

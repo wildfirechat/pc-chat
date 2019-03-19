@@ -5,9 +5,9 @@ import { observer, inject } from 'mobx-react';
 import classes from './style.css';
 
 @inject(stores => ({
-    avatar: stores.session.avatar,
-    code: stores.session.code,
-    getCode: stores.session.getCode,
+    avatar: stores.sessions.avatar,
+    code: stores.sessions.code,
+    getCode: stores.sessions.getCode,
 }))
 @observer
 export default class Login extends Component {

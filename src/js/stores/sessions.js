@@ -40,7 +40,7 @@ async function updateMenus({ conversations = [], contacts = [] }) {
         cookies: await helper.getCookie(),
     });
 }
-class Sessions {
+class sessions  {
     @observable loading = true;
     @observable auth;
     @observable code;
@@ -128,7 +128,7 @@ class Sessions {
                 delete window.code;
                 delete window.userAvatar;
 
-                // Login success, create session
+                // Login success, create sessions
                 let response = await axios.get(authAddress, {
                     params: {
                         fun: 'new',
@@ -396,5 +396,5 @@ class Sessions {
     }
 }
 
-const self = new Sessions();
+const self = new sessions ();
 export default self;

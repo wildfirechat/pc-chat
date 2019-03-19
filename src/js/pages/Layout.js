@@ -25,13 +25,13 @@ import { observable, action } from 'mobx';
 import EventType from '../wfc/wfcEvent';
 
 @inject(stores => ({
-    isLogin: () => !!stores.session.auth,
-    loading: stores.session.loading,
+    isLogin: () => !!stores.sessions.auth,
+    loading: stores.sessions.loading,
     getContacts: stores.contacts.getContacts,
     message: stores.snackbar.text,
     show: stores.snackbar.show,
     process: stores.chat.process,
-    reconnect: stores.session.checkTimeout,
+    reconnect: stores.sessions.checkTimeout,
     close: () => stores.snackbar.toggle(false),
     canidrag: () => !!stores.chat.conversation && !stores.batchsend.show,
     connectionStatus: stores.wfc.connectionStatus,

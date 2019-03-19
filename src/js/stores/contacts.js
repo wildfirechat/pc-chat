@@ -4,7 +4,7 @@ import { ipcRenderer } from 'electron';
 import axios from 'axios';
 import pinyin from 'han';
 
-import session from './sessions';
+import sessions from './sessions';
 import chat from './chat';
 import storage from 'utils/storage';
 import helper from 'utils/helper';

@@ -10,7 +10,7 @@ import Chats from './Chats';
 import ChatContent from './ChatContent';
 
 @inject(stores => ({
-    loading: stores.session.loading,
+    loading: stores.sessions.loading,
     showConversation: stores.chat.showConversation,
     toggleConversation: stores.chat.toggleConversation,
     showRedIcon: stores.settings.showRedIcon,

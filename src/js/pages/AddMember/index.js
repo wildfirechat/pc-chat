@@ -19,7 +19,6 @@ import wfc from '../../wfc/wfc'
         }
 
         let groupMemberIds = wfc.getGroupMemberIds(stores.chat.target.target);
-        console.log('groupMemberIds', groupMemberIds);
         let myUid = wfc.getUserId();
         return contacts.memberList.filter(
             e => groupMemberIds.indexOf(e.uid) < 0
