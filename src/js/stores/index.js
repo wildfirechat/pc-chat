@@ -1,5 +1,5 @@
 
-import session from './session';
+import session from './sessions';
 import chat from './chat';
 import addfriend from './addfriend';
 import addmember from './addmember';

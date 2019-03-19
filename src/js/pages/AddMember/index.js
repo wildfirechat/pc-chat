@@ -6,6 +6,7 @@ import { inject, observer } from 'mobx-react';
 import classes from './style.css';
 import UserList from 'components/UserList';
 import helper from 'utils/helper';
+import wfc from '../../wfc/wfc'
 
 @inject(stores => ({
     show: stores.addmember.show,
@@ -23,7 +24,7 @@ import helper from 'utils/helper';
                 && e.UserName !== stores.session.user.User.UserName
         );
     },
-    addMember: async(userids) => {
+    addMember: async (userids) => {
         var roomid = stores.chat.user.UserName;
 
         return stores.addmember.addMember(roomid, userids);

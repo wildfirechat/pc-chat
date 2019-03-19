@@ -40,7 +40,7 @@ async function updateMenus({ conversations = [], contacts = [] }) {
         cookies: await helper.getCookie(),
     });
 }
-class Session {
+class Sessions {
     @observable loading = true;
     @observable auth;
     @observable code;
@@ -396,5 +396,5 @@ class Session {
     }
 }
 
-const self = new Session();
+const self = new Sessions();
 export default self;

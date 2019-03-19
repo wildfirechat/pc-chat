@@ -2,7 +2,7 @@
 import { observable, action } from 'mobx';
 import axios from 'axios';
 
-import session from './session';
+import session from './sessions';
 import helper from 'utils/helper';
 import storage from 'utils/storage';
 

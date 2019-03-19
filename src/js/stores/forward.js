@@ -3,7 +3,7 @@ import { observable, action } from 'mobx';
 import pinyin from 'han';
 
 import contacts from './contacts';
-import session from './session';
+import session from './sessions';
 import chat from './chat';
 
 class Forward {
