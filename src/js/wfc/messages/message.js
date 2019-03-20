@@ -47,6 +47,10 @@ export default class Message {
 
     static protoMessageToMessage(obj) {
         let msg = Object.assign(new Message(), obj);
+        // big integer to number
+        msg.messageId = Number(msg.messageId);
+        msg.messageUid = Number(msg.messageUid);
+        msg.timestamp = Number(msg.timestamp);
         msg.conversation = new Conversation(obj.conversation.conversationType, obj.conversation.target, obj.conversation.line);
         let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
         if (contentClazz) {

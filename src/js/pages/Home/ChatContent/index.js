@@ -103,7 +103,7 @@ export default class ChatContent extends Component {
         switch (message.content.type) {
             case MessageContentType.Unknown:
                 let unknownMessageContent = message.messageContent;
-                console.log('unknown', unknownMessageContent.digest());
+                console.log('unknown', unknownMessageContent.digest(), message);
                 return emojiParse(unknownMessageContent.digest());
             case MessageContentType.Text:
                 if (message.location) {
@@ -233,9 +233,15 @@ export default class ChatContent extends Component {
                     `;
                 }
 
-                return `
-                    <video preload="metadata" poster="data:image/jpeg;base64, ${video.thumbnail}" controls src="${video.remotePath}" />
-                `;
+                if (video.localPath) {
+                    return `
+                        <video preload="metadata" controls src="${video.localPath}" />
+                    `;
+                } else {
+                    return `
+                        <video preload="metadata" poster="data:image/jpeg;base64, ${video.thumbnail}" controls src="${video.remotePath}" />
+                    `;
+                }
 
             case 49 + 2000:
                 // Money transfer
@@ -292,6 +298,7 @@ export default class ChatContent extends Component {
             var message = e;
             var user = wfc.getUserInfo(message.from);
             let type = message.messageContent.type;
+            console.log('------------- timestamp', message.messageId, message.timestamp);
 
             if (message.messageContent instanceof NotificationMessageContent) {
                 return (

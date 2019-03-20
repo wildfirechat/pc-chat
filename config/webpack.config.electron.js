@@ -23,6 +23,9 @@ export default {
     plugins: [
         // Minify the output
         new MinifyPlugin(),
+        // new webpack.DefinePlugin({
+        //     'process.env.FLUENTFFMPEG_COV': false
+        // })
     ],
 
     // https://github.com/chentsulin/webpack-target-electron-renderer#how-this-module-works

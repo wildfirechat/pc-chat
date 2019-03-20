@@ -112,6 +112,11 @@ export default {
         libraryTarget: 'commonjs2'
     },
 
+    externals: {
+        sharp: 'sharp',
+        ThumbnailGenerator: 'video-thumbnail-generator',
+    },
+
     resolve: {
         extensions: ['.js', '.jsx', '.json'],
         alias: {
