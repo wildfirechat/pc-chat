@@ -18,6 +18,7 @@ import MessageContentMediaType from '../wfc/messages/messageContentMediaType';
 import ImageMessageContent from '../wfc/messages/imageMessageContent';
 import VideoMessageContent from '../wfc/messages/videoMessageContent';
 import FileMessageContent from '../wfc/messages/fileMessageContent';
+import MessageStatus from '../wfc/messages/messageStatus';
 
 async function resolveMessage(message) {
     var auth = await storage.get('auth');
@@ -219,7 +220,7 @@ async function updateMenus({ conversations = [], contacts = [] }) {
 }
 
 class Chat {
-    @observable sessions  = [];
+    @observable sessions = [];
     @observable messages = new Map();
     @observable showConversation = true;
 
@@ -363,7 +364,7 @@ class Chat {
     }
 
     @action chatToPrev() {
-        var sessions  = self.sessions ;
+        var sessions = self.sessions;
         var index = self.user ? sessions.findIndex(e => e.UserName === self.user.UserName) : 0;
 
         --index;
@@ -372,11 +373,11 @@ class Chat {
             index = sessions.length - 1;
         }
 
-        self.chatTo(sessions [index]);
+        self.chatTo(sessions[index]);
     }
 
     @action chatToNext() {
-        var sessions  = self.sessions ;
+        var sessions = self.sessions;
         var index = self.user ? sessions.findIndex(e => e.UserName === self.user.UserName) : -1;
 
         ++index;
@@ -385,18 +386,18 @@ class Chat {
             index = 0;
         }
 
-        self.chatTo(sessions [index]);
+        self.chatTo(sessions[index]);
     }
 
     @action chatTo(user, onTop) {
-        var sessions  = self.sessions ;
+        var sessions = self.sessions;
         var stickyed = [];
         var normaled = [];
         var index = self.sessions.findIndex(e => e.UserName === user.UserName);
 
         if (index === -1) {
             // User not in chatset
-            sessions  = [user, ...self.sessions ];
+            sessions = [user, ...self.sessions];
 
             self.messages.set(user.UserName, {
                 data: [],
@@ -404,7 +405,7 @@ class Chat {
             });
         } else {
             if (onTop === true) {
-                sessions  = [
+                sessions = [
                     ...self.sessions.slice(index, index + 1),
                     ...self.sessions.slice(0, index),
                     ...self.sessions.slice(index + 1, self.sessions.length)
@@ -432,7 +433,7 @@ class Chat {
         var from = message.FromUserName;
         var user = await contacts.getUser(from);
         var list = self.messages.get(from);
-        var sessions  = self.sessions ;
+        var sessions = self.sessions;
         var stickyed = [];
         var normaled = [];
         /* eslint-enable */
@@ -459,14 +460,14 @@ class Chat {
             let index = self.sessions.findIndex(e => e.UserName === from);
 
             if (index !== -1) {
-                sessions  = [
+                sessions = [
                     ...self.sessions.slice(index, index + 1),
                     ...self.sessions.slice(0, index),
                     ...self.sessions.slice(index + 1, self.sessions.length)
                 ];
             } else {
                 // When user has removed should add to chat set
-                sessions  = [user, ...self.sessions ];
+                sessions = [user, ...self.sessions];
             }
 
             // Drop the duplicate message
@@ -492,7 +493,7 @@ class Chat {
             }
         } else {
             // User is not in chat set
-            sessions  = [user, ...self.sessions ];
+            sessions = [user, ...self.sessions];
             list = {
                 data: [message],
                 unread: 0,
@@ -505,7 +506,7 @@ class Chat {
             list.unread = list.data.length;
         }
 
-        sessions  = sessions.map(e => {
+        sessions = sessions.map(e => {
             // Catch the contact update, eg: MsgType = 10000, chat room name has changed
             var user = contacts.memberList.find(user => user.UserName === e.UserName);
 
@@ -758,7 +759,7 @@ class Chat {
         msg.conversation = self.conversation;
         msg.messageContent = textMessgeContent;
         var m;
-        wfc.sendMessage(msg,
+        wfc.sendMessage(msg, '',
             function (messageId, timestamp) {
                 m = wfc.getMessageById(messageId);
                 self.messageList.push(m);
@@ -791,21 +792,18 @@ class Chat {
             return false;
         }
 
-        console.log('------------', xxx);
-        console.log('----------- file', file);
-
         let msg = new Message();
         msg.conversation = self.conversation;
 
         var mediaType = helper.getMediaType(file.name.split('.').slice(-1).pop());
-        var type = {
+        var messageContentmediaType = {
             'pic': MessageContentMediaType.Image,
             'video': MessageContentMediaType.Video,
             'doc': MessageContentMediaType.File,
         }[mediaType];
 
         var messageContent;
-        switch (mediaType) {
+        switch (messageContentmediaType) {
             case MessageContentMediaType.Image:
                 messageContent = new ImageMessageContent(file);
                 break;
@@ -820,118 +818,25 @@ class Chat {
         }
         msg.messageContent = messageContent;
         var m;
-        wfc.sendMessage(msg,
+        wfc.sendMessage(msg, '',
             function (messageId, timestamp) {
-                console.log('-----------prepared');
                 m = wfc.getMessageById(messageId);
                 self.messageList.push(m);
             },
-            (remoteUrl) => {
-                console.log('-------------uploaded', remoteUrl);
+            (current, total) => {
+                // progress
             },
             function (messageUid, timestamp) {
-                console.log('----------- success');
                 m.messageUid = messageUid;
-                m.status = 1;
+                m.status = MessageStatus.Sent;
                 m.timestamp = timestamp;
 
             },
             function (errorCode) {
-                console.log('----------- failed');
                 console.log('send message failed', errorCode);
             }
         );
         return true;
-
-        var { mediaId, signature, type, uploaderid } = await self.upload(file, user);
-        var res = await self.sendMessage(user, {
-            type,
-            file: {
-                name: file.name,
-                size: file.size,
-                mediaId,
-                signature,
-                extension: file.name.split('.').slice(-1).pop()
-            },
-        }, false, (to, messages, message) => {
-            // Sent success
-            var list = messages.get(to);
-            var item = list.data.find(e => e.uploaderid === uploaderid);
-
-            switch (type) {
-                case 3:
-                    // When the locale file has been deleted fallback to get from server
-                    item.image.fallback = message.image.src;
-
-                    // Image
-                    Object.assign(item, message, {
-                        uploading: false,
-
-                        // Avoid rerender
-                        image: item.image,
-                    });
-                    break;
-
-                case 47:
-                    // Set the fallback image
-                    item.emoji.fallback = message.emoji.src;
-
-                    // Emoji
-                    Object.assign(item, message, {
-                        uploading: false,
-
-                        emoji: item.emoji,
-                    });
-                    break;
-
-                case 43:
-                    // Video
-                    Object.assign(item, message, {
-                        uploading: false,
-                        video: {
-                            ...message.video,
-                            src: item.video.src,
-                        },
-                    });
-                    break;
-
-                default:
-                    Object.assign(item, message, {
-                        uploading: false,
-                    });
-            }
-
-            return list;
-        });
-
-        if (res === false) {
-            showMessage(`Failed to send ${file.name}.`);
-        }
-
-        return res;
-    }
-
-    @action async upload(file, user = self.user) {
-        var mediaType = helper.getMediaType(file.name.split('.').slice(-1).pop());
-        var type = {
-            'pic': MessageContentMediaType.Image,
-            'video': MessageContentMediaType.Video,
-            'doc': MessageContentMediaType.File,
-        }[mediaType];
-
-        // type = file.name.toLowerCase().endsWith('.gif') ? MessageContentMediaType.Sticker: type;
-        var uploaderid = self.addUploadPreview(file, type, user);
-
-        await wfc.uploadMedia(file, type,
-            (remoteUrl) => {
-
-            },
-            (errorCode) => {
-
-            },
-            (current, total) => {
-
-            });
 
     }
 

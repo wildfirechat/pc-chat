@@ -337,28 +337,33 @@ class WfcManager {
         return Message.protoMessageToMessage(JSON.parse(mStr));
     }
 
-    async sendMessage(message, preparedCB, uploadedCB, successCB, failCB) {
+    // to 用来实现定向消息
+    async sendMessage(message, to, preparedCB, progressCB, successCB, failCB) {
         let strConv = JSON.stringify(message.conversation);
-        message.content = message.messageContent.encode();
+        message.content = await message.messageContent.encode();
         let strCont = JSON.stringify(message.content);
 
-        proto.sendMessage(strConv, strCont, "", 0, function (messageId, timestamp) { //preparedCB
-            if (typeof preparedCB === 'function') {
-                preparedCB(messageId, Number(timestamp));
-            }
-        }, function (uploaded, total) { //progressCB
-            if (typeof uploadedCB === 'function') {
-                uploadedCB(uploaded, total);
-            }
-        }, function (messageUid, timestamp) { //successCB
-            if (typeof successCB === 'function') {
-                successCB(Number(messageUid), timestamp);
-            }
-        }, function (errorCode) { //errorCB
-            if (typeof failCB === 'function') {
-                failCB(errorCode);
-            }
-        });
+        proto.sendMessage(strConv, strCont, to, 0,
+            function (messageId, timestamp) { //preparedCB
+                if (typeof preparedCB === 'function') {
+                    preparedCB(messageId, Number(timestamp));
+                }
+            },
+            function (uploaded, total) { //progressCB
+                if (typeof progressCB === 'function') {
+                    progressCB(uploaded, total);
+                }
+            },
+            function (messageUid, timestamp) { //successCB
+                if (typeof successCB === 'function') {
+                    successCB(Number(messageUid), Number(timestamp));
+                }
+            },
+            function (errorCode) { //errorCB
+                if (typeof failCB === 'function') {
+                    failCB(errorCode);
+                }
+            });
 
         self.eventEmitter.emit(EventType.SendMessage, message);
     }
