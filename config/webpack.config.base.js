@@ -113,7 +113,6 @@ export default {
     },
 
     externals: {
-        sharp: 'sharp',
         ThumbnailGenerator: 'video-thumbnail-generator',
     },
 

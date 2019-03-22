@@ -830,7 +830,6 @@ class Chat {
                 m.messageUid = messageUid;
                 m.status = MessageStatus.Sent;
                 m.timestamp = timestamp;
-
             },
             function (errorCode) {
                 console.log('send message failed', errorCode);
