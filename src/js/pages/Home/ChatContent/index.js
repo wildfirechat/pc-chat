@@ -97,6 +97,7 @@ import BenzAMRRecorder from 'benz-amr-recorder';
 @observer
 export default class ChatContent extends Component {
     amr;
+    latestMessage;
 
     getMessageContent(message) {
         var uploading = message.status === MessageStatus.Sending;
@@ -125,8 +126,6 @@ export default class ChatContent extends Component {
             case MessageContentType.Image:
                 // Image
                 let image = message.messageContent;
-                console.log(image.localPath);
-                console.log(image.remotePath);
 
                 if (uploading) {
                     return `
@@ -141,7 +140,8 @@ export default class ChatContent extends Component {
                 if (image.localPath) {
                     return `<img class="open-image unload" data-id="${message.messageId}" src="${image.localPath}" data-fallback="${image.fallback}" />`;
                 } else {
-                    return `<img class="open-image unload" data-id="${message.messageId}" src="data:image/jpeg;base64, ${image.thumbnail}" data-fallback="${image.fallback}" />`;
+                    //return `<img class="open-image unload" data-id="${message.messageId}" src="data:image/jpeg;base64, ${image.thumbnail}" data-fallback="${image.fallback}" />`;
+                    return `<img class="open-image unload" data-id="${message.messageId}" src="${image.remotePath}" data-fallback="${image.fallback}" />`;
                 }
             case MessageContentType.Voice:
                 /* eslint-disable */
@@ -631,10 +631,15 @@ export default class ChatContent extends Component {
             let newestMessage = this.props.messages[this.props.messages.length - 1];
             let images = viewport.querySelectorAll('img.unload');
 
+            let lastLatestMesage = this.latestMessage;
+            this.latestMessage = newestMessage;
+
             // Scroll to bottom when you sent message
             if (newestMessage && newestMessage.direction === 0) {
-                viewport.scrollTop = viewport.scrollHeight;
-                return;
+                if (!lastLatestMesage || lastLatestMesage.messageId !== newestMessage.messageId) {
+                    viewport.scrollTop = viewport.scrollHeight;
+                    return;
+                }
             }
 
             // Scroll to bottom when you receive message and you alread at the bottom
@@ -660,8 +665,8 @@ export default class ChatContent extends Component {
                 on(e, 'load', ev => {
                     off(e, 'load');
                     e.classList.remove('unload');
-                    viewport.scrollTop = viewport.scrollHeight;
-                    this.scrollTop = viewport.scrollTop;
+                    // viewport.scrollTop = viewport.scrollHeight;
+                    // this.scrollTop = viewport.scrollTop;
                 });
 
                 on(e, 'error', ev => {

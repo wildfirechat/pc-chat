@@ -302,7 +302,7 @@ class Chat {
                 self.hasMore = false;
             }
             self.loading = false;
-            console.log('loading old message', msgs.length);
+            console.log('loading old message', msgs.length, self.messageList.length);
         });
 
     }
