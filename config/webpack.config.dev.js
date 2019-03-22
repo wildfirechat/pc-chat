@@ -30,9 +30,6 @@ export default {
 
         // https://webpack.github.io/docs/hot-module-replacement-with-webpack.html
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.DefinePlugin({
-            'process.env.FLUENTFFMPEG_COV': false
-        })
     ],
 
     // https://github.com/chentsulin/webpack-target-electron-renderer#how-this-module-works

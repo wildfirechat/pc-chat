@@ -298,7 +298,6 @@ export default class ChatContent extends Component {
             var message = e;
             var user = wfc.getUserInfo(message.from);
             let type = message.messageContent.type;
-            console.log('------------- timestamp', message.messageId, message.timestamp);
 
             if (message.messageContent instanceof NotificationMessageContent) {
                 return (
