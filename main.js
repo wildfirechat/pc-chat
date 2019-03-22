@@ -639,6 +639,7 @@ const createMainWindow = () => {
     ipcMain.on('file-download', async(event, args) => {
         var filename = args.filename;
 
+        // TODO bug here
         fs.writeFileSync(filename, args.raw.replace(/^data:image\/png;base64,/, ''), {
             encoding: 'base64',
             // Overwrite file

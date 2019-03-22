@@ -14,7 +14,7 @@ class Settings {
     @observable blockRecall = false;
     @observable rememberConversation = false;
     @observable showRedIcon = true;
-    @observable downloads = '';
+    @observable downloads = '/tmp';
 
     @action setAlwaysOnTop(alwaysOnTop) {
         self.alwaysOnTop = alwaysOnTop;

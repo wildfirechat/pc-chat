@@ -345,6 +345,7 @@ class WfcManager {
 
         proto.sendMessage(strConv, strCont, to, 0,
             function (messageId, timestamp) { //preparedCB
+                message.memberId = messageId;
                 if (typeof preparedCB === 'function') {
                     preparedCB(messageId, Number(timestamp));
                 }
@@ -353,19 +354,28 @@ class WfcManager {
                 if (typeof progressCB === 'function') {
                     progressCB(uploaded, total);
                 }
+                // upload progress update
+                //self.eventEmitter.emit(EventType.MessageStatusUpdate, message);
             },
             function (messageUid, timestamp) { //successCB
+                message.messageUid = messageUid;
                 if (typeof successCB === 'function') {
                     successCB(Number(messageUid), Number(timestamp));
                 }
+                self.eventEmitter.emit(EventType.MessageStatusUpdate, message);
             },
             function (errorCode) { //errorCB
                 if (typeof failCB === 'function') {
                     failCB(errorCode);
                 }
+                self.eventEmitter.emit(EventType.MessageStatusUpdate, message);
             });
 
         self.eventEmitter.emit(EventType.SendMessage, message);
+    }
+
+    async updateMessageContent(messageId, messageContent) {
+        proto.updateMessage(messageId, JSON.stringify(messageContent))
     }
 
     async uploadMedia(data, mediaType, successCB, failCB, progressCB) {
