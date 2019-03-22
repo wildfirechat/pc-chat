@@ -19,6 +19,8 @@ import GroupInfo from '../../../wfc/model/groupInfo';
 import NotificationMessageContent from '../../../wfc/messages/notification/notificationMessageContent';
 import MessageStatus from '../../../wfc/messages/messageStatus';
 import { fs } from 'file-system';
+import BenzAMRRecorder from 'benz-amr-recorder';
+
 
 @inject(stores => ({
     sticky: stores.sessions.sticky,
@@ -94,6 +96,8 @@ import { fs } from 'file-system';
 }))
 @observer
 export default class ChatContent extends Component {
+    amr;
+
     getMessageContent(message) {
         var uploading = message.status === MessageStatus.Sending;
 
@@ -386,21 +390,37 @@ export default class ChatContent extends Component {
         // Play the voice message
         if (target.tagName === 'DIV'
             && target.classList.contains('play-voice')) {
-            console.log('play voice');
             let audio = target.querySelector('audio');
+            let source = audio.querySelector('source');
+            let voiceUrl = source.src;
 
             audio.onplay = () => {
                 console.log('on play');
+                if (!this.amr) {
+                    this.amr = new BenzAMRRecorder();
+                }
+                if (this.amr.isPlaying()) {
+                    this.amr.stop();
+                }
+                this.amr.initWithUrl(voiceUrl).then(() => {
+                    this.amr.play();
+                });
+                this.amr.onEnded(function () {
+                    console.log('on end');
+                    target.classList.remove(classes.playing)
+                })
                 target.classList.add(classes.playing)
             };
-            audio.onended = () => {
-                console.log('onended');
-                target.classList.remove(classes.playing)
-            };
-            audio.onerror = (e) => {
-                console.log('on error', e);
-            }
+            // audio不支持amr，所以下面两个回调不会走
+            // audio.onended = () => {
+            //     console.log('onended');
+            //     target.classList.remove(classes.playing)
+            // };
+            // audio.onerror = (e) => {
+            //     console.log('on error', e);
+            // }
             audio.play();
+
 
             return;
         }
