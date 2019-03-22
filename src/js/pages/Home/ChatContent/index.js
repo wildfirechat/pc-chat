@@ -18,6 +18,7 @@ import UserInfo from '../../../wfc/model/userInfo';
 import GroupInfo from '../../../wfc/model/groupInfo';
 import NotificationMessageContent from '../../../wfc/messages/notification/notificationMessageContent';
 import MessageStatus from '../../../wfc/messages/messageStatus';
+import { fs } from 'file-system';
 
 @inject(stores => ({
     sticky: stores.sessions.sticky,
@@ -47,9 +48,10 @@ import MessageStatus from '../../../wfc/messages/messageStatus';
 
         stores.userinfo.toggle(true, stores.chat.conversation, user, caniremove);
     },
-    getMessage: (messageid) => {
-        var list = stores.chat.messages.get(stores.chat.user.UserName);
-        return list.data.find(e => e.MsgId === messageid);
+    getMessage: (messageId) => {
+        var list = stores.chat.messageList;
+        messageId = Number(messageId);
+        return list.find(e => e.messageId === messageId);
     },
     deleteMessage: (messageid) => {
         stores.chat.deleteMessage(stores.chat.user.UserName, messageid);
@@ -258,8 +260,7 @@ export default class ChatContent extends Component {
             case MessageContentType.File:
                 // File message
                 let file = message.messageContent;
-                // TODO check downloaded or not?
-                let download = message.download;
+                let download = fs.existsSync(file.localPath);
 
                 /* eslint-disable */
                 return `
@@ -274,7 +275,7 @@ export default class ChatContent extends Component {
                         ${
                     uploading
                         ? '<i class="icon-ion-android-arrow-up"></i>'
-                        : (download.done ? '<i class="icon-ion-android-more-horizontal is-file"></i>' : '<i class="icon-ion-android-arrow-down is-download"></i>')
+                        : (download ? '<i class="icon-ion-android-more-horizontal is-file"></i>' : '<i class="icon-ion-android-arrow-down is-download"></i>')
                     }
                     </div>
                 `;
@@ -333,7 +334,7 @@ export default class ChatContent extends Component {
                     [classes.appMessage]: [49 + 2000, 49 + 17, 49 + 6].includes(type),
                     [classes.isTransfer]: type === 49 + 2000,
                     [classes.isLocationSharing]: type === 49 + 17,
-                    [classes.isFile]: type === 49 + 6,
+                    [classes.isFile]: type === MessageContentType.File,
                 })} key={message.messageId}>
                     <div>
                         <Avatar
@@ -438,24 +439,28 @@ export default class ChatContent extends Component {
         if (target.tagName === 'I'
             && target.classList.contains('is-file')) {
             let message = this.props.getMessage(e.target.parentElement.dataset.id);
-            this.showFileAction(message.download);
+            let file = message.messageContent;
+            this.showFileAction(file.localPath);
         }
 
         // Download file
         if (target.tagName === 'I'
             && target.classList.contains('is-download')) {
             let message = this.props.getMessage(e.target.parentElement.dataset.id);
-            let response = await axios.get(message.file.download, { responseType: 'arraybuffer' });
+            let file = message.messageContent;
+            let response = await axios.get(file.remotePath, { responseType: 'arraybuffer' });
             // eslint-disable-next-line
             let base64 = new window.Buffer(response.data, 'binary').toString('base64');
             let filename = ipcRenderer.sendSync(
                 'file-download',
                 {
-                    filename: `${this.props.downloads}/${message.MsgId}_${message.file.name}`,
+                    filename: `${this.props.downloads}/${message.messageId}_${file.name}`,
                     raw: base64,
                 },
             );
 
+            file.localPath = filename;
+            wfc.updateMessageContent(message.messageId, file);
             setTimeout(() => {
                 message.download = {
                     done: true,
@@ -465,18 +470,18 @@ export default class ChatContent extends Component {
         }
     }
 
-    showFileAction(download) {
+    showFileAction(path) {
         var templates = [
             {
                 label: 'Open file',
                 click: () => {
-                    ipcRenderer.send('open-file', download.path);
+                    ipcRenderer.send('open-file', path);
                 }
             },
             {
                 label: 'Open the folder',
                 click: () => {
-                    let dir = download.path.split('/').slice(0, -1).join('/');
+                    let dir = path.split('/').slice(0, -1).join('/');
                     ipcRenderer.send('open-folder', dir);
                 }
             },
