@@ -69,15 +69,7 @@ class Contacts {
 
     // TODO refactor to getContact, and the return mayby userInfo, GroupInfo 
     @action async getUser(userid) {
-        var user = self.memberList.find(e => e.uid === userid);
-
-        if (user) {
-            return user;
-        }
-
-        await self.batch([userid]);
-        user = await self.getUser(userid);
-        return user;
+        return self.memberList.find(e => e.uid === userid);
     }
 
     @action async getContacts() {
