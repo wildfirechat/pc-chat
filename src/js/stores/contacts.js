@@ -4,7 +4,6 @@ import { ipcRenderer } from 'electron';
 import axios from 'axios';
 import pinyin from 'han';
 
-import sessions from './sessions';
 import chat from './chat';
 import storage from 'utils/storage';
 import helper from 'utils/helper';
@@ -16,7 +15,7 @@ import GroupInfo from '../wfc/model/groupInfo';
 class Contacts {
     @observable loading = false;
     @observable showGroup = true;
-    @observable memberList = [];
+    @observable memberList = []; // 包含GroupInfo、UserInfo和ChannelInfo
     @observable filtered = {
         query: '',
         result: [],
@@ -68,9 +67,9 @@ class Contacts {
         return name;
     }
 
-    // TODO remove
+    // TODO refactor to getContact, and the return mayby userInfo, GroupInfo 
     @action async getUser(userid) {
-        var user = self.memberList.find(e => e.UserName === userid);
+        var user = self.memberList.find(e => e.uid === userid);
 
         if (user) {
             return user;

@@ -93,6 +93,7 @@ class WfcManager {
 
     getUserId() {
         // TODO login的时候确定, localstorage
+        // TODO cache userID in member field
         return 'uiuJuJcc';
     }
 

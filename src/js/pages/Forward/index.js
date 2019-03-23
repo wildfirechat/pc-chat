@@ -5,6 +5,8 @@ import { inject, observer } from 'mobx-react';
 
 import classes from './style.css';
 import UserList from 'components/UserList';
+import wfc from '../../wfc/wfc'
+import UserInfo from '../../wfc/model/userInfo';
 
 @inject(stores => ({
     show: stores.forward.show,
@@ -16,10 +18,15 @@ import UserList from 'components/UserList';
             return forward.list;
         }
 
-        return contacts.memberList.filter(e => e.UserName !== stores.sessions.user.User.UserName);
+        return contacts.memberList.filter(e => {
+            if (e instanceof UserInfo) {
+                return e.uid !== wfc.getUserId()
+            }
+            return true;
+        });
     },
     getUser: (userid) => {
-        return stores.contacts.memberList.find(e => e.UserName === userid);
+        return stores.contacts.memberList.find(e => e.uid === userid);
     },
     search: stores.forward.search,
     send: (userids) => stores.forward.send(userids),
@@ -88,7 +95,7 @@ export default class Forward extends Component {
                                     <img
                                         key={index}
                                         onClick={ev => this.refs.users.removeSelected(e)}
-                                        src={user.HeadImgUrl} />
+                                        src={user.portrait} />
                                 );
                             })
                         }

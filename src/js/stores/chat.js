@@ -753,11 +753,11 @@ class Chat {
         return list;
     }
 
-    @action async sendMessage(textMessgeContent, isForward = false) {
+    @action async sendMessage(messgeContent, isForward = false) {
 
         let msg = new Message();
         msg.conversation = self.conversation;
-        msg.messageContent = textMessgeContent;
+        msg.messageContent = messgeContent;
         var m;
         wfc.sendMessage(msg, '',
             function (messageId, timestamp) {

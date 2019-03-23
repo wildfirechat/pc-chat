@@ -3,8 +3,12 @@ import { observable, action } from 'mobx';
 import pinyin from 'han';
 
 import contacts from './contacts';
-import sessions from './sessions';
-import chat from './chat';
+import wfc from '../wfc/wfc'
+import UserInfo from '../wfc/model/userInfo';
+import GroupInfo from '../wfc/model/groupInfo';
+import Conversation from '../wfc/model/conversation';
+import ConversationType from '../wfc/model/conversationType';
+import Message from '../wfc/messages/message'
 
 class Forward {
     @observable show = false;
@@ -14,7 +18,9 @@ class Forward {
 
     @action async toggle(show = self.show, message = {}) {
         self.show = show;
-        self.message = message;
+        if (show) {
+            self.message = message;
+        }
 
         if (show === false) {
             self.query = '';
@@ -29,11 +35,12 @@ class Forward {
 
         if (text) {
             list = contacts.memberList.filter(e => {
-                if (e.UserName === sessions.user.User.UserName) {
+                let displayName = contacts.contactItemName(e);
+                if (e.uid === wfc.getUserId()) {
                     return false;
                 }
 
-                return pinyin.letter(e.NickName).toLowerCase().indexOf(pinyin.letter(text.toLocaleLowerCase())) > -1;
+                return pinyin.letter(displayName).toLowerCase().indexOf(pinyin.letter(text.toLocaleLowerCase())) > -1;
             });
             self.list.replace(list);
 
@@ -44,15 +51,18 @@ class Forward {
     }
 
     @action async send(userid) {
-        var message = self.message;
-        var user = await contacts.getUser(userid);
+        var contact = await contacts.getUser(userid);
 
-        message = Object.assign(message, {
-            content: message.Content,
-            type: message.MsgType,
-        });
+        let msg = new Message();
+        msg.messageContent = self.message.messageContent;
+        if (contact instanceof UserInfo) {
+            msg.conversation = new Conversation(ConversationType.Single, userid, 0);
 
-        chat.sendMessage(user, message, true);
+        } else if (contact instanceof GroupInfo) {
+            msg.conversation = new Conversation(ConversationType.Group, userid, 0);
+        }
+
+        wfc.sendMessage(msg, '');
     }
 }
 
