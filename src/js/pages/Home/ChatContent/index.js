@@ -512,7 +512,8 @@ export default class ChatContent extends Component {
     }
 
     showMessageAction(message) {
-        var caniforward = [1, 3, 47, 43, 49 + 6].includes(message.MsgType);
+
+        var caniforward = !(message.messageContent instanceof NotificationMessageContent)
         var templates = [
             {
                 label: 'Delete',
