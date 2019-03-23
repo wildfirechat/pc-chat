@@ -14,7 +14,7 @@ export default class MediaMessageContent extends MessageContent {
     encode() {
         let payload = super.encode();
         payload.localMediaPath = this.localPath;
-        payload.remoteMediaUrl = this.remoteUrl;
+        payload.remoteMediaUrl = this.remotePath;
         return payload;
     };
 
