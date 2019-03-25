@@ -569,7 +569,7 @@ export default class ChatContent extends Component {
             {
                 label: 'Empty Content',
                 click: () => {
-                    this.props.empty(user);
+                    this.props.empty(this.props.conversation);
                 }
             },
             {

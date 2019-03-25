@@ -49,6 +49,10 @@ export default class Message {
         let msg = Object.assign(new Message(), obj);
         // big integer to number
         msg.messageId = Number(msg.messageId);
+        if (msg.messageId === -1) {
+            return null;
+        }
+
         msg.messageUid = Number(msg.messageUid);
         msg.timestamp = Number(msg.timestamp);
         msg.conversation = new Conversation(obj.conversation.conversationType, obj.conversation.target, obj.conversation.line);
