@@ -667,12 +667,10 @@ class Chat {
         self.messages.set(userid, list);
     }
 
-    @action empty(user) {
+    @action empty(conversation) {
         // Empty the chat content
-        self.messages.set(user.UserName, {
-            data: [],
-            unread: 0,
-        });
+        self.messageList = [];
+        wfc.clearMessages(conversation);
     }
 }
 

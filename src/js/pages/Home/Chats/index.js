@@ -200,7 +200,7 @@ export default class Chats extends Component {
 
                                             <span
                                                 className={classes.message}
-                                                dangerouslySetInnerHTML={{ __html: e.lastMessage.messageContent.digest() || 'No Messagexx' }} />
+                                                dangerouslySetInnerHTML={{ __html: e.lastMessage ? e.lastMessage.messageContent.digest() : 'No Message' }} />
                                         </div>
                                     </div>
 

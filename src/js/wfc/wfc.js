@@ -415,6 +415,12 @@ class WfcManager {
         return result;
     }
 
+    async clearMessages(conversation) {
+        proto.clearMessages(JSON.stringify(conversation));
+        let conversationInfo = this.getConversationInfo(conversation);
+        self.eventEmitter.emit(EventType.ConversationInfoUpdate, conversationInfo);
+    }
+
     async updateMessageContent(messageId, messageContent) {
         proto.updateMessage(messageId, JSON.stringify(messageContent))
     }
