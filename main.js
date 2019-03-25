@@ -60,7 +60,7 @@ let mainMenu = [
                 type: 'separator'
             },
             {
-                label: 'Quit weweChat',
+                label: 'Quit wildfireChat',
                 accelerator: 'Command+Q',
                 selector: 'terminate:',
                 click() {
@@ -236,24 +236,24 @@ let mainMenu = [
             {
                 label: 'Feedback',
                 click() {
-                    shell.openExternal('https://github.com/trazyn/weweChat/issues');
+                    shell.openExternal('https://github.com/wildfirechat/pc-chat/issues');
                 }
             },
             {
                 label: 'Fork me on Github',
                 click() {
-                    shell.openExternal('https://github.com/trazyn/weweChat');
+                    shell.openExternal('https://github.com/wildfirechat/pc-chat');
                 }
             },
             {
                 type: 'separator'
             },
-            {
-                label: '💕 Follow me on Twitter 👏',
-                click() {
-                    shell.openExternal('https://twitter.com/var_darling');
-                }
-            }
+            // {
+            //     label: '💕 Follow me on Twitter 👏',
+            //     click() {
+            //         shell.openExternal('https://twitter.com/var_darling');
+            //     }
+            // }
         ]
     }
 ];
@@ -286,7 +286,7 @@ let trayMenu = [
     {
         label: 'Fork me on Github',
         click() {
-            shell.openExternal('https://github.com/trazyn/weweChat');
+            shell.openExternal('https://github.com/wildfirechat/pc-chat');
         }
     },
     {
@@ -317,7 +317,7 @@ let trayMenu = [
         }
     },
     {
-        label: 'Quit weweChat',
+        label: 'Quit wildfireChat',
         accelerator: 'Command+Q',
         selector: 'terminate:',
         click() {
@@ -448,8 +448,8 @@ function updateTray(unread = 0) {
 
 async function autostart() {
     var launcher = new AutoLaunch({
-        name: 'weweChat',
-        path: '/Applications/wewechat.app',
+        name: 'wildfireChat',
+        path: '/Applications/wildfirechat.app',
     });
 
     if (settings.startup) {
@@ -691,8 +691,8 @@ const createMainWindow = () => {
         app.setAboutPanelOptions({
             applicationName: pkg.name,
             applicationVersion: pkg.version,
-            copyright: 'Made with 💖 by trazyn. \n https://github.com/trazyn/weweChat',
-            credits: `With the invaluable help of: \n web.wechat.com`,
+            copyright: 'Made with 💖 by trazyn && wildfiechat. \n https://github.com/wildfirechat/pc-chat',
+            credits: `With the invaluable help of: \n https://github.com/trazyn/weweChat`,
             version: pkg.version
         });
     }
