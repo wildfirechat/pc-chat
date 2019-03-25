@@ -55,8 +55,8 @@ import BenzAMRRecorder from 'benz-amr-recorder';
         messageId = Number(messageId);
         return list.find(e => e.messageId === messageId);
     },
-    deleteMessage: (messageid) => {
-        stores.chat.deleteMessage(stores.chat.user.UserName, messageid);
+    deleteMessage: (messageId) => {
+        stores.chat.deleteMessage(messageId);
     },
     showMembers: (target) => {
         // TODO show channel members
@@ -513,12 +513,16 @@ export default class ChatContent extends Component {
 
     showMessageAction(message) {
 
+        if (message.messageContent instanceof NotificationMessageContent) {
+            return;
+        }
+
         var caniforward = !(message.messageContent instanceof NotificationMessageContent)
         var templates = [
             {
                 label: 'Delete',
                 click: () => {
-                    this.props.deleteMessage(message.MsgId);
+                    this.props.deleteMessage(message.messageId);
                 }
             },
         ];
@@ -533,8 +537,8 @@ export default class ChatContent extends Component {
             });
         }
 
-        if (message.isme
-            && message.CreateTime - new Date() < 2 * 60 * 1000) {
+        if (message.direction === 0
+            && (Date.now() + wfc.getServerDeltaTime() - message.timestamp) < 2 * 60 * 1000) {
             templates.unshift({
                 label: 'Recall',
                 click: () => {

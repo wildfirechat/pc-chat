@@ -10,6 +10,7 @@ import { normalize } from 'utils/emoji';
 import chat from './chat';
 import contacts from './contacts';
 import wfc from '../wfc/wfc';
+import ConversationType from '../wfc/model/conversationType';
 
 const CancelToken = axios.CancelToken;
 
@@ -40,7 +41,7 @@ async function updateMenus({ conversations = [], contacts = [] }) {
         cookies: await helper.getCookie(),
     });
 }
-class sessions  {
+class sessions {
     @observable loading = true;
     @observable auth;
     @observable code;
@@ -65,7 +66,7 @@ class sessions  {
     }
 
     @action async loadConversations() {
-        let cl = wfc.getConversationList([0, 1, 2, 3], [0, 1]);
+        let cl = wfc.getConversationList([ConversationType.Single, ConversationType.Group, ConversationType.Channel], [0, 1]);
         self.conversations = cl;
     }
 
@@ -396,5 +397,5 @@ class sessions  {
     }
 }
 
-const self = new sessions ();
+const self = new sessions();
 export default self;

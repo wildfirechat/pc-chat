@@ -220,8 +220,11 @@ async function updateMenus({ conversations = [], contacts = [] }) {
 }
 
 class Chat {
+    // TODO remove
     @observable sessions = [];
     @observable messages = new Map();
+    // TODO remove end
+
     @observable showConversation = true;
 
     // maybe userInfo, GroupInfo, ChannelInfo, ChatRoomInfo
@@ -633,34 +636,15 @@ class Chat {
     }
 
     @action async recallMessage(message) {
-        var id = (+new Date() * 1000) + Math.random().toString().substr(2, 4);
-        var auth = await storage.get('auth');
-        var to = self.user.UserName;
-        var response = await axios.post('/cgi-bin/mmwebwx-bin/webwxrevokemsg', {
-            BaseRequest: {
-                Sid: auth.wxsid,
-                Uin: auth.wxuin,
-                Skey: auth.skey,
-            },
-            SvrMsgId: message.MsgId,
-            ToUserName: to,
-            ClientMsgId: id,
-        });
-
-        if (+response.data.BaseResponse.Ret === 0) {
-            self.deleteMessage(to, message.MsgId);
-            return true;
-        }
-
-        return false;
+        wfc.recallMessage(message.messageUid);
     }
 
-    @action deleteMessage(userid, messageid) {
-        var list = self.messages.get(userid);
-
-        list.data = list.data.filter(e => e.MsgId !== messageid);
-        list.unread = 0;
-        self.messages.set(userid, list);
+    @action deleteMessage(messageId) {
+        let result = wfc.deleteMessage(messageId);
+        if (result) {
+            var list = self.messageList;
+            self.messageList = list.filter(e => e.messageId !== messageId);
+        }
     }
 
     @action markedRead(userid) {
