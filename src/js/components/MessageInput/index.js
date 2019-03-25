@@ -130,25 +130,6 @@ export default class MessageInput extends Component {
         // )
         let textMessageContent = this.handleMention(message);
         this.props.sendMessage(textMessageContent);
-        // Promise.all(
-        //             await this.props.sendMessage(
-        //                 new TextMessageContent(message)
-        //             )
-        // user.filter(e => e.UserName !== this.props.me.UserName).map(
-        //     async e => {
-        //         let res = await this.props.sendMessage(
-        //             new TextMessageContent(message)
-        //         );
-
-        //         if (!res) {
-        //             await this.props.showMessage(batch ? `Sending message to ${e.NickName} has failed!` : 'Failed to send message.');
-        //         }
-
-        //         return true;
-        //     }
-        // )
-        // );
-
         this.refs.input.value = '';
     }
 
@@ -168,34 +149,10 @@ export default class MessageInput extends Component {
     }
 
     async batchProcess(file) {
-        var message;
-        var batch = this.props.user.length > 1;
-        var receiver = this.props.user.filter(e => e.UserName !== this.props.me.UserName);
-        var showMessage = this.props.showMessage;
-
         if (this.canisend() === false) {
             return;
         }
-
-        for (let user of receiver) {
-            if (message) {
-                await this.props.sendMessage(user, message, true)
-                    .catch(ex => showMessage(`Sending message to ${user.NickName} has failed!`));
-                continue;
-            }
-
-            // Do not repeat upload file, forward the message to another user
-            message = await this.props.process(file, user);
-
-            if (message === false) {
-                if (batch) {
-                    showMessage(`Send message to ${user.NickName} is failed!`);
-                    continue;
-                }
-                // In batch mode just show the failed message
-                showMessage('Failed to send image.');
-            }
-        }
+        this.props.process(file);
     }
 
     async handlePaste(e) {
