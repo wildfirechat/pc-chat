@@ -25,7 +25,7 @@ import BenzAMRRecorder from 'benz-amr-recorder';
 @inject(stores => ({
     sticky: stores.sessions.sticky,
     empty: stores.chat.empty,
-    removeChat: stores.chat.removeChat,
+    removeChat: stores.sessions.removeConversation,
     messages: stores.chat.messageList,
     loading: stores.sessions.loading,
     loadOldMessages: stores.chat.loadOldMessages,
@@ -584,7 +584,7 @@ export default class ChatContent extends Component {
             {
                 label: 'Delete',
                 click: () => {
-                    this.props.removeChat(user);
+                    this.props.removeChat(this.props.conversation);
                 }
             },
         ]);
