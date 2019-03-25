@@ -1,6 +1,8 @@
 export default class EventType {
     static SendMessage = 'sendMsg';
     static ReceiveMessage = 'receiveMsg';
+    static RecallMessage = 'recallMsg';
+    static DeleteMessage = 'deleteMsg';
     static MessageStatusUpdate = 'msgStatusUpdate';
     static ConnectionStatusChanged = 'connectionStatusChanged';
     static UserInfoUpdate = 'userInfoUpdate';

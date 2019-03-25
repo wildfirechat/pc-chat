@@ -21,7 +21,8 @@ class WfcManager {
     userId = '';
     token = '';
 
-    onReceiveMessageListeners = [];
+    // TODO 移除吧，全都走EventEmitter
+    // onReceiveMessageListeners = [];
 
     messageContentList = new Map();
 
@@ -33,16 +34,48 @@ class WfcManager {
         console.log('connection status changed', status);
     }
 
+    // /**
+    //  * 
+    //  * @param {function} listener 
+    //  */
+    // setOnReceiveMessageListener(listener) {
+    //     if (typeof listener !== 'function') {
+    //         console.log('listener should be a function');
+    //         return;
+    //     }
+    //     self.onReceiveMessageListeners.forEach(l => {
+    //         l === listener
+    //         return
+    //     });
+    //     self.onReceiveMessageListeners.push(listener);
+    // }
+
+    // removeOnReceiMessageListener(listener) {
+    //     if (typeof listener !== 'function') {
+    //         console.log('listener should be a function');
+    //         return;
+    //     }
+    //     self.onReceiveMessageListeners.splice(self.onReceiveMessageListeners.indexOf(listener), 1);
+    // }
+
     onReceiveMessage(messages, hasMore) {
         var msgs = JSON.parse(messages);
         msgs.map(m => {
             let msg = Message.protoMessageToMessage(m);
-            self.onReceiveMessageListeners.forEach(listener => {
-                listener(msg, hasMore);
-            });
+            // self.onReceiveMessageListeners.forEach(listener => {
+            //     listener(msg, hasMore);
+            // });
 
             self.eventEmitter.emit(EventType.ReceiveMessage, msg);
         });
+    }
+
+    onRecallMessage(operatorUid, messageUid) {
+        self.eventEmitter.emit(EventType.ReceiveMessage, operatorUid, messageUid);
+    }
+
+    onMessageDeleted(messageId) {
+        self.eventEmitter.emit(EventType.DeleteMessage, messageId);
     }
 
     onUserInfoUpdate(userIds) {
@@ -58,7 +91,7 @@ class WfcManager {
 
     init() {
         proto.setConnectionStatusListener(self.onConnectionChanged);
-        proto.setReceiveMessageListener(self.onReceiveMessage);
+        proto.setReceiveMessageListener(self.onReceiveMessage, self.onRecallMessage);
         proto.setUserInfoUpdateListener(self.onUserInfoUpdate);
         proto.setFriendUpdateListener(self.onFriendListUpdate);
         self.registerDefaultMessageContents();
@@ -95,6 +128,10 @@ class WfcManager {
         // TODO login的时候确定, localstorage
         // TODO cache userID in member field
         return 'uiuJuJcc';
+    }
+
+    getServerDeltaTime() {
+        return proto.getServerDeltaTime();
     }
 
     getMyGroupList() {
@@ -218,30 +255,6 @@ class WfcManager {
                     failCB(errorCode);
                 }
             });
-    }
-
-    /**
-     * 
-     * @param {function} listener 
-     */
-    setOnReceiveMessageListener(listener) {
-        if (typeof listener !== 'function') {
-            console.log('listener should be a function');
-            return;
-        }
-        self.onReceiveMessageListeners.forEach(l => {
-            l === listener
-            return
-        });
-        self.onReceiveMessageListeners.push(listener);
-    }
-
-    removeOnReceiMessageListener(listener) {
-        if (typeof listener !== 'function') {
-            console.log('listener should be a function');
-            return;
-        }
-        self.onReceiveMessageListeners.splice(self.onReceiveMessageListeners.indexOf(listener), 1);
     }
 
     getConversationList(types, lines) {
@@ -375,6 +388,33 @@ class WfcManager {
         self.eventEmitter.emit(EventType.SendMessage, message);
     }
 
+    // 更新了原始消息的内容
+    async recallMessage(messageUid, successCB, failCB) {
+        console.log('recall', messageUid);
+        proto.recall(messageUid,
+            () => {
+                console.log('recall, s', messageUid);
+                if (successCB) {
+                    successCB();
+                    this.onRecallMessage(this.getUserId(), messageUid);
+                }
+            },
+            (errorCode) => {
+                console.log('recall, f', messageUid, errorCode);
+                if (failCB) {
+                    failCB();
+                }
+            });
+    }
+
+    deleteMessage(messageId) {
+        let result = proto.deleteMessage(messageId);
+        if (result) {
+            this.onMessageDeleted(messageId);
+        }
+        return result;
+    }
+
     async updateMessageContent(messageId, messageContent) {
         proto.updateMessage(messageId, JSON.stringify(messageContent))
     }
@@ -417,7 +457,7 @@ class WfcManager {
         let m = self.getGroupMembers('PHPSPS22');
         console.log(m);
 
-        self.getMyGroupList();
+        this.getMyGroupList();
 
         console.log('localStorage', localStorage.getItem('test'));
         localStorage.setItem('test', 'hello world');

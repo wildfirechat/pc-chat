@@ -35,7 +35,6 @@ moment.updateLocale('en', {
     searching: stores.search.searching,
     event: stores.wfc.eventEmitter,
     loadConversations: stores.sessions.loadConversations,
-    setOnReceiveMessageListener: stores.sessions.setOnReceiveMessageListener,
 }))
 @observer
 export default class Chats extends Component {
@@ -105,17 +104,29 @@ export default class Chats extends Component {
         this.props.loadConversations();
     }
 
+    onRecallMessage = (operatorId, messageUid) => {
+        this.props.loadConversations();
+    }
+
+    onDeleteMessage = (messageId) => {
+        this.props.loadConversations();
+    }
+
     componentWillMount() {
         this.props.loadConversations();
         this.props.event.on(EventType.ReceiveMessage, this.onReceiveMessage);
         this.props.event.on(EventType.SendMessage, this.onSendMessage);
         this.props.event.on(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
+        this.props.event.on(EventType.RecallMessage, this.onRecallMessage);
+        this.props.event.on(EventType.DeleteMessage, this.onRecallMessage);
     }
 
     componentWillUnmount() {
         this.props.event.removeListener(EventType.ReceiveMessage, this.onReceiveMessage);
         this.props.event.removeListener(EventType.SendMessage, this.onSendMessage);
         this.props.event.removeListener(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
+        this.props.event.removeListener(EventType.RecallMessage, this.onRecallMessage);
+        this.props.event.removeListener(EventType.DeleteMessage, this.onDeleteMessage);
     }
 
     componentDidUpdate() {
