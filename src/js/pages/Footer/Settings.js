@@ -9,7 +9,7 @@ export default class Placeholder extends Component {
             <div className={classes.settings}>
                 <a
                     className={classes.button}
-                    href="mailto:var.darling@gmail.com?Subject=WeWeChat%20Feedback"
+                    href="mailto:imndxx@gmail.com?Subject=WildfireChat%20Feedback"
                     target="_blank">
                     Send feedback
                     <i className="icon-ion-ios-email-outline" />
@@ -17,7 +17,7 @@ export default class Placeholder extends Component {
 
                 <a
                     className={classes.button}
-                    href="https://github.com/trazyn/weweChat"
+                    href="https://github.com/wildfirechat/pc-chat"
                     target="_blank">
                     Fork on Github
                     <i className="icon-ion-social-github" />
