@@ -33,7 +33,6 @@ export default class ImageMessageContent extends MediaMessageContent {
 
     decode(payload) {
         super.decode(payload);
-        this.thumbnail = atob(payload.binaryContent);
+        this.thumbnail = payload.binaryContent;
     }
-
 }

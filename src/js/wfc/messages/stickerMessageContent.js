@@ -1,6 +1,8 @@
 import MessageContentMediaType from "./messageContentMediaType";
 import MediaMessageContent from "./mediaMessageContent";
 import MessageContentType from "./messageContentType";
+import { Base64 } from 'js-base64';
+
 
 export default class StickerMessageContent extends MediaMessageContent {
     width = 0;
@@ -22,13 +24,13 @@ export default class StickerMessageContent extends MediaMessageContent {
             x: this.width,
             y: this.height,
         }
-        payload.binaryContent = btoa(JSON.stringify(obj));
+        payload.binaryContent = Base64.encode(JSON.stringify(obj));
         return payload;
     };
 
     decode(payload) {
         super.decode(payload);
-        let obj = JSON.parse(atob(payload.binaryContent));
+        let obj = JSON.parse(Base64.decode(payload.binaryContent));
         this.width = obj.x;
         this.height = obj.y;
     }

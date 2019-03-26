@@ -1,6 +1,8 @@
 import NotificationMessageContent from "./notificationMessageContent";
 import wfc from '../../wfc'
 import MessageContentType from "../messageContentType";
+import { Base64 } from 'js-base64';
+
 
 export default class ChangeGroupPortraitNotification extends NotificationMessageContent {
     operator = '';
@@ -24,13 +26,13 @@ export default class ChangeGroupPortraitNotification extends NotificationMessage
         let obj = {
             n: this.name,
         };
-        payload.binaryContent = btoa(JSON.stringify(obj));
+        payload.binaryContent = Base64.encode(JSON.stringify(obj));
         return payload;
     }
 
     decode(payload) {
         super.decode(payload);
-        let json = atob(payload.binaryContent)
+        let json = Base64.decode(payload.binaryContent)
         let obj = JSON.parse(json);
         this.operator = obj.o;
     }

@@ -147,9 +147,6 @@ let mainMenu = [
         ],
     },
     {
-
-    },
-    {
         label: 'Edit',
         submenu: [
             {
@@ -206,9 +203,6 @@ let mainMenu = [
                 type: 'separator',
             },
             {
-                label: ''
-            },
-            {
                 type: 'separator',
             },
             {
@@ -247,7 +241,7 @@ let mainMenu = [
             },
             {
                 type: 'separator'
-            },
+            }
             // {
             //     label: '💕 Follow me on Twitter 👏',
             //     click() {
@@ -472,11 +466,12 @@ async function autostart() {
 function createMenu() {
     var menu = Menu.buildFromTemplate(mainMenu);
 
-    if (isOsx) {
-        Menu.setApplicationMenu(menu);
-    } else {
-        mainWindow.setMenu(null);
-    }
+    console.log('----------------------', isOsx);
+    // if (isOsx) {
+    //     Menu.setApplicationMenu(menu);
+    // } else {
+    //     // mainWindow.setMenu(null);
+    // }
 }
 
 const createMainWindow = () => {
@@ -548,7 +543,7 @@ const createMainWindow = () => {
     });
 
     // TODO 不明白这儿是做什么？
-    ipcMain.on('menu-update', async(event, args) => {
+    ipcMain.on('menu-update', async (event, args) => {
         var { cookies, contacts = [], conversations = [] } = args;
         var conversationsMenu = mainMenu.find(e => e.label === 'Conversations');
         var contactsMenu = mainMenu.find(e => e.label === 'Contacts');
@@ -563,7 +558,7 @@ const createMainWindow = () => {
             shouldUpdate = true;
 
             conversations = await Promise.all(
-                conversations.map(async(e, index) => {
+                conversations.map(async (e, index) => {
                     let icon = await getIcon(cookies, e.id, e.avatar);
 
                     return {
@@ -635,7 +630,7 @@ const createMainWindow = () => {
         event.returnValue = args;
     });
 
-    ipcMain.on('file-download', async(event, args) => {
+    ipcMain.on('file-download', async (event, args) => {
         var filename = args.filename;
 
         // TODO bug here
@@ -647,11 +642,11 @@ const createMainWindow = () => {
         event.returnValue = filename;
     });
 
-    ipcMain.on('open-file', async(event, filename) => {
+    ipcMain.on('open-file', async (event, filename) => {
         shell.openItem(filename);
     });
 
-    ipcMain.on('open-folder', async(event, dir) => {
+    ipcMain.on('open-folder', async (event, dir) => {
         shell.openItem(dir);
     });
 
@@ -660,7 +655,7 @@ const createMainWindow = () => {
         shell.openExternal(args.map);
     });
 
-    ipcMain.on('open-image', async(event, args) => {
+    ipcMain.on('open-image', async (event, args) => {
         var filename = `${imagesCacheDir}/img_${args.dataset.id}`;
 
         fs.writeFileSync(filename, args.base64.replace(/^data:image\/png;base64,/, ''), 'base64');
