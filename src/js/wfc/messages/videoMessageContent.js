@@ -34,7 +34,7 @@ export default class VideoMessageContent extends MediaMessageContent {
     decode(payload) {
         super.decode(payload);
         if (payload.binaryContent && payload.binaryContent.lenght > 0) {
-            this.thumbnail = atob(payload.binaryContent);
+            this.thumbnail = payload.binaryContent;
         }
     }
 }

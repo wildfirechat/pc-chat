@@ -1,6 +1,7 @@
 import NotificationMessageContent from './notificationMessageContent'
 import wfc from '../../wfc'
 import MessageContentType from '../messageContentType';
+import { Base64 } from 'js-base64';
 export default class AddGroupMemberNotification extends NotificationMessageContent {
     invitor = '';
     invitees = [];
@@ -35,13 +36,13 @@ export default class AddGroupMemberNotification extends NotificationMessageConte
             o: this.invitor,
             ms: this.invitees,
         };
-        payload.binaryContent = btoa(JSON.stringify(obj));
+        payload.binaryContent = Base64.encode(JSON.stringify(obj));
         return payload;
     };
 
     decode(payload) {
         super.decode(payload);
-        let json = atob(payload.binaryContent);
+        let json = Base64.decode(payload.binaryContent);
         let obj = JSON.parse(json);
         this.invitor = obj.o;
         this.invitees = obj.ms;

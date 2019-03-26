@@ -47,7 +47,13 @@ export default class NewChat extends Component {
         } else {
             // You can not create a chat room by another chat room
             // createChatroom()
-            wfc.createGroup(null, 'TestGroupName1', '', selected, [0], null,
+            let groupName = '';
+            for (let i = 0; i < 3 && i < selected.length; i++) {
+                let userInfo = wfc.getUserInfo(selected[i]);
+                groupName += userInfo.displayName + '、';
+            }
+            groupName = groupName.substr(0, groupName.lastIndexOf('、'))
+            wfc.createGroup(null, groupName, '', selected, [0], null,
                 (groupId) => {
                     let conversation = new Conversation(ConversationType.Group, groupId);
                     this.props.chatTo(conversation);

@@ -150,6 +150,9 @@ class WfcManager {
      * @param {bool} fresh 
      */
     getUserInfo(userId, fresh = false) {
+        if (!userId || userId === '') {
+            return new NullUserInfo('');
+        }
         let userInfoStr = proto.getUserInfo(userId, fresh);
         if (userInfoStr === '') {
             return new NullUserInfo(userId);
