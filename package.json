@@ -95,6 +95,7 @@
     "electron-window-state": "^4.1.1",
     "ffi": "^2.3.0",
     "han": "^0.0.7",
+    "jr-qrcode": "^1.1.4",
     "mobx": "^5.0.3",
     "mobx-react": "^5.2.3",
     "moment": "^2.22.2",

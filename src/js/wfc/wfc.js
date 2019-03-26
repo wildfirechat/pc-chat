@@ -80,7 +80,8 @@ class WfcManager {
 
     onUserInfoUpdate(userIds) {
         console.log('userIndo update, ids', userIds);
-        userIds.map((userId => {
+        let userIdA = JSON.parse(userIds);
+        userIdA.map((userId => {
             self.eventEmitter.emit(EventType.UserInfoUpdate, userId);
         }))
     }
@@ -105,12 +106,8 @@ class WfcManager {
         self.messageContentList[type] = content;
     }
 
-    setServerAddress(host, port) {
-        // proto.setServerAddress(host, port);
-    }
-
     async connect(userId, token) {
-        self.setServerAddress("wildfirechat.cn", 80);
+        this.userId = userId;
         proto.connect(userId, token);
 
         // for testing your code
@@ -124,10 +121,12 @@ class WfcManager {
         });
     }
 
+    getClientId() {
+        return proto.getClientId();
+    }
+
     getUserId() {
-        // TODO login的时候确定, localstorage
-        // TODO cache userID in member field
-        return 'uiuJuJcc';
+        return this.userId;
     }
 
     getServerDeltaTime() {

@@ -3,56 +3,115 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
 import classes from './style.css';
-const USER_ID = 'uiuJuJcc';
-const TOKEN = 'w3bgeLJJJWvViSJ7fvwz1LPTnCegDb11Q646P5gf9VVRPylImGthlarXlylz0Im1+uAg7Cx5rTuCFhTrAH8c9SJZ4S+bIFzm2RBgXf1RtzRvcLhIjL3XhG7B77YmUxjWhKGdk1mxKn/sGifCWCXdK9PnOCmVLJsdbMMzg2c/otQ=';
+import Config from '../../wfc/config';
+import jrQRCode from 'jr-qrcode'
+import wfc from '../../wfc/wfc'
+import PCSession from '../../wfc/pcsession';
+import { observable } from 'mobx';
+import axios from 'axios';
+import helper from 'utils/helper';
 
-// const USER_ID = 'UZUWUWuu';
-// const TOKEN = 'mQyY7AF4EPLV6YgWUdypLlftbdauHjE1Nf+FNLTe+LFmMSylcoJlMYAJhK5fra50YqZRImBCf5S9rhyF7nUWIEl4p05l5vIrb0c+OfQmlm8/XBuGPCRmu2T52P66S0tcIPVvnKW9TRPaCEDLJfUfWTZqTANZvUMZnAkumf8zoB0=';
 @inject(stores => ({
     avatar: stores.sessions.avatar,
     code: stores.sessions.code,
-    getCode: stores.sessions.getCode,
-    setupConnectionStatusListener: stores.sessions.setupConnectionStatusListener,
-    test:stores.sessions.test,
-    connect: stores.wfc.connect,
 }))
-
 @observer
 export default class Login extends Component {
+    @observable qrCode;
+    token;
+    loginTimer;
+
     componentDidMount() {
-        //this.props.getCode();
+        axios.defaults.baseURL = Config.APP_SERVER_HOST + ':' + Config.APP_SERVER_PORT;
+
+        this.getCode();
+        this.keepLogin();
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         console.log('login will disappear');
+    }
+
+    renderUser() {
+        return (
+            <div className={classes.inner}>
+                {
+                    <img
+                        className="disabledDrag"
+                        src={this.props.avatar} />
+                }
+
+                <p>Scan successful</p>
+                <p>Confirm login on mobile WildfireChat</p>
+            </div>
+        );
+    }
+
+    async getCode() {
+        var response = await axios.post('/pc_session', {
+            token: '',
+            device_name: 'my mac',
+            clientId: wfc.getClientId(),
+        });
+        console.log('----------- getCode', response.data);
+        if (response.data) {
+            let session = Object.assign(new PCSession(), response.data.result);
+            this.token = session.token;
+            this.qrCode = jrQRCode.getQrBase64(Config.QR_CODE_PREFIX_PC_SESSION + session.token);
+        }
+    }
+
+    async keepLogin() {
+        this.loginTimer = setInterval(() => {
+            this.login();
+        }, 5 * 1000);
+    }
+
+    async login() {
+        if (!this.token) {
+            console.log('-------- t e');
+            return;
+        }
+        var response = await axios.post('/session_login/' + this.token);
+        console.log('---------- login', response.data);
+        if (response.data) {
+            switch (response.data.code) {
+                case 0:
+                    clearInterval(this.loginTimer);
+                    let userId = response.data.result.userId;
+                    let token = response.data.result.token;
+                    wfc.connect(userId, token);
+                    break;
+                default:
+                    console.log(response.data);
+                    break
+            }
+        }
+    }
+
+    renderCode() {
+
+        return (
+            <div className={classes.inner}>
+                {
+                    this.qrCode && (<img className="disabledDrag" src={this.qrCode} />)
+                }
+
+                <a href={window.location.pathname + '?' + +new Date()}>Refresh the QR Code</a>
+
+                <p>Scan to log in to WildfireChat</p>
+                <p>Log in on phone to use WildfireChat on Web</p>
+            </div>
+        );
     }
 
     render() {
         return (
             <div className={classes.container}>
-                <div >
-                    <p>login to wildfire chat</p>
-                </div>
-                <input
-                    autoFocus={true}
-                    defaultValue={USER_ID}
-                    ref="userId"
-                    type="text" />
-
-                <input
-                    autoFocus={true}
-                    ref="token"
-                    defaultValue={TOKEN}
-                    type="text" />
-
-                    <button onClick={
-                        e => {
-                            console.log('to connect');
-                            this.props.connect(this.refs.userId.value, this.refs.token.value);
-                            console.log('to connect end');
-                            this.props.test('hello world');
-                        }
-                    }>Connectxxx</button>
+                {
+                    // this.props.avatar ? this.renderUser() : this.renderCode()
+                    this.renderCode()
+                }
             </div>
         );
     }
