@@ -20,6 +20,8 @@ import NotificationMessageContent from '../../../wfc/messages/notification/notif
 import MessageStatus from '../../../wfc/messages/messageStatus';
 import { fs } from 'file-system';
 import BenzAMRRecorder from 'benz-amr-recorder';
+import MessageConfig from '../../../wfc/messageConfig';
+import UnknownMessageContent from '../../../wfc/messages/unknownMessageContent';
 
 
 @inject(stores => ({
@@ -107,7 +109,7 @@ export default class ChatContent extends Component {
             return emojiParse(unsupportMessageContent.digest());
         }
 
-        switch (message.content.type) {
+        switch (MessageConfig.getMessageContentType(message.messageContent)) {
             case MessageContentType.Unknown:
                 let unknownMessageContent = message.messageContent;
                 console.log('unknown', unknownMessageContent.digest(), message);
@@ -325,20 +327,20 @@ export default class ChatContent extends Component {
 
                     [classes.isme]: message.direction === 0,
                     //[classes.isText]: type === 1 && !message.location,
-                    [classes.isText]: type === MessageContentType.Text || (message.messageContent instanceof UnsupportMessageContent),
+                    [classes.isText]: type === MessageContentType.Text || (message.messageContent instanceof UnknownMessageContent) || (message.messageContent instanceof UnsupportMessageContent),
                     [classes.isLocation]: type === MessageContentType.Location,
                     [classes.isImage]: type === MessageContentType.Image,
                     //[classes.isEmoji]: type === 47 || type === 49 + 8,
                     [classes.isEmoji]: type === MessageContentType.Sticker,
                     [classes.isVoice]: type === MessageContentType.Voice,
-                    [classes.isContact]: type === 42,
                     [classes.isVideo]: type === MessageContentType.Video,
+                    [classes.isFile]: type === MessageContentType.File,
 
-                    // App messages
+                    [classes.isContact]: type === 42,
+                    // App messages，只在手机上显示的消息
                     [classes.appMessage]: [49 + 2000, 49 + 17, 49 + 6].includes(type),
                     [classes.isTransfer]: type === 49 + 2000,
                     [classes.isLocationSharing]: type === 49 + 17,
-                    [classes.isFile]: type === MessageContentType.File,
                 })} key={message.messageId}>
                     <div>
                         <Avatar

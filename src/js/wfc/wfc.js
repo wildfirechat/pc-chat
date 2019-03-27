@@ -1,5 +1,4 @@
 import proto from 'node-loader!../../../node_modules/marswrapper.node';
-import * as wfcMessage from '../wfc/messageConfig'
 import Message from '../wfc/messages/message';
 import Conversation from '../wfc/model/conversation';
 import ConversationInfo from '../wfc/model/conversationInfo';
@@ -14,6 +13,7 @@ import { UserSettingScope } from './userSettingScope';
 import CreateGroupNotification from './messages/notification/createGroupNotification';
 import MessageContentMediaType from './messages/messageContentMediaType';
 import AddGroupMemberNotification from './messages/notification/addGroupMemberNotification';
+import MessageConfig from './messageConfig';
 
 // 其实就是imclient，后续可能需要改下名字
 class WfcManager {
@@ -65,8 +65,9 @@ class WfcManager {
             // self.onReceiveMessageListeners.forEach(listener => {
             //     listener(msg, hasMore);
             // });
-
-            self.eventEmitter.emit(EventType.ReceiveMessage, msg);
+            if (msg) {
+                self.eventEmitter.emit(EventType.ReceiveMessage, msg);
+            }
         });
     }
 
@@ -115,7 +116,7 @@ class WfcManager {
     }
 
     registerDefaultMessageContents() {
-        wfcMessage.MessageContents.map((e) => {
+        MessageConfig.MessageContents.map((e) => {
             proto.registerMessageFlag(e.type, e.flag);
             self.registerMessageContent(e.type, e.content);
         });
@@ -183,6 +184,7 @@ class WfcManager {
 
         let payload = notifyContent.encode();
         let notifyContentStr = JSON.stringify(payload);
+        console.log('-------------a ', notifyContentStr);
         proto.createGroup(groupId, name, portrait, memberIds, lines, notifyContentStr,
             (groupId) => {
                 if (successCB) {
@@ -336,7 +338,9 @@ class WfcManager {
         let msgs = [];
         protoMsgs.map(m => {
             let msg = Message.protoMessageToMessage(m);
-            msgs.push(msg);
+            if (msg) {
+                msgs.push(msg);
+            }
         });
         console.log('getMessages', msgs.length);
 

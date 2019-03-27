@@ -1,7 +1,13 @@
 import MessageContent from "./messageContent";
+import MessageContentType from "./messageContentType";
 
 export default class UnknownMessageContent extends MessageContent {
     originalPayload;
+
+    constructor(originalPayload) {
+        super(MessageContentType.Unknown);
+        this.originalPayload = originalPayload;
+    }
 
     encode() {
         return this.originalPayload;
@@ -12,6 +18,6 @@ export default class UnknownMessageContent extends MessageContent {
     }
 
     digest() {
-        return '未知类型消息: ' + this.type;
+        return '未知类型消息';
     }
 }
