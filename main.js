@@ -466,12 +466,11 @@ async function autostart() {
 function createMenu() {
     var menu = Menu.buildFromTemplate(mainMenu);
 
-    console.log('----------------------', isOsx);
-    // if (isOsx) {
-    //     Menu.setApplicationMenu(menu);
-    // } else {
-    //     // mainWindow.setMenu(null);
-    // }
+    if (isOsx) {
+        Menu.setApplicationMenu(menu);
+    } else {
+        mainWindow.setMenu(null);
+    }
 }
 
 const createMainWindow = () => {
