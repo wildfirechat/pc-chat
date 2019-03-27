@@ -30,9 +30,11 @@
     }
  */
 import Conversation from '../model/conversation'
-import * as wfcMessage from '../messageConfig'
 import NotificationMessageContent from './notification/notificationMessageContent'
 import wfc from '../wfc'
+import MessageConfig from '../messageConfig';
+import UnknownMessageContent from './unknownMessageContent';
+import PersistFlag from './persistFlag';
 export default class Message {
     conversation = {};
     from = '';
@@ -56,7 +58,7 @@ export default class Message {
         msg.messageUid = Number(msg.messageUid);
         msg.timestamp = Number(msg.timestamp);
         msg.conversation = new Conversation(obj.conversation.conversationType, obj.conversation.target, obj.conversation.line);
-        let contentClazz = wfcMessage.getMessageContentClazz(msg.content.type);
+        let contentClazz = MessageConfig.getMessageContentClazz(msg.content.type);
         if (contentClazz) {
             let content = new contentClazz();
             try {
@@ -65,7 +67,13 @@ export default class Message {
                     content.fromSelf = msg.from === wfc.getUserId();
                 }
             } catch (error) {
-                console.log('protoMessageToMessage', error);
+                console.log('decode message payload failed, fallback to unkownMessage', msg.content);
+                let flag = MessageConfig.getMessageContentPersitFlag(msg.content.type);
+                if (PersistFlag.Persist === flag || PersistFlag.Persist_And_Count === flag) {
+                    content = new UnknownMessageContent(msg.content);
+                } else {
+                    return null;
+                }
             }
             msg.messageContent = content;
 
