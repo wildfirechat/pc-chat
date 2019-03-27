@@ -621,7 +621,8 @@ const createMainWindow = () => {
 
             args = {
                 hasImage: true,
-                filename,
+                filename: filename,
+                raw: image.toPNG(),
             };
 
             fs.writeFileSync(filename, image.toPNG());

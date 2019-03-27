@@ -166,7 +166,7 @@ export default class MessageInput extends Component {
             }
 
             let parts = [
-                new window.Blob([new window.Uint8Array(args.raw.data)], { type: 'image/png' })
+                new window.Blob([new window.Uint8Array(args.raw)], { type: 'image/png' })
             ];
             let file = new window.File(parts, args.filename, {
                 lastModified: new Date(),
