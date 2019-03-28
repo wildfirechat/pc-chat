@@ -336,45 +336,6 @@ class Chat {
         self.chatTo(sessions[index]);
     }
 
-    @action chatTo(user, onTop) {
-        var sessions = self.sessions;
-        var stickyed = [];
-        var normaled = [];
-        var index = self.sessions.findIndex(e => e.UserName === user.UserName);
-
-        if (index === -1) {
-            // User not in chatset
-            sessions = [user, ...self.sessions];
-
-            self.messages.set(user.UserName, {
-                data: [],
-                unread: 0,
-            });
-        } else {
-            if (onTop === true) {
-                sessions = [
-                    ...self.sessions.slice(index, index + 1),
-                    ...self.sessions.slice(0, index),
-                    ...self.sessions.slice(index + 1, self.sessions.length)
-                ];
-            }
-        }
-
-        sessions.map(e => {
-            if (helper.isTop(e)) {
-                stickyed.push(e);
-            } else {
-                normaled.push(e);
-            }
-        });
-
-        self.sessions.replace([...stickyed, ...normaled]);
-        self.user = user;
-        self.markedRead(user.UserName);
-
-        hasUnreadMessage(self.messages);
-    }
-
     @action async addMessage(message, sync = false) {
         /* eslint-disable */
         var from = message.FromUserName;
