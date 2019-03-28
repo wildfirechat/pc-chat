@@ -98,8 +98,9 @@ import UnknownMessageContent from '../../../wfc/messages/unknownMessageContent';
 }))
 @observer
 export default class ChatContent extends Component {
-    amr;
     latestMessage;
+    isAudioPlaying = false;
+    arm;
 
     getMessageContent(message) {
         var uploading = message.status === MessageStatus.Sending;
@@ -396,20 +397,35 @@ export default class ChatContent extends Component {
             let source = audio.querySelector('source');
             let voiceUrl = source.src;
 
+            console.log('to play');
+
+            if (this.isAudioPlaying) {
+                let current = document.getElementsByClassName(classes.playing);
+                let currentAudio = current.item(0).querySelector('audio');
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                target.classList.remove(classes.playing)
+                console.log('pause current');
+                this.isAudioPlaying = false;
+                this.amr = null;
+                this.amr.stop();
+            }
+
+            this.amr = new BenzAMRRecorder();
             audio.onplay = () => {
                 console.log('on play');
-                if (!this.amr) {
-                    this.amr = new BenzAMRRecorder();
-                }
-                if (this.amr.isPlaying()) {
-                    this.amr.stop();
-                }
+
                 this.amr.initWithUrl(voiceUrl).then(() => {
+                    this.isAudioPlaying = true;
                     this.amr.play();
                 });
-                this.amr.onEnded(function () {
+                this.amr.onEnded(() => {
+                    this.isAudioPlaying = false;
+                    this.amr = null;
                     console.log('on end');
                     target.classList.remove(classes.playing)
+                    audio.pause();
+                    audio.currentTime = 0;
                 })
                 target.classList.add(classes.playing)
             };
@@ -418,11 +434,11 @@ export default class ChatContent extends Component {
             //     console.log('onended');
             //     target.classList.remove(classes.playing)
             // };
-            // audio.onerror = (e) => {
-            //     console.log('on error', e);
-            // }
+            audio.onerror = (e) => {
+                target.classList.remove(classes.playing)
+                console.log('on error', e);
+            }
             audio.play();
-
 
             return;
         }
