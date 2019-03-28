@@ -241,13 +241,19 @@ let mainMenu = [
             },
             {
                 type: 'separator'
-            }
+            },
             // {
             //     label: '💕 Follow me on Twitter 👏',
             //     click() {
             //         shell.openExternal('https://twitter.com/var_darling');
             //     }
             // }
+            {
+                role: 'reload'
+            },
+            {
+                role: 'forcereload'
+            },
         ]
     }
 ];

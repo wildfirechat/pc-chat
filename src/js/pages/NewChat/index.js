@@ -9,10 +9,15 @@ import helper from 'utils/helper';
 import wfc from '../../wfc/wfc'
 import Conversation from '../../wfc/model/conversation';
 import ConversationType from '../../wfc/model/conversationType';
+import MessageContentMediaType from '../../wfc/messages/messageContentMediaType';
+import { imgSync } from 'base64-img';
+import { fs } from 'file-system';
+import tmp from 'tmp';
 
 @inject(stores => ({
     show: stores.newchat.show,
     searching: stores.newchat.query,
+    mergeImages: stores.newchat.mergeImages,
     getList: () => {
         var { newchat, contacts } = stores;
 
@@ -53,13 +58,32 @@ export default class NewChat extends Component {
                 groupName += userInfo.displayName + '、';
             }
             groupName = groupName.substr(0, groupName.lastIndexOf('、'))
-            wfc.createGroup(null, groupName, '', selected, [0], null,
-                (groupId) => {
-                    let conversation = new Conversation(ConversationType.Group, groupId);
-                    this.props.chatTo(conversation);
+
+            var portraits = [];
+            for (let i = 0; i < 9 && i < selected.length; i++) {
+                let userInfo = wfc.getUserInfo(selected[i]);
+                portraits.push(userInfo.portrait);
+            }
+            let dataUri = await this.props.mergeImages(portraits);
+            let filePath = imgSync(dataUri, tmp.dirSync().name, tmp.tmpNameSync());
+            let str = fs.readFileSync(filePath).toString('base64');
+
+            wfc.uploadMedia(str, MessageContentMediaType.Portrait,
+                (remoteUrl) => {
+                    wfc.createGroup(null, groupName, remoteUrl, selected, [0], null,
+                        (groupId) => {
+                            let conversation = new Conversation(ConversationType.Group, groupId);
+                            this.props.chatTo(conversation);
+                        },
+                        (errorCode) => {
+                            console.log('create group error', errorCode);
+                        });
                 },
                 (errorCode) => {
-                    console.log('create group error', errorCode);
+                    console.log('upload media error', errorCode);
+                },
+                (current, total) => {
+                    // do nothing
                 });
         };
 
