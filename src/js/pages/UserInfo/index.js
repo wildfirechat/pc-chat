@@ -52,9 +52,7 @@ import KickoffGroupMemberNotification from '../../wfc/messages/notification/kick
     showAddFriend: (user) => stores.addfriend.toggle(true, user),
     showMessage: stores.snackbar.showMessage,
     isme: () => {
-        console.log(stores.userinfo.user, wfc.getUserId());
         let isMe = stores.userinfo.user.uid === wfc.getUserId();
-        console.log('is me', isMe);
         return isMe;
     },
 }))
