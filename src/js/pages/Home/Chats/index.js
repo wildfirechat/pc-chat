@@ -6,8 +6,6 @@ import clazz from 'classname';
 import moment from 'moment';
 
 import classes from './style.css';
-import helper from 'utils/helper';
-import wfc from '../../../wfc/wfc'
 import EventType from '../../../wfc/wfcEvent'
 import ConversationType from '../../../wfc/model/conversationType';
 
