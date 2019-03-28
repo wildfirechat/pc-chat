@@ -4,7 +4,6 @@ import axios from 'axios';
 import pinyin from 'han';
 
 import contacts from './contacts';
-import storage from 'utils/storage';
 import UserInfo from '../wfc/model/userInfo'
 import resizeImage from 'resize-image'
 
@@ -55,6 +54,8 @@ class NewChat {
         return new Promise(resolve => {
             options = Object.assign({}, this.defaultOptions, options);
 
+            sources = sources.filter(source => source !== null && source !== undefined);
+
             // Setup browser/Node.js specific variables
             const canvas = options.Canvas ? new options.Canvas() : window.document.createElement('canvas');
             const Image = options.Canvas ? options.Canvas.Image : window.Image;
@@ -103,9 +104,9 @@ class NewChat {
                 }
 
                 // Resolve source and img when loaded
-                console.log('---------source', source);
                 const img = new Image();
-                img.onerror = () => reject(new Error('Couldn\'t load image'));
+                //img.onerror = () => reject(new Error('Couldn\'t load image'));
+                img.onerror = () => resolve(null);
                 img.onload = () => resolve(Object.assign({}, source, { data: resizeImage.resize(img, size, size, resizeImage.PNG) }));
                 img.src = source.src;
             }));
@@ -113,10 +114,9 @@ class NewChat {
             const loadResizedImages = (resizedImagesBase64) => resizedImagesBase64.map(image => new Promise((resolve, reject) => {
                 // Resolve source and img when loaded
                 const img = new Image();
-                img.onerror = () => reject(new Error('Couldn\'t load image2'));
-                img.onload = () => {
-                    resolve(Object.assign({}, { img }))
-                };
+                //img.onerror = () => reject(new Error('Couldn\'t load image2'));
+                img.onerror = () => resolve(null);
+                img.onload = () => resolve(Object.assign({}, { img }));
                 img.src = image.data;
             }));
 
@@ -126,9 +126,12 @@ class NewChat {
             // When sources have loaded
             resolve(Promise.all(images)
                 .then((images) => {
+                    images = images.filter(i => i !== null);
                     return Promise.all(loadResizedImages(images));
                 })
                 .then(images => {
+
+                    images = images.filter(i => i !== null);
 
                     // Set canvas dimensions
                     // const getSize = dim => options[dim] || Math.max(...images.map(image => image.img[dim]));
@@ -253,6 +256,8 @@ class NewChat {
                             break;
                     }
 
+                    ctx.fillStyle = '#CCCCCC';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
                     // Draw images to canvas
                     images.forEach(image => {
                         ctx.globalAlpha = image.opacity ? image.opacity : 1;

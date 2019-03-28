@@ -106,6 +106,7 @@
     "react-addons-css-transition-group": "^15.6.2",
     "react-dom": "^16.0.0",
     "react-router-dom": "^4.2.2",
+    "resize-image": "^0.1.0",
     "sharp": "^0.22.0",
     "tmp": "0.0.33",
     "tributejs": "^3.6.0",
