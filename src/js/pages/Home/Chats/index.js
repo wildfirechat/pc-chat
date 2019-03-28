@@ -9,6 +9,7 @@ import classes from './style.css';
 import helper from 'utils/helper';
 import wfc from '../../../wfc/wfc'
 import EventType from '../../../wfc/wfcEvent'
+import ConversationType from '../../../wfc/model/conversationType';
 
 moment.updateLocale('en', {
     relativeTime: {
@@ -164,11 +165,24 @@ export default class Chats extends Component {
                     ref="container">
                     {
                         !searching && chats.map((e, index) => {
-                            let conversationInfo = wfc.getConversationInfo(e);
-                            var muted = conversationInfo.isSilent;
-                            var isTop = conversationInfo.isTop;
-                            let unreadCount = conversationInfo.unreadCount;
+                            // let conversationInfo = wfc.getConversationInfo(e);
+                            var muted = e.isSilent;
+                            var isTop = e.isTop;
+                            let unreadCount = e.unreadCount;
                             let hasUnread = unreadCount.unread > 0 || unreadCount.unreadMention > 0 || unreadCount.unreadMentionAll > 0;
+                            var portrait = e.portrait();
+                            if (!portrait) {
+                                switch (e.conversation.conversationType) {
+                                    case ConversationType.Single:
+                                        portrait = 'assets/images/user-fallback.png';
+                                        break;
+                                    case ConversationType.Group:
+                                        portrait = 'assets/images/default_group_avatar.png';
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
 
                             return (
                                 <div
@@ -188,7 +202,7 @@ export default class Chats extends Component {
                                             <img
                                                 className="disabledDrag"
                                                 // TODO portrait
-                                                src={e.portrait()}
+                                                src={portrait}
                                                 onError={e => (e.target.src = 'assets/images/user-fallback.png')}
                                             />
                                         </div>
