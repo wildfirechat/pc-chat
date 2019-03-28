@@ -89,6 +89,7 @@ class WfcManager {
 
     onFriendListUpdate(friendListIds) {
         console.log('friendList update, ids', friendListIds);
+        self.eventEmitter.emit(EventType.FriendListUpdate, friendListIds);
     }
 
     init() {

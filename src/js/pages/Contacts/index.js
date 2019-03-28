@@ -5,6 +5,7 @@ import clazz from 'classname';
 import randomColor from 'randomcolor';
 
 import classes from './style.css';
+import EventType from '../../wfc/wfcEvent';
 
 @inject(stores => ({
     filter: stores.contacts.filter,
@@ -12,6 +13,7 @@ import classes from './style.css';
     getContacts: stores.contacts.getContacts,
     showUserinfo: stores.userinfo.toggle,
     contactItemName: stores.contacts.contactItemName,
+    event: stores.wfc.eventEmitter,
 }))
 @observer
 export default class Contacts extends Component {
@@ -78,9 +80,18 @@ export default class Contacts extends Component {
         return e.portrait;
     }
 
+    onContactUpdate() {
+        this.props.getContacts();
+    }
+
     componentWillMount() {
         this.props.getContacts();
         // this.props.filter();
+        this.props.event.on(EventType.FriendListUpdate, this.onContactUpdate);
+    }
+
+    componentWillUnmount() {
+        this.props.event.removeListener(EventType.FriendListUpdate, this.onContactUpdate);
     }
 
     render() {
