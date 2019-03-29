@@ -2,8 +2,6 @@ import NotificationMessageContent from "./notificationMessageContent";
 import wfc from '../../wfc'
 import MessageContentType from "../messageContentType";
 import { Base64 } from 'js-base64';
-import { base64 } from "base64-img";
-
 
 export default class ChangeGroupNameNotification extends NotificationMessageContent {
     operator = '';
@@ -36,7 +34,7 @@ export default class ChangeGroupNameNotification extends NotificationMessageCont
 
     decode(payload) {
         super.decode(payload);
-        let json = base64.decode(payload.binaryContent)
+        let json = Base64.decode(payload.binaryContent)
         let obj = JSON.parse(json);
         this.operator = obj.o;
         this.name = obj.n;
