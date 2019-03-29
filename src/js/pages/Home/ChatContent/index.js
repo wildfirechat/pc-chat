@@ -397,32 +397,33 @@ export default class ChatContent extends Component {
             let source = audio.querySelector('source');
             let voiceUrl = source.src;
 
-            console.log('to play');
-
             if (this.isAudioPlaying) {
+                console.log('pause current', this.isAudioPlaying);
                 let current = document.getElementsByClassName(classes.playing);
-                let currentAudio = current.item(0).querySelector('audio');
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-                target.classList.remove(classes.playing)
-                console.log('pause current');
-                this.isAudioPlaying = false;
-                this.amr = null;
-                this.amr.stop();
+                if (current.length > 0) {
+                    let currentAudio = current.item(0).querySelector('audio');
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    currentAudio.classList.remove(classes.playing)
+                    this.isAudioPlaying = false;
+                    this.amr.stop();
+                    this.amr = null;
+                    if (audio == currentAudio) {
+                        return;
+                    }
+                }
             }
 
-            this.amr = new BenzAMRRecorder();
             audio.onplay = () => {
-                console.log('on play');
-
+                this.amr = new BenzAMRRecorder();
                 this.amr.initWithUrl(voiceUrl).then(() => {
                     this.isAudioPlaying = true;
                     this.amr.play();
                 });
                 this.amr.onEnded(() => {
                     this.isAudioPlaying = false;
-                    this.amr = null;
-                    console.log('on end');
+                    // do not uncomment the following line
+                    // this.amr = null;
                     target.classList.remove(classes.playing)
                     audio.pause();
                     audio.currentTime = 0;
@@ -644,6 +645,14 @@ export default class ChatContent extends Component {
 
     componentWillUnmount() {
         !this.props.rememberConversation && this.props.reset();
+        this.stopAudio();
+    }
+
+    stopAudio() {
+        if (this.amr) {
+            this.amr.stop();
+            this.amr = null;
+        }
     }
 
     componentDidUpdate() {
@@ -727,6 +736,7 @@ export default class ChatContent extends Component {
             wfc.clearConversationUnreadStatus(nextProps.conversation);
             this.scrollTop = -1;
         }
+        this.stopAudio();
     }
 
     title() {
