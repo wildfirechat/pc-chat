@@ -19,6 +19,8 @@ import ImageMessageContent from '../wfc/messages/imageMessageContent';
 import VideoMessageContent from '../wfc/messages/videoMessageContent';
 import FileMessageContent from '../wfc/messages/fileMessageContent';
 import MessageStatus from '../wfc/messages/messageStatus';
+import resizeImage from 'resize-image';
+
 
 async function resolveMessage(message) {
     var auth = await storage.get('auth');
@@ -466,6 +468,18 @@ class Chat {
         return true;
     }
 
+    // return data url
+    imageThumbnail(file) {
+        return new Promise((resolve, reject) => {
+            var img = new Image();
+            img.onload = function () {
+                var data = resizeImage.resize(img, 320, 240, resizeImage.PNG);
+                resolve(data);
+            };
+            img.src = file.path; // local image url
+        });
+    }
+
     @action async process(file, user = self.user) {
         var showMessage = snackbar.showMessage;
 
@@ -489,11 +503,13 @@ class Chat {
             'video': MessageContentMediaType.Video,
             'doc': MessageContentMediaType.File,
         }[mediaType];
+        console.log('-----------', messageContentmediaType);
 
         var messageContent;
         switch (messageContentmediaType) {
             case MessageContentMediaType.Image:
-                messageContent = new ImageMessageContent(file);
+                let imageThumbnail = await self.imageThumbnail(file);
+                messageContent = new ImageMessageContent(file, imageThumbnail.split(',')[1]);
                 break;
             case MessageContentMediaType.Video:
                 messageContent = new VideoMessageContent(file);
