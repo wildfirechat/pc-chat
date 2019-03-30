@@ -20,6 +20,9 @@ import VideoMessageContent from '../wfc/messages/videoMessageContent';
 import FileMessageContent from '../wfc/messages/fileMessageContent';
 import MessageStatus from '../wfc/messages/messageStatus';
 import resizeImage from 'resize-image';
+import { imgSync } from 'base64-img';
+import { fs } from 'file-system';
+import tmp from 'tmp';
 
 
 async function resolveMessage(message) {
@@ -472,12 +475,54 @@ class Chat {
     imageThumbnail(file) {
         return new Promise((resolve, reject) => {
             var img = new Image();
-            img.onload = function () {
+            img.onload = () => {
                 var data = resizeImage.resize(img, 320, 240, resizeImage.PNG);
                 resolve(data);
             };
+            img.onerror = () => {
+                resolve(null);
+            }
             img.src = file.path; // local image url
         });
+    }
+
+    // return data url
+    videoThumbnail(file) {
+        return new Promise(
+            (resolve, reject) => {
+                let video = document.getElementById('bgvid');
+                video.onplay = () => {
+                    console.log('------------ video onplay');
+
+                    var canvas = document.createElement("canvas");
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    canvas.getContext('2d')
+                        .drawImage(video, 0, 0, canvas.width, canvas.height);
+                    var img = document.createElement("img");
+                    img.src = canvas.toDataURL();
+                    img.onload = () => {
+                        var data = resizeImage.resize(img, 320, 240, resizeImage.PNG);
+                        resolve(data);
+                        video.src = null;
+                    };
+                    img.onerror = () => {
+                        resolve(null);
+                    };
+                };
+                video.onerror = () => {
+                    resolve(null);
+                }
+                video.src = file.path;
+                console.log('----------', video);
+            });
+    }
+
+    imgDataUriToBase64(dataUri) {
+        let filePath = imgSync(dataUri, tmp.dirSync().name, tmp.tmpNameSync());
+        let imageData = fs.readFileSync(filePath, { encoding: 'base64' });
+
+        return imageData;
     }
 
     @action async process(file, user = self.user) {
@@ -503,22 +548,30 @@ class Chat {
             'video': MessageContentMediaType.Video,
             'doc': MessageContentMediaType.File,
         }[mediaType];
-        console.log('-----------', messageContentmediaType);
 
         var messageContent;
         switch (messageContentmediaType) {
             case MessageContentMediaType.Image:
                 let imageThumbnail = await self.imageThumbnail(file);
+                if (imageThumbnail === null) {
+                    return false;
+                }
+                // let img64 = self.imgDataUriToBase64(imageThumbnail);
                 messageContent = new ImageMessageContent(file, imageThumbnail.split(',')[1]);
                 break;
             case MessageContentMediaType.Video:
-                messageContent = new VideoMessageContent(file);
+                let videoThumbnail = await self.videoThumbnail(file);
+                if (videoThumbnail === null) {
+                    return false;
+                }
+                // let video64 = self.imgDataUriToBase64(videoThumbnail);
+                messageContent = new VideoMessageContent(file, videoThumbnail.split(',')[1]);
                 break;
             case MessageContentMediaType.File:
                 messageContent = new FileMessageContent(file);
                 break;
             default:
-                break;
+                return false;
         }
         msg.messageContent = messageContent;
         var m;
