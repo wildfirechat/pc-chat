@@ -1,12 +1,38 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>wildfireChat</title>
+
+    <style>
+        .styled_video_container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -999;
+            transform: translateX(-50%) translateY(-50%);
+            background-size: cover;
+            transition: 1s opacity;
+        }
+    </style>
+
 </head>
+
 <body>
-    <div id="root"></div>
+    <div id="styled_video_container" class="styled_video_container">
+        <video class="styled_video_container" id="bgvid" playsinline autoplay muted loop>
+            <!-- <source src="http://thenewcode.com/assets/videos/polina.webm" type="video/webm">
+            <source src="http://thenewcode.com/assets/videos/polina.mp4" type="video/mp4"> -->
+        </video>
+    </div>
+
+    <div id="root">
+    </div>
     <script>
         if (process.env.HOT) {
             let script = document.createElement('script');
@@ -19,4 +45,5 @@
         }
     </script>
 </body>
+
 </html>
