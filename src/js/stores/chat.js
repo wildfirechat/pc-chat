@@ -490,7 +490,7 @@ class Chat {
             img.onerror = () => {
                 resolve(null);
             }
-            img.src = file.path; // local image url
+            img.src = file.path.indexOf(file.name) > -1 ? file.path : file.path + file.name; // local image url
         });
     }
 
@@ -531,7 +531,7 @@ class Chat {
                 video.onerror = () => {
                     resolve(null);
                 }
-                video.src = file.path;
+                video.src = file.path.indexOf(file.name) > -1 ? file.path : file.path + file.name; // local video url
                 console.log('----------', video);
             });
     }
