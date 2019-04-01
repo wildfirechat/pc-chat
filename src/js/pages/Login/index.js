@@ -9,7 +9,6 @@ import wfc from '../../wfc/wfc'
 import PCSession from '../../wfc/pcsession';
 import { observable } from 'mobx';
 import axios from 'axios';
-import helper from 'utils/helper';
 
 @inject(stores => ({
     avatar: stores.sessions.avatar,

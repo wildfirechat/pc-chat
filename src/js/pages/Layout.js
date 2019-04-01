@@ -23,6 +23,7 @@ import Login from './Login';
 import wfc from '../wfc/wfc'
 import { observable, action } from 'mobx';
 import EventType from '../wfc/wfcEvent';
+import ConnectionStatus from '../wfc/connectionStatus';
 
 @inject(stores => ({
     isLogin: () => !!stores.sessions.auth,
@@ -149,7 +150,7 @@ export default class Layout extends Component {
     onConnectionStatusChange = (status) => {
         this.connectionStatus = status;
         // 
-        if (status === 1 && !this.contactsLoaded) {
+        if (status === ConnectionStatus.ConnectionStatusConnected && !this.contactsLoaded) {
             this.props.getContacts();
             this.contactsLoaded = true;
         }
@@ -176,7 +177,9 @@ export default class Layout extends Component {
         //     );
         // }
 
-        if (!this.connectionStatus == 1) {
+        if (this.connectionStatus === ConnectionStatus.ConnectionStatusRejected
+            || this.connectionStatus === ConnectionStatus.ConnectionStatusLogout
+            || wfc.getUserId() === '') {
             return <Login />;
         }
 
