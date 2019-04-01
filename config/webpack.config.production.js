@@ -27,7 +27,7 @@ export default {
     plugins: [
         // https://github.com/webpack/webpack/issues/2545
         // Use babel-minify-webpack-plugin minify code
-        new MinifyPlugin(),
+        // new MinifyPlugin(),
 
         // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
         // https://github.com/webpack/webpack/issues/864
