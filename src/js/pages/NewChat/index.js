@@ -65,8 +65,6 @@ export default class NewChat extends Component {
                 portraits.push(userInfo.portrait);
             }
             let dataUri = await this.props.mergeImages(portraits);
-            // let filePath = imgSync(dataUri, tmp.dirSync().name, tmp.tmpNameSync());
-            // let imageData = fs.readFileSync(filePath, { encoding: 'base64' });
 
             wfc.uploadMedia(dataUri.split(',')[1], MessageContentMediaType.Portrait,
                 (remoteUrl) => {

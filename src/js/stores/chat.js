@@ -7,7 +7,6 @@ import storage from 'utils/storage';
 import helper from 'utils/helper';
 import contacts from './contacts';
 import settings from './settings';
-import sessions from './sessions';
 import members from './members';
 import snackbar from './snackbar';
 import wfc from '../wfc/wfc'
@@ -23,7 +22,6 @@ import resizeImage from 'resize-image';
 import { imgSync } from 'base64-img';
 import { fs } from 'file-system';
 import tmp from 'tmp';
-
 
 async function resolveMessage(message) {
     var auth = await storage.get('auth');
@@ -476,8 +474,18 @@ class Chat {
         return new Promise((resolve, reject) => {
             var img = new Image();
             img.onload = () => {
-                var data = resizeImage.resize(img, 320, 240, resizeImage.PNG);
-                resolve(data);
+                let resizedCanvas = resizeImage.resize2Canvas(img, 320, 240);
+                resizedCanvas.toBlob((blob) => {
+                    var reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = () => {
+                        let base64data = reader.result;
+                        resolve(base64data);
+                    }
+                    reader.onerror = () => {
+                        resolve(null);
+                    }
+                }, 'image/jpeg', 0.6);
             };
             img.onerror = () => {
                 resolve(null);
@@ -502,9 +510,19 @@ class Chat {
                     var img = document.createElement("img");
                     img.src = canvas.toDataURL();
                     img.onload = () => {
-                        var data = resizeImage.resize(img, 320, 240, resizeImage.PNG);
-                        resolve(data);
-                        video.src = null;
+                        let resizedCanvas = resizeImage.resize2Canvas(img, 320, 240);
+                        resizedCanvas.toBlob((blob) => {
+                            var reader = new FileReader();
+                            reader.readAsDataURL(blob);
+                            reader.onloadend = () => {
+                                let base64data = reader.result;
+                                resolve(base64data);
+                                video.src = null;
+                            };
+                            reader.onerror = () => {
+                                resolve(null);
+                            }
+                        }, 'image/jpeg', 0.6);
                     };
                     img.onerror = () => {
                         resolve(null);
