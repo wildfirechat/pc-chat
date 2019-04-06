@@ -17,13 +17,13 @@ export default class AddGroupMemberNotification extends NotificationMessageConte
         if (this.fromSelf) {
             notifyStr = '您邀请:';
         } else {
-            let u = wfc.getUserInfo(this.operator);
-            return u.displayName + '邀请:';
+            let u = wfc.getUserInfo(this.invitor);
+            notifyStr = u.displayName + '邀请:';
         }
 
         let membersStr = '';
         this.invitees.forEach(m => {
-            let u = wfc.getUserInfo(m);
+            let u = wfc.getUserInfo(m, true);
             membersStr += ' ' + u.displayName;
         });
 
