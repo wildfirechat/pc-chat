@@ -19,7 +19,7 @@ export default class ConversationInfo {
     static protoConversationToConversationInfo(obj) {
         let conversationInfo = Object.assign(new ConversationInfo(), obj);
         conversationInfo.conversation = new Conversation(obj.conversationType, obj.target, obj.line);
-        conversationInfo.lastMessage = Message.protoMessageToMessage(obj.lastMessage);
+        conversationInfo.lastMessage = Message.fromProtoMessage(obj.lastMessage);
         return conversationInfo;
     }
 
