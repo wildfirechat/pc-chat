@@ -30,7 +30,7 @@ import KickoffGroupMemberNotification from '../../wfc/messages/notification/kick
         let conversation = stores.userinfo.conversation;
         if (conversation.conversationType === ConversationType.Group) {
             let kickOffNotify = new KickoffGroupMemberNotification(wfc.getUserId(), [user.uid]);
-            wfc.removeGroupMembers(conversation.target, [user.uid], [0], kickOffNotify,
+            wfc.kickoffGroupMembers(conversation.target, [user.uid], [0], kickOffNotify,
                 () => {
                     console.log('kick off group member success');
                 },

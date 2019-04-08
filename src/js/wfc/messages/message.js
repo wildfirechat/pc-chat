@@ -47,7 +47,7 @@ export default class Message {
     timestamp = 0;
     to = '';
 
-    static protoMessageToMessage(obj) {
+    static fromProtoMessage(obj) {
         let msg = Object.assign(new Message(), obj);
         // big integer to number
         msg.messageId = Number(msg.messageId);
@@ -67,7 +67,7 @@ export default class Message {
                     content.fromSelf = msg.from === wfc.getUserId();
                 }
             } catch (error) {
-                console.log('decode message payload failed, fallback to unkownMessage', msg.content, error);
+                console.log('decode message payload failed, fallback to unkownMessage', msg.content);
                 let flag = MessageConfig.getMessageContentPersitFlag(msg.content.type);
                 if (PersistFlag.Persist === flag || PersistFlag.Persist_And_Count === flag) {
                     content = new UnknownMessageContent(msg.content);
