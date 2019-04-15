@@ -22,6 +22,8 @@ import GroupSearchResult from './model/groupSearchResult';
 import FriendRequest from './model/friendRequest';
 import ChatRoomMemberInfo from './model/chatRoomMemberInfo';
 import ChannelInfo from './model/channelInfo';
+import ConversationType from './model/conversationType';
+import TextMessageContent from './messages/textMessageContent';
 
 // 其实就是imclient，后续可能需要改下名字
 class WfcManager {
@@ -348,7 +350,6 @@ class WfcManager {
 
         let payload = notifyContent.encode();
         let notifyContentStr = JSON.stringify(payload);
-        console.log('-------------a ', notifyContentStr);
         proto.createGroup(groupId, name, portrait, memberIds, lines, notifyContentStr,
             (groupId) => {
                 if (successCB) {
@@ -868,14 +869,25 @@ class WfcManager {
         return matchMsgs;
     }
 
-    // to 用来实现定向消息
-    async sendMessage(message, to, preparedCB, progressCB, successCB, failCB) {
+    async sendConversationMessage(conversation, messageContent, toUsers, preparedCB, progressCB, successCB, failCB) {
+        let message = new Message();
+        message.conversation = conversation;
+        message.messageContent = messageContent;
+        self.sendMessageEx(message, toUsers, preparedCB, progressCB, successCB, failCB);
+    }
+
+    async sendMessage(message, preparedCB, progressCB, successCB, failCB) {
+        self.sendMessageEx(message, [], preparedCB, progressCB, successCB, failCB);
+    }
+
+    // toUsers 用来实现定向消息
+    async sendMessageEx(message, toUsers = [], preparedCB, progressCB, successCB, failCB) {
         let strConv = JSON.stringify(message.conversation);
         message.content = await message.messageContent.encode();
         console.log('--------------p', message.content);
         let strCont = JSON.stringify(message.content);
 
-        proto.sendMessage(strConv, strCont, to, 0,
+        proto.sendMessage(strConv, strCont, toUsers, 0,
             function (messageId, timestamp) { //preparedCB
                 message.memberId = messageId;
                 if (typeof preparedCB === 'function') {
@@ -1010,6 +1022,13 @@ class WfcManager {
             (current, total) => {
 
             });
+
+        // let conversation = new Conversation(ConversationType.Group, "tTt5t566", 0);
+        // let content = new TextMessageContent("hello");
+        // self.sendConversationMessage(conversation, content, ["CbGHCH88"])
+        // content = new TextMessageContent("world");
+        // self.sendConversationMessage(conversation, content, [])
+
         console.log('---------------test end----------------------');
     }
 }

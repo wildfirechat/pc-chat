@@ -62,7 +62,7 @@ class Forward {
             msg.conversation = new Conversation(ConversationType.Group, userid, 0);
         }
 
-        wfc.sendMessage(msg, '');
+        wfc.sendMessage(msg)
     }
 }
 

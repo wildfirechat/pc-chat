@@ -450,7 +450,7 @@ class Chat {
         msg.conversation = self.conversation;
         msg.messageContent = messgeContent;
         var m;
-        wfc.sendMessage(msg, '',
+        wfc.sendMessage(msg,
             function (messageId, timestamp) {
                 m = wfc.getMessageById(messageId);
                 self.messageList.push(m);
@@ -593,7 +593,7 @@ class Chat {
         }
         msg.messageContent = messageContent;
         var m;
-        wfc.sendMessage(msg, '',
+        wfc.sendMessage(msg,
             function (messageId, timestamp) {
                 m = wfc.getMessageById(messageId);
                 self.messageList.push(m);
