@@ -12,7 +12,7 @@ import EventType from '../../../wfc/wfcEvent';
     searching: stores.search.searching,
     filtered: stores.contacts.filtered,
     getContacts: stores.contacts.getContacts,
-    showUserinfo: stores.userinfo.toggle,
+    showUserinfo: stores.contactInfo.toggle,
     contactItemName: stores.contacts.contactItemName,
     event: stores.wfc.eventEmitter,
 }))
@@ -48,7 +48,7 @@ export default class Contacts extends Component {
                                     <div
                                         className={classes.item}
                                         key={index}
-                                        onClick={() => this.props.showUserinfo(true, null, e)}>
+                                        onClick={() => this.props.showUserinfo(true, e)}>
                                         <div className={classes.avatar}>
                                             <img
                                                 src={this.itemPortrait(e)}
