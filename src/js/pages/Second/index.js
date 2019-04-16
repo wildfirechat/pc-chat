@@ -6,8 +6,8 @@ import clazz from 'classname';
 import classes from './style.css';
 import Loader from 'components/Loader';
 import SearchBar from '../SearchBar';
-import Chats from './Chats';
-import ChatContent from './ChatContent';
+// import ChatContent from './ChatContent';
+import Contacts from './Contacts';
 
 @inject(stores => ({
     loading: stores.sessions.loading,
@@ -17,7 +17,7 @@ import ChatContent from './ChatContent';
     newChat: () => stores.newchat.toggle(true),
 }))
 @observer
-export default class Home extends Component {
+export default class Second extends Component {
     componentDidMount() {
         this.props.toggleConversation(true);
     }
@@ -33,22 +33,12 @@ export default class Home extends Component {
                 })}>
                     <div className={classes.left}>
                         <SearchBar />
-                        <Chats />
-
-                        {
-                            this.props.showRedIcon && (
-                                <div
-                                    className={classes.addChat}
-                                    onClick={() => this.props.newChat()}>
-                                    <i className="icon-ion-android-add" />
-                                </div>
-                            )
-                        }
+                        <Contacts />
                     </div>
 
-                    <div className={classes.right}>
+                    {/* <div className={classes.right}>
                         <ChatContent />
-                    </div>
+                    </div> */}
                 </div>
             </div>
         );
