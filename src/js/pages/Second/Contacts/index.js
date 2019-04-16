@@ -35,9 +35,9 @@ export default class Contacts extends Component {
                             position: 'absolute',
                             left: 0,
                             bottom: 0,
-                            height: 2,
+                            height: 1,
                             width: '100%',
-                            background: randomColor(),
+                            background: '#eaedea',
                         }} />
                     </div>
 

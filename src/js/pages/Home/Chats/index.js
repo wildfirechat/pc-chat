@@ -25,7 +25,6 @@ moment.updateLocale('en', {
     chats: stores.sessions.conversations,
     chatTo: stores.chat.chatToN,
     conversation: stores.chat.conversation,
-    selected: stores.chat.user,
     messages: stores.chat.messages,
     markedRead: stores.chat.markedRead,
     sticky: stores.sessions.sticky,
