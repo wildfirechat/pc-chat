@@ -8,6 +8,7 @@ import Loader from 'components/Loader';
 import SearchBar from '../SearchBar';
 // import ChatContent from './ChatContent';
 import Contacts from './Contacts';
+import ContactInfo from './ContactInfo';
 
 @inject(stores => ({
     loading: stores.sessions.loading,
@@ -36,9 +37,9 @@ export default class Second extends Component {
                         <Contacts />
                     </div>
 
-                    {/* <div className={classes.right}>
-                        <ChatContent />
-                    </div> */}
+                    <div className={classes.right}>
+                        <ContactInfo />
+                    </div>
                 </div>
             </div>
         );
