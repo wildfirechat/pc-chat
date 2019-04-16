@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 
 import classes from './style.css';
-import UserInfo from '../../../wfc/model/userInfo';
-import GroupInfo from '../../../wfc/model/groupInfo';
-import Conversation from '../../../wfc/model/conversation';
-import ConversationType from '../../../wfc/model/conversationType';
+import UserInfo from '../../wfc/model/userInfo';
+import GroupInfo from '../../wfc/model/groupInfo';
+import Conversation from '../../wfc/model/conversation';
+import ConversationType from '../../wfc/model/conversationType';
 
 @inject(stores => ({
     history: stores.search.history,

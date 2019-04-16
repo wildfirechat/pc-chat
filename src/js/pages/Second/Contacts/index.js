@@ -5,10 +5,11 @@ import clazz from 'classname';
 import randomColor from 'randomcolor';
 
 import classes from './style.css';
-import EventType from '../../wfc/wfcEvent';
+import EventType from '../../../wfc/wfcEvent';
 
 @inject(stores => ({
     filter: stores.contacts.filter,
+    searching: stores.search.searching,
     filtered: stores.contacts.filtered,
     getContacts: stores.contacts.getContacts,
     showUserinfo: stores.userinfo.toggle,
@@ -19,7 +20,7 @@ import EventType from '../../wfc/wfcEvent';
 export default class Contacts extends Component {
     renderColumns(data, index) {
         console.log('render c', data);
-        var list = data.filter((e, i) => i % 3 === index);
+        var list = data.filter((e, i) => i % 1 === index);
 
         console.log('render', list.length);
         return list.map((e, index) => {
@@ -30,12 +31,11 @@ export default class Contacts extends Component {
                     <div className={classes.header}>
                         <label>{e.prefix}</label>
 
-                        <span>{e.list.length} people</span>
                         <span style={{
                             position: 'absolute',
                             left: 0,
                             bottom: 0,
-                            height: 4,
+                            height: 2,
                             width: '100%',
                             background: randomColor(),
                         }} />
@@ -96,6 +96,7 @@ export default class Contacts extends Component {
 
     render() {
         var { query, result } = this.props.filtered;
+        var searching = this.props.searching;
 
         if (query && result.length === 0) {
             return (
@@ -110,22 +111,11 @@ export default class Contacts extends Component {
 
         return (
             <div className={classes.container}>
-                <div className={classes.columns}>
-                    <div className={classes.column}>
-                        {
-                            this.renderColumns(result, 0)
-                        }
-                    </div>
-                    <div className={classes.column}>
-                        {
-                            this.renderColumns(result, 1)
-                        }
-                    </div>
-                    <div className={classes.column}>
-                        {
-                            this.renderColumns(result, 2)
-                        }
-                    </div>
+                <div className={classes.contacts}
+                    ref="container">
+                    {
+                        !searching && this.renderColumns(result, 0)
+                    }
                 </div>
             </div>
         );
