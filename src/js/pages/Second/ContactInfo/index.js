@@ -9,6 +9,8 @@ import classes from './style.css';
 import Avatar from 'components/Avatar';
 import Conversation from '../../../wfc/model/conversation';
 import ConversationType from '../../../wfc/model/conversationType';
+import UserInfo from '../../../wfc/model/userInfo';
+import GroupInfo from '../../../wfc/model/groupInfo';
 
 @inject(stores => ({
     chatTo: (conversation) => {
@@ -52,27 +54,35 @@ class ContactInfo extends Component {
     }
 
     handleAction(user) {
-        if (this.props.history.location.pathname !== '/') {
-            this.props.history.push('/');
-        }
 
         setTimeout(() => {
-            //if (helper.isContact(user) || helper.isChatRoom(user.UserName)) {
-            let conversation = new Conversation(ConversationType.Single, user.uid, 0);
+
+            var conversation;
+            if (user instanceof UserInfo) {
+                conversation = new Conversation(ConversationType.Single, user.uid, 0);
+            } else if (user instanceof GroupInfo) {
+                conversation = new Conversation(ConversationType.Group, user.target, 0);
+            } else {
+                console.log('contactInfo unknown', user);
+                return;
+            }
             this.props.chatTo(conversation);
             this.props.toggle(false, null);
+            if (this.props.history.location.pathname !== '/') {
+                this.props.history.push('/');
+            }
             document.querySelector('#messageInput').focus();
         });
     }
 
     render() {
         var user = this.props.user;
-        var RemarkName = 'remarkName';
         var gradient = 'none';
         var fontColor = '#777';
         var buttonColor = '#777';
 
         var background = '#fff';
+
 
         return (
             <div className={classes.container}>
@@ -96,20 +106,19 @@ class ContactInfo extends Component {
 
                         <div
                             className={classes.username}
-                            dangerouslySetInnerHTML={{ __html: user.displayName }} />
-
+                            dangerouslySetInnerHTML={{ __html: user.displayName ? user.displayName : user.name }} />
 
                         {
                             /* eslint-disable */
-                            this.state.showEdit && (
-                                <input
-                                    autoFocus={true}
-                                    defaultValue={RemarkName}
-                                    onKeyPress={e => this.handleEnter(e)}
-                                    placeholder="Type the remark name"
-                                    ref="input"
-                                    type="text" />
-                            )
+                            // this.state.showEdit && (
+                            //     <input
+                            //         autoFocus={true}
+                            //         defaultValue={RemarkName}
+                            //         onKeyPress={e => this.handleEnter(e)}
+                            //         placeholder="Type the remark name"
+                            //         ref="input"
+                            //         type="text" />
+                            // )
                             /* eslint-enable */
                         }
                         <div

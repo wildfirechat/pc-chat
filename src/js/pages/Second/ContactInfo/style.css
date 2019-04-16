@@ -2,18 +2,41 @@
 .container {
     position: relative;
     padding: 0 !important;
-    width: 320px;
     overflow: hidden;
+    height: 100%;
 
     & input {
         position: absolute;
         bottom: 0;
         left: 0;
         height: 60px;
-        width: 100%;
+        width: 320px;
         text-align: center;
         font-size: 16px;
         outline: 0;
+    }
+}
+
+.noselected {
+    position: relative;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    & img {
+        width: 200px;
+        margin-bottom: 5vh;
+    }
+
+    & h1 {
+        font-family: 'Roboto';
+        font-weight: 100;
+        color: rgba(0, 0, 0, .8);
+        letter-spacing: 2px;
+        word-spacing: 4px;
     }
 }
 
@@ -38,7 +61,7 @@
 
 .hero {
     display: flex;
-    height: 370px;
+    height: 100%;
     padding-top: 20px;
     font-family: 'Helvetica';
     justify-content: center;
@@ -167,7 +190,7 @@
 
 @media (width <= 800px) {
     .container {
-        width: 240px;
+        width: 100%;
 
         & input {
             height: 46px;
@@ -185,7 +208,7 @@
     }
 
     .hero {
-        height: 280px;
+        height: 100%;
         padding-top: 10px;
 
         &.large {

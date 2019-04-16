@@ -6,6 +6,7 @@ import storage from 'utils/storage';
 
 class ContactInfo {
     @observable show = false;
+    // maybe userInfo, GroupInfo, ChannelInfo, ChatRoomInfo
     @observable user = {};
 
     @action async toggle(show = self.show, user = self.user) {
