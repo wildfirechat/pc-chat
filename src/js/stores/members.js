@@ -61,7 +61,7 @@ class Members {
 
         if (text) {
             list = self.list.filter(e => {
-                return pinyin.letter(e.displayName).toLowerCase().indexOf(pinyin.letter(text.toLocaleLowerCase())) > -1;
+                return pinyin.letter(e.displayName, null).toLowerCase().indexOf(pinyin.letter(text.toLocaleLowerCase()), null) > -1;
             });
             self.filtered.replace(list);
 

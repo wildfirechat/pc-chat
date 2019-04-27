@@ -37,7 +37,7 @@ class Contacts {
             // }
 
             let name = self.contactItemName(e);
-            var prefix = (pinyin.letter(name).toString()[0] + '').replace('?', '#');
+            var prefix = (pinyin.letter(name, null).toString()[0] + '').replace('?', '#');
             var group = mappings[prefix];
 
             if (!group) {
@@ -146,13 +146,13 @@ class Contacts {
     }
 
     @action filter(text = '', showall = false) {
-        text = pinyin.letter(text.toLocaleLowerCase());
+        text = pinyin.letter(text.toLocaleLowerCase(), null);
         var list = self.memberList.filter(e => {
             let name = self.contactItemName(e);
-            var res = pinyin.letter(name).toLowerCase().indexOf(text) > -1;
+            var res = pinyin.letter(name, null).toLowerCase().indexOf(text) > -1;
 
             // if (e.RemarkName) {
-            //     res = res || pinyin.letter(e.RemarkName).toLowerCase().indexOf(text) > -1;
+            //     res = res || pinyin.letter(e.RemarkName, null).toLowerCase().indexOf(text) > -1;
             // }
 
             return res;
