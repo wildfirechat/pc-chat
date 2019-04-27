@@ -87,7 +87,7 @@ class UserInfo extends Component {
             this.props.refreshContacts({
                 ...this.props.user,
                 RemarkName: value,
-                RemarkPYInitial: value ? (pinyin.letter(value)[0]).toUpperCase() : value,
+                RemarkPYInitial: value ? (pinyin.letter(value, null)[0]).toUpperCase() : value,
             });
             this.toggleEdit(false);
         } else {

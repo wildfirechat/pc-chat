@@ -40,7 +40,7 @@ class Forward {
                     return false;
                 }
 
-                return pinyin.letter(displayName).toLowerCase().indexOf(pinyin.letter(text.toLocaleLowerCase())) > -1;
+                return pinyin.letter(displayName, null).toLowerCase().indexOf(pinyin.letter(text.toLocaleLowerCase(), null)) > -1;
             });
             self.list.replace(list);
 

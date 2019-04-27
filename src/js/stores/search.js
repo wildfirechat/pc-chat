@@ -20,14 +20,14 @@ class Search {
         var groups = [];
         var friend = [];
 
-        text = pinyin.letter(text.toLocaleLowerCase());
+        text = pinyin.letter(text.toLocaleLowerCase(), null);
 
         list = contacts.memberList.filter(e => {
             let name = contacts.contactItemName(e);
-            var res = pinyin.letter(name).toLowerCase().indexOf(text) > -1;
+            var res = pinyin.letter(name, null).toLowerCase().indexOf(text) > -1;
 
             // if (e.RemarkName) {
-            //     res = res || pinyin.letter(e.RemarkName).toLowerCase().indexOf(text) > -1;
+            //     res = res || pinyin.letter(e.RemarkName, null).toLowerCase().indexOf(text) > -1;
             // }
 
             return res;
