@@ -10,7 +10,7 @@ import Tribute from "tributejs";
 import TextMessageContent from '../../wfc/messages/textMessageContent';
 import ConversationType from '../../wfc/model/conversationType';
 import wfc from '../../wfc/wfc'
-import pinyin from 'han';
+import pinyin from '../../han';
 
 export default class MessageInput extends Component {
     static propTypes = {
@@ -42,9 +42,9 @@ export default class MessageInput extends Component {
         if (type === ConversationType.Group) {
             let groupInfo = wfc.getGroupInfo(conversation.target);
             let members = wfc.getGroupMembers(conversation.target);
-            mentionMenuItems.push({ key: "所有人", value: '@' + conversation.target, avatar: groupInfo.portrait, searchKey: '所有人' + pinyin.letter('所有人',null) });
+            mentionMenuItems.push({ key: "所有人", value: '@' + conversation.target, avatar: groupInfo.portrait, searchKey: '所有人' + pinyin.letter('所有人', '', null) });
             members.forEach(e => {
-                mentionMenuItems.push({ key: e.getName(), value: '@' + e.memberId, avatar: e.getPortrait(), searchKey: e.getName() + pinyin.letter(e.getName(),null) });
+                mentionMenuItems.push({ key: e.getName(), value: '@' + e.memberId, avatar: e.getPortrait(), searchKey: e.getName() + pinyin.letter(e.getName(), '', null) });
             });
         }
 

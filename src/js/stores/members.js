@@ -1,6 +1,6 @@
 
 import { observable, action } from 'mobx';
-import pinyin from 'han';
+import pinyin from './../han';
 
 import helper from 'utils/helper';
 import GroupInfo from '../wfc/model/groupInfo';
@@ -61,7 +61,7 @@ class Members {
 
         if (text) {
             list = self.list.filter(e => {
-                return pinyin.letter(e.displayName, null).toLowerCase().indexOf(pinyin.letter(text.toLocaleLowerCase()), null) > -1;
+                return pinyin.letter(e.displayName, '', null).toLowerCase().indexOf(pinyin.letter(text.toLocaleLowerCase(), '', null)) > -1;
             });
             self.filtered.replace(list);
 

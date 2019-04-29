@@ -1,6 +1,6 @@
 
 import { observable, action } from 'mobx';
-import pinyin from 'han';
+import pinyin from '../han';
 
 import contacts from './contacts';
 
@@ -24,13 +24,13 @@ class BatchSend {
         self.query = text;
 
         if (text) {
-            text = pinyin.letter(text.toLocaleLowerCase(), null);
+            text = pinyin.letter(text.toLocaleLowerCase(), '', null);
 
             list = list.filter(e => {
-                var res = pinyin.letter(e.NickName, null).toLowerCase().indexOf(text) > -1;
+                var res = pinyin.letter(e.NickName, '', null).toLowerCase().indexOf(text) > -1;
 
                 if (e.RemarkName) {
-                    res = res || pinyin.letter(e.RemarkName, null).toLowerCase().indexOf(text) > -1;
+                    res = res || pinyin.letter(e.RemarkName, '', null).toLowerCase().indexOf(text) > -1;
                 }
 
                 return res;

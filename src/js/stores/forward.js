@@ -1,6 +1,6 @@
 
 import { observable, action } from 'mobx';
-import pinyin from 'han';
+import pinyin from '../han';
 
 import contacts from './contacts';
 import wfc from '../wfc/wfc'
@@ -40,7 +40,7 @@ class Forward {
                     return false;
                 }
 
-                return pinyin.letter(displayName, null).toLowerCase().indexOf(pinyin.letter(text.toLocaleLowerCase(), null)) > -1;
+                return pinyin.letter(displayName, '', null).toLowerCase().indexOf(pinyin.letter(text.toLocaleLowerCase(), '', null)) > -1;
             });
             self.list.replace(list);
 
