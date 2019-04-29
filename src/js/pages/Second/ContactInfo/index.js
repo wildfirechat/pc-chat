@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import pinyin from 'han';
+import pinyin from '../../../han';
 import clazz from 'classname';
 
 import classes from './style.css';
@@ -45,7 +45,7 @@ class ContactInfo extends Component {
             this.props.refreshContacts({
                 ...this.props.user,
                 RemarkName: value,
-                RemarkPYInitial: value ? (pinyin.letter(value, null)[0]).toUpperCase() : value,
+                RemarkPYInitial: value ? (pinyin.letter(value, '', null)[0]).toUpperCase() : value,
             });
             this.toggleEdit(false);
         } else {

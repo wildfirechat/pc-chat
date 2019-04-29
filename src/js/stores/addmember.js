@@ -1,7 +1,7 @@
 
 import { observable, action } from 'mobx';
 import axios from 'axios';
-import pinyin from 'han';
+import pinyin from './../han';
 
 import contacts from './contacts';
 import sessions from './sessions';
@@ -19,10 +19,10 @@ class AddMember {
     }
 
     @action search(text) {
-        text = pinyin.letter(text.toLocaleLowerCase(), null);
+        text = pinyin.letter(text.toLocaleLowerCase(), '', null);
 
         var list = contacts.memberList.filter(e => {
-            var res = pinyin.letter(e.NickName, null).toLowerCase().indexOf(text) > -1;
+            var res = pinyin.letter(e.NickName, '', null).toLowerCase().indexOf(text) > -1;
 
             if (e.UserName === sessions.user.User.UserName
                 || !helper.isContact(e)
@@ -32,7 +32,7 @@ class AddMember {
             }
 
             if (e.RemarkName) {
-                res = res || pinyin.letter(e.RemarkName, null).toLowerCase().indexOf(text) > -1;
+                res = res || pinyin.letter(e.RemarkName, '', null).toLowerCase().indexOf(text) > -1;
             }
 
             return res;

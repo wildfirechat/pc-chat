@@ -1,0 +1,18 @@
+# Linux
+!.gitignore
+*~
+
+# OS X
+.DS_Store
+# Thumbnails
+._*
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# IDE
+.idea
+.settings
+.buildpath
+.project

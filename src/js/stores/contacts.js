@@ -2,7 +2,7 @@
 import { observable, action } from 'mobx';
 import { ipcRenderer } from 'electron';
 import axios from 'axios';
-import pinyin from 'han';
+import pinyin from '../han';
 
 import chat from './chat';
 import storage from 'utils/storage';
@@ -37,7 +37,7 @@ class Contacts {
             // }
 
             let name = self.contactItemName(e);
-            var prefix = (pinyin.letter(name, null).toString()[0] + '').replace('?', '#');
+            var prefix = (pinyin.letter(name, '', null).toString()[0] + '').replace('?', '#');
             var group = mappings[prefix];
 
             if (!group) {
@@ -146,10 +146,10 @@ class Contacts {
     }
 
     @action filter(text = '', showall = false) {
-        text = pinyin.letter(text.toLocaleLowerCase(), null);
+        text = pinyin.letter(text.toLocaleLowerCase(), '', null);
         var list = self.memberList.filter(e => {
             let name = self.contactItemName(e);
-            var res = pinyin.letter(name, null).toLowerCase().indexOf(text) > -1;
+            var res = pinyin.letter(name, '', null).toLowerCase().indexOf(text) > -1;
 
             // if (e.RemarkName) {
             //     res = res || pinyin.letter(e.RemarkName, null).toLowerCase().indexOf(text) > -1;

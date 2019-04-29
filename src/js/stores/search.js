@@ -1,6 +1,6 @@
 
 import { observable, action } from 'mobx';
-import pinyin from 'han';
+import pinyin from '../han';
 
 import contacts from './contacts';
 import storage from 'utils/storage';
@@ -20,11 +20,11 @@ class Search {
         var groups = [];
         var friend = [];
 
-        text = pinyin.letter(text.toLocaleLowerCase(), null);
+        text = pinyin.letter(text.toLocaleLowerCase(), '', null);
 
         list = contacts.memberList.filter(e => {
             let name = contacts.contactItemName(e);
-            var res = pinyin.letter(name, null).toLowerCase().indexOf(text) > -1;
+            var res = pinyin.letter(name, '', null).toLowerCase().indexOf(text) > -1;
 
             // if (e.RemarkName) {
             //     res = res || pinyin.letter(e.RemarkName, null).toLowerCase().indexOf(text) > -1;
