@@ -12,9 +12,13 @@ export default {
                 loader: ['babel-loader'],
                 exclude: /node_modules/,
             },
+            // {
+            //     test: /\.node$/,
+            //     use: 'node-loader',
+            // },
             {
                 test: /\.node$/,
-                use: 'node-loader',
+                use: 'native-ext-loader',
             },
             {
                 test: /\.css$/,
