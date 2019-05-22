@@ -6,8 +6,17 @@ import windowStateKeeper from 'electron-window-state';
 import AutoLaunch from 'auto-launch';
 import { autoUpdater } from 'electron-updater';
 import axios from 'axios';
+import i18n from 'i18n';
 
 import pkg from './package.json';
+
+let Locales = {};
+i18n.configure({
+    locales:['en', 'ch'],
+    directory: __dirname + '/locales',
+    register: Locales
+});
+Locales.setLocale('ch');
 
 let forceQuit = false;
 let downloading = false;
@@ -72,10 +81,10 @@ let mainMenu = [
         ]
     },
     {
-        label: 'File',
+        label: Locales.__('File').Title,
         submenu: [
             {
-                label: 'New Chat',
+                label: Locales.__('File').New,
                 accelerator: 'Cmd+N',
                 click() {
                     mainWindow.show();
@@ -83,7 +92,7 @@ let mainMenu = [
                 }
             },
             {
-                label: 'Search...',
+                label: Locales.__('File').Search,
                 accelerator: 'Cmd+F',
                 click() {
                     mainWindow.show();
@@ -91,7 +100,7 @@ let mainMenu = [
                 }
             },
             {
-                label: 'Batch Send Message',
+                label: Locales.__('File').BatchSend,
                 accelerator: 'Cmd+B',
                 click() {
                     mainWindow.show();
@@ -102,7 +111,7 @@ let mainMenu = [
                 type: 'separator',
             },
             {
-                label: 'Insert emoji',
+                label: Locales.__('File').InsertEmoji,
                 accelerator: 'Cmd+I',
                 click() {
                     mainWindow.show();
@@ -113,7 +122,7 @@ let mainMenu = [
                 type: 'separator',
             },
             {
-                label: 'Next conversation',
+                label: Locales.__('File').Next,
                 accelerator: 'Cmd+J',
                 click() {
                     mainWindow.show();
@@ -121,7 +130,7 @@ let mainMenu = [
                 }
             },
             {
-                label: 'Previous conversation',
+                label: Locales.__('File').Prev,
                 accelerator: 'Cmd+K',
                 click() {
                     mainWindow.show();
@@ -131,58 +140,66 @@ let mainMenu = [
         ]
     },
     {
-        label: 'Conversations',
+        label: Locales.__('Conversations').Title,
         submenu: [
             {
-                label: 'Loading...',
+                label: Locales.__('Conversations').Loading,
             }
         ],
     },
     {
-        label: 'Contacts',
+        label: Locales.__('Contacts').Title,
         submenu: [
             {
-                label: 'Loading...',
+                label: Locales.__('Contacts').Loading,
             }
         ],
     },
     {
-        label: 'Edit',
+        label: Locales.__('Edit').Title,
         submenu: [
             {
-                role: 'undo'
+                role: 'undo',
+                label: Locales.__('Edit').Undo
             },
             {
-                role: 'redo'
+                role: 'redo',
+                label: Locales.__('Edit').Redo
             },
             {
                 type: 'separator'
             },
             {
-                role: 'cut'
+                role: 'cut',
+                label: Locales.__('Edit').Cut
             },
             {
-                role: 'copy'
+                role: 'copy',
+                label: Locales.__('Edit').Copy
             },
             {
-                role: 'paste'
+                role: 'paste',
+                label: Locales.__('Edit').Paste
             },
             {
-                role: 'pasteandmatchstyle'
+                role: 'pasteandmatchstyle',
+                label: Locales.__('Edit').PasteMatch
             },
             {
-                role: 'delete'
+                role: 'delete',
+                label: Locales.__('Edit').Delete
             },
             {
-                role: 'selectall'
+                role: 'selectall',
+                label: Locales.__('Edit').SelectAll
             }
         ]
     },
     {
-        label: 'View',
+        label: Locales.__('View').Title,
         submenu: [
             {
-                label: isFullScreen ? 'Exit Full Screen' : 'Enter Full Screen',
+                label: isFullScreen ? Locales.__('View').ExitFull : Locales.__('View').EnterFull,
                 accelerator: 'Shift+Cmd+F',
                 click() {
                     isFullScreen = !isFullScreen;
@@ -192,7 +209,7 @@ let mainMenu = [
                 }
             },
             {
-                label: 'Toggle Conversations',
+                label: Locales.__('View').ToggleConversations,
                 accelerator: 'Shift+Cmd+M',
                 click() {
                     mainWindow.show();
@@ -206,35 +223,41 @@ let mainMenu = [
                 type: 'separator',
             },
             {
-                role: 'toggledevtools'
+                role: 'toggledevtools',
+                label: Locales.__('View').ToggleDevtools
             },
             {
-                role: 'togglefullscreen'
+                role: 'togglefullscreen',
+                label: Locales.__('View').ToggleFull
             }
         ]
     },
     {
+        lable: Locales.__('Window').Title,
         role: 'window',
         submenu: [
             {
+                lable: Locales.__('Window').Min,
                 role: 'minimize'
             },
             {
+                lable: Locales.__('Window').Close,
                 role: 'close'
             }
         ]
     },
     {
+        lable: Locales.__('Help').Title,
         role: 'help',
         submenu: [
             {
-                label: 'Feedback',
+                label: Locales.__('Help').FeedBack,
                 click() {
                     shell.openExternal('https://github.com/wildfirechat/pc-chat/issues');
                 }
             },
             {
-                label: 'Fork me on Github',
+                label: Locales.__('Help').Fork,
                 click() {
                     shell.openExternal('https://github.com/wildfirechat/pc-chat');
                 }
@@ -249,10 +272,12 @@ let mainMenu = [
             //     }
             // }
             {
-                role: 'reload'
+                role: 'reload',
+                label: Locales.__('Help').Reload
             },
             {
-                role: 'forcereload'
+                role: 'forcereload',
+                label: Locales.__('Help').ForceReload
             },
         ]
     }
@@ -505,7 +530,6 @@ const createMainWindow = () => {
     mainWindow.loadURL(
         `file://${__dirname}/src/index.html`
     );
-    mainWindow.webContents.openDevTools();
     mainWindow.webContents.on('did-finish-load', () => {
         try {
             mainWindow.show();
