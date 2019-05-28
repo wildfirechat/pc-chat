@@ -46,6 +46,10 @@ export default {
                 from: path.resolve(__dirname, '../package.json'),
                 to: config.dist,
             },
+            {
+                from: path.resolve(__dirname, '../locales/*'),
+                to: config.dist,
+            },
         ]),
 
         new HtmlWebpackPlugin({
