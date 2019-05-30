@@ -1,6 +1,4 @@
-// import proto from 'node-loader!../../../node_modules/marswrapper.node';
-
-import proto from 'node-loader!../../../marswrapper.node';
+// import proto from 'node-loader!../../../marswrapper.node';
 import Message from '../wfc/messages/message';
 import Conversation from '../wfc/model/conversation';
 import ConversationInfo from '../wfc/model/conversationInfo';
@@ -26,6 +24,7 @@ import ChatRoomMemberInfo from './model/chatRoomMemberInfo';
 import ChannelInfo from './model/channelInfo';
 import ConversationType from './model/conversationType';
 import TextMessageContent from './messages/textMessageContent';
+var proto = null;
 
 // 其实就是imclient，后续可能需要改下名字
 class WfcManager {
@@ -122,6 +121,7 @@ class WfcManager {
     }
 
     init() {
+        proto = self.proto;
         proto.setConnectionStatusListener(self.onConnectionChanged);
         proto.setReceiveMessageListener(self.onReceiveMessage, self.onRecallMessage);
         proto.setUserInfoUpdateListener(self.onUserInfoUpdate);
