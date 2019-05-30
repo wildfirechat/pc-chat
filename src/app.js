@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'mobx-react';
 import { HashRouter } from 'react-router-dom';
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, remote } from 'electron';
 
 import './global.css';
 import './assets/fonts/icomoon/style.css';
@@ -11,12 +11,15 @@ import 'utils/albumcolors';
 import getRoutes from './js/routes';
 import stores from './js/stores';
 
+var sharedObj = remote.getGlobal('sharedObj');
+
 class App extends Component {
     async componentWillMount() {
         if (window.navigator.onLine) {
             // await stores.sessions.hasLogin();
             // await stores.settings.init();
             // await stores.search.getHistory();
+            stores.wfc.proto = sharedObj.proto;
             await stores.wfc.init();
         }
     }

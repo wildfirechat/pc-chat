@@ -7,6 +7,7 @@ import AutoLaunch from 'auto-launch';
 import { autoUpdater } from 'electron-updater';
 import axios from 'axios';
 import i18n from 'i18n';
+import proto from './marswrapper.node';
 
 import pkg from './package.json';
 
@@ -17,6 +18,8 @@ i18n.configure({
     register: Locales
 });
 Locales.setLocale('ch');
+
+global.sharedObj = {proto: proto};
 
 let forceQuit = false;
 let downloading = false;
