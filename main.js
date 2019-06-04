@@ -1,7 +1,7 @@
 
 import fs from 'fs';
 import tmp from 'tmp';
-import { app, powerMonitor, BrowserWindow, Tray, Menu, ipcMain, clipboard, shell, nativeImage, dialog } from 'electron';
+import { app, powerMonitor, BrowserWindow, Tray, Menu, ipcMain, clipboard, shell, nativeImage, dialog, globalShortcut } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import AutoLaunch from 'auto-launch';
 import { autoUpdater } from 'electron-updater';
@@ -507,6 +507,14 @@ function createMenu() {
     }
 }
 
+function regShortcut() {
+    // if(isWin) {
+        globalShortcut.register('CommandOrControl+G', () => {
+            mainWindow.webContents.toggleDevTools();
+        })
+    // }
+}
+
 const createMainWindow = () => {
     var mainWindowState = windowStateKeeper({
         defaultWidth: 745,
@@ -732,6 +740,7 @@ const createMainWindow = () => {
 
     mainWindow.webContents.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/603.3.8 (KHTML, like Gecko) Version/10.1.2 Safari/603.3.8');
     createMenu();
+    regShortcut();
 };
 
 app.setName(pkg.name);
