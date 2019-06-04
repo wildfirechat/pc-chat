@@ -96,10 +96,9 @@ export default class Login extends Component {
                     this.qrCode && (<img className="disabledDrag" src={this.qrCode} />)
                 }
 
-                <a href={window.location.pathname + '?' + +new Date()}>Refresh the QR Code</a>
+                <a href={window.location.pathname + '?' + +new Date()}>刷新二维码</a>
 
-                <p>Scan to log in to WildfireChat</p>
-                <p>Log in on phone to use WildfireChat on Web</p>
+                <p>扫码登录野火IM</p>
             </div>
         );
     }

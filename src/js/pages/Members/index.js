@@ -111,7 +111,7 @@ export default class Members extends Component {
                         id="messageInput"
                         maxLength={30}
                         onInput={e => this.props.search(e.target.value)}
-                        placeholder="Type something to search..."
+                        placeholder="输入内容开始搜索 ..."
                         ref="input"
                         type="text" />
                 </div>
