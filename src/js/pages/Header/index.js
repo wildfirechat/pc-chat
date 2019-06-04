@@ -7,13 +7,13 @@ export default class Header extends Component {
     getTitle() {
         switch (this.props.location.pathname) {
             case '/contacts':
-                return 'Contacts - WildfireChat';
+                return '联系人';
 
             case '/settings':
-                return 'Settings - WildfireChat';
+                return '设置';
 
             default:
-                return 'WildfireChat';
+                return '野火IM';
         }
     }
 
