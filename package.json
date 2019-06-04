@@ -64,13 +64,18 @@
       ]
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "../resource/win.ico",
+      "requestedExecutionLevel": "requireAdministrator"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "artifactName": "${productName}-${version}-${os}-${arch}-setup.${ext}",
-      "deleteAppDataOnUninstall": true
+      "deleteAppDataOnUninstall": true,
+      "perMachine": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "wildfireChat" 
     },
     "directories": {
       "output": "../release"
