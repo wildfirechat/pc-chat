@@ -577,7 +577,7 @@ export default class ChatContent extends Component {
         let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
         var menu = new remote.Menu.buildFromTemplate([
             {
-                label: 'Toggle the conversation',
+                label: '全屏模式/正常模式',
                 click: () => {
                     this.props.toggleConversation();
                 }
@@ -586,7 +586,7 @@ export default class ChatContent extends Component {
                 type: 'separator',
             },
             {
-                label: 'Empty Content',
+                label: '清空会话消息',
                 click: () => {
                     this.props.empty(this.props.conversation);
                 }
@@ -595,13 +595,13 @@ export default class ChatContent extends Component {
                 type: 'separator'
             },
             {
-                label: covnersationInfo.isTop ? 'Unsticky' : 'Sticky on Top',
+                label: covnersationInfo.isTop ? '取消置顶' : '置顶',
                 click: () => {
                     this.props.sticky(covnersationInfo);
                 }
             },
             {
-                label: 'Delete',
+                label: '删除会话',
                 click: () => {
                     this.props.removeChat(this.props.conversation);
                 }
@@ -755,9 +755,9 @@ export default class ChatContent extends Component {
     render() {
         var { loading, showConversation, messages, conversation, target } = this.props;
 
-        var signature = 'Click to show members';
+        var signature = '点击查看群成员';
         if (target instanceof UserInfo) {
-            signature = 'TODO signature';
+            signature = '';
         }
 
         // maybe userName, groupName, ChannelName or ChatRoomName
@@ -780,7 +780,7 @@ export default class ChatContent extends Component {
 
                                     <span
                                         className={classes.signature}
-                                        dangerouslySetInnerHTML={{ __html: signature || 'No Signature' }}
+                                        dangerouslySetInnerHTML={{ __html: signature || '' }}
                                         onClick={e => this.props.showMembers(target)}
                                         title={signature} />
                                 </div>
@@ -807,7 +807,7 @@ export default class ChatContent extends Component {
                                 <img
                                     className="disabledDrag"
                                     src="assets/images/noselected.png" />
-                                <h1>No Chat selected :(</h1>
+                                <h1>请选择会话 :(</h1>
                             </div>
                         )
                 }

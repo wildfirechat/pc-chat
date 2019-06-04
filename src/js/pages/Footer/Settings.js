@@ -11,7 +11,7 @@ export default class Placeholder extends Component {
                     className={classes.button}
                     href="mailto:imndxx@gmail.com?Subject=WildfireChat%20Feedback"
                     target="_blank">
-                    Send feedback
+                    发送反馈给我们
                     <i className="icon-ion-ios-email-outline" />
                 </a>
 
