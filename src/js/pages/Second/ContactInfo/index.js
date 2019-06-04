@@ -128,7 +128,7 @@ class ContactInfo extends Component {
                                 color: buttonColor,
                                 opacity: .6,
                             }}>
-                            Send Message
+                            发送消息
                         </div>
                     </div>
                     ) : (

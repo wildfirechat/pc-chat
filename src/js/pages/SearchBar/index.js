@@ -167,7 +167,7 @@ export default class SearchBar extends Component {
 
                     <span
                         className={classes.signature}
-                        dangerouslySetInnerHTML={{ __html: item.Signature || 'No Signature' }} />
+                        dangerouslySetInnerHTML={{ __html: item.Signature || '' }} />
                 </div>
             </div>
         );
