@@ -49,7 +49,7 @@ export default class Members extends Component {
         return (
             <div className={classes.container}>
                 <header>
-                    <span dangerouslySetInnerHTML={{ __html: `Group '${targetName}' has ${list.length} members` }} />
+                    <span dangerouslySetInnerHTML={{ __html: `群组 '${targetName}' 拥有 ${list.length} 位成员` }} />
 
                     <span>
                         <i

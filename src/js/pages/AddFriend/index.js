@@ -37,9 +37,9 @@ export default class AddFriend extends Component {
                         type="text" />
 
                     <div>
-                        <button onClick={e => this.addFriend()}>Send</button>
+                        <button onClick={e => this.addFriend()}>发送请求</button>
 
-                        <button onClick={e => close()}>Cancel</button>
+                        <button onClick={e => close()}>取消</button>
                     </div>
                 </ModalBody>
             </Modal>
