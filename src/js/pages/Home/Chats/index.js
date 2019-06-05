@@ -110,6 +110,10 @@ export default class Chats extends Component {
         this.props.loadConversations();
     }
 
+    onSettingUpdate = () => {
+        this.props.loadConversations();
+    }
+
     componentWillMount() {
         this.props.loadConversations();
         this.props.event.on(EventType.ReceiveMessage, this.onReceiveMessage);
@@ -117,14 +121,15 @@ export default class Chats extends Component {
         this.props.event.on(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
         this.props.event.on(EventType.RecallMessage, this.onRecallMessage);
         this.props.event.on(EventType.DeleteMessage, this.onRecallMessage);
+        this.props.event.on(EventType.SettingUpdate, this.onSettingUpdate);
     }
 
     componentWillUnmount() {
-        this.props.event.removeListener(EventType.ReceiveMessage, this.onReceiveMessage);
-        this.props.event.removeListener(EventType.SendMessage, this.onSendMessage);
-        this.props.event.removeListener(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
-        this.props.event.removeListener(EventType.RecallMessage, this.onRecallMessage);
-        this.props.event.removeListener(EventType.DeleteMessage, this.onDeleteMessage);
+        // this.props.event.removeListener(EventType.ReceiveMessage, this.onReceiveMessage);
+        // this.props.event.removeListener(EventType.SendMessage, this.onSendMessage);
+        // this.props.event.removeListener(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
+        // this.props.event.removeListener(EventType.RecallMessage, this.onRecallMessage);
+        // this.props.event.removeListener(EventType.DeleteMessage, this.onDeleteMessage);
     }
 
     componentDidUpdate() {
@@ -193,8 +198,8 @@ export default class Chats extends Component {
                                     onClick={ev => chatTo(e.conversation)}>
                                     <div className={classes.inner}>
                                         <div className={clazz(classes.dot, {
-                                            [classes.green]: !muted && hasUnread,
-                                            [classes.red]: muted && hasUnread
+                                            [classes.green]: muted && hasUnread,
+                                            [classes.red]: !muted && hasUnread
                                         })}>
                                             <img
                                                 className="disabledDrag"
