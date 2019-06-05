@@ -517,15 +517,15 @@ function regShortcut() {
 
 const createMainWindow = () => {
     var mainWindowState = windowStateKeeper({
-        defaultWidth: 800,
+        defaultWidth: 900,
         defaultHeight: 600,
     });
 
     mainWindow = new BrowserWindow({
         x: mainWindowState.x,
         y: mainWindowState.y,
-        minWidth: 1024,
-        minHeight: 768,
+        minWidth: 400,
+        minHeight: 400,
         transparent: true,
         titleBarStyle: 'hiddenInset',
         backgroundColor: 'none',
@@ -537,7 +537,7 @@ const createMainWindow = () => {
         icon
     });
 
-    mainWindow.setSize(800, 600);
+    mainWindow.setSize(400, 480);
     mainWindow.loadURL(
         `file://${__dirname}/src/index.html`
     );
