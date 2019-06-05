@@ -112,10 +112,10 @@ export default class AddMember extends Component {
                         <button
                             disabled={!this.state.selected.length}
                             onClick={e => this.add(this.state.selected)}>
-                            Add
+                            添加成员
                         </button>
 
-                        <button onClick={e => this.close()}>Cancel</button>
+                        <button onClick={e => this.close()}>取消</button>
                     </div>
                 </ModalBody>
             </Modal>
