@@ -88,8 +88,8 @@
         position: absolute;
         bottom: 4px;
         right: 0;
-        width: 8px;
-        height: 8px;
+        width: 15px;
+        height: 15px;
         border-radius: 8px;
         border: 2px solid #fff;
     }
@@ -100,8 +100,9 @@
     }
 
     &.red::after {
-        content: '';
+        content: attr(data-afterContent);
         background: red;
+        text-align: center;
     }
 }
 

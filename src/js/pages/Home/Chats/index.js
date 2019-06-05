@@ -173,6 +173,7 @@ export default class Chats extends Component {
                             let unreadCount = e.unreadCount;
                             let hasUnread = unreadCount.unread > 0 || unreadCount.unreadMention > 0 || unreadCount.unreadMentionAll > 0;
                             var portrait = e.portrait();
+
                             if (!portrait) {
                                 switch (e.conversation.conversationType) {
                                     case ConversationType.Single:
@@ -197,7 +198,7 @@ export default class Chats extends Component {
                                     onContextMenu={ev => this.showContextMenu(e)}
                                     onClick={ev => chatTo(e.conversation)}>
                                     <div className={classes.inner}>
-                                        <div className={clazz(classes.dot, {
+                                        <div data-aftercontent={unreadCount.unread} className={clazz(classes.dot, {
                                             [classes.green]: muted && hasUnread,
                                             [classes.red]: !muted && hasUnread
                                         })}>
