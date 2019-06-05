@@ -92,7 +92,8 @@ class WfcManager {
     }
 
     onSettingUpdate() {
-        // TODO
+        // TODO 具体更新的信息
+        self.eventEmitter.emit(EventType.SettingUpdate);
     }
 
     onRecallMessage(operatorUid, messageUid) {

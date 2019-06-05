@@ -8,4 +8,5 @@ export default class EventType {
     static UserInfoUpdate = 'userInfoUpdate';
     static FriendListUpdate = 'friendListUpdate'
     static ConversationInfoUpdate = 'conversationInfoUpdate'
+    static SettingUpdate = 'settingUpdate'
 }
