@@ -27,7 +27,7 @@ let mainWindow;
 let tray;
 let settings = {};
 let isFullScreen = false;
-// let isWin = process.platform === 'win32';
+let isWin = process.platform === 'win32';
 let isOsx = process.platform === 'darwin';
 let isSuspend = false;
 let userData = app.getPath('userData');
@@ -533,7 +533,7 @@ const createMainWindow = () => {
         webPreferences: {
             scrollBounce: true
         },
-        // frame: !isWin,
+        frame: !isWin,
         icon
     });
 
@@ -579,6 +579,32 @@ const createMainWindow = () => {
         if (!mainWindow.isVisible()) {
             mainWindow.show();
             mainWindow.focus();
+        }
+    });
+
+    ipcMain.on('close-window', event => {
+        forceQuit = true;
+        mainWindow.close();
+    });
+
+    ipcMain.on('min-window', event => {
+        mainWindow.minimize();
+    });
+
+    // ipcMain.on('max-window', event => {
+    //     mainWindow.maximize();
+    // });
+
+    // ipcMain.on('unmax-window', event => {
+    //     mainWindow.unmaximize();
+    // });
+
+    ipcMain.on('toggle-max', event => {
+        var isMax = mainWindow.isMaximized();
+        if(isMax){
+            mainWindow.unmaximize();
+        } else {
+            mainWindow.maximize();
         }
     });
 
