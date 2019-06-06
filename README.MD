@@ -33,6 +33,8 @@
 
 ## 体验
 
+可下载我们已编译好的可执行文件进行体验，[pc-chat 下载](https://github.com/wildfirechat/pc-chat/releases/tag/wfc0.1.7)
+
 ![login_qr](./screenshots/login_qr.png)
 
 ![home](./screenshots/home.png)
@@ -51,9 +53,12 @@
 
 ## 开发
 
-*** 目前还没准备好，计划2019-06-30左右发布测试版本，请加群了解进展 ***
+***由于我们都是用mac进行开发，开发环境未适配Windows，故Windows上，可能编译不过。***
+
+以下针对mac
 
 ```
+$ cp proto_addon/marswrapper.mac.node marswrapper.node
 $ npm install
 $ npm run dev
 ```
