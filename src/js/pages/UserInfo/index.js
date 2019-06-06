@@ -196,7 +196,7 @@ class UserInfo extends Component {
                         {
                             !this.props.remove ? (
                                 <div className={classes.wrap}>
-                                    <p dangerouslySetInnerHTML={{ __html: Signature || 'No Signature' }} />
+                                    <p dangerouslySetInnerHTML={{ __html: Signature || '' }} />
 
                                     <div className={classes.address}>
                                         <i

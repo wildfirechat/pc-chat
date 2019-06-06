@@ -167,7 +167,7 @@ export default class SearchBar extends Component {
 
                     <span
                         className={classes.signature}
-                        dangerouslySetInnerHTML={{ __html: item.Signature || 'No Signature' }} />
+                        dangerouslySetInnerHTML={{ __html: item.Signature || '' }} />
                 </div>
             </div>
         );
@@ -243,7 +243,7 @@ export default class SearchBar extends Component {
                     onFocus={e => this.filter(e.target.value)}
                     onInput={e => this.filter(e.target.value)}
                     onKeyUp={e => this.navigation(e)}
-                    placeholder="Search ..."
+                    placeholder="搜索 ..."
                     ref="search"
                     type="text" />
                 {
