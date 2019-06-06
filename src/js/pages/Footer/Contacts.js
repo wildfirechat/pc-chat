@@ -37,7 +37,7 @@ export default class Filter extends Component {
             <div className={classes.contacts}>
                 <input
                     onInput={e => this.doFilter(e.target.value)}
-                    placeholder="Type something to search..."
+                    placeholder="输入内容开始搜索 ..."
                     ref="filter"
                     type="text" />
 

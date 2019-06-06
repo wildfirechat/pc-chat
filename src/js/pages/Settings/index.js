@@ -66,7 +66,7 @@ export default class Settings extends Component {
         return (
             <div className={classes.container}>
                 <div className={classes.column}>
-                    <h2>Settings</h2>
+                    <h2>设置</h2>
 
                     <ul>
                         {
@@ -83,11 +83,11 @@ export default class Settings extends Component {
                                     onChange={e => setDownloads(e.target.files[0])}
                                     ref="downloads"
                                     type="file" />
-                                <p>Downloads</p>
+                                <p>下载路径</p>
                                 <p onClick={e => this.choiceDownloadDir()}>{downloads}</p>
                             </div>
 
-                            <button onClick={e => this.choiceDownloadDir()}>Change</button>
+                            <button onClick={e => this.choiceDownloadDir()}>修改</button>
                         </li>
                         <li>
                             <label htmlFor="alwaysOnTop">
@@ -112,31 +112,11 @@ export default class Settings extends Component {
 
                         <li>
                             <label htmlFor="showNotification">
-                                <span>Send Desktop Notifications</span>
+                                <span>发送桌面通知</span>
                                 <Switch
                                     checked={showNotification}
                                     id="showNotification"
                                     onChange={e => setShowNotification(e.target.checked)} />
-                            </label>
-                        </li>
-
-                        <li>
-                            <label htmlFor="blockRecall">
-                                <span>Block Message Recall</span>
-                                <Switch
-                                    checked={blockRecall}
-                                    id="blockRecall"
-                                    onChange={e => setBlockRecall(e.target.checked)} />
-                            </label>
-                        </li>
-
-                        <li>
-                            <label htmlFor="rememberConversation">
-                                <span>Remember the last Conversation</span>
-                                <Switch
-                                    checked={rememberConversation}
-                                    id="rememberConversation"
-                                    onChange={e => setRememberConversation(e.target.checked)} />
                             </label>
                         </li>
 
@@ -152,7 +132,7 @@ export default class Settings extends Component {
 
                         <li>
                             <label htmlFor="confirmImagePaste">
-                                <span>Image paste Confirmation</span>
+                                <span>粘贴图片确认</span>
                                 <Switch
                                     checked={confirmImagePaste}
                                     id="confirmImagePaste"
@@ -162,7 +142,7 @@ export default class Settings extends Component {
 
                         <li>
                             <label htmlFor="startup">
-                                <span>Launch at startup</span>
+                                <span>开机自动启动</span>
                                 <Switch
                                     checked={startup}
                                     id="startup"
@@ -172,7 +152,7 @@ export default class Settings extends Component {
                     </ul>
                 </div>
                 <div className={classes.column}>
-                    <h2>TODO:</h2>
+                    <h2></h2>
                 </div>
             </div>
         );

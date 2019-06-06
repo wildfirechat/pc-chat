@@ -1,0 +1,50 @@
+{
+	"File": {
+		"Title": "File",
+		"New": "New Chat",
+		"Search": "Search...",
+		"Next": "Next conversation",
+		"Prev": "Previous conversation",
+		"BatchSend": "Batch Send Message",
+		"InsertEmoji": "Insert emoji"
+	},
+	"Conversations": {
+		"Title": "Conversation",
+		"Loading": "Loading..."
+	},
+	"Contacts": {
+		"Title": "Contacts",
+		"Loading": "Loading..."
+	},
+	"Edit": {
+		"Title": "Edit",
+		"Undo": "Undo",
+		"Redo": "Redo",
+		"Cut": "Cut",
+		"Copy": "Copy",
+		"Paste": "Paste",
+		"PasteAndMatch": "pasteandmatchstyle",
+		"Delete": "Delete",
+		"SelectAll": "SelectAll"
+	},
+	"View": {
+		"Title": "View",
+		"EnterFull": "Enter Full Screen",
+		"ExitFull": "Exit Full Screen",
+		"ToggleConversations": "Toggle Conversations",
+		"ToggleDevtools": "Toggle Devtools",
+		"ToggleFull": "Toggle Full Screen"
+	},
+	"Window": {
+		"Title": "Window",
+		"Min": "Minimize",
+		"Close": "Close Window"
+	},
+	"Help": {
+		"Title": "Help",
+		"Feedback": "Feedback",
+		"Fork": "Fork me on Github",
+		"Reload": "Reload",
+		"ForceReload": "ForceReload"
+	}
+}

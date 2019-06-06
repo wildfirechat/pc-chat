@@ -16,6 +16,20 @@
     cursor: default;
 }
 
+.container div {   
+    position: fixed;
+    right: 30px;
+    top: 0px;
+    -webkit-app-region: no-drag;
+}
+
+.container p {    
+    color: #777;
+    cursor: pointer;
+    padding-left: 15px;
+    display: inline-block;
+}
+
 @media (width <= 800px) {
     .container h1 {
         font-size: 12px;

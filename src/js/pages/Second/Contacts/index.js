@@ -63,7 +63,7 @@ export default class Contacts extends Component {
                                                 dangerouslySetInnerHTML={{ __html: this.props.contactItemName(e) }} />
                                             <p
                                                 className={classes.signature}
-                                                dangerouslySetInnerHTML={{ __html: e.Signature || 'No Signature' }} />
+                                                dangerouslySetInnerHTML={{ __html: e.Signature || '' }} />
                                         </div>
                                     </div>
                                 );

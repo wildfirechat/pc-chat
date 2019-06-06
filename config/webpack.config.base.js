@@ -12,9 +12,13 @@ export default {
                 loader: ['babel-loader'],
                 exclude: /node_modules/,
             },
+            // {
+            //     test: /\.node$/,
+            //     use: 'node-loader',
+            // },
             {
                 test: /\.node$/,
-                use: 'node-loader',
+                use: 'native-ext-loader',
             },
             {
                 test: /\.css$/,
@@ -99,7 +103,10 @@ export default {
                 test: /\.js$/,
                 //loader: 'babel',
                 loader: ['babel-loader'],
-                exclude: /node_modules\/(?!tributejs)/
+                exclude: /node_modules\/(?!tributejs)/,
+                include: [
+                    path.join(__dirname, "node_modules/benz-amr-recorder")
+                ]
             },
         ]
     },

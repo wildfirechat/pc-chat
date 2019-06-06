@@ -110,6 +110,10 @@ export default class Chats extends Component {
         this.props.loadConversations();
     }
 
+    onSettingUpdate = () => {
+        this.props.loadConversations();
+    }
+
     componentWillMount() {
         this.props.loadConversations();
         this.props.event.on(EventType.ReceiveMessage, this.onReceiveMessage);
@@ -117,14 +121,15 @@ export default class Chats extends Component {
         this.props.event.on(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
         this.props.event.on(EventType.RecallMessage, this.onRecallMessage);
         this.props.event.on(EventType.DeleteMessage, this.onRecallMessage);
+        this.props.event.on(EventType.SettingUpdate, this.onSettingUpdate);
     }
 
     componentWillUnmount() {
-        this.props.event.removeListener(EventType.ReceiveMessage, this.onReceiveMessage);
-        this.props.event.removeListener(EventType.SendMessage, this.onSendMessage);
-        this.props.event.removeListener(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
-        this.props.event.removeListener(EventType.RecallMessage, this.onRecallMessage);
-        this.props.event.removeListener(EventType.DeleteMessage, this.onDeleteMessage);
+        // this.props.event.removeListener(EventType.ReceiveMessage, this.onReceiveMessage);
+        // this.props.event.removeListener(EventType.SendMessage, this.onSendMessage);
+        // this.props.event.removeListener(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
+        // this.props.event.removeListener(EventType.RecallMessage, this.onRecallMessage);
+        // this.props.event.removeListener(EventType.DeleteMessage, this.onDeleteMessage);
     }
 
     componentDidUpdate() {
@@ -168,6 +173,8 @@ export default class Chats extends Component {
                             let unreadCount = e.unreadCount;
                             let hasUnread = unreadCount.unread > 0 || unreadCount.unreadMention > 0 || unreadCount.unreadMentionAll > 0;
                             var portrait = e.portrait();
+                            let txtUnread = unreadCount.unread > 99 ? "..." : unreadCount.unread;
+
                             if (!portrait) {
                                 switch (e.conversation.conversationType) {
                                     case ConversationType.Single:
@@ -192,9 +199,9 @@ export default class Chats extends Component {
                                     onContextMenu={ev => this.showContextMenu(e)}
                                     onClick={ev => chatTo(e.conversation)}>
                                     <div className={classes.inner}>
-                                        <div className={clazz(classes.dot, {
-                                            [classes.green]: !muted && hasUnread,
-                                            [classes.red]: muted && hasUnread
+                                        <div data-aftercontent={txtUnread} className={clazz(classes.dot, {
+                                            [classes.green]: muted && hasUnread,
+                                            [classes.red]: !muted && hasUnread
                                         })}>
                                             <img
                                                 className="disabledDrag"
@@ -211,7 +218,7 @@ export default class Chats extends Component {
 
                                             <span
                                                 className={classes.message}
-                                                dangerouslySetInnerHTML={{ __html: e.lastMessage ? e.lastMessage.messageContent.digest() : 'No Message' }} />
+                                                dangerouslySetInnerHTML={{ __html: e.lastMessage ? e.lastMessage.messageContent.digest() : '' }} />
                                         </div>
                                     </div>
 
