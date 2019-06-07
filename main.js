@@ -526,10 +526,11 @@ const createMainWindow = () => {
         y: mainWindowState.y,
         minWidth: 400,
         minHeight: 400,
-        transparent: true,
         titleBarStyle: 'hiddenInset',
         backgroundColor: 'none',
-        resizable: false,
+        // 以下两属性设置时会导致win不能正常unmaximize. electron bug
+        // transparent: true,
+        // resizable: false,
         webPreferences: {
             scrollBounce: true
         },
@@ -587,17 +588,17 @@ const createMainWindow = () => {
         mainWindow.close();
     });
 
-    ipcMain.on('min-window', event => {
-        mainWindow.minimize();
-    });
+    // ipcMain.on('min-window', event => {
+    //     mainWindow.minimize();
+    // });
 
     // ipcMain.on('max-window', event => {
     //     mainWindow.maximize();
     // });
 
-    // ipcMain.on('unmax-window', event => {
-    //     mainWindow.unmaximize();
-    // });
+    ipcMain.on('unmax-window', event => {
+        mainWindow.unmaximize();
+    });
 
     ipcMain.on('toggle-max', event => {
         var isMax = mainWindow.isMaximized();
