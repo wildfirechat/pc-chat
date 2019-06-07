@@ -300,7 +300,121 @@ const helper = {
                 resolve(err ? false : md5);
             });
         });
+    },
+
+    weekFormat: (num) => {
+        let str
+        switch (num) {
+            case 1:
+                str = '星期一'
+                break
+            case 2:
+                str = '星期二'
+                break
+            case 3:
+                str = '星期三'
+                break
+            case 4:
+                str = '星期四'
+                break
+            case 5:
+                str = '星期五'
+                break
+            case 6:
+                str = '星期六'
+                break
+            default:
+                str = '星期天'
+        }
+        return str
+    },
+
+    /**
+    * 消息会话时间显示
+    */
+    timeFormat: (date) => {
+        if (!date) return ''
+        let newtime
+        let nowtime = new Date()
+        // if (date.constructor !== Date) {
+        //     date = new Date(date.replace(/\-/g, '/')) // 解决ios日期显示NAN问题
+        //  }
+        date = new Date(date)
+        // 获取消息发送时间
+        let Y = date.getFullYear()
+        let M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+        let D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+        let W = date.getDay()
+        let H = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+        let Min = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+        // 获取当前时间
+        let nowY = nowtime.getFullYear()
+        let nowM = nowtime.getMonth() + 1 < 10 ? '0' + (nowtime.getMonth() + 1) : nowtime.getMonth() + 1
+        let nowD = nowtime.getDate() < 10 ? '0' + nowtime.getDate() : nowtime.getDate()
+        let isWeek = Math.abs(date - nowtime) < 7 * 24 * 3600 * 1000
+        if (Y < nowY) {
+            // 去年
+            newtime = Y + '-' + M + '-' + D + ' ' + H + ':' + Min
+        } else {
+            if (Y === nowY && M === nowM && (nowD - D <= 7)) {
+                // 昨天
+                if ((nowD - D) === 1) {
+                    newtime = '昨天' + ' ' + H + ':' + Min
+                } else if (nowD === D) {
+                    // 当天
+                    newtime = H + ':' + Min
+                } else {
+                    // 一周内
+                    newtime = helper.weekFormat(W) + ' ' + H + ':' + Min
+                }
+            }
+            else {
+                // 一年内
+                newtime = M + '-' + D + ' ' + H + ':' + Min
+            }
+        }
+        return newtime
+    },
+    // 消息按时间排序
+    compare: (pro) => {
+        return function (obj1, obj2) {
+            var val1 = obj1[pro]
+            var val2 = obj2[pro]
+            if (val1 < val2) {
+                return 1
+            } else if (val1 > val2) {
+                return -1
+            } else {
+                return 0
+            }
+        }
+    },
+
+    dateFormat: (date, fmt) => {
+        if (!date) return ''
+        if (date.constructor !== Date) {
+            date = new Date(date)
+        }
+        const o = {
+            'M+': date.getMonth() + 1, // 月份
+            'd+': date.getDate(), // 日
+            'h+': date.getHours(), // 小时
+            'm+': date.getMinutes(), // 分
+            's+': date.getSeconds(), // 秒
+            'q+': Math.floor((date.getMonth() + 3) / 3), // 季度
+            'S': date.getMilliseconds() // 毫秒
+        }
+        if (/(y+)/.test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
+        }
+        for (let k in o) {
+            if (new RegExp('(' + k + ')').test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+            }
+        }
+        return fmt
     }
 };
+
 
 export default helper;

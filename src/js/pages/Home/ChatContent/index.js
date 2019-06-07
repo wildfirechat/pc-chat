@@ -33,6 +33,12 @@ import UnknownMessageContent from '../../../wfc/messages/unknownMessageContent';
     loadOldMessages: stores.chat.loadOldMessages,
     conversation: stores.chat.conversation,
     target: stores.chat.target,
+    getTimePanel: (messageTime) => {
+        // 当天的消息，以每5分钟为一个跨度显示时间；
+        // 消息超过1天、小于1周，显示为“星期 消息发送时间”；
+        // 消息大于1周，显示为“日期 消息发送时间”。
+
+    },
     reset: () => {
         //stores.chat.user = false;
     },
@@ -322,46 +328,52 @@ export default class ChatContent extends Component {
             // }
 
             return (
-                <div className={clazz('unread', classes.message, {
-                    // File is uploading
-                    [classes.uploading]: message.status === MessageStatus.Sending,
+                <div>
+                    <div
+                        key={message.messageId}
+                        className={clazz('unread', classes.message, classes.system)}
+                        dangerouslySetInnerHTML={{ __html: helper.timeFormat(message.timestamp) }} />
+                    <div className={clazz('unread', classes.message, {
+                        // File is uploading
+                        [classes.uploading]: message.status === MessageStatus.Sending,
 
-                    [classes.isme]: message.direction === 0,
-                    //[classes.isText]: type === 1 && !message.location,
-                    [classes.isText]: type === MessageContentType.Text || (message.messageContent instanceof UnknownMessageContent) || (message.messageContent instanceof UnsupportMessageContent),
-                    [classes.isLocation]: type === MessageContentType.Location,
-                    [classes.isImage]: type === MessageContentType.Image,
-                    //[classes.isEmoji]: type === 47 || type === 49 + 8,
-                    [classes.isEmoji]: type === MessageContentType.Sticker,
-                    [classes.isVoice]: type === MessageContentType.Voice,
-                    [classes.isVideo]: type === MessageContentType.Video,
-                    [classes.isFile]: type === MessageContentType.File,
+                        [classes.isme]: message.direction === 0,
+                        //[classes.isText]: type === 1 && !message.location,
+                        [classes.isText]: type === MessageContentType.Text || (message.messageContent instanceof UnknownMessageContent) || (message.messageContent instanceof UnsupportMessageContent),
+                        [classes.isLocation]: type === MessageContentType.Location,
+                        [classes.isImage]: type === MessageContentType.Image,
+                        //[classes.isEmoji]: type === 47 || type === 49 + 8,
+                        [classes.isEmoji]: type === MessageContentType.Sticker,
+                        [classes.isVoice]: type === MessageContentType.Voice,
+                        [classes.isVideo]: type === MessageContentType.Video,
+                        [classes.isFile]: type === MessageContentType.File,
 
-                    [classes.isContact]: type === 42,
-                    // App messages，只在手机上显示的消息
-                    [classes.appMessage]: [49 + 2000, 49 + 17, 49 + 6].includes(type),
-                    [classes.isTransfer]: type === 49 + 2000,
-                    [classes.isLocationSharing]: type === 49 + 17,
-                })} key={message.messageId}>
-                    <div>
-                        <Avatar
-                            //src={message.isme ? message.HeadImgUrl : user.HeadImgUrl}
-                            src={user.portrait ? user.portrait : 'assets/images/user-fallback.png'}
-                            className={classes.avatar}
-                            onClick={ev => this.props.showUserinfo(message.direction === 0, user)}
-                        />
+                        [classes.isContact]: type === 42,
+                        // App messages，只在手机上显示的消息
+                        [classes.appMessage]: [49 + 2000, 49 + 17, 49 + 6].includes(type),
+                        [classes.isTransfer]: type === 49 + 2000,
+                        [classes.isLocationSharing]: type === 49 + 17,
+                    })} key={message.messageId}>
 
-                        <p
-                            className={classes.username}
-                            //dangerouslySetInnerHTML={{__html: user.DisplayName || user.RemarkName || user.NickName}}
-                            dangerouslySetInnerHTML={{ __html: user.displayName }}
-                        />
+                        <div>
+                            <Avatar
+                                //src={message.isme ? message.HeadImgUrl : user.HeadImgUrl}
+                                src={user.portrait ? user.portrait : 'assets/images/user-fallback.png'}
+                                className={classes.avatar}
+                                onClick={ev => this.props.showUserinfo(message.direction === 0, user)}
+                            />
 
-                        <div className={classes.content}>
                             <p
-                                onContextMenu={e => this.showMessageAction(message)}
-                                dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
-                            <span className={classes.times}>{moment(message.timestamp).fromNow()}</span>
+                                className={classes.username}
+                                //dangerouslySetInnerHTML={{__html: user.DisplayName || user.RemarkName || user.NickName}}
+                                dangerouslySetInnerHTML={{ __html: user.displayName }}
+                            />
+
+                            <div className={classes.content}>
+                                <p
+                                    onContextMenu={e => this.showMessageAction(message)}
+                                    dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
+                            </div>
                         </div>
                     </div>
                 </div>
