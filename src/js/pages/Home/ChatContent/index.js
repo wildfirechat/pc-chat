@@ -328,9 +328,8 @@ export default class ChatContent extends Component {
             // }
 
             return (
-                <div>
+                <div key={message.messageId}>
                     <div
-                        key={message.messageId}
                         className={clazz('unread', classes.message, classes.system)}
                         dangerouslySetInnerHTML={{ __html: helper.timeFormat(message.timestamp) }} />
                     <div className={clazz('unread', classes.message, {
@@ -353,7 +352,7 @@ export default class ChatContent extends Component {
                         [classes.appMessage]: [49 + 2000, 49 + 17, 49 + 6].includes(type),
                         [classes.isTransfer]: type === 49 + 2000,
                         [classes.isLocationSharing]: type === 49 + 17,
-                    })} key={message.messageId}>
+                    })}>
 
                         <div>
                             <Avatar
