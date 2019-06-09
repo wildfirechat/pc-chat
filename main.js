@@ -42,7 +42,7 @@ let mainMenu = [
                 selector: 'orderFrontStandardAboutPanel:',
             },
             {
-                label: 'Preferences...',
+                label: Locales.__('Main').Preferences,
                 accelerator: 'Cmd+,',
                 click() {
                     mainWindow.show();
@@ -62,7 +62,7 @@ let mainMenu = [
                 role: 'unhide'
             },
             {
-                label: 'Check for updates',
+                label: Locales.__('Main').Check,
                 accelerator: 'Cmd+U',
                 click() {
                     checkForUpdates();
@@ -72,7 +72,7 @@ let mainMenu = [
                 type: 'separator'
             },
             {
-                label: 'Quit wildfireChat',
+                label: Locales.__('Main').Quit,
                 accelerator: 'Command+Q',
                 selector: 'terminate:',
                 click() {
@@ -286,15 +286,15 @@ let mainMenu = [
     }
 ];
 let trayMenu = [
+    // {
+    //     label: `你有 0 条消息`,
+    //     click() {
+    //         mainWindow.show();
+    //         mainWindow.webContents.send('show-messages');
+    //     }
+    // },
     {
-        label: `You have 0 messages`,
-        click() {
-            mainWindow.show();
-            mainWindow.webContents.send('show-messages');
-        }
-    },
-    {
-        label: 'Toggle main window',
+        label: '切换主窗口',
         click() {
             let isVisible = mainWindow.isVisible();
             isVisible ? mainWindow.hide() : mainWindow.show();
@@ -304,7 +304,7 @@ let trayMenu = [
         type: 'separator'
     },
     {
-        label: 'Preferences...',
+        label: '偏好...',
         accelerator: 'Cmd+,',
         click() {
             mainWindow.show();
@@ -312,7 +312,7 @@ let trayMenu = [
         }
     },
     {
-        label: 'Fork me on Github',
+        label: Locales.__('Help').Fork,
         click() {
             shell.openExternal('https://github.com/wildfirechat/pc-chat');
         }
@@ -321,31 +321,31 @@ let trayMenu = [
         type: 'separator'
     },
     {
-        label: 'Toggle DevTools',
+        label: Locales.__('View').ToggleDevtools,
         accelerator: 'Alt+Command+I',
         click() {
             mainWindow.show();
             mainWindow.toggleDevTools();
         }
     },
-    {
-        label: 'Hide menu bar icon',
-        click() {
-            mainWindow.webContents.send('hide-tray');
-        }
-    },
+    // {
+    //     label: 'Hide menu bar icon',
+    //     click() {
+    //         mainWindow.webContents.send('hide-tray');
+    //     }
+    // },
     {
         type: 'separator'
     },
     {
-        label: 'Check for updates',
+        label: Locales.__('Main').Check,
         accelerator: 'Cmd+U',
         click() {
             checkForUpdates();
         }
     },
     {
-        label: 'Quit wildfireChat',
+        label: Locales.__('Main').Quit,
         accelerator: 'Command+Q',
         selector: 'terminate:',
         click() {
@@ -359,6 +359,7 @@ let avatarPath = tmp.dirSync();
 let avatarCache = {};
 let avatarPlaceholder = `${__dirname}/src/assets/images/user-fallback.png`;
 const icon = `${__dirname}/src/assets/images/dock.png`;
+let blink = null
 
 async function getIcon(cookies, userid, src) {
     var cached = avatarCache[userid];
@@ -422,7 +423,7 @@ function updateTray(unread = 0) {
     }
 
     // Update unread mesage count
-    trayMenu[0].label = `You have ${unread} messages`;
+    // trayMenu[0].label = `你有 ${unread} 条信息`;
 
     if (settings.showOnTray) {
         if (tray
@@ -431,10 +432,7 @@ function updateTray(unread = 0) {
         }
 
         let contextmenu = Menu.buildFromTemplate(trayMenu);
-        let icon = unread
-            ? `${__dirname}/src/assets/images/icon-new-message.png`
-            : `${__dirname}/src/assets/images/icon.png`
-            ;
+        let icon = `${__dirname}/src/assets/images/icon.png`;
 
         // Make sure the last tray has been destroyed
         setTimeout(() => {
@@ -446,22 +444,15 @@ function updateTray(unread = 0) {
                     tray.popUpContextMenu();
                 });
 
-                let clicked = false;
                 tray.on('click', () => {
-                    if (clicked) {
-                        mainWindow.show();
-                        clicked = false;
-                    } else {
-                        clicked = true;
-                        setTimeout(() => {
-                            clicked = false;
-                        }, 400);
-                    }
+                    let isVisible = mainWindow.isVisible();
+                    isVisible ? mainWindow.hide() : mainWindow.show();
                 });
             }
 
             tray.setImage(icon);
             tray.setContextMenu(contextmenu);
+            execBlink(unread > 0);
         });
     } else {
         if (!tray) return;
@@ -584,8 +575,7 @@ const createMainWindow = () => {
     });
 
     ipcMain.on('close-window', event => {
-        forceQuit = true;
-        mainWindow.close();
+        mainWindow.hide();
     });
 
     // ipcMain.on('min-window', event => {
@@ -607,6 +597,11 @@ const createMainWindow = () => {
         } else {
             mainWindow.maximize();
         }
+    });
+
+    ipcMain.on('exec-blink', (event, args) => {
+        var isBlink = args.isBlink;
+        execBlink(isBlink, args.interval);
     });
 
     // TODO 不明白这儿是做什么？
@@ -673,10 +668,9 @@ const createMainWindow = () => {
 
     ipcMain.on('message-unread', (event, args) => {
         var counter = args.counter;
-
-        if (settings.showOnTray) {
+        //if (settings.showOnTray) {
             updateTray(counter);
-        }
+        //}
     });
 
     ipcMain.on('file-paste', (event) => {
@@ -783,6 +777,34 @@ app.on('activate', e => {
         mainWindow.show();
     }
 });
+
+function clearBlink() {
+    if(blink){
+        clearInterval(blink)
+    }
+    blink = null
+}
+
+function execBlink (flag, _interval) {
+    let interval = _interval ? _interval : 500;
+    let icon= [`${__dirname}/src/assets/images/icon.png`,
+            `${__dirname}/src/assets/images/Remind_icon.png`];
+    let count = 0;
+    if(flag){
+        blink = setInterval(function(){
+            toggleTrayIcon(icon[count++]);
+            count = count > 1 ? 0 : count;
+        }, interval);
+    } else {
+        clearBlink();
+        toggleTrayIcon(icon[0]);
+    }
+
+}
+
+function toggleTrayIcon(icon){
+    tray.setImage(icon);
+}
 
 autoUpdater.on('update-not-available', e => {
     dialog.showMessageBox({

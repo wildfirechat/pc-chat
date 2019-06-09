@@ -1,4 +1,9 @@
-{
+{	
+	"Main": {
+		"Title": "Preferences...",
+		"Check": "Check for updates",
+		"Quit": "Quit wildfireChat"
+	},
 	"File": {
 		"Title": "File",
 		"New": "New Chat",
