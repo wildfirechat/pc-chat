@@ -142,22 +142,22 @@ let mainMenu = [
             },
         ]
     },
-    {
-        label: Locales.__('Conversations').Title,
-        submenu: [
-            {
-                label: Locales.__('Conversations').Loading,
-            }
-        ],
-    },
-    {
-        label: Locales.__('Contacts').Title,
-        submenu: [
-            {
-                label: Locales.__('Contacts').Loading,
-            }
-        ],
-    },
+    // {
+    //     label: Locales.__('Conversations').Title,
+    //     submenu: [
+    //         {
+    //             label: Locales.__('Conversations').Loading,
+    //         }
+    //     ],
+    // },
+    // {
+    //     label: Locales.__('Contacts').Title,
+    //     submenu: [
+    //         {
+    //             label: Locales.__('Contacts').Loading,
+    //         }
+    //     ],
+    // },
     {
         label: Locales.__('Edit').Title,
         submenu: [
