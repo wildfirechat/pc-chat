@@ -4,6 +4,7 @@ import { inject, observer } from 'mobx-react';
 import { remote } from 'electron';
 import clazz from 'classname';
 import moment from 'moment';
+import helper from 'utils/helper';
 
 import classes from './style.css';
 import EventType from '../../../wfc/wfcEvent'
@@ -224,7 +225,7 @@ export default class Chats extends Component {
 
                                     <span className={classes.times}>
                                         {
-                                            e.timestamp ? moment(e.timestamp).fromNow() : ''
+                                            e.timestamp ? helper.timeFormat(e.timestamp) : ''
                                         }
                                     </span>
                                 </div>

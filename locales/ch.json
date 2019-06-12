@@ -1,4 +1,9 @@
 {
+	"Main": {
+		"Title": "偏好...",
+		"Check": "检查更新",
+		"Quit": "退出 wildfireChat"
+	},
 	"File": {
 		"Title": "文件",
 		"New": "新会话",
