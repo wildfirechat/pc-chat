@@ -33,7 +33,7 @@
 
 ## 体验
 
-可下载我们已编译好的可执行文件进行体验，[pc-chat 下载](https://github.com/wildfirechat/pc-chat/releases/tag/wfc0.1.7)
+可下载我们已编译好的可执行文件进行体验，[pc-chat 下载](https://github.com/wildfirechat/pc-chat/releases)
 
 ![login_qr](./screenshots/login_qr.png)
 

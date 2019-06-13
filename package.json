@@ -1,6 +1,6 @@
 {
   "name": "wildfireChat",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "Unofficial WeChat client built with React, MobX and Electron.",
   "main": "main.js",
   "scripts": {
