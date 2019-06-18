@@ -351,7 +351,8 @@ let trayMenu = [
         click() {
             forceQuit = true;
             mainWindow = null;
-            app.quit();
+            // app.quit();
+            app.exit(0);
         }
     }
 ];
@@ -772,6 +773,7 @@ app.on('ready', createMainWindow);
 app.on('before-quit', () => {
     // Fix issues #14
     forceQuit = true;
+    tray.destroy();
 });
 app.on('activate', e => {
     if (!mainWindow.isVisible()) {
