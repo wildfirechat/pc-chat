@@ -453,6 +453,8 @@ function updateTray(unread = 0) {
             tray.setImage(icon);
             tray.setContextMenu(contextmenu);
             execBlink(unread > 0);
+            // Avoid tray icon been recreate
+            updateTray.lastUnread = unread;
         });
     } else {
         if (!tray) return;
@@ -461,8 +463,7 @@ function updateTray(unread = 0) {
         tray = null;
     }
 
-    // Avoid tray icon been recreate
-    updateTray.lastUnread = unread;
+
 }
 
 async function autostart() {
@@ -791,9 +792,12 @@ function execBlink (flag, _interval) {
             `${__dirname}/src/assets/images/Remind_icon.png`];
     let count = 0;
     if(flag){
+        if (blink) {
+            return;
+        }
         blink = setInterval(function(){
             toggleTrayIcon(icon[count++]);
-            count = count > 1 ? 0 : count;
+            count = count > 1 ? 0 : 1;
         }, interval);
     } else {
         clearBlink();
