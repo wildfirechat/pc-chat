@@ -14,7 +14,6 @@
 | [push_server](https://github.com/wildfirechat/push_server)   | 推送服务器                                              |      |
 | [docs](https://github.com/wildfirechat/docs)                 | 野火IM相关文档，包含设计、概念、开发、使用说明          |      |
 
-# 
 
 ## pc-chat说明
 
@@ -53,15 +52,40 @@
 
 ## 开发
 
-***由于我们都是用mac进行开发，开发环境未适配Windows，故Windows上，可能编译不过。***
-
-以下针对mac
-
+#### mac系统
+开发
 ```
 $ cp proto_addon/marswrapper.mac.node marswrapper.node
 $ npm install
 $ npm run dev
 ```
+
+打包
+
+1. ```npm install``` 安装依赖
+2. ```npm run package-win32``` 打包window版本，软件生成在release目录下
+3. ```npm run package-mac``` 打包mac版本，软件生成在release目录下
+
+
+#### windows系统
+拷贝windows配置
+把```package-win32.json```改名为```package.json```。
+
+开发
+```
+$ copy proto_addon\marswrapper.mac.node marswrapper.node
+$ npm install
+$ npm run dev
+```
+
+打包
+
+1. ```npm install``` 安装依赖
+2. ```npm run package-win32``` 打包window版本，软件生成在release目录下
+
+> mac版本必须使用mac系统打包
+
+
 
 更多信息，请查看[wewechat readme](./README_wewechat.MD)
 
@@ -73,7 +97,7 @@ $ npm run dev
 
 2. Under the 996ICU License. See the [LICENSE](https://github.com/996icu/996.ICU/blob/master/LICENSE) file for details.
 
-   
+
 
 # 鸣谢
 
