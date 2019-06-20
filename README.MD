@@ -71,19 +71,19 @@ $ npm run dev
 拷贝windows配置
 把```package-win32.json```改名为```package.json```。
 
-开发
+开发(目前还有问题，请打包安装使用)
 ```
-$ copy proto_addon\marswrapper.mac.node marswrapper.node
+$ copy proto_addon\marswrapper.win32.node marswrapper.node
 $ npm install
 $ npm run dev
 ```
 
 打包
-
+0. 把```package-win32.json```改名为```package.json```。
 1. ```npm install``` 安装依赖
 2. ```npm run package-win32``` 打包window版本，软件生成在release目录下
 
-> mac版本必须使用mac系统打包
+> mac下能打包出windows版本和mac版本。windows下只能打包出windows版本
 
 
 
