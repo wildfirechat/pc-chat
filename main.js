@@ -460,7 +460,9 @@ function updateTray(unread = 0) {
     } else {
         if (!tray) return;
 
-        tray.destroy();
+        if (!isOsx) {
+          tray.destroy();
+        }
         tray = null;
     }
 
@@ -773,7 +775,9 @@ app.on('ready', createMainWindow);
 app.on('before-quit', () => {
     // Fix issues #14
     forceQuit = true;
-    tray.destroy();
+    if (!isOsx) {
+      tray.destroy();
+    }
 });
 app.on('activate', e => {
     if (!mainWindow.isVisible()) {
