@@ -54,6 +54,7 @@
 
 #### mac系统
 开发
+
 ```
 $ cp proto_addon/marswrapper.mac.node marswrapper.node
 $ npm install
@@ -68,17 +69,25 @@ $ npm run dev
 
 
 #### windows系统
-拷贝windows配置
+
+##### 环境准备：
+
+1. nodejs10.16.0
+2. python2.7
+3. Visual Studio Community 2015(C++ Runtime & Windows SDK version 8.1)
+4. npm install -g node-gyp
+
+##### 拷贝windows配置
 把```package-win32.json```改名为```package.json```。
 
-开发(目前还有问题，请打包安装使用)
+##### 开发(目前还有问题，请打包安装验证)
 ```
 $ copy proto_addon\marswrapper.win32.node marswrapper.node
 $ npm install
 $ npm run dev
 ```
 
-打包
+##### 打包
 0. 把```package-win32.json```改名为```package.json```。
 1. ```npm install``` 安装依赖
 2. ```npm run package-win32``` 打包window版本，软件生成在release目录下
