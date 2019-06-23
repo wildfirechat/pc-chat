@@ -150,6 +150,21 @@ class WfcManager {
         self.test();
     }
 
+    disconnect() {
+        this.userId = '';
+        proto.disconnect(0);
+
+
+        //sleep 1 second wait disconnect with im server
+        var now = new Date();
+        var exitTime = now.getTime() + 1000;
+        while (true) {
+          now = new Date();
+          if (now.getTime() > exitTime)
+            return;
+        }
+    }
+
     registerDefaultMessageContents() {
         MessageConfig.MessageContents.map((e) => {
             proto.registerMessageFlag(e.type, e.flag);
