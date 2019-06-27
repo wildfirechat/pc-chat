@@ -31,6 +31,7 @@ class WfcManager {
     connectionStatus = 0;
     userId = '';
     token = '';
+    users = new Map();
 
     // TODO 移除吧，全都走EventEmitter
     // onReceiveMessageListeners = [];
@@ -107,13 +108,19 @@ class WfcManager {
     onUserInfoUpdate(userIds) {
         console.log('userIndo update, ids', userIds);
         let userIdA = JSON.parse(userIds);
+
         userIdA.map((userId => {
+            this.users.delete(userId);
             self.eventEmitter.emit(EventType.UserInfoUpdate, userId);
         }))
     }
 
     onFriendListUpdate(friendListIds) {
         console.log('friendList update, ids', friendListIds);
+        let ids = JSON.parse(friendListIds);
+        ids.map((uid) => {
+            this.users.delete(uid);
+        });
         self.eventEmitter.emit(EventType.FriendListUpdate, friendListIds);
     }
 
@@ -159,9 +166,9 @@ class WfcManager {
         var now = new Date();
         var exitTime = now.getTime() + 1000;
         while (true) {
-          now = new Date();
-          if (now.getTime() > exitTime)
-            return;
+            now = new Date();
+            if (now.getTime() > exitTime)
+                return;
         }
     }
 
@@ -214,12 +221,23 @@ class WfcManager {
         if (!userId || userId === '') {
             return new NullUserInfo('');
         }
+        let userInfo;
+        if (!fresh) {
+            userInfo = this.users.get(userId);
+            if (userInfo) {
+                return userInfo;
+            }
+        }
+
+        console.log('getuserInfo', userId);
         let userInfoStr = proto.getUserInfo(userId, fresh);
         if (userInfoStr === '') {
-            return new NullUserInfo(userId);
+            userInfo = new NullUserInfo(userId);
         } else {
-            return Object.assign(new UserInfo(), JSON.parse(userInfoStr));
+            userInfo = Object.assign(new UserInfo(), JSON.parse(userInfoStr));
         }
+        this.users.set(userInfo.uid, userInfo);
+        return userInfo;
     }
 
     async searchUser(keyword, successCB, failCB) {
@@ -549,6 +567,7 @@ class WfcManager {
 
     modifyMyInfo() {
         // TODO
+        this.users.delete(this.getUserId())
     }
 
     isGlobalSlient() {
