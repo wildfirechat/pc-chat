@@ -43,6 +43,22 @@ class sessions {
         console.log('test', info);
     }
 
+    @action async reloadConversation(conversation) {
+        let info = wfc.getConversationInfo(conversation);
+        let i = -1;
+        for (let index = 0; index < self.conversations.length; index++) {
+            if (self.conversations[index].conversation.equal(conversation)) {
+                i = index;
+            }
+        }
+        if (i >= 0) {
+            self.conversations[i] = info;
+        } else {
+            self.conversations.push(info);
+        }
+        console.log('reload conversation~');
+    }
+
     @action async loadConversations() {
         let cl = wfc.getConversationList([ConversationType.Single, ConversationType.Group, ConversationType.Channel], [0, 1]);
         self.conversations = cl;
