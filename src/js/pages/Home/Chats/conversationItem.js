@@ -11,9 +11,12 @@ export default class ConversationItem extends Component {
 
     shouldComponentUpdate(nextProps) {
         return !this.props.conversationInfo
+            || !nextProps.currentConversation
             || !nextProps.conversationInfo.conversation.equal(this.props.conversationInfo.conversation)
+            || this.props.conversationInfo.lastMessage.messageId !== nextProps.conversationInfo.lastMessage.messageId
             || this.active !== (nextProps.currentConversation.equal(nextProps.conversationInfo.conversation))
             ;
+
     }
 
     render() {
