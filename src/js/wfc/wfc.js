@@ -72,7 +72,7 @@ class WfcManager {
 
     onReceiveMessage(messages, hasMore) {
         var msgs = JSON.parse(messages);
-        msgs.map(m => {
+        msgs.forEach(m => {
             let msg = Message.fromProtoMessage(m);
             // self.onReceiveMessageListeners.forEach(listener => {
             //     listener(msg, hasMore);
@@ -98,7 +98,7 @@ class WfcManager {
     }
 
     onRecallMessage(operatorUid, messageUid) {
-        self.eventEmitter.emit(EventType.ReceiveMessage, operatorUid, messageUid);
+        self.eventEmitter.emit(EventType.RecallMessage, operatorUid, messageUid);
     }
 
     onMessageDeleted(messageId) {
@@ -110,7 +110,7 @@ class WfcManager {
         let userIdA = JSON.parse(userIds);
 
         userIdA.map((userId => {
-            this.users.delete(userId);
+            self.users.delete(userId);
             self.eventEmitter.emit(EventType.UserInfoUpdate, userId);
         }))
     }
@@ -118,8 +118,8 @@ class WfcManager {
     onFriendListUpdate(friendListIds) {
         console.log('friendList update, ids', friendListIds);
         let ids = JSON.parse(friendListIds);
-        ids.map((uid) => {
-            this.users.delete(uid);
+        ids.forEach((uid) => {
+            self.users.delete(uid);
         });
         self.eventEmitter.emit(EventType.FriendListUpdate, friendListIds);
     }
@@ -150,7 +150,7 @@ class WfcManager {
     }
 
     async connect(userId, token) {
-        this.userId = userId;
+        self.userId = userId;
         proto.connect(userId, token);
 
         // for testing your code
@@ -158,7 +158,7 @@ class WfcManager {
     }
 
     disconnect() {
-        this.userId = '';
+        self.userId = '';
         proto.disconnect(0);
 
 
@@ -184,7 +184,7 @@ class WfcManager {
     }
 
     getUserId() {
-        return this.userId;
+        return self.userId;
     }
 
     getServerDeltaTime() {
@@ -223,7 +223,7 @@ class WfcManager {
         }
         let userInfo;
         if (!fresh) {
-            userInfo = this.users.get(userId);
+            userInfo = self.users.get(userId);
             if (userInfo) {
                 return userInfo;
             }
@@ -236,7 +236,7 @@ class WfcManager {
         } else {
             userInfo = Object.assign(new UserInfo(), JSON.parse(userInfoStr));
         }
-        this.users.set(userInfo.uid, userInfo);
+        self.users.set(userInfo.uid, userInfo);
         return userInfo;
     }
 
@@ -410,7 +410,7 @@ class WfcManager {
 
     addGroupMembers(groupId, memberIds, notifyLines, notifyMessageContent, successCB, failCB) {
         if (!notifyMessageContent) {
-            notifyMessageContent = new AddGroupMemberNotification(this.getUserId(), memberIds);
+            notifyMessageContent = new AddGroupMemberNotification(self.getUserId(), memberIds);
         }
         let payload = notifyMessageContent.encode();
         let notifyContentStr = JSON.stringify(payload);
@@ -428,7 +428,7 @@ class WfcManager {
     }
 
     getGroupMemberIds(groupId, fresh = false) {
-        let groupMembers = this.getGroupMembers(groupId, fresh);
+        let groupMembers = self.getGroupMembers(groupId, fresh);
         var groupMemberIds = [];
         groupMembers.forEach(e => {
             groupMemberIds.push(e.memberId);
@@ -567,7 +567,7 @@ class WfcManager {
 
     modifyMyInfo() {
         // TODO
-        this.users.delete(this.getUserId())
+        self.users.delete(self.getUserId())
     }
 
     isGlobalSlient() {

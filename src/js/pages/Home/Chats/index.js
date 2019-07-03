@@ -95,13 +95,13 @@ export default class Chats extends Component {
 
     onSendMessage = (msg) => {
         if (this.props.conversation.equal(msg.conversation)) {
-            this.props.reloadConversation();
+            this.props.reloadConversation(msg.conversation);
         }
     }
 
     onReceiveMessage = (msg) => {
-        if (this.props.conversation.equal(msg.conversation)) {
-            this.props.reloadConversation();
+        if (this.props.conversation && this.props.conversation.equal(msg.conversation)) {
+            this.props.reloadConversation(msg.conversation);
         }
     }
 

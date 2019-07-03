@@ -56,7 +56,7 @@ class sessions {
         } else {
             self.conversations.push(info);
         }
-        console.log('reload conversation~');
+        console.log('refresh conversation', conversation);
     }
 
     @action async loadConversations() {
