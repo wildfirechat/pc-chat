@@ -1,15 +1,13 @@
 
-import React, { Component } from 'react';
-import { inject, observer } from 'mobx-react';
 import { remote } from 'electron';
-import clazz from 'classname';
+import { inject, observer } from 'mobx-react';
 import moment from 'moment';
-import helper from 'utils/helper';
-
-import classes from './style.css';
-import EventType from '../../../wfc/wfcEvent'
-import ConversationType from '../../../wfc/model/conversationType';
+import React, { Component } from 'react';
+import EventType from '../../../wfc/wfcEvent';
 import ConversationItem from './conversationItem';
+import classes from './style.css';
+import ConversationType from '../../../wfc/model/conversationType';
+
 
 moment.updateLocale('en', {
     relativeTime: {
@@ -119,7 +117,30 @@ export default class Chats extends Component {
         this.props.loadConversations();
     }
 
+    onConnectionStatusChange = () => {
+        if (status === 1) {
+            this.props.loadConversations();
+        }
+    }
+
+    onUserInfoUpdate = (userId) => {
+        this.props.chats.map((c, index) => {
+            if (c.conversation.conversationType === ConversationType.Single && c.conversation.target === userId) {
+                this.props.reloadConversation(c.conversation);
+            }
+        });
+    }
+
+    onGroupInfoUpdate = (groupId) => {
+        this.props.chats.map((c, index) => {
+            if (c.conversation.conversationType === ConversationType.Group && c.conversation.target === groupId) {
+                this.props.reloadConversation(c.conversation);
+            }
+        });
+    }
+
     componentWillMount() {
+        console.log('componentWillMount');
         this.props.loadConversations();
         this.props.event.on(EventType.ReceiveMessage, this.onReceiveMessage);
         this.props.event.on(EventType.SendMessage, this.onSendMessage);
@@ -127,6 +148,9 @@ export default class Chats extends Component {
         this.props.event.on(EventType.RecallMessage, this.onRecallMessage);
         this.props.event.on(EventType.DeleteMessage, this.onRecallMessage);
         this.props.event.on(EventType.SettingUpdate, this.onSettingUpdate);
+        this.props.event.on(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
+        this.props.event.on(EventType.UserInfoUpdate, this.onUserInfoUpdate);
+        this.props.event.on(EventType.GroupInfoUpdate, this.onGroupInfoUpdate);
     }
 
     componentWillUnmount() {
