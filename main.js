@@ -351,7 +351,7 @@ let trayMenu = [
         click() {
             forceQuit = true;
             mainWindow = null;
-            // app.quit();
+            global.sharedObj.proto.disconnect(0);
             app.exit(0);
         }
     }
