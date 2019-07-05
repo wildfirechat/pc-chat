@@ -100,9 +100,7 @@ export default class Chats extends Component {
     }
 
     onReceiveMessage = (msg) => {
-        if (this.props.conversation && this.props.conversation.equal(msg.conversation)) {
-            this.props.reloadConversation(msg.conversation);
-        }
+        this.props.reloadConversation(msg.conversation);
     }
 
     onConversationInfoUpdate = (conversationInfo) => {
