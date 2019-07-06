@@ -352,6 +352,14 @@ let trayMenu = [
             forceQuit = true;
             mainWindow = null;
             global.sharedObj.proto.disconnect(0);
+            console.log('--------------- disconnect', global.sharedObj.proto);
+            var now = new Date();
+            var exitTime = now.getTime() + 1000;
+            while (true) {
+                now = new Date();
+                if (now.getTime() > exitTime)
+                    break;
+            }
             app.exit(0);
         }
     }

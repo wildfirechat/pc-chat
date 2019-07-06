@@ -67,6 +67,18 @@ export default class ConversationInfo {
 
         title = targetName;
         return title;
+    }
+
+    static equals(info1, info2) {
+        if (!info1 || !info2) {
+            return false;
+        }
+        if (!info1.conversation.equal(info2.conversation)) {
+            return false;
+        }
+
+        // 其他的应当都会反应在timestamp上
+        return info1.timestamp === info2.timestamp && info1.draft === info2.draft;
 
     }
 }

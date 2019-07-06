@@ -63,7 +63,7 @@ class sessions {
         let cl = wfc.getConversationList([ConversationType.Single, ConversationType.Group, ConversationType.Channel], [0, 1]);
         self.conversations = cl;
         let counter = 0;
-        cl.map((e, index) => {
+        cl.forEach((e) => {
             counter += e.unreadCount.unread;
         });
         console.log('loadConversations', counter);
