@@ -92,17 +92,21 @@ export default class Chats extends Component {
     }
 
     onSendMessage = (msg) => {
-        if (this.props.conversation.equal(msg.conversation)) {
-            this.props.reloadConversation(msg.conversation);
-        }
+        // if (this.props.conversation.equal(msg.conversation)) {
+        //     this.props.reloadConversation(msg.conversation);
+        // }
+        // this.props.reloadConversation(msg.conversation);
+        this.props.loadConversations();
     }
 
     onReceiveMessage = (msg) => {
-        this.props.reloadConversation(msg.conversation);
+        // this.props.reloadConversation(msg.conversation);
+        this.props.loadConversations();
     }
 
     onConversationInfoUpdate = (conversationInfo) => {
-        this.props.reloadConversation(conversationInfo.conversation);
+        // this.props.reloadConversation(conversationInfo.conversation);
+        this.props.loadConversations();
     }
 
     onRecallMessage = (operatorId, messageUid) => {
@@ -118,9 +122,9 @@ export default class Chats extends Component {
     }
 
     onConnectionStatusChange = () => {
-        if (status === 1) {
-            this.props.loadConversations();
-        }
+        // if (status === 1) {
+        //     this.props.loadConversations();
+        // }
     }
 
     onUserInfoUpdate = (userId) => {
@@ -151,6 +155,10 @@ export default class Chats extends Component {
         this.props.event.on(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
         this.props.event.on(EventType.UserInfoUpdate, this.onUserInfoUpdate);
         this.props.event.on(EventType.GroupInfoUpdate, this.onGroupInfoUpdate);
+
+        setTimeout(() => {
+            this.props.loadConversations();
+        }, 200)
     }
 
     componentWillUnmount() {
