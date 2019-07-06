@@ -5,19 +5,20 @@ import helper from 'utils/helper';
 
 import classes from './style.css';
 import ConversationType from '../../../wfc/model/conversationType';
+import ConversationInfo from '../../../wfc/model/conversationInfo';
 
 export default class ConversationItem extends Component {
     active = false;
 
-    shouldComponentUpdate(nextProps) {
-        return !this.props.conversationInfo
-            || !nextProps.currentConversation
-            || !nextProps.conversationInfo.conversation.equal(this.props.conversationInfo.conversation)
-            || this.props.conversationInfo.lastMessage.messageId !== nextProps.conversationInfo.lastMessage.messageId
-            || this.active !== (nextProps.currentConversation.equal(nextProps.conversationInfo.conversation))
-            ;
-
-    }
+    // 1. 原来是空的
+    // 2. 绑定新的数据(新会话，会话更新了, 会话的target更新了)
+    // 3. 选中、取消选中
+    // shouldComponentUpdate(nextProps) {
+    //     let update = !ConversationInfo.equals(this.props.conversationInfo, nextProps.conversationInfo)
+    //         || (!nextProps.currentConversation && (this.active !== (nextProps.currentConversation.equal(nextProps.conversationInfo.conversation))));
+    //     console.log('update conversation', update, this.props.conversationInfo, nextProps.conversationInfo);
+    //     return update;
+    // }
 
     render() {
         let e = this.props.conversationInfo;

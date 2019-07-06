@@ -268,8 +268,6 @@ class Chat {
         self.hasMore = true;
 
         self.loadConversationMessages(conversation, 10000000);
-        wfc.clearConversationUnreadStatus(conversation);
-
 
         // TODO update observable for chat content
         switch (conversation.conversationType) {

@@ -71,6 +71,10 @@ class WfcManager {
     // }
 
     onReceiveMessage(messages, hasMore) {
+        // receiving
+        if (self.connectionStatus === 2) {
+            return;
+        }
         var msgs = JSON.parse(messages);
         msgs.forEach(m => {
             let msg = Message.fromProtoMessage(m);
@@ -106,10 +110,9 @@ class WfcManager {
     }
 
     onUserInfoUpdate(userIds) {
-        console.log('userIndo update, ids', userIds);
-        let userIdA = JSON.parse(userIds);
+        let userIdArray = JSON.parse(userIds);
 
-        userIdA.map((userId => {
+        userIdArray.forEach((userId => {
             self.users.delete(userId);
             self.eventEmitter.emit(EventType.UserInfoUpdate, userId);
         }))
