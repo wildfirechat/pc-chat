@@ -94,7 +94,9 @@ $ npm run dev
 
 > mac下能打包出windows版本和mac版本。windows下只能打包出windows版本
 
-
+##### 常见问题
+windows上需要严格按照环境进行安装，mac上环境比较简单一些，安装node和node-gyp就可以了
+另外如果还有问题，请试试命令```npm cache clean --force ```
 
 更多信息，请查看[wewechat readme](./README_wewechat.MD)
 
