@@ -64,8 +64,9 @@ $ npm run dev
 打包
 
 1. ```npm install``` 安装依赖
-2. ```npm run package-win32``` 打包window版本，软件生成在release目录下
-3. ```npm run package-mac``` 打包mac版本，软件生成在release目录下
+2. ```npm install -g dmg-builder``` 安装dmg builder
+3. ```npm run package-win32``` 打包window版本，软件生成在release目录下
+4. ```npm run package-mac``` 打包mac版本，软件生成在release目录下
 
 
 #### windows系统
@@ -94,7 +95,9 @@ $ npm run dev
 
 > mac下能打包出windows版本和mac版本。windows下只能打包出windows版本
 
-
+##### 常见问题
+windows上需要严格按照环境进行安装，mac上环境比较简单一些，安装node和node-gyp就可以了
+另外如果还有问题，请试试命令```npm cache clean --force ```
 
 更多信息，请查看[wewechat readme](./README_wewechat.MD)
 
