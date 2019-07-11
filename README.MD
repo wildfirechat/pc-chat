@@ -64,8 +64,9 @@ $ npm run dev
 打包
 
 1. ```npm install``` 安装依赖
-2. ```npm run package-win32``` 打包window版本，软件生成在release目录下
-3. ```npm run package-mac``` 打包mac版本，软件生成在release目录下
+2. ```npm install -g dmg-builder``` 安装dmg builder
+3. ```npm run package-win32``` 打包window版本，软件生成在release目录下
+4. ```npm run package-mac``` 打包mac版本，软件生成在release目录下
 
 
 #### windows系统
