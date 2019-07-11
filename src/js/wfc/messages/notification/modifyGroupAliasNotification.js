@@ -1,9 +1,9 @@
-import NotificationMessageContent from './notificationMessageContent'
-import wfc from '../../wfc'
-import MessageContentType from '../messageContentType';
 import { Base64 } from 'js-base64';
+import wfc from '../../wfc';
+import MessageContentType from '../messageContentType';
+import GroupNotificationContent from './groupNotification';
 
-export default class ModifyGroupAliasNotification extends NotificationMessageContent {
+export default class ModifyGroupAliasNotification extends GroupNotificationContent {
     operator = '';
     alias = '';
 
@@ -25,6 +25,7 @@ export default class ModifyGroupAliasNotification extends NotificationMessageCon
     encode() {
         let payload = super.encode();
         let obj = {
+            g: this.groupId,
             n: this.alias,
             o: this.operator,
         };
@@ -36,6 +37,7 @@ export default class ModifyGroupAliasNotification extends NotificationMessageCon
         super.decode(payload);
         let json = Base64.decode(payload.binaryContent)
         let obj = JSON.parse(json);
+        this.groupId = obj.g;
         this.operator = obj.o;
         this.alias = obj.n;
     }

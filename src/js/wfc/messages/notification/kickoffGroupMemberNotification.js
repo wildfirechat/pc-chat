@@ -1,10 +1,10 @@
-import NotificationMessageContent from "./notificationMessageContent";
-import wfc from '../../wfc'
-import MessageContentType from "../messageContentType";
 import { Base64 } from 'js-base64';
+import wfc from '../../wfc';
+import MessageContentType from "../messageContentType";
+import GroupNotificationContent from "./groupNotification";
 
 
-export default class KickoffGroupMemberNotification extends NotificationMessageContent {
+export default class KickoffGroupMemberNotification extends GroupNotificationContent {
     operator = '';
     kickedMembers = [];
 
@@ -35,6 +35,7 @@ export default class KickoffGroupMemberNotification extends NotificationMessageC
     encode() {
         let payload = super.encode();
         let obj = {
+            g: this.groupId,
             ms: this.kickedMembers,
             o: this.operateUser,
         };
@@ -46,6 +47,7 @@ export default class KickoffGroupMemberNotification extends NotificationMessageC
         super.decode(payload);
         let json = Base64.decode(payload.binaryContent)
         let obj = JSON.parse(json);
+        this.groupId = obj.g;
         this.operator = obj.o;
         this.kickedMembers = obj.ms;
     }

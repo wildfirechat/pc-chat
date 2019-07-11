@@ -1,10 +1,10 @@
-import NotificationMessageContent from "./notificationMessageContent";
-import wfc from '../../wfc'
-import MessageContentType from "../messageContentType";
 import { Base64 } from 'js-base64';
+import wfc from '../../wfc';
+import MessageContentType from "../messageContentType";
+import GroupNotificationContent from "./groupNotification";
 
 
-export default class ChangeGroupPortraitNotification extends NotificationMessageContent {
+export default class ChangeGroupPortraitNotification extends GroupNotificationContent {
     operator = '';
 
     constructor(operator) {
@@ -24,6 +24,7 @@ export default class ChangeGroupPortraitNotification extends NotificationMessage
     encode() {
         let payload = super.encode();
         let obj = {
+            g: this.groupId,
             n: this.name,
         };
         payload.binaryContent = Base64.encode(JSON.stringify(obj));
@@ -34,6 +35,7 @@ export default class ChangeGroupPortraitNotification extends NotificationMessage
         super.decode(payload);
         let json = Base64.decode(payload.binaryContent)
         let obj = JSON.parse(json);
+        this.groupId = obj.g;
         this.operator = obj.o;
     }
 
