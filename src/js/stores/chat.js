@@ -22,6 +22,9 @@ import resizeImage from 'resize-image';
 import { imgSync } from 'base64-img';
 import { fs } from 'file-system';
 import tmp from 'tmp';
+import QuitGroupNotification from '../wfc/messages/notification/quitGroupNotification';
+import DismissGroupNotification from '../wfc/messages/notification/dismissGroupNotification';
+import KickoffGroupMemberNotification from '../wfc/messages/notification/kickoffGroupMemberNotification';
 
 async function resolveMessage(message) {
     var auth = await storage.get('auth');
@@ -228,7 +231,7 @@ class Chat {
     @observable messages = new Map();
     // TODO remove end
 
-    @observable showConversation = true;
+    @observable showConversation = false;
 
     // maybe userInfo, GroupInfo, ChannelInfo, ChatRoomInfo
     @observable target = false;
@@ -246,9 +249,22 @@ class Chat {
     onReceiveMessage(message, hasMore) {
         console.log('chat on receive message');
         // TODO message id
-        if (message.messageId > 0 && self.conversation.equal(message.conversation)) {
+        if (self.conversation && message.messageId > 0 && self.conversation.equal(message.conversation)) {
             // message conent type
-            self.messageList.push(message);
+            let content = message.messageContent;
+            if (self.conversation.conversationType === ConversationType.Group) {
+                if ((content instanceof QuitGroupNotification && content.groupId === self.conversation.target && content.operator === wfc.getUserId())
+                    || (content instanceof DismissGroupNotification && content.groupId === self.conversation.target)
+                    || (content instanceof KickoffGroupMemberNotification && content.groupId === self.conversation.target && content.kickedMembers.indexOf(wfc.getUserId()) > -1)
+                ) {
+                    self.target = false;
+                    self.conversation = null;
+                } else {
+                    self.messageList.push(message);
+                }
+            } else {
+                self.messageList.push(message);
+            }
         }
     }
 
