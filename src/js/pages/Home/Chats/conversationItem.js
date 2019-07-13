@@ -1,11 +1,10 @@
 
-import React, { Component } from 'react';
 import clazz from 'classname';
+import React, { Component } from 'react';
 import helper from 'utils/helper';
-
-import classes from './style.css';
 import ConversationType from '../../../wfc/model/conversationType';
-import ConversationInfo from '../../../wfc/model/conversationInfo';
+import classes from './style.css';
+
 
 export default class ConversationItem extends Component {
     active = false;

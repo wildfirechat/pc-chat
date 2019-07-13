@@ -22,6 +22,7 @@ import { fs } from 'file-system';
 import BenzAMRRecorder from 'benz-amr-recorder';
 import MessageConfig from '../../../wfc/messageConfig';
 import UnknownMessageContent from '../../../wfc/messages/unknownMessageContent';
+import EventType from '../../../wfc/wfcEvent';
 
 
 @inject(stores => ({
@@ -634,9 +635,10 @@ export default class ChatContent extends Component {
             this.props.loadOldMessages();
         }
 
-        if (viewport.clientHeight + viewport.scrollTop === viewport.scrollHeight) {
-            wfc.clearConversationUnreadStatus(this.props.conversation);
-        }
+        // if (viewport.clientHeight + viewport.scrollTop === viewport.scrollHeight) {
+        //     wfc.clearConversationUnreadStatus(this.props.conversation);
+        //     wfc.eventEmitter.emit(EventType.ConversationInfoUpdate, this.props.conversation);
+        // }
 
         Array.from(unread).map(e => {
             if (e.getBoundingClientRect().top > rect.bottom) {
@@ -669,6 +671,11 @@ export default class ChatContent extends Component {
     componentDidUpdate() {
         var viewport = this.refs.viewport;
         var tips = this.refs.tips;
+
+        if (this.props.conversation) {
+            wfc.clearConversationUnreadStatus(this.props.conversation);
+            wfc.eventEmitter.emit(EventType.ConversationInfoUpdate, this.props.conversation);
+        }
 
         if (viewport) {
             let newestMessage = this.props.messages[this.props.messages.length - 1];
@@ -741,7 +748,7 @@ export default class ChatContent extends Component {
 
         // if (nextProps.conversation) {
         //     wfc.clearConversationUnreadStatus(nextProps.conversation);
-        //     this.scrollTop = -1;
+        //     wfc.eventEmitter.emit(EventType.ConversationInfoUpdate, this.props.conversation);
         // }
         this.scrollTop = -1;
         this.stopAudio();
