@@ -1,6 +1,6 @@
 ## 野火IM解决方案
 
-野火IM是一套跨平台、全开源的即时通讯解决方案，主要包含以下内容。
+野火IM是一套跨平台开源的即时通讯解决方案，主要包含以下内容。
 
 | 仓库                                                         | 说明                                                    | 备注 |
 | ------------------------------------------------------------ | ------------------------------------------------------- | ---- |
@@ -13,7 +13,7 @@
 | [robot_server](https://github.com/wildfirechat/robot_server) | 机器人服务端Demo                                        |      |
 | [push_server](https://github.com/wildfirechat/push_server)   | 推送服务器                                              |      |
 | [docs](https://github.com/wildfirechat/docs)                 | 野火IM相关文档，包含设计、概念、开发、使用说明          |      |
-
+> 上述仓库中只有PC有个功能库没有开源需要授权才能使用，其它代码全部开源。详细说明请参加[费用](http://docs.wildfirechat.cn/#费用)
 
 ## pc-chat说明
 
