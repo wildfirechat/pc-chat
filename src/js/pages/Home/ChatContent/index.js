@@ -668,13 +668,16 @@ export default class ChatContent extends Component {
         }
     }
 
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return true;
+    // }
+
     componentDidUpdate() {
         var viewport = this.refs.viewport;
         var tips = this.refs.tips;
 
         if (this.props.conversation) {
             wfc.clearConversationUnreadStatus(this.props.conversation);
-            wfc.eventEmitter.emit(EventType.ConversationInfoUpdate, this.props.conversation);
         }
 
         if (viewport) {
