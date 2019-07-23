@@ -32,6 +32,7 @@ class WfcManager {
     userId = '';
     token = '';
     users = new Map();
+    groups = new Map();
 
     // TODO 移除吧，全都走EventEmitter
     // onReceiveMessageListeners = [];
@@ -88,7 +89,12 @@ class WfcManager {
     }
 
     onGroupInfoUpdate(groupListIds) {
-        // TODO
+        let groupIdArray = JSON.parse(groupListIds);
+
+        groupIdArray.forEach((groupId => {
+            self.groups.delete(groupId);
+            self.eventEmitter.emit(EventType.GroupInfoUpdate, groupId);
+        }))
     }
 
     onChannelInfoUpdate(channelListIds) {
@@ -403,11 +409,22 @@ class WfcManager {
     }
 
     getGroupInfo(groupId, fresh = false) {
+        let groupInfo;
+        if (!fresh) {
+            groupInfo = self.groups.get(groupId);
+            if (groupInfo) {
+                return groupInfo;
+            }
+        }
+
+        console.log('get groupInfo', groupId, fresh);
         let groupInfoStr = proto.getGroupInfo(groupId, fresh);
         if (groupInfoStr === '') {
             return new NullGroupInfo(groupId);
         } else {
-            return Object.assign(new GroupInfo(), JSON.parse(groupInfoStr));
+            groupInfo = Object.assign(new GroupInfo(), JSON.parse(groupInfoStr));
+            self.groups.set(groupId, groupInfo);
+            return groupInfo;
         }
     }
 
