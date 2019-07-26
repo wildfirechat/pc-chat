@@ -71,7 +71,9 @@ $ npm run dev
 
 #### windows系统
 
-##### 环境准备：
+##### 环境准备
+
+> 请严格安装下面的版本安装对应依赖，否则无法打包
 
 1. nodejs10.16.0
 2. python2.7
@@ -79,7 +81,9 @@ $ npm run dev
 4. npm install -g node-gyp
 
 ##### 拷贝windows配置
-把```package-win32.json```改名为```package.json```。
+1. 删除```package.json```
+2. 把```package-win32.json```改名为```package.json```。
+
 
 ##### 开发(目前还有问题，请打包安装验证)
 ```
@@ -89,7 +93,6 @@ $ npm run dev
 ```
 
 ##### 打包
-0. 把```package-win32.json```改名为```package.json```。
 1. ```npm install``` 安装依赖
 2. ```npm run package-win32``` 打包window版本，软件生成在release目录下
 
