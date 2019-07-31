@@ -121,10 +121,11 @@ export default class Chats extends Component {
         this.props.loadConversations();
     }
 
-    onConnectionStatusChange = () => {
-        // if (status === 1) {
-        //     this.props.loadConversations();
-        // }
+    onConnectionStatusChange = (status) => {
+        console.log('connection status loadc', status);
+        if (status === 1) {
+            this.props.loadConversations();
+        }
     }
 
     onUserInfoUpdate = (userId) => {
