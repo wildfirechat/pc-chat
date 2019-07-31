@@ -163,7 +163,7 @@ class WfcManager {
         proto.connect(userId, token);
 
         // for testing your code
-        self.test();
+        // self.test();
     }
 
     disconnect() {
