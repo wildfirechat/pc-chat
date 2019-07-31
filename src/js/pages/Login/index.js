@@ -63,7 +63,7 @@ export default class Login extends Component {
     async keepLogin() {
         this.loginTimer = setInterval(() => {
             this.login();
-        }, 2 * 1000);
+        }, 1 * 1000);
     }
 
     async login() {
