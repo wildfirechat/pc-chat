@@ -24,6 +24,7 @@ import ChatRoomMemberInfo from './model/chatRoomMemberInfo';
 import ChannelInfo from './model/channelInfo';
 import ConversationType from './model/conversationType';
 import TextMessageContent from './messages/textMessageContent';
+import ConnectionStatus from './connectionStatus';
 var proto = null;
 
 // 其实就是imclient，后续可能需要改下名字
@@ -33,6 +34,7 @@ class WfcManager {
     token = '';
     users = new Map();
     groups = new Map();
+    isLogined = false;
 
     // TODO 移除吧，全都走EventEmitter
     // onReceiveMessageListeners = [];
@@ -42,6 +44,9 @@ class WfcManager {
     eventEmitter = new EventEmitter();
 
     onConnectionChanged(status) {
+        if (!self.isLogined && status == ConnectionStatus.ConnectionStatusConnected) {
+            self.isLogined = true;
+        }
         self.connectionStatus = status;
         self.eventEmitter.emit(EventType.ConnectionStatusChanged, status);
         console.log('connection status changed', status);
@@ -201,7 +206,8 @@ class WfcManager {
     }
 
     isLogin() {
-        return proto.isLogin();
+        // return proto.isLogin();
+        return self.isLogined;
     }
 
     getConnectionStatus() {
