@@ -177,6 +177,7 @@
         font-size: 14px;
         color: #777;
         line-height: 22.65px;
+        user-select: text;
     }
 
     & .times {
