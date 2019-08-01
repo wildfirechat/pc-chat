@@ -91,19 +91,19 @@ export default class Layout extends Component {
             }
         });
 
-        window.addEventListener('offline', () => {
-            this.setState({
-                offline: true,
-            });
-        });
+        // window.addEventListener('offline', () => {
+        //     this.setState({
+        //         offline: true,
+        //     });
+        // });
 
-        window.addEventListener('online', () => {
-            // Reconnect to wechat
-            this.props.reconnect();
-            this.setState({
-                offline: false,
-            });
-        });
+        // window.addEventListener('online', () => {
+        //     // Reconnect to wechat
+        //     this.props.reconnect();
+        //     this.setState({
+        //         offline: false,
+        //     });
+        // });
 
         if (window.process.platform === 'win32') {
             document.body.classList.add('isWin');
@@ -212,7 +212,7 @@ export default class Layout extends Component {
                 <ConfirmImagePaste />
                 <Forward />
 
-                <Offline show={this.state.offline} />;
+                {/* <Offline show={this.state.offline} />; */}
 
                 <div
                     className={classes.dragDropHolder}
