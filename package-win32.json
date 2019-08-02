@@ -61,7 +61,7 @@
     "win": {
       "target": "nsis",
       "icon": "../resource/win.ico",
-      "requestedExecutionLevel": "requireAdministrator"
+      "requestedExecutionLevel": "asInvoker"
     },
     "nsis": {
       "oneClick": false,
