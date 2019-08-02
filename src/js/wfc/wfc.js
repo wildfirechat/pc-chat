@@ -144,6 +144,9 @@ class WfcManager {
 
     init() {
         proto = self.proto;
+        // if(process.platform === 'win32'){
+        //     proto.setDBPath(process.cwd());
+        // }
         proto.setConnectionStatusListener(self.onConnectionChanged);
         proto.setReceiveMessageListener(self.onReceiveMessage, self.onRecallMessage);
         proto.setUserInfoUpdateListener(self.onUserInfoUpdate);
