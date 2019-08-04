@@ -1,5 +1,4 @@
 
-import { remote } from 'electron';
 import { inject, observer } from 'mobx-react';
 import moment from 'moment';
 import React, { Component } from 'react';
@@ -55,40 +54,6 @@ export default class Chats extends Component {
         if (list) {
             return list.data.length !== (list.unread || 0);
         }
-    }
-
-    showContextMenu(conversationInfo) {
-        var menu = new remote.Menu.buildFromTemplate([
-            {
-                label: 'Send Message',
-                click: () => {
-                    this.props.chatTo(conversationInfo.conversation);
-                }
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: conversationInfo.isTop ? 'Unsticky' : 'Sticky on Top',
-                click: () => {
-                    this.props.sticky(conversationInfo);
-                }
-            },
-            {
-                label: 'Delete',
-                click: () => {
-                    this.props.removeChat(conversationInfo);
-                }
-            },
-            {
-                label: 'Mark as Read',
-                click: () => {
-                    this.props.markedRead(conversationInfo.UserName);
-                }
-            },
-        ]);
-
-        menu.popup(remote.getCurrentWindow());
     }
 
     onSendMessage = (msg) => {
@@ -187,7 +152,7 @@ export default class Chats extends Component {
     }
 
     render() {
-        var { loading, chats, conversation, chatTo, searching } = this.props;
+        var { loading, chats, conversation, chatTo, searching, markedRead, sticky, removeChat} = this.props;
 
 
         // if (loading) return false;
@@ -207,7 +172,7 @@ export default class Chats extends Component {
                         !searching && chats.map((e, index) => {
                             return (
                                 <div key={e.conversation.target}>
-                                    <ConversationItem key={e.conversation.target} chatTo={chatTo} currentConversation={conversation} conversationInfo={e} />
+                                    <ConversationItem key={e.conversation.target} chatTo={chatTo} markedRead={markedRead} sticky={sticky} removeChat={removeChat} currentConversation={conversation} conversationInfo={e} />
                                 </div>
                             )
                             // return <this.conversationItem key={e.conversation.target} chatTo={chatTo} currentConversation={conversation} conversationInfo={e} />
