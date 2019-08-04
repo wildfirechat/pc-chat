@@ -21,6 +21,7 @@ import tmp from 'tmp';
     getList: () => {
         var { newchat, contacts } = stores;
 
+        contacts.getContacts();
         if (newchat.query) {
             return newchat.list;
         }
