@@ -60,7 +60,7 @@ class sessions {
     }
 
     @action async loadConversations() {
-        let cl = wfc.getConversationList([ConversationType.Single, ConversationType.Group, ConversationType.Channel], [0, 1]);
+        let cl = wfc.getConversationList([ConversationType.Single, ConversationType.Group, ConversationType.Channel], [0]);
         self.conversations = cl;
         let counter = 0;
         cl.forEach((e) => {
