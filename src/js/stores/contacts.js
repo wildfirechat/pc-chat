@@ -11,6 +11,8 @@ import { normalize } from 'utils/emoji';
 import wfc from '../wfc/wfc'
 import UserInfo from '../wfc/model/userInfo';
 import GroupInfo from '../wfc/model/groupInfo';
+import NullUserInfo from '../wfc/model/nullUserInfo';
+import NullGroupInfo from '../wfc/model/nullGroupInfo';
 
 class Contacts {
     @observable loading = false;
@@ -72,7 +74,7 @@ class Contacts {
         return self.memberList.find(e => e.uid === userid);
     }
 
-    @action async getContacts() {
+    @action getContacts() {
         self.loading = true;
 
         self.memberList = [];
@@ -81,7 +83,9 @@ class Contacts {
         if (friendListIds.length > 0) {
             friendListIds.map((e) => {
                 let u = wfc.getUserInfo(e);
-                self.memberList.push(u);
+                if (!(u instanceof NullUserInfo)) {
+                    self.memberList.push(u);
+                }
             });
         }
 
@@ -89,7 +93,9 @@ class Contacts {
             let groupList = wfc.getMyGroupList();
             groupList.map(e => {
                 let g = wfc.getGroupInfo(e);
-                self.memberList.push(g);
+                if (!(g instanceof NullGroupInfo)) {
+                    self.memberList.push(g);
+                }
             });
         }
 
