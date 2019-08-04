@@ -130,7 +130,19 @@ export default class NewChat extends Component {
                 onCancel={e => this.props.close()}
                 show={this.props.show}>
                 <ModalBody className={classes.container}>
-                    New Chat ({this.state.selected.length} / 20)
+                    <div className={classes.title}> New Chat</div>
+                    <div className={classes.setItem}> 
+                        <span>群名字：</span>
+                        <span><input className={classes.groupName} value="" /></span>
+                    </div>
+                    <div className={classes.setItem}> 
+                        <span>群管理：</span>
+                        <span></span>
+                    </div>
+                    <div className={classes.setItem}> 
+                        <span>选择：</span>
+                        <span> [{this.state.selected.length} / 20]</span>
+                    </div>
 
                     <div className={classes.avatars}>
                         {
