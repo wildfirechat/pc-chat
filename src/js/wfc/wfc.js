@@ -375,7 +375,7 @@ class WfcManager {
         return [];
     }
 
-    async createGroup(groupId, name, portrait, memberIds = [], lines = [0], notifyContent, successCB, failCB) {
+    async createGroup(groupId, name, portrait, memberIds = [], lines = [0], notifyContent, successCB, failCB, groupType) {
         groupId = !groupId ? '' : groupId;
         let myUid = self.getUserId();
 
@@ -399,7 +399,7 @@ class WfcManager {
                 if (failCB) {
                     failCB();
                 }
-            });
+            }, groupType);
     }
 
     getGroupInfo(groupId, fresh = false) {
@@ -518,6 +518,19 @@ class WfcManager {
     transferGroup(groupId, newOwner, lines, notifyMessageContent, successCB, failCB) {
         let payload = notifyMessageContent.encode();
         proto.transferGroup(groupId, newOwner, lines, JSON.stringify(payload), () => {
+            if (successCB) {
+                successCB();
+            }
+        }, (errorCode) => {
+            if (failCB) {
+                failCB(errorCode);
+            }
+        });
+    }
+
+    setGroupManager(groupId, isSet, memberIds, lines, notifyMessageContent, successCB, failCB) {
+        let payload = notifyMessageContent.encode();
+        proto.setGroupManager(groupId, isSet, memberIds, lines, JSON.stringify(payload), () => {
             if (successCB) {
                 successCB();
             }
