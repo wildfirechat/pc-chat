@@ -375,7 +375,7 @@ class WfcManager {
         return [];
     }
 
-    async createGroup(groupId, name, portrait, memberIds = [], lines = [0], notifyContent, successCB, failCB, groupType) {
+    async createGroup(groupId, groupType, name, portrait, memberIds = [], lines = [0], notifyContent, successCB, failCB) {
         groupId = !groupId ? '' : groupId;
         let myUid = self.getUserId();
 
@@ -389,7 +389,7 @@ class WfcManager {
 
         let payload = notifyContent.encode();
         let notifyContentStr = JSON.stringify(payload);
-        proto.createGroup(groupId, name, portrait, memberIds, lines, notifyContentStr,
+        proto.createGroup(groupId, groupType, name, portrait, memberIds, lines, notifyContentStr,
             (groupId) => {
                 if (successCB) {
                     successCB(groupId);
@@ -397,9 +397,9 @@ class WfcManager {
             },
             (errorCode) => {
                 if (failCB) {
-                    failCB();
+                    failCB(errorCode);
                 }
-            }, groupType);
+            });
     }
 
     getGroupInfo(groupId, fresh = false) {

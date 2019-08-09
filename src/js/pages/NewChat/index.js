@@ -13,6 +13,7 @@ import MessageContentMediaType from '../../wfc/messages/messageContentMediaType'
 import { imgSync } from 'base64-img';
 import { fs } from 'file-system';
 import tmp from 'tmp';
+import GroupType from '../../wfc/model/groupType';
 
 @inject(stores => ({
     show: stores.newchat.show,
@@ -68,7 +69,7 @@ export default class NewChat extends Component {
 
             wfc.uploadMedia(dataUri.split(',')[1], MessageContentMediaType.Portrait,
                 (remoteUrl) => {
-                    wfc.createGroup(null, groupName, remoteUrl, selected, [0], null,
+                    wfc.createGroup(null,GroupType.Restricted, groupName, remoteUrl, selected, [0], null,
                         (groupId) => {
                             let conversation = new Conversation(ConversationType.Group, groupId);
                             this.props.chatTo(conversation);
