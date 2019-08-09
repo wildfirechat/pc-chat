@@ -13,6 +13,7 @@ import MessageContentMediaType from '../../wfc/messages/messageContentMediaType'
 import { imgSync } from 'base64-img';
 import { fs } from 'file-system';
 import tmp from 'tmp';
+import Switch from 'components/Switch';
 
 @inject(stores => ({
     show: stores.newchat.show,
@@ -57,7 +58,7 @@ export default class NewChat extends Component {
                 let userInfo = wfc.getUserInfo(selected[i]);
                 groupName += userInfo.displayName + '、';
             }
-            groupName = groupName.substr(0, groupName.lastIndexOf('、'))
+            groupName = groupName.substr(0, groupName.lastIndexOf('、'));
 
             var portraits = [];
             for (let i = 0; i < 9 && i < selected.length; i++) {
@@ -130,36 +131,38 @@ export default class NewChat extends Component {
                 onCancel={e => this.props.close()}
                 show={this.props.show}>
                 <ModalBody className={classes.container}>
-                    <div className={classes.title}> New Chat</div>
-                    <div className={classes.setItem}> 
-                        <span>群名字：</span>
-                        <span><input className={classes.groupName} value="" /></span>
-                    </div>
-                    <div className={classes.setItem}> 
-                        <span>群管理：</span>
-                        <span></span>
-                    </div>
-                    <div className={classes.setItem}> 
-                        <span>选择：</span>
-                        <span> [{this.state.selected.length} / 20]</span>
-                    </div>
+                    <div className={classes.title}> New Chat ({this.state.selected.length} / 20)</div>
+                    <div className={classes.content}>
+                        <div className={classes.setItem}>
+                            <span>群名字：</span>
+                            <span>
+                                <input className={classes.groupName} type="text" value="" placeholder="请输入群名称" />
+                            </span>
+                        </div>
 
-                    <div className={classes.avatars}>
-                        {
-                            this.state.selected.map((e, index) => {
-                                var user = this.props.getUser(e);
-                                return (
-                                    <img
-                                        key={index}
-                                        onClick={ev => this.refs.users.removeSelected(e)}
-                                        src={user.portrait} />
-                                );
-                            })
-                        }
+                        <div className={classes.setItem}>
+                            <span>群管理：</span>
+                            <span className={classes.switchClass}>
+                                <Switch id="showRedIcon" />
+                            </span>
+                        </div>
+
+                        <div className={classes.avatars}>
+                            {
+                                this.state.selected.map((e, index) => {
+                                    var user = this.props.getUser(e);
+                                    return (
+                                        <img
+                                            key={index}
+                                            onClick={ev => this.refs.users.removeSelected(e)}
+                                            src={user.portrait} />
+                                    );
+                                })
+                            }
+                        </div>
+
+                        {this.renderList()}
                     </div>
-
-                    {this.renderList()}
-
                     <div>
                         <button
                             disabled={!this.state.selected.length}
