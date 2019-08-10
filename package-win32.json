@@ -74,14 +74,7 @@
     },
     "directories": {
       "output": "../release"
-    },
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "wildfirechat",
-        "repo": "pc-chat"
-      }
-    ]
+    }
   },
   "dependencies": {
     "auto-launch": "^5.0.1",
