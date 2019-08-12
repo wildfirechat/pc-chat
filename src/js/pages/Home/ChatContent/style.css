@@ -42,7 +42,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
+    & .signature{
+        display: inline;
+    }
     & p {
         margin: 0;
         padding: 0;
@@ -177,7 +179,6 @@
         font-size: 14px;
         color: #777;
         line-height: 22.65px;
-        user-select: text;
     }
 
     & .times {

@@ -15,6 +15,7 @@ import settings from './settings';
 import snackbar from './snackbar';
 import wfc from '../wfc/wfc'
 import confirmImagePaste from './confirmImagePaste';
+import groupMenus from './groupMenus';
 
 const stores = {
     sessions,
@@ -33,6 +34,7 @@ const stores = {
     snackbar,
     confirmImagePaste,
     wfc,
+    groupMenus,
 };
 
 export default stores;

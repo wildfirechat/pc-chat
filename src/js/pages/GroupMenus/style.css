@@ -1,0 +1,46 @@
+.container {
+  background: #fff;
+  height: 100vh;
+  width: 100vw;
+  font-family: 'Roboto';
+  font-size: 24px;
+  color: #000;
+  font-weight: 100;
+  letter-spacing: 2px;
+  word-spacing: 4px;
+
+  & header {
+      margin-top:40px;
+      padding: 0 12px;
+      height: 50px;
+      width:100%;
+      line-height: 50px;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Roboto';
+      font-weight: 100;
+      font-size: 20px;
+      color: #333;
+      box-shadow: inset 0 -1px 0 0 #eaedea;
+  }
+  & header div{
+      float:left;
+  }
+
+}
+
+header div.cancelbtn{
+  float: right;
+  margin-right:24px;
+}
+
+@media (width <= 800px) {
+  .container {
+      font-size: 26px;
+      letter-spacing: 2px;
+      word-spacing: 2px;
+
+  
+  }
+
+}

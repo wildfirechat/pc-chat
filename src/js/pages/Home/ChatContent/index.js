@@ -67,10 +67,17 @@ import EventType from '../../../wfc/wfcEvent';
     deleteMessage: (messageId) => {
         stores.chat.deleteMessage(messageId);
     },
+    //显示群成员
     showMembers: (target) => {
         // TODO show channel members
         if (target instanceof GroupInfo) {
             stores.members.toggle(true, target);
+        }
+    },
+    //显示群菜单
+    showGroupMenus: (target) => {
+        if (target instanceof GroupInfo) {
+            stores.groupMenus.toggle(true, target);
         }
     },
     showContact: (userid) => {
@@ -774,8 +781,10 @@ export default class ChatContent extends Component {
         var { loading, showConversation, messages, conversation, target } = this.props;
 
         var signature = '点击查看群成员';
+        var groupMenu = '点击查看群菜单';
         if (target instanceof UserInfo) {
             signature = '';
+            groupMenu = '';
         }
 
         // maybe userName, groupName, ChannelName or ChatRoomName
@@ -801,6 +810,12 @@ export default class ChatContent extends Component {
                                         dangerouslySetInnerHTML={{ __html: signature || '' }}
                                         onClick={e => this.props.showMembers(target)}
                                         title={signature} />
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span
+                                        className={classes.signature}
+                                        dangerouslySetInnerHTML={{ __html: groupMenu || '' }}
+                                        onClick={e => this.props.showGroupMenus(target)}
+                                        title={groupMenu} />
                                 </div>
 
                                 <i

@@ -24,6 +24,7 @@ import wfc from '../wfc/wfc'
 import { observable, action } from 'mobx';
 import EventType from '../wfc/wfcEvent';
 import ConnectionStatus from '../wfc/connectionStatus';
+import GroupMenus from './GroupMenus';
 
 @inject(stores => ({
     isLogin: () => !!stores.sessions.auth,
@@ -211,6 +212,7 @@ export default class Layout extends Component {
                 <AddMember />
                 <ConfirmImagePaste />
                 <Forward />
+                <GroupMenus />
 
                 {/* <Offline show={this.state.offline} />; */}
 
