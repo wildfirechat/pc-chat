@@ -6,7 +6,7 @@ import { inject, observer } from 'mobx-react';
 import classes from './style.css';
 import UserList from 'components/UserList';
 import helper from 'utils/helper';
-import wfc from '../../wfc/wfc'
+import wfc from '../../wfc/wfc';
 import Conversation from '../../wfc/model/conversation';
 import ConversationType from '../../wfc/model/conversationType';
 import MessageContentMediaType from '../../wfc/messages/messageContentMediaType';
@@ -146,6 +146,7 @@ export default class NewChat extends Component {
                                 <Switch id="showRedIcon" />
                             </span>
                         </div>
+                        <hr />
 
                         <div className={classes.avatars}>
                             {
