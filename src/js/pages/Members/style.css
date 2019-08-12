@@ -7,6 +7,8 @@
     background: #fff;
     color: #333;
     z-index: 9;
+    height: 100vh;
+
 
     & header {
         display: flex;
@@ -43,7 +45,6 @@
     padding: 0;
     margin: 0;
     list-style: none;
-    height: calc(100vh - 90px - 60px);
     overflow: hidden;
     overflow-y: auto;
 
@@ -135,8 +136,64 @@
     }
 }
 
+.column {
+    width: 50%;
+
+& ul {
+      padding-left: 20%;
+      margin: 0;
+      margin-top: 42px;
+      list-style: none;
+  }
+
+& li {
+      padding-right: 42px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      font-family: 'Roboto';
+  }
+
+& label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  }
+
+& button {
+      background-color: #409eff;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 11px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 10px;
+      outline: none;
+  }
+
+& button:hover {
+      background: #4c61af;
+  }
+}
+
+.groupName {
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    border: none;
+    background: none;
+    outline: 0;
+    font-size: 13px;
+    font-weight: 100;
+}
+
 @media (width <= 800px) {
     .container {
+        height: calc(100vh - 80px - 46px);
+
         & header {
             padding: 0 10px;
             height: 40px;
@@ -146,7 +203,6 @@
     }
 
     .list {
-        height: calc(100vh - 80px - 46px);
 
         & li {
             padding: 0 10px;

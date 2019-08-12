@@ -5,7 +5,8 @@ import { observer, inject } from 'mobx-react';
 import classes from './style.css';
 import helper from 'utils/helper';
 import GroupInfo from '../../wfc/model/groupInfo';
-import wfc from '../../wfc/wfc'
+import wfc from '../../wfc/wfc';
+import Switch from 'components/Switch';
 
 @inject(stores => ({
     show: stores.members.show,
@@ -104,6 +105,78 @@ export default class Members extends Component {
                         })
                     }
                 </ul>
+
+                <hr />
+
+                <div className={classes.column}>
+                    <ul >
+                        <li>
+                            <label htmlFor="alwaysOnTop">
+                                <span>群聊名称
+                                    <input type="text" className={classes.groupName} placeholder="群名称"/>
+                                </span>
+                                <button className="Switch">保存</button>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label htmlFor="alwaysOnTop">
+                                <span>更改头像</span>
+                                <input type="file" />
+                                <button className="Switch">上传</button>
+                                <button className="Switch">保存</button>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label htmlFor="alwaysOnTop">
+                                <span>群管理</span>
+                                <button className="Switch">更多</button>
+                            </label>
+                        </li>
+                        <hr />
+                        <li>
+                            <label htmlFor="alwaysOnTop">
+                                <span>查找聊天内容</span>
+                                <button className="Switch">搜索</button>
+                            </label>
+                        </li>
+                        <hr />
+                        <li>
+                            <label htmlFor="alwaysOnTop">
+                                <span>消息免打扰</span>
+                                <Switch id="alwaysOnTop" />
+                            </label>
+                        </li>
+                        <li>
+                            <label htmlFor="alwaysOnTop">
+                                <span>置顶聊天</span>
+                                <Switch id="alwaysOnTop" />
+                            </label>
+                        </li>
+                        <li>
+                            <label htmlFor="alwaysOnTop">
+                                <span>保存到通讯录</span>
+                                <Switch id="alwaysOnTop" />
+                            </label>
+                        </li>
+                        <hr />
+                        <li>
+                            <label htmlFor="alwaysOnTop">
+                                <span>我的本群昵称
+                                    <input type="text" placeholder="未设置" className={classes.groupName} />
+                                </span>
+                                <button className="Switch">保存</button>
+                            </label>
+                        </li>
+                        <li>
+                            <label htmlFor="alwaysOnTop">
+                                <span>显示群成员昵称</span>
+                                <Switch id="alwaysOnTop" />
+                            </label>
+                        </li>
+                    </ul>
+                </div>
 
                 <div className={classes.footer}>
                     <input
