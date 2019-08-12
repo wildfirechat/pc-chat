@@ -807,15 +807,15 @@ export default class ChatContent extends Component {
 
                                     <span
                                         className={classes.signature}
-                                        dangerouslySetInnerHTML={{ __html: signature || '' }}
-                                        onClick={e => this.props.showMembers(target)}
-                                        title={signature} />
-                                    &nbsp;&nbsp;&nbsp;&nbsp;
-                                    <span
-                                        className={classes.signature}
                                         dangerouslySetInnerHTML={{ __html: groupMenu || '' }}
-                                        onClick={e => this.props.showGroupMenus(target)}
+                                        onClick={e => this.props.showMembers(target)}
                                         title={groupMenu} />
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    {/*<span*/}
+                                        {/*className={classes.signature}*/}
+                                        {/*dangerouslySetInnerHTML={{ __html: groupMenu || '' }}*/}
+                                        {/*onClick={e => this.props.showGroupMenus(target)}*/}
+                                        {/*title={groupMenu} />*/}
                                 </div>
 
                                 <i

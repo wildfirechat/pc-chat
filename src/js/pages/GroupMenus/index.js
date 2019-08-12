@@ -47,7 +47,55 @@ export default class GroupMenus extends Component {
                 </header>
 
                 <div className={classes.column}>
-                    <h2>设置</h2>
+                    <span>成员管理</span>
+                    <hr />
+                    <ul>
+                        <li>
+                            <label htmlFor="alwaysOnTop">
+                                <span>管理员</span>
+                                <button className="Switch">设置</button>
+                            </label>
+                        </li>
+                        <li>
+                            <label htmlFor="alwaysOnTop">
+                                <span>全体禁言</span>
+                                <Switch id="alwaysOnTop" />
+                            </label>
+                        </li>
+                        <li>
+                            <label htmlFor="alwaysOnTop">
+                                <span>允许普通成员发起临时会话</span>
+                                <Switch id="alwaysOnTop" />
+                            </label>
+                        </li>
+                    </ul>
+                    <span>加群设置</span>
+                    <hr/>
+                    <ul>
+                        <li>
+                            <span className={classes.banner}>加群方式</span>
+                            <span>
+                                <input type="radio" id="" className="inputRadio" />
+                                <span class="showRadio">不限制加入群</span>
+                            </span>
+                            <span>
+                                <input type="radio" id="" className="inputRadio" />
+                                <span class="showRadio">不限制加入群</span>
+                            </span>
+                        </li>
+
+                        <li>
+                            <span className={classes.banner}>查找方式</span>
+                            <span>
+                                <input type="radio" id="" className="inputRadio" />
+                                <span class="showRadio">允许查找</span>
+                            </span>
+                            <span>
+                                <input type="radio" id="" className="inputRadio" />
+                                <span class="showRadio">不允许查找</span>
+                            </span>
+                        </li>
+                    </ul>
                 </div>
             </ModalBody>
             </Modal>

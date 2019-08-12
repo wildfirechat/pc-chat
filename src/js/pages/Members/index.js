@@ -30,7 +30,12 @@ import Switch from 'components/Switch';
     addMember: () => {
         stores.members.toggle(false);
         stores.addmember.toggle(true);
-    }
+    },
+    showGroupMenus: (target) => {
+        if (target instanceof GroupInfo) {
+          stores.groupMenus.toggle(true, target);
+        }
+      },
 }))
 @observer
 export default class Members extends Component {
@@ -131,7 +136,9 @@ export default class Members extends Component {
                         <li>
                             <label htmlFor="alwaysOnTop">
                                 <span>群管理</span>
-                                <button className="Switch">更多</button>
+                                <button className="Switch" onClick={e => this.props.showGroupMenus(target)}>
+                                    更多
+                                </button>
                             </label>
                         </li>
                         <hr />
