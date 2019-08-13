@@ -123,4 +123,8 @@
             margin: 12px 4px;
         }
     }
+    .content {
+        text-align: left;
+        height: 80vh;
+    }
 }
