@@ -20,4 +20,8 @@ export default class GroupInfo {
     memberCount = 0;
     extra = '';
     updateDt;
+    mute;
+    joinType;
+    privateChat;
+    searchable;
 }
