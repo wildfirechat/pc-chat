@@ -60,6 +60,7 @@ export default class NewChat extends Component {
     }
 
     async chat() {
+        var {showGroupMenu} = this.props;
         var selected = this.state.selected;
 
         if (selected.length === 1) {
@@ -87,7 +88,7 @@ export default class NewChat extends Component {
 
             wfc.uploadMedia(dataUri.split(',')[1], MessageContentMediaType.Portrait,
                 (remoteUrl) => {
-                    wfc.createGroup(null,GroupType.Restricted, groupName, remoteUrl, selected, [0], null,
+                    wfc.createGroup(null, showGroupMenu, groupName, remoteUrl, selected, [0], null,
                         (groupId) => {
                             let conversation = new Conversation(ConversationType.Group, groupId);
                             this.props.chatTo(conversation);
