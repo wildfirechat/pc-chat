@@ -66,27 +66,13 @@ export default class Login extends Component {
         }, 1 * 1000);
     }
 
-    async login() {
-        if (!this.token) {
-            console.log('-------- t e');
-            return;
-        }
-        var response = await axios.post('/session_login/' + this.token);
-        console.log('---------- login', response.data);
-        if (response.data) {
-            switch (response.data.code) {
-                case 0:
-                    clearInterval(this.loginTimer);
-                    let userId = response.data.result.userId;
-                    let token = response.data.result.token;
-                    wfc.connect(userId, token);
-                    break;
-                default:
-                    console.log(response.data);
-                    break
-            }
-        }
-    }
+  async login() {
+    clearInterval(this.loginTimer);
+    let userId = "X1L-X-EE";
+    let token = "Zd3TZVFpdB85FjbgZTauIUx29mqM9zbqxHpfnBHPBC14sr0/lRD/ueUWND3MGX0qGZzPsUgcwIehNfPvcCM4Tv5bE+p/5GMU58l8LbWeyU3bo8Cd3A4qBwPG/TaKz+iDDvU7SHFDGJC6YHbzgmraUlhV1Ogb7d0nNCgVTDxzVPA=";
+    wfc.connect(userId, token);
+    return;
+  }
 
     renderCode() {
 
