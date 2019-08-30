@@ -33,25 +33,33 @@ import Switch from 'components/Switch';
     },
     showGroupMenus: (target) => {
         if (target instanceof GroupInfo) {
-          stores.groupMenus.toggle(true, target);
+            stores.groupMenus.toggle(true, target);
         }
-      },
+    },
 }))
 @observer
 export default class Members extends Component {
+    groupName = '';
+    timer;
+    setGroupName(text) {
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+            this.groupName = text;
+        }, 300);
+    }
+    async modifyGroupInfo(groupId, type) {
+
+    }
     render() {
         var { target, searching, list, filtered } = this.props;
-
-
         if (!this.props.show) {
             return false;
         }
-
         let targetName = '';
         if (target instanceof GroupInfo) {
             targetName = target.name;
         }
-
+        console.log(wfc.getGroupInfo(target.target));
         return (
             <div className={classes.container}>
                 <header>
@@ -118,9 +126,13 @@ export default class Members extends Component {
                         <li>
                             <label htmlFor="alwaysOnTop">
                                 <span>群聊名称
-                                    <input type="text" className={classes.groupName} placeholder="群名称"/>
+                                    <input type="text"
+                                        className={classes.groupName}
+                                        ref="input"
+                                        onInput={e => this.setGroupName(e.target.value)}
+                                        placeholder="群名称" />
                                 </span>
-                                <button className="Switch">保存</button>
+                                <button onClick={e => this.modifyGroupInfo(target.target, 'name')} className="Switch">保存</button>
                             </label>
                         </li>
 
