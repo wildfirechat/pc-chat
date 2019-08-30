@@ -15,6 +15,12 @@ class Settings {
     @observable rememberConversation = false;
     @observable showRedIcon = true;
     @observable downloads = '/tmp';
+    @observable showGroupMenu = true;
+
+    @action setGroupMenu(showGroupMenu) {
+        self.showGroupMenu = showGroupMenu;
+        self.save();
+    }
 
     @action setAlwaysOnTop(alwaysOnTop) {
         self.alwaysOnTop = alwaysOnTop;
@@ -63,7 +69,7 @@ class Settings {
 
     @action async init() {
         var settings = await storage.get('settings');
-        var { alwaysOnTop, showOnTray, showNotification, blockRecall, rememberConversation, showRedIcon, startup, downloads } = self;
+        var { alwaysOnTop, showOnTray, showNotification, blockRecall, rememberConversation, showRedIcon, startup, downloads, showGroupMenu} = self;
 
         if (settings && Object.keys(settings).length) {
             // Use !! force convert to a bool value
@@ -76,6 +82,7 @@ class Settings {
             self.rememberConversation = !!settings.rememberConversation;
             self.showRedIcon = !!settings.showRedIcon;
             self.downloads = settings.downloads;
+            self.showGroupMenu = !!showGroupMenu;
         } else {
             await storage.set('settings', {
                 alwaysOnTop,
@@ -86,6 +93,7 @@ class Settings {
                 blockRecall,
                 rememberConversation,
                 showRedIcon,
+                showGroupMenu,
             });
         }
 
@@ -104,7 +112,7 @@ class Settings {
     }
 
     save() {
-        var { alwaysOnTop, showOnTray, showNotification, confirmImagePaste, blockRecall, rememberConversation, showRedIcon, startup, downloads } = self;
+        var { alwaysOnTop, showOnTray, showNotification, confirmImagePaste, blockRecall, rememberConversation, showRedIcon, startup, downloads, showGroupMenu} = self;
 
         storage.set('settings', {
             alwaysOnTop,
@@ -116,6 +124,7 @@ class Settings {
             blockRecall,
             rememberConversation,
             showRedIcon,
+            showGroupMenu
         });
 
         ipcRenderer.send('settings-apply', {
@@ -129,6 +138,7 @@ class Settings {
                 blockRecall,
                 rememberConversation,
                 showRedIcon,
+                showGroupMenu
             }
         });
     }

@@ -16,6 +16,8 @@ import tmp from 'tmp';
 import Switch from 'components/Switch';
 
 @inject(stores => ({
+    showGroupMenu: stores.settings.showGroupMenu,
+    setGroupMenu: stores.settings.setGroupMenu,
     show: stores.newchat.show,
     searching: stores.newchat.query,
     mergeImages: stores.newchat.mergeImages,
@@ -43,6 +45,18 @@ export default class NewChat extends Component {
     state = {
         selected: [],
     };
+    group = {
+        groupName: '',
+        type: '',
+    }
+    timer;
+    setGroupName(text) {
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+            this.group.groupName = text;
+        }, 300);
+        console.log(this.group.groupName);
+    }
 
     async chat() {
         var selected = this.state.selected;
@@ -54,12 +68,15 @@ export default class NewChat extends Component {
             // You can not create a chat room by another chat room
             // createChatroom()
             let groupName = '';
-            for (let i = 0; i < 3 && i < selected.length; i++) {
-                let userInfo = wfc.getUserInfo(selected[i]);
-                groupName += userInfo.displayName + '、';
+            if (!this.group.groupName) {
+                for (let i = 0; i < 3 && i < selected.length; i++) {
+                    let userInfo = wfc.getUserInfo(selected[i]);
+                    groupName += userInfo.displayName + '、';
+                }
+                groupName = groupName.substr(0, groupName.lastIndexOf('、'));
+            } else {
+                groupName = this.group.groupName;
             }
-            groupName = groupName.substr(0, groupName.lastIndexOf('、'));
-
             var portraits = [];
             for (let i = 0; i < 9 && i < selected.length; i++) {
                 let userInfo = wfc.getUserInfo(selected[i]);
@@ -125,6 +142,10 @@ export default class NewChat extends Component {
     }
 
     render() {
+        var {
+            showGroupMenu,
+            setGroupMenu,
+        } = this.props;
         return (
             <Modal
                 fullscreen={true}
@@ -136,16 +157,24 @@ export default class NewChat extends Component {
                         <div className={classes.setItem}>
                             <span>群名字：</span>
                             <span>
-                                <input className={classes.groupName} type="text" value="" placeholder="请输入群名称" />
+                                <input
+                                    className={classes.groupName}
+                                    ref="input"
+                                    type="text"
+                                    onInput={e => this.setGroupName(e.target.value)}
+                                    placeholder="请输入群名称" />
                             </span>
                         </div>
 
-                        <div className={classes.setItem}>
+                        <label className={classes.setItem} htmlFor="showGroupMenu">
                             <span>群管理：</span>
                             <span className={classes.switchClass}>
-                                <Switch id="showRedIcon" />
+                                <Switch
+                                    id="showGroupMenu"
+                                    checked={showGroupMenu}
+                                    onChange={e => setGroupMenu(e.target.checked)} />
                             </span>
-                        </div>
+                        </label>
                         <hr />
 
                         <div className={classes.avatars}>
