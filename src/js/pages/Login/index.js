@@ -21,7 +21,7 @@ export default class Login extends Component {
     loginTimer;
 
     componentDidMount() {
-        axios.defaults.baseURL = Config.APP_SERVER_HOST + ':' + Config.APP_SERVER_PORT;
+        axios.defaults.baseURL = Config.APP_SERVER;
 
         this.getCode();
         this.keepLogin();
