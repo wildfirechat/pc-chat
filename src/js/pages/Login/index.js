@@ -83,7 +83,7 @@ export default class Login extends Component {
                     break;
                 default:
                     console.log(response.data);
-                    break
+                    break;
             }
         }
     }

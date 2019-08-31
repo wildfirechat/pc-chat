@@ -6,16 +6,19 @@ import { inject, observer } from 'mobx-react';
 import classes from './style.css';
 import UserList from 'components/UserList';
 import helper from 'utils/helper';
-import wfc from '../../wfc/wfc'
+import wfc from '../../wfc/wfc';
 import Conversation from '../../wfc/model/conversation';
 import ConversationType from '../../wfc/model/conversationType';
 import MessageContentMediaType from '../../wfc/messages/messageContentMediaType';
 import { imgSync } from 'base64-img';
 import { fs } from 'file-system';
 import tmp from 'tmp';
+import Switch from 'components/Switch';
 import GroupType from '../../wfc/model/groupType';
 
 @inject(stores => ({
+    showGroupMenu: stores.settings.showGroupMenu,
+    setGroupMenu: stores.settings.setGroupMenu,
     show: stores.newchat.show,
     searching: stores.newchat.query,
     mergeImages: stores.newchat.mergeImages,
@@ -44,8 +47,25 @@ export default class NewChat extends Component {
     state = {
         selected: [],
     };
+    group = {
+        groupName: '',
+        type: '',
+    }
+    timer;
+    setGroupName(text) {
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+            this.group.groupName = text;
+        }, 300);
+        console.log(this.group.groupName);
+    }
 
     async chat() {
+        var {showGroupMenu} = this.props;
+        let type = 0;
+        if (showGroupMenu) {
+            type = 2;
+        }
         var selected = this.state.selected;
 
         if (selected.length === 1) {
@@ -55,12 +75,15 @@ export default class NewChat extends Component {
             // You can not create a chat room by another chat room
             // createChatroom()
             let groupName = '';
-            for (let i = 0; i < 3 && i < selected.length; i++) {
-                let userInfo = wfc.getUserInfo(selected[i]);
-                groupName += userInfo.displayName + '、';
+            if (!this.group.groupName) {
+                for (let i = 0; i < 3 && i < selected.length; i++) {
+                    let userInfo = wfc.getUserInfo(selected[i]);
+                    groupName += userInfo.displayName + '、';
+                }
+                groupName = groupName.substr(0, groupName.lastIndexOf('、'));
+            } else {
+                groupName = this.group.groupName;
             }
-            groupName = groupName.substr(0, groupName.lastIndexOf('、'))
-
             var portraits = [];
             for (let i = 0; i < 9 && i < selected.length; i++) {
                 let userInfo = wfc.getUserInfo(selected[i]);
@@ -70,7 +93,7 @@ export default class NewChat extends Component {
 
             wfc.uploadMedia(dataUri.split(',')[1], MessageContentMediaType.Portrait,
                 (remoteUrl) => {
-                    wfc.createGroup(null,GroupType.Restricted, groupName, remoteUrl, selected, [0], null,
+                    wfc.createGroup(null, type, groupName, remoteUrl, selected, [0], null,
                         (groupId) => {
                             let conversation = new Conversation(ConversationType.Group, groupId);
                             this.props.chatTo(conversation);
@@ -126,30 +149,57 @@ export default class NewChat extends Component {
     }
 
     render() {
+        var {
+            showGroupMenu,
+            setGroupMenu,
+        } = this.props;
         return (
             <Modal
                 fullscreen={true}
                 onCancel={e => this.props.close()}
                 show={this.props.show}>
                 <ModalBody className={classes.container}>
-                    New Chat ({this.state.selected.length} / 20)
+                    <div className={classes.title}> New Chat ({this.state.selected.length} / 20)</div>
+                    <div className={classes.content}>
+                        <div className={classes.setItem}>
+                            <span>群名字：</span>
+                            <span>
+                                <input
+                                    className={classes.groupName}
+                                    ref="input"
+                                    type="text"
+                                    onInput={e => this.setGroupName(e.target.value)}
+                                    placeholder="请输入群名称" />
+                            </span>
+                        </div>
 
-                    <div className={classes.avatars}>
-                        {
-                            this.state.selected.map((e, index) => {
-                                var user = this.props.getUser(e);
-                                return (
-                                    <img
-                                        key={index}
-                                        onClick={ev => this.refs.users.removeSelected(e)}
-                                        src={user.portrait} />
-                                );
-                            })
-                        }
+                        <label className={classes.setItem} htmlFor="showGroupMenu">
+                            <span>群管理：</span>
+                            <span className={classes.switchClass}>
+                                <Switch
+                                    id="showGroupMenu"
+                                    checked={showGroupMenu}
+                                    onChange={e => setGroupMenu(e.target.checked)} />
+                            </span>
+                        </label>
+                        <hr />
+
+                        <div className={classes.avatars}>
+                            {
+                                this.state.selected.map((e, index) => {
+                                    var user = this.props.getUser(e);
+                                    return (
+                                        <img
+                                            key={index}
+                                            onClick={ev => this.refs.users.removeSelected(e)}
+                                            src={user.portrait} />
+                                    );
+                                })
+                            }
+                        </div>
+
+                        {this.renderList()}
                     </div>
-
-                    {this.renderList()}
-
                     <div>
                         <button
                             disabled={!this.state.selected.length}

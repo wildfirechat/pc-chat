@@ -17,7 +17,7 @@
     & input {
         height: 64px;
         line-height: 64px;
-        width: 80%;
+        width: 50%;
         text-align: center;
         border: none;
         background: none;
@@ -58,6 +58,24 @@
     }
 }
 
+.groupName {
+    height: 64px;
+    line-height: 64px;
+    text-align: center;
+    border: none;
+    background: none;
+    outline: 0;
+    font-size: 32px;
+    font-weight: 100;
+}
+
+.switchClass{
+    margin-left: 16vw;
+}
+
+.setItem {
+    display: inherit;
+}
 .avatars {
     min-height: 20px;
 
@@ -68,6 +86,10 @@
         box-shadow: 0 0 8px 0 rgba(0, 0, 0, .3);
         cursor: pointer;
     }
+}
+
+.content {
+    text-align: left;
 }
 
 @media (width <= 800px) {
@@ -100,5 +122,9 @@
             width: 24px;
             margin: 12px 4px;
         }
+    }
+    .content {
+        text-align: left;
+        height: 80vh;
     }
 }
