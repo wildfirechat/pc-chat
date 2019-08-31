@@ -21,11 +21,23 @@
 
 开发一套IM系统真的很艰辛，请路过的朋友们给点个star，支持我们坚持下去🙏🙏🙏🙏🙏
 
-
 ### 联系我们
-问题讨论请加群：822762829
 
-微信公众号：
+> 商务合作请优先采用邮箱和我们联系。技术问题请到[野火IM论坛](http://bbs.wildfirechat.cn/)发帖交流。
+
+1. heavyrain.lee  邮箱: heavyrain.lee@wildfirechat.cn  微信：wildfirechat
+2. imndx  邮箱: imndx@wildfirechat.cn  微信：wfchat
+
+
+### 问题交流
+
+1. 微信交流群（请先加我们好友，我们再邀请您进群）
+
+  ![微信二维码](http://static.wildfirechat.cn/wx_qr_wildfirechat.jpeg)   ![微信二维码](http://static.wildfirechat.cn/wx_qr_wfc.jpeg)
+  
+2. 如果大家发现bug，请在GitHub提issue
+3. 其他问题，请到[野火IM论坛](http://bbs.wildfirechat.cn/)进行交流学习
+4. 微信公众号
 
 <img src="http://static.wildfirechat.cn/wx_wfc_qrcode.jpg" width = 50% height = 50% />
 
@@ -71,7 +83,9 @@ $ npm run dev
 
 #### windows系统
 
-##### 环境准备：
+##### 环境准备
+
+> 请严格安装下面的版本安装对应依赖，否则无法打包
 
 1. nodejs10.16.0
 2. python2.7
@@ -79,7 +93,9 @@ $ npm run dev
 4. npm install -g node-gyp
 
 ##### 拷贝windows配置
-把```package-win32.json```改名为```package.json```。
+1. 删除```package.json```
+2. 把```package-win32.json```改名为```package.json```。
+
 
 ##### 开发(目前还有问题，请打包安装验证)
 ```
@@ -89,7 +105,6 @@ $ npm run dev
 ```
 
 ##### 打包
-0. 把```package-win32.json```改名为```package.json```。
 1. ```npm install``` 安装依赖
 2. ```npm run package-win32``` 打包window版本，软件生成在release目录下
 

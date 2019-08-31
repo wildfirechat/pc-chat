@@ -24,6 +24,7 @@ import ChatRoomMemberInfo from './model/chatRoomMemberInfo';
 import ChannelInfo from './model/channelInfo';
 import ConversationType from './model/conversationType';
 import TextMessageContent from './messages/textMessageContent';
+import ConnectionStatus from './connectionStatus';
 var proto = null;
 
 // 其实就是imclient，后续可能需要改下名字
@@ -32,6 +33,8 @@ class WfcManager {
     userId = '';
     token = '';
     users = new Map();
+    groups = new Map();
+    isLogined = false;
 
     // TODO 移除吧，全都走EventEmitter
     // onReceiveMessageListeners = [];
@@ -41,6 +44,9 @@ class WfcManager {
     eventEmitter = new EventEmitter();
 
     onConnectionChanged(status) {
+        if (!self.isLogined && status == ConnectionStatus.ConnectionStatusConnected) {
+            self.isLogined = true;
+        }
         self.connectionStatus = status;
         self.eventEmitter.emit(EventType.ConnectionStatusChanged, status);
         console.log('connection status changed', status);
@@ -71,6 +77,9 @@ class WfcManager {
     // }
 
     onReceiveMessage(messages, hasMore) {
+      if (!self.isLogined) {
+        return;
+      }
         // receiving
         if (self.connectionStatus === 2) {
             return;
@@ -88,28 +97,51 @@ class WfcManager {
     }
 
     onGroupInfoUpdate(groupListIds) {
-        // TODO
+      if (!self.isLogined) {
+        return;
+      }
+
+        let groupIdArray = JSON.parse(groupListIds);
+
+        groupIdArray.forEach((groupId => {
+            self.groups.delete(groupId);
+            self.eventEmitter.emit(EventType.GroupInfoUpdate, groupId);
+        }))
     }
 
     onChannelInfoUpdate(channelListIds) {
         // TODO
-
+        if (!self.isLogined) {
+          return;
+        }
     }
 
     onSettingUpdate() {
+      if (!self.isLogined) {
+        return;
+      }
         // TODO 具体更新的信息
         self.eventEmitter.emit(EventType.SettingUpdate);
     }
 
     onRecallMessage(operatorUid, messageUid) {
+      if (!self.isLogined) {
+        return;
+      }
         self.eventEmitter.emit(EventType.RecallMessage, operatorUid, messageUid);
     }
 
     onMessageDeleted(messageId) {
+      if (!self.isLogined) {
+        return;
+      }
         self.eventEmitter.emit(EventType.DeleteMessage, messageId);
     }
 
     onUserInfoUpdate(userIds) {
+      if (!self.isLogined) {
+        return;
+      }
         let userIdArray = JSON.parse(userIds);
 
         userIdArray.forEach((userId => {
@@ -119,6 +151,9 @@ class WfcManager {
     }
 
     onFriendListUpdate(friendListIds) {
+      if (!self.isLogined) {
+        return;
+      }
         console.log('friendList update, ids', friendListIds);
         let ids = JSON.parse(friendListIds);
         ids.forEach((uid) => {
@@ -129,10 +164,16 @@ class WfcManager {
 
     onFriendRequestUpdate() {
         // TODO
+        if (!self.isLogined) {
+          return;
+        }
     }
 
     init() {
         proto = self.proto;
+        // if(process.platform === 'win32'){
+        //     proto.setDBPath(process.cwd());
+        // }
         proto.setConnectionStatusListener(self.onConnectionChanged);
         proto.setReceiveMessageListener(self.onReceiveMessage, self.onRecallMessage);
         proto.setUserInfoUpdateListener(self.onUserInfoUpdate);
@@ -157,7 +198,7 @@ class WfcManager {
         proto.connect(userId, token);
 
         // for testing your code
-        self.test();
+        // self.test();
     }
 
     disconnect() {
@@ -195,7 +236,8 @@ class WfcManager {
     }
 
     isLogin() {
-        return proto.isLogin();
+        // return proto.isLogin();
+        return self.isLogined;
     }
 
     getConnectionStatus() {
@@ -403,11 +445,22 @@ class WfcManager {
     }
 
     getGroupInfo(groupId, fresh = false) {
+        let groupInfo;
+        if (!fresh) {
+            groupInfo = self.groups.get(groupId);
+            if (groupInfo) {
+                return groupInfo;
+            }
+        }
+
+        console.log('get groupInfo', groupId, fresh);
         let groupInfoStr = proto.getGroupInfo(groupId, fresh);
         if (groupInfoStr === '') {
             return new NullGroupInfo(groupId);
         } else {
-            return Object.assign(new GroupInfo(), JSON.parse(groupInfoStr));
+            groupInfo = Object.assign(new GroupInfo(), JSON.parse(groupInfoStr));
+            self.groups.set(groupId, groupInfo);
+            return groupInfo;
         }
     }
 

@@ -1,9 +1,12 @@
 
+import { remote } from 'electron';
 import clazz from 'classname';
 import React, { Component } from 'react';
 import helper from 'utils/helper';
 import ConversationType from '../../../wfc/model/conversationType';
 import classes from './style.css';
+import ConversationInfo from '../../../wfc/model/conversationInfo';
+import wfc from '../../../wfc/wfc'
 
 
 export default class ConversationItem extends Component {
@@ -12,12 +15,55 @@ export default class ConversationItem extends Component {
     // 1. 原来是空的
     // 2. 绑定新的数据(新会话，会话更新了, 会话的target更新了)
     // 3. 选中、取消选中
-    // shouldComponentUpdate(nextProps) {
-    //     let update = !ConversationInfo.equals(this.props.conversationInfo, nextProps.conversationInfo)
-    //         || (!nextProps.currentConversation && (this.active !== (nextProps.currentConversation.equal(nextProps.conversationInfo.conversation))));
-    //     console.log('update conversation', update, this.props.conversationInfo, nextProps.conversationInfo);
-    //     return update;
-    // }
+    shouldComponentUpdate(nextProps) {
+        if (!this.props.conversationInfo || this.active === undefined) {
+            return true;
+        }
+
+        if (!ConversationInfo.equals(this.props.conversationInfo, nextProps.conversationInfo)) {
+            return true;
+        }
+
+        if (nextProps.currentConversation && this.active !== (nextProps.currentConversation.equal(nextProps.conversationInfo.conversation))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    showContextMenu(conversationInfo) {
+        var menu = new remote.Menu.buildFromTemplate([
+            {
+                label: 'Send Message',
+                click: () => {
+                    this.props.chatTo(conversationInfo.conversation);
+                }
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: conversationInfo.isTop ? 'Unsticky' : 'Sticky on Top',
+                click: () => {
+                    this.props.sticky(conversationInfo);
+                }
+            },
+            {
+                label: 'Delete',
+                click: () => {
+                    this.props.removeChat(conversationInfo);
+                }
+            },
+            {
+                label: 'Mark as Read',
+                click: () => {
+                    this.props.markedRead(conversationInfo.UserName);
+                }
+            },
+        ]);
+
+        menu.popup(remote.getCurrentWindow());
+    }
 
     render() {
         let e = this.props.conversationInfo;
@@ -52,7 +98,10 @@ export default class ConversationItem extends Component {
                 })}
                 // TODO key should be conversation
                 onContextMenu={ev => this.showContextMenu(e)}
-                onClick={ev => chatTo(e.conversation)}>
+                onClick={ev => {
+                    chatTo(e.conversation)
+                    // wfc.clearConversationUnreadStatus(e.conversation);
+                }}>
                 <div className={classes.inner}>
                     <div data-aftercontent={txtUnread} className={clazz(classes.dot, {
                         [classes.green]: muted && hasUnread,

@@ -22,6 +22,7 @@ import GroupType from '../../wfc/model/groupType';
     getList: () => {
         var { newchat, contacts } = stores;
 
+        contacts.getContacts();
         if (newchat.query) {
             return newchat.list;
         }

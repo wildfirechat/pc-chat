@@ -28,7 +28,6 @@ import ConnectionStatus from '../wfc/connectionStatus';
 @inject(stores => ({
     isLogin: () => !!stores.sessions.auth,
     loading: stores.sessions.loading,
-    getContacts: stores.contacts.getContacts,
     message: stores.snackbar.text,
     show: stores.snackbar.show,
     process: stores.chat.process,
@@ -41,7 +40,6 @@ import ConnectionStatus from '../wfc/connectionStatus';
 export default class Layout extends Component {
     @observable connectionStatus = 0;
 
-    contactsLoaded = false;
 
     state = {
         offline: false,
@@ -91,19 +89,19 @@ export default class Layout extends Component {
             }
         });
 
-        window.addEventListener('offline', () => {
-            this.setState({
-                offline: true,
-            });
-        });
+        // window.addEventListener('offline', () => {
+        //     this.setState({
+        //         offline: true,
+        //     });
+        // });
 
-        window.addEventListener('online', () => {
-            // Reconnect to wechat
-            this.props.reconnect();
-            this.setState({
-                offline: false,
-            });
-        });
+        // window.addEventListener('online', () => {
+        //     // Reconnect to wechat
+        //     this.props.reconnect();
+        //     this.setState({
+        //         offline: false,
+        //     });
+        // });
 
         if (window.process.platform === 'win32') {
             document.body.classList.add('isWin');
@@ -149,11 +147,6 @@ export default class Layout extends Component {
 
     onConnectionStatusChange = (status) => {
         this.connectionStatus = status;
-        // 
-        if (status === ConnectionStatus.ConnectionStatusConnected && !this.contactsLoaded) {
-            this.props.getContacts();
-            this.contactsLoaded = true;
-        }
     }
 
 
@@ -184,7 +177,7 @@ export default class Layout extends Component {
         }
 
         ipcRenderer.send('logined');
-        loading = (this.connectionStatus === 0 || this.connectionStatus === 2/** receving */);
+        loading = !wfc.isLogin() && (this.connectionStatus === 0 || this.connectionStatus === 2/** receving */);
 
         return (
             <div>
@@ -212,7 +205,7 @@ export default class Layout extends Component {
                 <ConfirmImagePaste />
                 <Forward />
 
-                <Offline show={this.state.offline} />;
+                {/* <Offline show={this.state.offline} />; */}
 
                 <div
                     className={classes.dragDropHolder}
