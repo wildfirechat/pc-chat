@@ -25,6 +25,7 @@ import ChannelInfo from './model/channelInfo';
 import ConversationType from './model/conversationType';
 import TextMessageContent from './messages/textMessageContent';
 import ConnectionStatus from './connectionStatus';
+import ModifyGroupAliasNotification from './messages/notification/modifyGroupAliasNotification';
 var proto = null;
 
 // 其实就是imclient，后续可能需要改下名字
@@ -77,9 +78,9 @@ class WfcManager {
     // }
 
     onReceiveMessage(messages, hasMore) {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
         // receiving
         if (self.connectionStatus === 2) {
             return;
@@ -97,9 +98,9 @@ class WfcManager {
     }
 
     onGroupInfoUpdate(groupListIds) {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
 
         let groupIdArray = JSON.parse(groupListIds);
 
@@ -112,36 +113,36 @@ class WfcManager {
     onChannelInfoUpdate(channelListIds) {
         // TODO
         if (!self.isLogined) {
-          return;
+            return;
         }
     }
 
     onSettingUpdate() {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
         // TODO 具体更新的信息
         self.eventEmitter.emit(EventType.SettingUpdate);
     }
 
     onRecallMessage(operatorUid, messageUid) {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
         self.eventEmitter.emit(EventType.RecallMessage, operatorUid, messageUid);
     }
 
     onMessageDeleted(messageId) {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
         self.eventEmitter.emit(EventType.DeleteMessage, messageId);
     }
 
     onUserInfoUpdate(userIds) {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
         let userIdArray = JSON.parse(userIds);
 
         userIdArray.forEach((userId => {
@@ -151,9 +152,9 @@ class WfcManager {
     }
 
     onFriendListUpdate(friendListIds) {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
         console.log('friendList update, ids', friendListIds);
         let ids = JSON.parse(friendListIds);
         ids.forEach((uid) => {
@@ -165,7 +166,7 @@ class WfcManager {
     onFriendRequestUpdate() {
         // TODO
         if (!self.isLogined) {
-          return;
+            return;
         }
     }
 
@@ -421,17 +422,15 @@ class WfcManager {
         groupId = !groupId ? '' : groupId;
         let myUid = self.getUserId();
 
-        if (!notifyContent) {
-            notifyContent = new CreateGroupNotification(myUid, name);
-        }
-
         if (!memberIds.includes(myUid)) {
             memberIds.push(myUid);
         }
 
-        let payload = notifyContent.encode();
-        let notifyContentStr = JSON.stringify(payload);
-        proto.createGroup(groupId, groupType, name, portrait, memberIds, lines, notifyContentStr,
+        let payload = '';
+        if (notifyContent) {
+            payload = JSON.stringify(notifyContent.encode());
+        }
+        proto.createGroup(groupId, groupType, name, portrait, memberIds, lines, payload,
             (groupId) => {
                 if (successCB) {
                     successCB(groupId);
@@ -465,12 +464,11 @@ class WfcManager {
     }
 
     addGroupMembers(groupId, memberIds, notifyLines, notifyMessageContent, successCB, failCB) {
-        if (!notifyMessageContent) {
-            notifyMessageContent = new AddGroupMemberNotification(self.getUserId(), memberIds);
+        let payload = '';
+        if (notifyMessageContent) {
+            payload = JSON.stringify(notifyMessageContent.encode());
         }
-        let payload = notifyMessageContent.encode();
-        let notifyContentStr = JSON.stringify(payload);
-        proto.addMembers(memberIds, groupId, notifyLines, notifyContentStr,
+        proto.addMembers(memberIds, groupId, notifyLines, payload,
             () => {
                 if (successCB) {
                     successCB();
@@ -508,9 +506,11 @@ class WfcManager {
     }
 
     kickoffGroupMembers(groupId, memberIds, notifyLines, notifyMsg, successCB, failCB) {
-        let payload = notifyMsg.encode();
-        let strCont = JSON.stringify(payload);
-        proto.kickoffMembers(groupId, memberIds, notifyLines, strCont,
+        let payload = '';
+        if (notifyMsg) {
+            payload = JSON.stringify(notifyMsg.encode());
+        }
+        proto.kickoffMembers(groupId, memberIds, notifyLines, payload,
             () => {
                 if (successCB) {
                     successCB();
@@ -524,8 +524,11 @@ class WfcManager {
     }
 
     async quitGroup(groupId, lines, notifyMessageContent, successCB, failCB) {
-        let payload = notifyMessageContent.encode();
-        proto.quitGroup(groupId, lines, JSON.stringify(payload), () => {
+        let payload = '';
+        if (notifyMessageContent) {
+            payload = JSON.stringify(notifyMessageContent.encode());
+        }
+        proto.quitGroup(groupId, lines, payload, () => {
             if (successCB) {
                 successCB();
             }
@@ -535,8 +538,11 @@ class WfcManager {
     }
 
     async dismissGroup(groupId, lines, notifyMessageContent, successCB, failCB) {
-        let payload = notifyMessageContent.encode();
-        proto.dismissGroup(groupId, lines, JSON.stringify(payload), () => {
+        let payload = '';
+        if (notifyMessageContent) {
+            payload = JSON.stringify(notifyMessageContent.encode());
+        }
+        proto.dismissGroup(groupId, lines, payload, () => {
             if (successCB) {
                 successCB();
             }
@@ -548,9 +554,9 @@ class WfcManager {
     async modifyGroupInfo(groupId, type, newValue, lines, notifyMessageContent, successCB, failCB) {
         let payload = '';
         if (notifyMessageContent) {
-            payload = notifyMessageContent.encode();
+            payload = JSON.stringify(notifyMessageContent.encode());
         }
-        proto.modifyGroupInfo(groupId, type, newValue, lines, JSON.stringify(payload),
+        proto.modifyGroupInfo(groupId, type, newValue, lines, payload,
             () => {
                 if (successCB) {
                     successCB();
@@ -563,20 +569,24 @@ class WfcManager {
     }
 
     async modifyGroupAlias(groupId, alias, lines, notifyMessageContent, successCB, failCB) {
-        let payload = notifyMessageContent.encode();
-        proto.modifyGroupAlias(groupId, alias, lines, JSON.stringify(payload), () => {
-            if (successCB) {
-                successCB();
-            }
 
+        let payload = '';
+        if (notifyMessageContent) {
+            payload = JSON.stringify(notifyMessageContent.encode());
+        }
+        proto.modifyGroupAlias(groupId, alias, lines, payload, () => {
+            successCB();
         }, (errorCode) => {
             failCB(errorCode);
         });
     }
 
     transferGroup(groupId, newOwner, lines, notifyMessageContent, successCB, failCB) {
-        let payload = notifyMessageContent.encode();
-        proto.transferGroup(groupId, newOwner, lines, JSON.stringify(payload), () => {
+        let payload = '';
+        if (notifyMessageContent) {
+            payload = JSON.stringify(notifyMessageContent.encode());
+        }
+        proto.transferGroup(groupId, newOwner, lines, payload, () => {
             if (successCB) {
                 successCB();
             }
@@ -588,8 +598,11 @@ class WfcManager {
     }
 
     setGroupManager(groupId, isSet, memberIds, lines, notifyMessageContent, successCB, failCB) {
-        let payload = notifyMessageContent.encode();
-        proto.setGroupManager(groupId, isSet, memberIds, lines, JSON.stringify(payload), () => {
+        let payload = '';
+        if (notifyMessageContent) {
+            payload = JSON.stringify(notifyMessageContent.encode());
+        }
+        proto.setGroupManager(groupId, isSet, memberIds, lines, payload, () => {
             if (successCB) {
                 successCB();
             }

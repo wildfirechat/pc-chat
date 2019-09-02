@@ -16,7 +16,7 @@ class Search {
     @observable searching = false;
 
     @action filter(text = '') {
-        var list = contacts.memberList;
+        var list = contacts.getContacts();
         var groups = [];
         var friend = [];
 

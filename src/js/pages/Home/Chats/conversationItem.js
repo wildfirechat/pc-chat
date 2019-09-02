@@ -1,4 +1,5 @@
 
+import { remote } from 'electron';
 import clazz from 'classname';
 import React, { Component } from 'react';
 import helper from 'utils/helper';
@@ -28,6 +29,40 @@ export default class ConversationItem extends Component {
         }
 
         return false;
+    }
+
+    showContextMenu(conversationInfo) {
+        var menu = new remote.Menu.buildFromTemplate([
+            {
+                label: 'Send Message',
+                click: () => {
+                    this.props.chatTo(conversationInfo.conversation);
+                }
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: conversationInfo.isTop ? 'Unsticky' : 'Sticky on Top',
+                click: () => {
+                    this.props.sticky(conversationInfo);
+                }
+            },
+            {
+                label: 'Delete',
+                click: () => {
+                    this.props.removeChat(conversationInfo);
+                }
+            },
+            {
+                label: 'Mark as Read',
+                click: () => {
+                    this.props.markedRead(conversationInfo.UserName);
+                }
+            },
+        ]);
+
+        menu.popup(remote.getCurrentWindow());
     }
 
     render() {
