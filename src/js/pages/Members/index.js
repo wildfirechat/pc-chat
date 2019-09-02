@@ -52,6 +52,9 @@ export default class Members extends Component {
         this.modifyGroup(groupId, GroupType.modifyGroupName, this.groupName);
     }
 
+    async setPortrait(groupId, data) {
+        this.modifyGroup(groupId, GroupType.modifyGroupPortrait, data);
+    }
     async modifyGroup(groupId, type, newValue) {
         console.log(groupId, newValue);
         wfc.modifyGroupInfo(groupId, type, newValue, [0], null, null,
@@ -149,7 +152,11 @@ export default class Members extends Component {
                         <li>
                             <label htmlFor="alwaysOnTop">
                                 <span>更改头像</span>
-                                <input type="file" />
+                                <input type="file"
+                                    accept=".png, .jpg"
+                                    onClick={e => (e.target.value = null)}
+                                    onChange={e => this.setPortrait(target.target, e.target.value)}
+                                />
                                 <button className="Switch">上传</button>
                                 <button className="Switch">保存</button>
                             </label>
