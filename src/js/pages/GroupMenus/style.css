@@ -111,6 +111,11 @@ header div.cancelbtn{
     padding-right: 15%;
 }
 
+.joinType {
+    margin-top: -2vh;
+    margin-left: 14vw;
+}
+
 @media (width <= 800px) {
   .container {
       font-size: 26px;

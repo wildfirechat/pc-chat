@@ -7,6 +7,7 @@ import helper from 'utils/helper';
 import GroupInfo from '../../wfc/model/groupInfo';
 import wfc from '../../wfc/wfc';
 import Switch from 'components/Switch';
+import GroupType from '../../wfc/model/groupType';
 
 @inject(stores => ({
     show: stores.members.show,
@@ -16,7 +17,7 @@ import Switch from 'components/Switch';
     search: stores.members.search,
     searching: stores.members.query,
     filtered: stores.members.filtered,
-    showUserinfo: async (user) => {
+    showUserinfo: async(user) => {
         var caniremove = false;
         if (stores.chat.target instanceof GroupInfo) {
             let groupInfo = stores.chat.target;
@@ -47,11 +48,20 @@ export default class Members extends Component {
             this.groupName = text;
         }, 300);
     }
-    async modifyGroupInfo(groupId, type) {
+    async saveGroupName(groupId) {
+        this.modifyGroup(groupId, GroupType.modifyGroupName, this.groupName);
+    }
 
+    async modifyGroup(groupId, type, newValue) {
+        console.log(groupId, newValue);
+        wfc.modifyGroupInfo(groupId, type, newValue, [0], null, null,
+            (errorCode) => {
+                console.log('modify group info fail', errorCode);
+            }
+        );
     }
     render() {
-        var { target, searching, list, filtered } = this.props;
+        var {target, searching, list, filtered} = this.props;
         if (!this.props.show) {
             return false;
         }
@@ -59,7 +69,6 @@ export default class Members extends Component {
         if (target instanceof GroupInfo) {
             targetName = target.name;
         }
-        console.log(wfc.getGroupInfo(target.target));
         return (
             <div className={classes.container}>
                 <header>
@@ -129,10 +138,11 @@ export default class Members extends Component {
                                     <input type="text"
                                         className={classes.groupName}
                                         ref="input"
+                                        defaultValue={target.name}
                                         onInput={e => this.setGroupName(e.target.value)}
                                         placeholder="群名称" />
                                 </span>
-                                <button onClick={e => this.modifyGroupInfo(target.target, 'name')} className="Switch">保存</button>
+                                <button onClick={e => this.saveGroupName(target.target)} className="Switch">保存</button>
                             </label>
                         </li>
 
@@ -162,9 +172,9 @@ export default class Members extends Component {
                         </li>
                         <hr />
                         <li>
-                            <label htmlFor="alwaysOnTop">
+                            <label htmlFor="ignoreMsg">
                                 <span>消息免打扰</span>
-                                <Switch id="alwaysOnTop" />
+                                <Switch id="ignoreMsg" />
                             </label>
                         </li>
                         <li>
@@ -174,9 +184,9 @@ export default class Members extends Component {
                             </label>
                         </li>
                         <li>
-                            <label htmlFor="alwaysOnTop">
+                            <label htmlFor="saveToAddressBook">
                                 <span>保存到通讯录</span>
-                                <Switch id="alwaysOnTop" />
+                                <Switch id="saveToAddressBook" />
                             </label>
                         </li>
                         <hr />
@@ -189,9 +199,9 @@ export default class Members extends Component {
                             </label>
                         </li>
                         <li>
-                            <label htmlFor="alwaysOnTop">
+                            <label htmlFor="showMemberName">
                                 <span>显示群成员昵称</span>
-                                <Switch id="alwaysOnTop" />
+                                <Switch id="showMemberName" />
                             </label>
                         </li>
                     </ul>

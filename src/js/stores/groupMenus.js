@@ -3,9 +3,9 @@ import pinyin from '../han/han';
 
 import helper from 'utils/helper';
 import GroupInfo from '../wfc/model/groupInfo';
-import wfc from '../wfc/wfc'
+import wfc from '../wfc/wfc';
 
-//群菜单
+// 群菜单
 class GroupMenus {
     @observable show = false;
     @observable target;
@@ -14,7 +14,6 @@ class GroupMenus {
         self.show = show;
         self.target = target;
     }
-
 }
 
 const self = new GroupMenus();

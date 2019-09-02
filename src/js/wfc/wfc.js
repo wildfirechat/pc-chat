@@ -3,7 +3,7 @@ import Message from '../wfc/messages/message';
 import Conversation from '../wfc/model/conversation';
 import ConversationInfo from '../wfc/model/conversationInfo';
 import { EventEmitter } from 'events';
-import EventType from './wfcEvent'
+import EventType from './wfcEvent';
 import UserInfo from '../wfc/model/userInfo';
 import NullUserInfo from '../wfc/model/nullUserInfo';
 import NullGroupInfo from './model/nullGroupInfo';
@@ -546,7 +546,10 @@ class WfcManager {
     }
 
     async modifyGroupInfo(groupId, type, newValue, lines, notifyMessageContent, successCB, failCB) {
-        let payload = notifyMessageContent.encode();
+        let payload = '';
+        if (notifyMessageContent) {
+            payload = notifyMessageContent.encode();
+        }
         proto.modifyGroupInfo(groupId, type, newValue, lines, JSON.stringify(payload),
             () => {
                 if (successCB) {
@@ -562,7 +565,10 @@ class WfcManager {
     async modifyGroupAlias(groupId, alias, lines, notifyMessageContent, successCB, failCB) {
         let payload = notifyMessageContent.encode();
         proto.modifyGroupAlias(groupId, alias, lines, JSON.stringify(payload), () => {
-            successCB();
+            if (successCB) {
+                successCB();
+            }
+
         }, (errorCode) => {
             failCB(errorCode);
         });
