@@ -17,6 +17,7 @@ import GroupType from '../../wfc/model/groupType';
     search: stores.members.search,
     searching: stores.members.query,
     filtered: stores.members.filtered,
+    conversation: stores.chat.conversation,
     showUserinfo: async(user) => {
         var caniremove = false;
         if (stores.chat.target instanceof GroupInfo) {
@@ -63,8 +64,18 @@ export default class Members extends Component {
             }
         );
     }
+
+    async setTop() {
+        let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
+        wfc.setConversationTop(covnersationInfo.conversation, !covnersationInfo.isTop,
+            () => {},
+            (errorCode) => {
+                console.log('set conversion on top fail');
+            });
+    }
+
     render() {
-        var {target, searching, list, filtered} = this.props;
+        var {target, searching, list, filtered, conversation} = this.props;
         if (!this.props.show) {
             return false;
         }
@@ -72,6 +83,7 @@ export default class Members extends Component {
         if (target instanceof GroupInfo) {
             targetName = target.name;
         }
+        let covnersationInfo = wfc.getConversationInfo(conversation);
         return (
             <div className={classes.container}>
                 <header>
@@ -172,7 +184,7 @@ export default class Members extends Component {
                         </li>
                         <hr />
                         <li>
-                            <label htmlFor="alwaysOnTop">
+                            <label>
                                 <span>查找聊天内容</span>
                                 <button className="Switch">搜索</button>
                             </label>
@@ -187,7 +199,10 @@ export default class Members extends Component {
                         <li>
                             <label htmlFor="alwaysOnTop">
                                 <span>置顶聊天</span>
-                                <Switch id="alwaysOnTop" />
+                                <Switch id="alwaysOnTop"
+                                    defaultChecked={covnersationInfo.isTop}
+                                    onChange={e => this.setTop()}
+                                />
                             </label>
                         </li>
                         <li>
@@ -198,7 +213,7 @@ export default class Members extends Component {
                         </li>
                         <hr />
                         <li>
-                            <label htmlFor="alwaysOnTop">
+                            <label>
                                 <span>我的本群昵称
                                     <input type="text" placeholder="未设置" className={classes.groupName} />
                                 </span>
