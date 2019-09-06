@@ -558,7 +558,7 @@ const createMainWindow = () => {
     });
 
     mainWindow.on('close', e => {
-        if (forceQuit) {
+        if (forceQuit || !tray) {
             mainWindow = null;
             app.quit();
         } else {
