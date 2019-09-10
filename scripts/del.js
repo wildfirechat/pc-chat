@@ -15,8 +15,8 @@ var path = require('path');
 
 var cpy = path.join(__dirname, '../node_modules/del-cli/cli.js');
 
-shelljs.exec(cpy + ' --force ' + targets, addCheckMark.bind(null, callback));
+shelljs.exec('node ' + cpy + ' --force ' + targets, addCheckMark.bind(null, callback));
 
 function callback() {
-  process.stdout.write(' Deleted ' + targets + '\n\n');
+  console.log(' Deleted ' + targets + '\n\n');
 }
