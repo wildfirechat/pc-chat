@@ -16,7 +16,7 @@ var path = require('path');
 
 var cpy = path.join(__dirname, '../node_modules/cpy-cli/cli.js ');
 
-shelljs.exec(cpy + ' --rename=marswrapper.node ' + fromParam + ' ' + toParam, addCheckMark.bind(null, callback));
+shelljs.exec('node ' + cpy + ' --rename=marswrapper.node ' + fromParam + ' ' + toParam, addCheckMark.bind(null, callback));
 
 function callback() {
   process.stdout.write(' Copied ' + fromParam + ' to the ' + toParam + ' directory\n\n');
