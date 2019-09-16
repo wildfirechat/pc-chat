@@ -8,6 +8,9 @@ import GroupInfo from '../../wfc/model/groupInfo';
 import wfc from '../../wfc/wfc';
 import Switch from 'components/Switch';
 import GroupType from '../../wfc/model/groupType';
+import MessageContentMediaType from '../../wfc/messages/messageContentMediaType';
+import UserSettingScope from '../../wfc/userSettingScope';
+import PropTypes from 'prop-types';
 
 @inject(stores => ({
     show: stores.members.show,
@@ -42,6 +45,8 @@ import GroupType from '../../wfc/model/groupType';
 @observer
 export default class Members extends Component {
     groupName = '';
+    nickName = '';
+    Portrait = '';
     timer;
     setGroupName(text) {
         clearTimeout(this.timer);
@@ -49,15 +54,45 @@ export default class Members extends Component {
             this.groupName = text;
         }, 300);
     }
+
+    setNickName(text) {
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+            this.nickName = text;
+        }, 300);
+    }
+
     async saveGroupName(groupId) {
         this.modifyGroup(groupId, GroupType.modifyGroupName, this.groupName);
     }
 
-    async setPortrait(groupId, data) {
-        this.modifyGroup(groupId, GroupType.modifyGroupPortrait, data);
+    async saveNickName(groupId) {
+        wfc.modifyGroupAlias(groupId, this.nickName, [0], null, null, (errorCode) => {
+            console.log('modify group my nickName fail', errorCode);
+        });
     }
+
+    async uploadPortrait(data) {
+        let reader = new FileReader();
+        reader.readAsDataURL(data);
+        console.log(reader.result);
+        wfc.uploadMedia(reader.result, MessageContentMediaType.Portrait,
+            (remoteUrl) => {
+                this.Portrait = remoteUrl;
+            },
+            (errorCode) => {
+                console.log('-------------upload error', errorCode);
+            },
+            (current, total) => {
+
+            });
+    }
+
+    async savePortrait(groupId) {
+        this.modifyGroup(groupId, GroupType.modifyGroupPortrait, this.Portrait);
+    }
+
     async modifyGroup(groupId, type, newValue) {
-        console.log(groupId, newValue);
         wfc.modifyGroupInfo(groupId, type, newValue, [0], null, null,
             (errorCode) => {
                 console.log('modify group info fail', errorCode);
@@ -74,8 +109,18 @@ export default class Members extends Component {
             });
     }
 
+    async setGroupHiddenNickName(target, newValue) {
+        wfc.setUserSetting(5, target, newValue, null, (errorCode) => {
+            console.log('modify show groupMembers nickName fail', errorCode);
+        });
+    }
+
+    async batchProcess(file) {
+        this.props.process(file);
+    }
+
     render() {
-        var {target, searching, list, filtered, conversation} = this.props;
+        var {target, searching, list, filtered, conversation, UserSettingScope} = this.props;
         if (!this.props.show) {
             return false;
         }
@@ -84,6 +129,9 @@ export default class Members extends Component {
             targetName = target.name;
         }
         let covnersationInfo = wfc.getConversationInfo(conversation);
+        let groupHideNickname = wfc.getUserSetting(5, target.target);
+        let uid = wfc.getUserId();
+        let userInfo = wfc.getUserInfo(uid, true, target.target);
         return (
             <div className={classes.container}>
                 <header>
@@ -148,7 +196,7 @@ export default class Members extends Component {
                 <div className={classes.column}>
                     <ul >
                         <li>
-                            <label htmlFor="alwaysOnTop">
+                            <label htmlFor="groupName">
                                 <span>群聊名称
                                     <input type="text"
                                         className={classes.groupName}
@@ -162,15 +210,22 @@ export default class Members extends Component {
                         </li>
 
                         <li>
-                            <label htmlFor="alwaysOnTop">
+                            <label htmlFor="portrait">
                                 <span>更改头像</span>
                                 <input type="file"
-                                    accept=".png, .jpg"
-                                    onClick={e => (e.target.value = null)}
-                                    onChange={e => this.setPortrait(target.target, e.target.value)}
+                                    ref="uploader"
+                                    style={{
+                                        display: 'none',
+                                    }}
+                                    onChange={e => {
+                                        console.log(e.target.files[0]);
+                                        this.uploadPortrait(e.target.files[0]);
+                                        e.target.value = null;
+                                    }}
                                 />
-                                <button className="Switch">上传</button>
-                                <button className="Switch">保存</button>
+                                <img src={target.portrait} alt="" />
+                                <button className="Switch" onClick={e => this.refs.uploader.click()}>上传</button>
+                                <button className="Switch" onClick={e => this.savePortrait(target.target)}>保存</button>
                             </label>
                         </li>
 
@@ -215,15 +270,24 @@ export default class Members extends Component {
                         <li>
                             <label>
                                 <span>我的本群昵称
-                                    <input type="text" placeholder="未设置" className={classes.groupName} />
+                                    <input type="text"
+                                        placeholder="未设置"
+                                        ref="input"
+                                        defaultValue={userInfo.groupAlias}
+                                        onInput={e => this.setNickName(e.target.value)}
+                                        className={classes.groupName}
+                                    />
                                 </span>
-                                <button className="Switch">保存</button>
+                                <button onClick={e => this.saveNickName(target.target)} className="Switch">保存</button>
                             </label>
                         </li>
                         <li>
                             <label htmlFor="showMemberName">
                                 <span>显示群成员昵称</span>
-                                <Switch id="showMemberName" />
+                                <Switch id="showMemberName"
+                                    defaultChecked={!groupHideNickname}
+                                    onChange={e => this.setGroupHiddenNickName(target.target, groupHideNickname ? '0' : '1')}
+                                />
                             </label>
                         </li>
                     </ul>
