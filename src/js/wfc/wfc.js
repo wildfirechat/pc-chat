@@ -575,7 +575,9 @@ class WfcManager {
             payload = JSON.stringify(notifyMessageContent.encode());
         }
         proto.modifyGroupAlias(groupId, alias, lines, payload, () => {
-            successCB();
+            if (successCB) {
+                successCB();
+            }
         }, (errorCode) => {
             failCB(errorCode);
         });
