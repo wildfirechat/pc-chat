@@ -72,15 +72,16 @@ export default class Members extends Component {
         });
     }
 
-    async uploadPortrait(data) {
+    uploadPortrait(data) {
         let reader = new window.FileReader();
+        let self = this;
         reader.readAsDataURL(data);
         reader.onload = function(e) {
             let imgSrc = reader.result.split(',')[1];
             wfc.uploadMedia(imgSrc, MessageContentMediaType.Portrait,
                 (remoteUrl) => {
                     console.log(remoteUrl);
-                    this.Portrait = remoteUrl;
+                    self.Portrait = remoteUrl;
                 },
                 (errorCode) => {
                     console.log('-------------upload error', errorCode);
@@ -92,6 +93,7 @@ export default class Members extends Component {
     }
 
     async savePortrait(groupId) {
+        console.log(this.Portrait);
         this.modifyGroup(groupId, GroupType.modifyGroupPortrait, this.Portrait);
     }
 
