@@ -115,6 +115,9 @@ export default class Members extends Component {
     }
 
     async setGroupHiddenNickName(target, newValue) {
+        console.log(222);
+        console.log(newValue);
+        console.log(wfc.getUserSetting(5, target));
         wfc.setUserSetting(5, target, newValue, null, (errorCode) => {
             console.log('modify show groupMembers nickName fail', errorCode);
         });
@@ -135,6 +138,8 @@ export default class Members extends Component {
         }
         let covnersationInfo = wfc.getConversationInfo(conversation);
         let groupHideNickname = wfc.getUserSetting(5, target.target);
+        console.log(groupHideNickname);
+        console.log(1111);
         let uid = wfc.getUserId();
         let userInfo = wfc.getUserInfo(uid, true, target.target);
         return (
