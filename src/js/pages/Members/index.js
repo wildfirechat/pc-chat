@@ -73,19 +73,22 @@ export default class Members extends Component {
     }
 
     async uploadPortrait(data) {
-        let reader = new FileReader();
+        let reader = new window.FileReader();
         reader.readAsDataURL(data);
-        console.log(reader.result);
-        wfc.uploadMedia(reader.result, MessageContentMediaType.Portrait,
-            (remoteUrl) => {
-                this.Portrait = remoteUrl;
-            },
-            (errorCode) => {
-                console.log('-------------upload error', errorCode);
-            },
-            (current, total) => {
+        reader.onload = function(e) {
+            let imgSrc = reader.result.split(',')[1];
+            wfc.uploadMedia(imgSrc, MessageContentMediaType.Portrait,
+                (remoteUrl) => {
+                    console.log(remoteUrl);
+                    this.Portrait = remoteUrl;
+                },
+                (errorCode) => {
+                    console.log('-------------upload error', errorCode);
+                },
+                (current, total) => {
 
-            });
+                });
+        };
     }
 
     async savePortrait(groupId) {
@@ -218,12 +221,11 @@ export default class Members extends Component {
                                         display: 'none',
                                     }}
                                     onChange={e => {
-                                        console.log(e.target.files[0]);
                                         this.uploadPortrait(e.target.files[0]);
                                         e.target.value = null;
                                     }}
                                 />
-                                <img src={target.portrait} alt="" />
+                                <img src={target.portrait} alt="" width="100px" height="100px" />
                                 <button className="Switch" onClick={e => this.refs.uploader.click()}>上传</button>
                                 <button className="Switch" onClick={e => this.savePortrait(target.target)}>保存</button>
                             </label>
