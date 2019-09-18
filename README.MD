@@ -34,7 +34,7 @@
 1. 微信交流群（请先加我们好友，我们再邀请您进群）
 
   ![微信二维码](http://static.wildfirechat.cn/wx_qr_wildfirechat.jpeg)   ![微信二维码](http://static.wildfirechat.cn/wx_qr_wfc.jpeg)
-  
+
 2. 如果大家发现bug，请在GitHub提issue
 3. 其他问题，请到[野火IM论坛](http://bbs.wildfirechat.cn/)进行交流学习
 4. 微信公众号
@@ -76,9 +76,8 @@ $ npm run dev
 打包
 
 1. ```npm install``` 安装依赖
-2. ```npm install -g dmg-builder``` 安装dmg builder
-3. ```npm run package-win32``` 打包window版本，软件生成在release目录下
-4. ```npm run package-mac``` 打包mac版本，软件生成在release目录下
+2. ```npm run package-win32``` 打包window版本，软件生成在release目录下
+3. ```npm run package-mac``` 打包mac版本，软件生成在release目录下
 
 
 #### windows系统
@@ -92,12 +91,8 @@ $ npm run dev
 3. Visual Studio Community 2015(C++ Runtime & Windows SDK version 8.1)
 4. npm install -g node-gyp
 
-##### 拷贝windows配置
-1. 删除```package.json```
-2. 把```package-win32.json```改名为```package.json```。
 
-
-##### 开发(目前还有问题，请打包安装验证)
+##### 开发(目前还有问题，请打包安装验证，请跳过这一段)
 ```
 $ copy proto_addon\marswrapper.win32.node marswrapper.node
 $ npm install
