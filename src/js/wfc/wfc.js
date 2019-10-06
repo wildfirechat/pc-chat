@@ -1060,9 +1060,9 @@ class WfcManager {
         proto.updateMessage(messageId, JSON.stringify(messageContent))
     }
 
-    async uploadMedia(data, mediaType, successCB, failCB, progressCB) {
+    async uploadMedia(fileName, data, mediaType, successCB, failCB, progressCB) {
         // var data = file.slile(0, file.size);
-        proto.uploadMedia(data, mediaType,
+        proto.uploadMedia(fileName, data, mediaType,
             (remoteUrl) => {
                 if (successCB) {
                     successCB(remoteUrl);
@@ -1105,7 +1105,7 @@ class WfcManager {
         console.log('localStorage', localStorage.getItem('test'));
 
         console.log('atob', btoa('hello world'));
-        self.uploadMedia('hello world', MessageContentMediaType.Image,
+        self.uploadMedia('test', 'hello world', MessageContentMediaType.Image,
             (remoteUrl) => {
                 console.log('----------------upload success', remoteUrl);
             },
