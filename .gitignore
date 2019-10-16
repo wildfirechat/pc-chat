@@ -1,13 +1,10 @@
 # OSX
 #
 .DS_Store
-
 # Other
 #
 dist/
 release/
-package-lock.json
-
 # Xcode
 #
 build/
