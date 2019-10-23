@@ -77,9 +77,9 @@ class WfcManager {
     // }
 
     onReceiveMessage(messages, hasMore) {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
         // receiving
         if (self.connectionStatus === 2) {
             return;
@@ -97,9 +97,9 @@ class WfcManager {
     }
 
     onGroupInfoUpdate(groupListIds) {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
 
         let groupIdArray = JSON.parse(groupListIds);
 
@@ -112,36 +112,36 @@ class WfcManager {
     onChannelInfoUpdate(channelListIds) {
         // TODO
         if (!self.isLogined) {
-          return;
+            return;
         }
     }
 
     onSettingUpdate() {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
         // TODO 具体更新的信息
         self.eventEmitter.emit(EventType.SettingUpdate);
     }
 
     onRecallMessage(operatorUid, messageUid) {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
         self.eventEmitter.emit(EventType.RecallMessage, operatorUid, messageUid);
     }
 
     onMessageDeleted(messageId) {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
         self.eventEmitter.emit(EventType.DeleteMessage, messageId);
     }
 
     onUserInfoUpdate(userIds) {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
         let userIdArray = JSON.parse(userIds);
 
         userIdArray.forEach((userId => {
@@ -151,9 +151,9 @@ class WfcManager {
     }
 
     onFriendListUpdate(friendListIds) {
-      if (!self.isLogined) {
-        return;
-      }
+        if (!self.isLogined) {
+            return;
+        }
         console.log('friendList update, ids', friendListIds);
         let ids = JSON.parse(friendListIds);
         ids.forEach((uid) => {
@@ -165,7 +165,7 @@ class WfcManager {
     onFriendRequestUpdate() {
         // TODO
         if (!self.isLogined) {
-          return;
+            return;
         }
     }
 
@@ -283,6 +283,18 @@ class WfcManager {
         }
         self.users.set(userInfo.uid, userInfo);
         return userInfo;
+    }
+    getUserInfos(userIds, groupId = '') {
+        let users = [];
+        let userInfoStrs = proto.getUserInfos(userIds, groupId);
+        if (userInfoStrs && userInfoStrs !== '') {
+            let tmp = JSON.parse(userInfoStrs);
+            tmp.forEach((u) => {
+                let userInfo = Object.assign(new UserInfo(), u);
+                users.push(userInfo)
+            });
+        }
+        return users;
     }
 
     async searchUser(keyword, successCB, failCB) {
