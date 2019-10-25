@@ -23,6 +23,7 @@ import BenzAMRRecorder from 'benz-amr-recorder';
 import MessageConfig from '../../../wfc/messageConfig';
 import UnknownMessageContent from '../../../wfc/messages/unknownMessageContent';
 import EventType from '../../../wfc/wfcEvent';
+import ConversationType from '../../../wfc/model/conversationType';
 
 
 @inject(stores => ({
@@ -311,7 +312,12 @@ export default class ChatContent extends Component {
         return list.map((e) => {
             // var { message, user } = this.props.parseMessage(e, from);
             var message = e;
-            var user = wfc.getUserInfo(message.from);
+            let user;
+            if (message.conversation.conversationType === ConversationType.Group) {
+                user = wfc.getUserInfo(message.from, false, message.conversation.target);
+            } else {
+                user = wfc.getUserInfo(message.from);
+            }
             let type = message.messageContent.type;
 
             if (message.messageContent instanceof NotificationMessageContent) {
