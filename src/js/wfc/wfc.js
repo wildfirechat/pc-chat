@@ -262,26 +262,28 @@ class WfcManager {
      * @param {string} userId 
      * @param {bool} fresh 
      */
-    getUserInfo(userId, fresh = false) {
+    getUserInfo(userId, fresh = false, groupId = '') {
         if (!userId || userId === '') {
             return new NullUserInfo('');
         }
         let userInfo;
-        if (!fresh) {
+        if (!fresh && (!groupId || groupId === '')) {
             userInfo = self.users.get(userId);
             if (userInfo) {
                 return userInfo;
             }
         }
 
-        console.log('getuserInfo', userId);
-        let userInfoStr = proto.getUserInfo(userId, fresh);
+        console.log('getuserInfo', userId, fresh, groupId);
+        let userInfoStr = proto.getUserInfo(userId, fresh, groupId);
         if (userInfoStr === '') {
             userInfo = new NullUserInfo(userId);
         } else {
             userInfo = Object.assign(new UserInfo(), JSON.parse(userInfoStr));
         }
-        self.users.set(userInfo.uid, userInfo);
+        if (!groupId || groupId === '') {
+            self.users.set(userInfo.uid, userInfo);
+        }
         return userInfo;
     }
     getUserInfos(userIds, groupId = '') {
