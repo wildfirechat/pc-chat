@@ -43,8 +43,14 @@ export default class MessageInput extends Component {
             let groupInfo = wfc.getGroupInfo(conversation.target);
             let members = wfc.getGroupMembers(conversation.target);
             mentionMenuItems.push({ key: "所有人", value: '@' + conversation.target, avatar: groupInfo.portrait, searchKey: '所有人' + pinyin.letter('所有人', '', null) });
+            let userIds = [];
             members.forEach(e => {
-                mentionMenuItems.push({ key: e.getName(), value: '@' + e.memberId, avatar: e.getPortrait(), searchKey: e.getName() + pinyin.letter(e.getName(), '', null) });
+                userIds.push(e.memberId);
+            });
+
+            let userInfos = wfc.getUserInfos(userIds, groupInfo.target);
+            userInfos.forEach((e) => {
+                mentionMenuItems.push({ key: e.displayName, value: '@' + e.uid, avatar: e.portrait, searchKey: e.displayName + pinyin.letter(e.displayName, '', null) });
             });
         }
 
