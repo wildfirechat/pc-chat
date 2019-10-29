@@ -46,8 +46,8 @@ class WfcManager {
     onConnectionChanged(status) {
         if (!self.isLogined && status == ConnectionStatus.ConnectionStatusConnected) {
             self.isLogined = true;
-            // var ret = proto.screenShot();
-            // console.log(ret);
+            var ret = proto.screenShot();
+            console.log(ret);
         }
         self.connectionStatus = status;
         self.eventEmitter.emit(EventType.ConnectionStatusChanged, status);
