@@ -63,7 +63,13 @@
     "win": {
       "target": "nsis",
       "icon": "../resource/win.ico",
-      "requestedExecutionLevel": "asInvoker"
+      "requestedExecutionLevel": "asInvoker",
+      "extraResources":[
+        {
+          "from": "../win32-qt-denpendency",
+          "to": "../"
+        }
+      ]
     },
     "nsis": {
       "oneClick": false,

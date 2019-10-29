@@ -46,6 +46,8 @@ class WfcManager {
     onConnectionChanged(status) {
         if (!self.isLogined && status == ConnectionStatus.ConnectionStatusConnected) {
             self.isLogined = true;
+            // var ret = proto.screenShot();
+            // console.log(ret);
         }
         self.connectionStatus = status;
         self.eventEmitter.emit(EventType.ConnectionStatusChanged, status);
@@ -53,8 +55,8 @@ class WfcManager {
     }
 
     // /**
-    //  * 
-    //  * @param {function} listener 
+    //  *
+    //  * @param {function} listener
     //  */
     // setOnReceiveMessageListener(listener) {
     //     if (typeof listener !== 'function') {
@@ -186,8 +188,8 @@ class WfcManager {
     }
 
     /**
-     * 
-     * @param {messagecontent} content 
+     *
+     * @param {messagecontent} content
      */
     registerMessageContent(type, content) {
         self.messageContentList[type] = content;
@@ -259,8 +261,8 @@ class WfcManager {
     }
 
     /**
-     * @param {string} userId 
-     * @param {bool} fresh 
+     * @param {string} userId
+     * @param {bool} fresh
      */
     getUserInfo(userId, fresh = false) {
         if (!userId || userId === '') {
@@ -928,12 +930,12 @@ class WfcManager {
     }
 
     /**
-     * 
+     *
      * @param {Conversation} conversation
-     * @param {number} fromIndex 
-     * @param {boolean} before 
-     * @param {number} count 
-     * @param {string} withUser 
+     * @param {number} fromIndex
+     * @param {boolean} before
+     * @param {number} count
+     * @param {string} withUser
      */
     async getMessages(conversation, fromIndex, before = true, count = 20, withUser = '') {
         let protoMsgsStr = proto.getMessages(JSON.stringify(conversation), [], fromIndex, before, count, withUser);
@@ -1057,10 +1059,10 @@ class WfcManager {
     }
 
     /**
-     * 
-     * @param {Conversation} conversation 
-     * @param {MessageContent} messageContent 
-     * @param {MessageStatus} status 
+     *
+     * @param {Conversation} conversation
+     * @param {MessageContent} messageContent
+     * @param {MessageStatus} status
      * @param {boolean} notify 是否触发onReceiveMessage
      * @param {Number} serverTime 服务器时间，精度到毫秒
      */
