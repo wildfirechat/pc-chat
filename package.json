@@ -48,7 +48,18 @@
       "title": "wildfireChat ${version}"
     },
     "mac": {
-      "icon": "../resource/dock.icns"
+      "icon": "../resource/dock.icns",
+      "target":"zip",
+      "extraResources":[
+        {
+          "from": "../mac-qt-denpendency/framework",
+          "to": "../Frameworks"
+        },
+        {
+          "from": "../mac-qt-denpendency/app",
+          "to": "../"
+        }
+      ]
     },
     "linux": {
       "icon": "../resource",
