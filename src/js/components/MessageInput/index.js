@@ -147,6 +147,27 @@ export default class MessageInput extends Component {
         this.setState({ showEmoji: show });
     }
 
+    async screenShot() {
+        let ret = wfc.screenShot();
+        if ('done' === ret) {
+            var args = ipcRenderer.sendSync('file-paste');
+            if (args.hasImage && this.canisend()) {
+                if ((await this.props.confirmSendImage(args.filename)) === false) {
+                    return;
+                }
+
+                let parts = [
+                    new window.Blob([new window.Uint8Array(args.raw)], { type: 'image/png' })
+                ];
+                let file = new window.File(parts, args.filename, {
+                    lastModified: new Date(),
+                    type: 'image/png'
+                });
+                this.batchProcess(file);
+            }
+        }
+    }
+
     writeEmoji(emoji) {
         var input = this.refs.input;
 
@@ -258,6 +279,14 @@ export default class MessageInput extends Component {
                         onClick={e => canisend && this.toggleEmoji(true)}
                         style={{
                             color: 'red',
+                        }}
+                    />
+                    <i
+                        className="icon-ion-ios-heart"
+                        id="screenShot"
+                        onClick={e => canisend && this.screenShot()}
+                        style={{
+                            color: 'black',
                         }}
                     />
 
