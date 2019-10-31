@@ -61,7 +61,15 @@
 ## 开发
 
 #### mac系统
-开发
+
+##### 环境准备
+
+> 请严格安装下面的版本安装对应依赖，否则无法打包
+
+1. nodejs10.16.0
+2. python2.7
+
+##### 开发
 
 ```
 $ cp proto_addon/marswrapper.mac.node marswrapper.node
@@ -69,7 +77,7 @@ $ npm install
 $ npm run dev
 ```
 
-打包
+##### 打包
 
 1. ```npm install``` 安装依赖
 2. ```npm run package-win32``` 打包window版本，软件生成在release目录下
