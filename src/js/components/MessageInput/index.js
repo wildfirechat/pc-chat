@@ -282,7 +282,7 @@ export default class MessageInput extends Component {
                         }}
                     />
                     <i
-                        className="icon-ion-ios-heart"
+                        className="icon-ion-scissors"
                         id="screenShot"
                         onClick={e => canisend && this.screenShot()}
                         style={{
