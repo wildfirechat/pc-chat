@@ -53,8 +53,8 @@ class WfcManager {
     }
 
     // /**
-    //  * 
-    //  * @param {function} listener 
+    //  *
+    //  * @param {function} listener
     //  */
     // setOnReceiveMessageListener(listener) {
     //     if (typeof listener !== 'function') {
@@ -186,8 +186,8 @@ class WfcManager {
     }
 
     /**
-     * 
-     * @param {messagecontent} content 
+     *
+     * @param {messagecontent} content
      */
     registerMessageContent(type, content) {
         self.messageContentList[type] = content;
@@ -235,6 +235,11 @@ class WfcManager {
         return proto.getServerDeltaTime();
     }
 
+    screenShot() {
+        var ret = proto.screenShot();
+        return ret;
+    }
+
     isLogin() {
         // return proto.isLogin();
         return self.isLogined;
@@ -259,8 +264,8 @@ class WfcManager {
     }
 
     /**
-     * @param {string} userId 
-     * @param {bool} fresh 
+     * @param {string} userId
+     * @param {bool} fresh
      */
     getUserInfo(userId, fresh = false, groupId = '') {
         if (!userId || userId === '') {
@@ -930,12 +935,12 @@ class WfcManager {
     }
 
     /**
-     * 
+     *
      * @param {Conversation} conversation
-     * @param {number} fromIndex 
-     * @param {boolean} before 
-     * @param {number} count 
-     * @param {string} withUser 
+     * @param {number} fromIndex
+     * @param {boolean} before
+     * @param {number} count
+     * @param {string} withUser
      */
     async getMessages(conversation, fromIndex, before = true, count = 20, withUser = '') {
         let protoMsgsStr = proto.getMessages(JSON.stringify(conversation), [], fromIndex, before, count, withUser);
@@ -1059,10 +1064,10 @@ class WfcManager {
     }
 
     /**
-     * 
-     * @param {Conversation} conversation 
-     * @param {MessageContent} messageContent 
-     * @param {MessageStatus} status 
+     *
+     * @param {Conversation} conversation
+     * @param {MessageContent} messageContent
+     * @param {MessageStatus} status
      * @param {boolean} notify 是否触发onReceiveMessage
      * @param {Number} serverTime 服务器时间，精度到毫秒
      */

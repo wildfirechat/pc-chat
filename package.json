@@ -48,7 +48,18 @@
       "title": "wildfireChat ${version}"
     },
     "mac": {
-      "icon": "../resource/dock.icns"
+      "icon": "../resource/dock.icns",
+      "target":"zip",
+      "extraResources":[
+        {
+          "from": "../mac-qt-denpendency/framework",
+          "to": "../Frameworks"
+        },
+        {
+          "from": "../mac-qt-denpendency/app",
+          "to": "../"
+        }
+      ]
     },
     "linux": {
       "icon": "../resource",
@@ -63,7 +74,13 @@
     "win": {
       "target": "nsis",
       "icon": "../resource/win.ico",
-      "requestedExecutionLevel": "asInvoker"
+      "requestedExecutionLevel": "asInvoker",
+      "extraResources":[
+        {
+          "from": "../win32-qt-denpendency",
+          "to": "../"
+        }
+      ]
     },
     "nsis": {
       "oneClick": false,
