@@ -49,8 +49,7 @@
     },
     "mac": {
       "icon": "../resource/dock.icns",
-      "target":"zip",
-      "extraResources":[
+      "extraResources": [
         {
           "from": "../mac-qt-denpendency/framework",
           "to": "../Frameworks"
@@ -75,7 +74,7 @@
       "target": "nsis",
       "icon": "../resource/win.ico",
       "requestedExecutionLevel": "asInvoker",
-      "extraResources":[
+      "extraResources": [
         {
           "from": "../win32-qt-denpendency",
           "to": "../"
