@@ -253,7 +253,7 @@ export default class MessageInput extends Component {
                 <div
                     className={classes.tips}
                 >
-                    You should choose a contact first.
+                    请先选择一个会话。
                 </div>
 
                 <input
