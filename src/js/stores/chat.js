@@ -245,6 +245,17 @@ class Chat {
     @action toggleConversation(show = !self.showConversation) {
         self.showConversation = show;
     }
+    onRecallMessage(operatorUid, messageUid) {
+      console.log('chat on recall message');
+      if (self.conversation && self.messageList) {
+        for(var i = 0; i < self.messageList.length; i++) {
+          if (self.messageList[i].messageUid == messageUid && self.messageList[i].messageContent.type != MessageContentType.RecallMessage_Notification) {
+            self.messageList.slice(i,1);
+            break;
+          }
+        }
+      }
+    }
 
     onReceiveMessage(message, hasMore) {
         console.log('chat on receive message');
@@ -277,6 +288,7 @@ class Chat {
         // 第一次进入的时候订阅
         if (self.conversation === undefined) {
             wfc.eventEmitter.on(EventType.ReceiveMessage, self.onReceiveMessage);
+            wfc.eventEmitter.on(EventType.RecallMessage, self.onRecallMessage);
         }
 
         self.conversation = conversation;
