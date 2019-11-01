@@ -9,9 +9,9 @@ import contacts from './contacts';
 import settings from './settings';
 import members from './members';
 import snackbar from './snackbar';
-import wfc from '../wfc/wfc'
+import wfc from '../wfc/client/wfc'
 import Message from '../wfc/messages/message';
-import EventType from '../wfc/wfcEvent';
+import EventType from '../wfc/client/wfcEvent';
 import ConversationType from '../wfc/model/conversationType';
 import MessageContentMediaType from '../wfc/messages/messageContentMediaType';
 import ImageMessageContent from '../wfc/messages/imageMessageContent';

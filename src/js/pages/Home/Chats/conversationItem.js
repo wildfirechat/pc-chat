@@ -6,7 +6,7 @@ import helper from 'utils/helper';
 import ConversationType from '../../../wfc/model/conversationType';
 import classes from './style.css';
 import ConversationInfo from '../../../wfc/model/conversationInfo';
-import wfc from '../../../wfc/wfc'
+import wfc from '../../../wfc/client/wfc'
 
 
 export default class ConversationItem extends Component {
