@@ -31,8 +31,8 @@
  */
 import Conversation from '../model/conversation'
 import NotificationMessageContent from './notification/notificationMessageContent'
-import wfc from '../wfc'
-import MessageConfig from '../messageConfig';
+import wfc from '../client/wfc'
+import MessageConfig from '../client/messageConfig';
 import UnknownMessageContent from './unknownMessageContent';
 import PersistFlag from './persistFlag';
 export default class Message {

@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react';
 import classes from './style.css';
 import helper from 'utils/helper';
 import GroupInfo from '../../wfc/model/groupInfo';
-import wfc from '../../wfc/wfc'
+import wfc from '../../wfc/client/wfc'
 
 @inject(stores => ({
     show: stores.members.show,

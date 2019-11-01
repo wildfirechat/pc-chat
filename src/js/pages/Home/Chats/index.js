@@ -2,7 +2,7 @@
 import { inject, observer } from 'mobx-react';
 import moment from 'moment';
 import React, { Component } from 'react';
-import EventType from '../../../wfc/wfcEvent';
+import EventType from '../../../wfc/client/wfcEvent';
 import ConversationItem from './conversationItem';
 import classes from './style.css';
 import ConversationType from '../../../wfc/model/conversationType';

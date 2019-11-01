@@ -1,25 +1,25 @@
-import TextMessageContent from './messages/textMessageContent'
-import ImageMessageContent from './messages/imageMessageContent';
+import TextMessageContent from '../messages/textMessageContent'
+import ImageMessageContent from '../messages/imageMessageContent';
 
-import MessageContentType from './messages/messageContentType';
+import MessageContentType from '../messages/messageContentType';
 
-import PersistFlag from './messages/persistFlag';
-import TipNotificationMessageContent from './messages/notification/tipNotification';
-import UnknownMessageContent from './messages/unknownMessageContent';
-import UnsupportMessageContent from './messages/unsupportMessageConten';
-import ChangeGroupNameNotification from './messages/notification/changeGroupNameNotification';
-import KickoffGroupMemberNotification from './messages/notification/kickoffGroupMemberNotification';
-import AddGroupMemberNotification from './messages/notification/addGroupMemberNotification';
-import ChangeGroupPortraitNotification from './messages/notification/changeGroupPortraitNotification';
-import CreateGroupNotification from './messages/notification/createGroupNotification';
-import DismissGroupNotification from './messages/notification/dismissGroupNotification';
-import ModifyGroupAliasNotification from './messages/notification/modifyGroupAliasNotification';
-import QuitGroupNotification from './messages/notification/quitGroupNotification';
-import TransferGroupOwnerNotification from './messages/notification/transferGroupOwnerNotification';
-import FileMessageContent from './messages/fileMessageContent';
-import VideoMessageContent from './messages/videoMessageContent';
-import StickerMessageContent from './messages/stickerMessageContent';
-import SoundMessageContent from './messages/soundMessageContent';
+import PersistFlag from '../messages/persistFlag';
+import TipNotificationMessageContent from '../messages/notification/tipNotification';
+import UnknownMessageContent from '../messages/unknownMessageContent';
+import UnsupportMessageContent from '../messages/unsupportMessageConten';
+import ChangeGroupNameNotification from '../messages/notification/changeGroupNameNotification';
+import KickoffGroupMemberNotification from '../messages/notification/kickoffGroupMemberNotification';
+import AddGroupMemberNotification from '../messages/notification/addGroupMemberNotification';
+import ChangeGroupPortraitNotification from '../messages/notification/changeGroupPortraitNotification';
+import CreateGroupNotification from '../messages/notification/createGroupNotification';
+import DismissGroupNotification from '../messages/notification/dismissGroupNotification';
+import ModifyGroupAliasNotification from '../messages/notification/modifyGroupAliasNotification';
+import QuitGroupNotification from '../messages/notification/quitGroupNotification';
+import TransferGroupOwnerNotification from '../messages/notification/transferGroupOwnerNotification';
+import FileMessageContent from '../messages/fileMessageContent';
+import VideoMessageContent from '../messages/videoMessageContent';
+import StickerMessageContent from '../messages/stickerMessageContent';
+import SoundMessageContent from '../messages/soundMessageContent';
 
 export default class MessageConfig {
     static getMessageContentClazz(type) {

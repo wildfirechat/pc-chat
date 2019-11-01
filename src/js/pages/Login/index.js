@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
 import classes from './style.css';
-import Config from '../../wfc/config';
+import Config from '../../wfc/client/config';
 import jrQRCode from 'jr-qrcode'
-import wfc from '../../wfc/wfc'
-import PCSession from '../../wfc/pcsession';
+import wfc from '../../wfc/client/wfc'
+import PCSession from '../../wfc/model/pcsession';
 import { observable } from 'mobx';
 import axios from 'axios';
 
