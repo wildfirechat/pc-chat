@@ -20,6 +20,7 @@ import FileMessageContent from './messages/fileMessageContent';
 import VideoMessageContent from './messages/videoMessageContent';
 import StickerMessageContent from './messages/stickerMessageContent';
 import SoundMessageContent from './messages/soundMessageContent';
+import RecallMessageNotification from './messages/notification/recallMessageNotification';
 
 export default class MessageConfig {
     static getMessageContentClazz(type) {
@@ -180,6 +181,12 @@ export default class MessageConfig {
             flag: PersistFlag.Persist,
             type: MessageContentType.TransferGroupOwner_Notification,
             contentClazz: TransferGroupOwnerNotification,
+        },
+        {
+            name: 'recallMessageNotification',
+            flag: PersistFlag.Persist,
+            type: MessageContentType.RecallMessage_Notification,
+            contentClazz: RecallMessageNotification,
         },
     ];
 }
