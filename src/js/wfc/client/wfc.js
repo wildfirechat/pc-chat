@@ -25,6 +25,9 @@ import ChannelInfo from '../model/channelInfo';
 import ConversationType from '../model/conversationType';
 import TextMessageContent from '../messages/textMessageContent';
 import ConnectionStatus from './connectionStatus';
+import Long from 'long';
+
+
 var proto = null;
 
 // 其实就是imclient，后续可能需要改下名字
@@ -128,7 +131,7 @@ class WfcManager {
         if (!self.isLogined) {
             return;
         }
-        self.eventEmitter.emit(EventType.RecallMessage, operatorUid, messageUid);
+        self.eventEmitter.emit(EventType.RecallMessage, operatorUid, Long.fromValue(messageUid));
     }
 
     onMessageDeleted(messageId) {
@@ -248,8 +251,6 @@ class WfcManager {
     getConnectionStatus() {
         return proto.getConnectionStatus();
     }
-
-
 
     getMyGroupList() {
         let str = proto.getUserSettings(UserSettingScope.FavoriteGroup);
@@ -1002,8 +1003,9 @@ class WfcManager {
         proto.sendMessage(strConv, strCont, toUsers, 0,
             function (messageId, timestamp) { //preparedCB
                 message.memberId = messageId;
+                message.timestamp = Long.fromValue(timestamp);
                 if (typeof preparedCB === 'function') {
-                    preparedCB(messageId, Number(timestamp));
+                    preparedCB(messageId, Long.fromValue(timestamp));
                 }
             },
             function (uploaded, total) { //progressCB
@@ -1014,9 +1016,10 @@ class WfcManager {
                 //self.eventEmitter.emit(EventType.MessageStatusUpdate, message);
             },
             function (messageUid, timestamp) { //successCB
-                message.messageUid = messageUid;
+                message.messageUid = Long.fromValue(messageUid);
+                message.timestamp = Long.fromValue(timestamp);
                 if (typeof successCB === 'function') {
-                    successCB(Number(messageUid), Number(timestamp));
+                    successCB(Long.fromValue(messageUid), Long.fromValue(timestamp));
                 }
                 self.eventEmitter.emit(EventType.MessageStatusUpdate, message);
             },
