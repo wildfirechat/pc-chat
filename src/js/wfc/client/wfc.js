@@ -965,7 +965,7 @@ class WfcManager {
     }
 
     getMessageByUid(messageUid) {
-        let mStr = proto.getMessageByUid(messageUid);
+        let mStr = proto.getMessageByUid(messageUid.toString());
         return Message.fromProtoMessage(JSON.parse(mStr));
     }
 
@@ -1003,9 +1003,9 @@ class WfcManager {
         proto.sendMessage(strConv, strCont, toUsers, 0,
             function (messageId, timestamp) { //preparedCB
                 message.memberId = messageId;
-                message.timestamp = Long.fromValue(timestamp);
+                message.timestamp = Long.fromValue(timestamp).toNumber();
                 if (typeof preparedCB === 'function') {
-                    preparedCB(messageId, Long.fromValue(timestamp));
+                    preparedCB(messageId, Long.fromValue(timestamp).toNumber());
                 }
             },
             function (uploaded, total) { //progressCB
@@ -1016,14 +1016,16 @@ class WfcManager {
                 //self.eventEmitter.emit(EventType.MessageStatusUpdate, message);
             },
             function (messageUid, timestamp) { //successCB
+                message.status = MessageStatus.Sent;
                 message.messageUid = Long.fromValue(messageUid);
-                message.timestamp = Long.fromValue(timestamp);
+                message.timestamp = Long.fromValue(timestamp).toNumber();
                 if (typeof successCB === 'function') {
-                    successCB(Long.fromValue(messageUid), Long.fromValue(timestamp));
+                    successCB(Long.fromValue(messageUid), Long.fromValue(timestamp).toNumber());
                 }
                 self.eventEmitter.emit(EventType.MessageStatusUpdate, message);
             },
             function (errorCode) { //errorCB
+                message.status = MessageStatus.SendFailure;
                 if (typeof failCB === 'function') {
                     failCB(errorCode);
                 }
@@ -1036,13 +1038,13 @@ class WfcManager {
     // 更新了原始消息的内容
     async recallMessage(messageUid, successCB, failCB) {
         console.log('recall', messageUid);
-        proto.recall(messageUid,
+        proto.recall(messageUid.toString(),
             () => {
                 console.log('recall, s', messageUid);
                 if (successCB) {
                     successCB();
-                    this.onRecallMessage(this.getUserId(), messageUid);
                 }
+                this.onRecallMessage(this.getUserId(), messageUid);
             },
             (errorCode) => {
                 console.log('recall, f', messageUid, errorCode);
