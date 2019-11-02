@@ -1,5 +1,5 @@
 
-import { observable, action } from 'mobx';
+import { observable, action, extendObservable } from 'mobx';
 import axios from 'axios';
 import { ipcRenderer } from 'electron';
 
@@ -246,15 +246,11 @@ class Chat {
         self.showConversation = show;
     }
     onRecallMessage(operatorUid, messageUid) {
-      console.log('chat on recall message');
-      if (self.conversation && self.messageList) {
-        for(var i = 0; i < self.messageList.length; i++) {
-          if (self.messageList[i].messageUid == messageUid && self.messageList[i].messageContent.type != MessageContentType.RecallMessage_Notification) {
-            self.messageList.slice(i,1);
-            break;
-          }
+        let msg = wfc.getMessageByUid(messageUid);
+        if (self.conversation && self.conversation.equal(msg.conversation)) {
+            let index = self.messageList.findIndex(m => m.messageId === msg.messageId);
+            self.messageList[index] = msg;
         }
-      }
     }
 
     onReceiveMessage(message, hasMore) {
@@ -476,20 +472,20 @@ class Chat {
         let msg = new Message();
         msg.conversation = self.conversation;
         msg.messageContent = messgeContent;
-        var m;
+        let m;
         wfc.sendMessage(msg,
-            function (messageId, timestamp) {
+            (messageId, timestamp) => {
                 m = wfc.getMessageById(messageId);
                 self.messageList.push(m);
             },
             null,
-            function (messageUid, timestamp) {
+            (messageUid, timestamp) => {
                 m.messageUid = messageUid;
                 m.status = 1;
                 m.timestamp = timestamp;
 
             },
-            function (errorCode) {
+            (errorCode) => {
                 console.log('send message failed', errorCode);
             }
         );
@@ -641,7 +637,12 @@ class Chat {
     }
 
     @action async recallMessage(message) {
-        wfc.recallMessage(message.messageUid);
+        wfc.recallMessage(message.messageUid, () => {
+            let msg = wfc.getMessageById(message.messageId);
+            let oldMsg = self.messageList.find(m => m.messageId === msg.messageId);
+            // extendObservable(oldMsg, msg);
+            oldMsg.messageContent = msg.messageContent;
+        });
     }
 
     @action deleteMessage(messageId) {
