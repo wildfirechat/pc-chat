@@ -1,5 +1,5 @@
 import NotificationMessageContent from './notificationMessageContent'
-import wfc from '../../wfc'
+import wfc from '../../client/wfc'
 import MessageContentType from '../messageContentType';
 import { Base64 } from 'js-base64';
 
