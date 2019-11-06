@@ -20,10 +20,10 @@ import Loader from 'components/Loader';
 import Snackbar from 'components/Snackbar';
 import Offline from 'components/Offline';
 import Login from './Login';
-import wfc from '../wfc/wfc'
+import wfc from '../wfc/client/wfc'
 import { observable, action } from 'mobx';
-import EventType from '../wfc/wfcEvent';
-import ConnectionStatus from '../wfc/connectionStatus';
+import EventType from '../wfc/client/wfcEvent';
+import ConnectionStatus from '../wfc/client/connectionStatus';
 
 @inject(stores => ({
     isLogin: () => !!stores.sessions.auth,

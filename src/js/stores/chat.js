@@ -1,5 +1,5 @@
 
-import { observable, action } from 'mobx';
+import { observable, action, extendObservable } from 'mobx';
 import axios from 'axios';
 import { ipcRenderer } from 'electron';
 
@@ -9,9 +9,9 @@ import contacts from './contacts';
 import settings from './settings';
 import members from './members';
 import snackbar from './snackbar';
-import wfc from '../wfc/wfc'
+import wfc from '../wfc/client/wfc'
 import Message from '../wfc/messages/message';
-import EventType from '../wfc/wfcEvent';
+import EventType from '../wfc/client/wfcEvent';
 import ConversationType from '../wfc/model/conversationType';
 import MessageContentMediaType from '../wfc/messages/messageContentMediaType';
 import ImageMessageContent from '../wfc/messages/imageMessageContent';
@@ -245,6 +245,13 @@ class Chat {
     @action toggleConversation(show = !self.showConversation) {
         self.showConversation = show;
     }
+    onRecallMessage(operatorUid, messageUid) {
+        let msg = wfc.getMessageByUid(messageUid);
+        if (self.conversation && self.conversation.equal(msg.conversation)) {
+            let index = self.messageList.findIndex(m => m.messageId === msg.messageId);
+            self.messageList[index] = msg;
+        }
+    }
 
     onReceiveMessage(message, hasMore) {
         console.log('chat on receive message');
@@ -277,6 +284,7 @@ class Chat {
         // 第一次进入的时候订阅
         if (self.conversation === undefined) {
             wfc.eventEmitter.on(EventType.ReceiveMessage, self.onReceiveMessage);
+            wfc.eventEmitter.on(EventType.RecallMessage, self.onRecallMessage);
         }
 
         self.conversation = conversation;
@@ -464,20 +472,20 @@ class Chat {
         let msg = new Message();
         msg.conversation = self.conversation;
         msg.messageContent = messgeContent;
-        var m;
+        let m;
         wfc.sendMessage(msg,
-            function (messageId, timestamp) {
+            (messageId, timestamp) => {
                 m = wfc.getMessageById(messageId);
                 self.messageList.push(m);
             },
             null,
-            function (messageUid, timestamp) {
+            (messageUid, timestamp) => {
                 m.messageUid = messageUid;
                 m.status = 1;
                 m.timestamp = timestamp;
 
             },
-            function (errorCode) {
+            (errorCode) => {
                 console.log('send message failed', errorCode);
             }
         );
@@ -629,7 +637,12 @@ class Chat {
     }
 
     @action async recallMessage(message) {
-        wfc.recallMessage(message.messageUid);
+        wfc.recallMessage(message.messageUid, () => {
+            let msg = wfc.getMessageById(message.messageId);
+            let oldMsg = self.messageList.find(m => m.messageId === msg.messageId);
+            // extendObservable(oldMsg, msg);
+            oldMsg.messageContent = msg.messageContent;
+        });
     }
 
     @action deleteMessage(messageId) {

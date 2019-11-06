@@ -4,7 +4,7 @@ import pinyin from './../han';
 
 import helper from 'utils/helper';
 import GroupInfo from '../wfc/model/groupInfo';
-import wfc from '../wfc/wfc'
+import wfc from '../wfc/client/wfc'
 
 class Members {
     @observable show = false;

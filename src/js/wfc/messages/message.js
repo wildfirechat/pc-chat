@@ -31,18 +31,20 @@
  */
 import Conversation from '../model/conversation'
 import NotificationMessageContent from './notification/notificationMessageContent'
-import wfc from '../wfc'
-import MessageConfig from '../messageConfig';
+import wfc from '../client/wfc'
+import MessageConfig from '../client/messageConfig';
 import UnknownMessageContent from './unknownMessageContent';
 import PersistFlag from './persistFlag';
+import Long from 'long'
+import { observable, action } from 'mobx';
 export default class Message {
     conversation = {};
     from = '';
     content = {}; // 实际是payload
-    messageContent = {};
+    @observable messageContent = {};
     messageId = 0;
     direction = 0;
-    status = 0;
+    @observable status = 0;
     messageUid = 0;
     timestamp = 0;
     to = '';
@@ -55,8 +57,8 @@ export default class Message {
             return null;
         }
 
-        msg.messageUid = Number(msg.messageUid);
-        msg.timestamp = Number(msg.timestamp);
+        msg.messageUid = Long.fromValue(msg.messageUid);
+        msg.timestamp = Long.fromValue(msg.timestamp).toNumber();
         msg.conversation = new Conversation(obj.conversation.conversationType, obj.conversation.target, obj.conversation.line);
         let contentClazz = MessageConfig.getMessageContentClazz(msg.content.type);
         if (contentClazz) {

@@ -1,6 +1,6 @@
 import Conversation from "./conversation";
 import Message from "../messages/message";
-import wfc from '../wfc'
+import wfc from '../client/wfc'
 
 import ConversationType from "./conversationType";
 

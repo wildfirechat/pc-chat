@@ -13,7 +13,7 @@ import search from './search';
 import batchsend from './batchsend';
 import settings from './settings';
 import snackbar from './snackbar';
-import wfc from '../wfc/wfc'
+import wfc from '../wfc/client/wfc'
 import confirmImagePaste from './confirmImagePaste';
 
 const stores = {

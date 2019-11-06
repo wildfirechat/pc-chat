@@ -13,16 +13,16 @@ import { parser as emojiParse } from 'utils/emoji';
 import { on, off } from 'utils/event';
 import MessageContentType from '../../../wfc/messages/messageContentType';
 import UnsupportMessageContent from '../../../wfc/messages/unsupportMessageConten';
-import wfc from '../../../wfc/wfc'
+import wfc from '../../../wfc/client/wfc'
 import UserInfo from '../../../wfc/model/userInfo';
 import GroupInfo from '../../../wfc/model/groupInfo';
 import NotificationMessageContent from '../../../wfc/messages/notification/notificationMessageContent';
 import MessageStatus from '../../../wfc/messages/messageStatus';
 import { fs } from 'file-system';
 import BenzAMRRecorder from 'benz-amr-recorder';
-import MessageConfig from '../../../wfc/messageConfig';
+import MessageConfig from '../../../wfc/client/messageConfig';
 import UnknownMessageContent from '../../../wfc/messages/unknownMessageContent';
-import EventType from '../../../wfc/wfcEvent';
+import EventType from '../../../wfc/client/wfcEvent';
 import ConversationType from '../../../wfc/model/conversationType';
 
 

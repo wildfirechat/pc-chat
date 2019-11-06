@@ -1,6 +1,6 @@
 
 import { observable, action } from 'mobx';
-import wfc from '../wfc/wfc'
+import wfc from '../wfc/client/wfc'
 
 class AddFriend {
     @observable show = false;
