@@ -8,7 +8,7 @@ import clazz from 'classname';
 import classes from './style.css';
 import Avatar from 'components/Avatar';
 import { Modal, ModalBody } from 'components/Modal';
-import wfc from '../../wfc/wfc'
+import wfc from '../../wfc/client/wfc'
 import Conversation from '../../wfc/model/conversation';
 import ConversationType from '../../wfc/model/conversationType';
 import KickoffGroupMemberNotification from '../../wfc/messages/notification/kickoffGroupMemberNotification';

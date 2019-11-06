@@ -6,7 +6,7 @@ import { ipcRenderer } from 'electron';
 
 import helper from 'utils/helper';
 import storage from 'utils/storage';
-import wfc from '../wfc/wfc';
+import wfc from '../wfc/client/wfc';
 import ConversationType from '../wfc/model/conversationType';
 
 async function updateMenus({ conversations = [], contacts = [] }) {

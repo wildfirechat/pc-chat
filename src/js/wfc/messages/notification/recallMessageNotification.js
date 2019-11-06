@@ -1,7 +1,8 @@
 import NotificationMessageContent from './notificationMessageContent'
-import wfc from '../../wfc'
+import wfc from '../../client/wfc'
 import MessageContentType from '../messageContentType';
 import { Base64 } from 'js-base64';
+import Long from 'long';
 
 export default class RecallMessageNotification extends NotificationMessageContent {
     operatorId = '';
@@ -28,6 +29,6 @@ export default class RecallMessageNotification extends NotificationMessageConten
     decode(payload) {
         super.decode(payload);
         this.operatorId = payload.content;
-        this.messageUid = Number(Base64.decode(payload.binaryContent));
+        this.messageUid = Long.fromValue(Base64.decode(payload.binaryContent));
     }
 }

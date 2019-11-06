@@ -7,7 +7,7 @@ import contacts from './contacts';
 import sessions from './sessions';
 import storage from 'utils/storage';
 import helper from 'utils/helper';
-import wfc from '../wfc/wfc'
+import wfc from '../wfc/client/wfc'
 
 class AddMember {
     @observable show = false;

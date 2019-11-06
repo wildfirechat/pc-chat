@@ -5,7 +5,7 @@ import clazz from 'classname';
 import randomColor from 'randomcolor';
 
 import classes from './style.css';
-import EventType from '../../../wfc/wfcEvent';
+import EventType from '../../../wfc/client/wfcEvent';
 import stores from '../../../stores';
 
 @inject(stores => ({

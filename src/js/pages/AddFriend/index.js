@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Modal, ModalBody } from 'components/Modal';
 import { inject, observer } from 'mobx-react';
-import wfc from '../../wfc/wfc'
+import wfc from '../../wfc/client/wfc'
 
 import classes from './style.css';
 

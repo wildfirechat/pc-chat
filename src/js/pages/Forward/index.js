@@ -5,7 +5,7 @@ import { inject, observer } from 'mobx-react';
 
 import classes from './style.css';
 import UserList from 'components/UserList';
-import wfc from '../../wfc/wfc'
+import wfc from '../../wfc/client/wfc'
 import UserInfo from '../../wfc/model/userInfo';
 
 @inject(stores => ({

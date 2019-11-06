@@ -8,7 +8,7 @@ import chat from './chat';
 import storage from 'utils/storage';
 import helper from 'utils/helper';
 import { normalize } from 'utils/emoji';
-import wfc from '../wfc/wfc'
+import wfc from '../wfc/client/wfc'
 import UserInfo from '../wfc/model/userInfo';
 import GroupInfo from '../wfc/model/groupInfo';
 import NullUserInfo from '../wfc/model/nullUserInfo';

@@ -1,30 +1,33 @@
 // import proto from 'node-loader!../../../marswrapper.node';
-import Message from '../wfc/messages/message';
-import Conversation from '../wfc/model/conversation';
-import ConversationInfo from '../wfc/model/conversationInfo';
+import Message from '../messages/message';
+import Conversation from '../model/conversation';
+import ConversationInfo from '../model/conversationInfo';
 import { EventEmitter } from 'events';
 import EventType from './wfcEvent'
-import UserInfo from '../wfc/model/userInfo';
-import NullUserInfo from '../wfc/model/nullUserInfo';
-import NullGroupInfo from './model/nullGroupInfo';
-import GroupInfo from './model/groupInfo';
-import GroupMember from './model/groupMember';
+import UserInfo from '../model/userInfo';
+import NullUserInfo from '../model/nullUserInfo';
+import NullGroupInfo from '../model/nullGroupInfo';
+import GroupInfo from '../model/groupInfo';
+import GroupMember from '../model/groupMember';
 import { UserSettingScope } from './userSettingScope';
-import CreateGroupNotification from './messages/notification/createGroupNotification';
-import MessageContentMediaType from './messages/messageContentMediaType';
-import AddGroupMemberNotification from './messages/notification/addGroupMemberNotification';
+import CreateGroupNotification from '../messages/notification/createGroupNotification';
+import MessageContentMediaType from '../messages/messageContentMediaType';
+import AddGroupMemberNotification from '../messages/notification/addGroupMemberNotification';
 import MessageConfig from './messageConfig';
-import UnreadCount from './model/unreadCount';
-import ConversationSearchResult from './model/conversationSearchResult';
-import MessageStatus from './messages/messageStatus';
-import MessageContent from './messages/messageContent';
-import GroupSearchResult from './model/groupSearchResult';
-import FriendRequest from './model/friendRequest';
-import ChatRoomMemberInfo from './model/chatRoomMemberInfo';
-import ChannelInfo from './model/channelInfo';
-import ConversationType from './model/conversationType';
-import TextMessageContent from './messages/textMessageContent';
+import UnreadCount from '../model/unreadCount';
+import ConversationSearchResult from '../model/conversationSearchResult';
+import MessageStatus from '../messages/messageStatus';
+import MessageContent from '../messages/messageContent';
+import GroupSearchResult from '../model/groupSearchResult';
+import FriendRequest from '../model/friendRequest';
+import ChatRoomMemberInfo from '../model/chatRoomMemberInfo';
+import ChannelInfo from '../model/channelInfo';
+import ConversationType from '../model/conversationType';
+import TextMessageContent from '../messages/textMessageContent';
 import ConnectionStatus from './connectionStatus';
+import Long from 'long';
+
+
 var proto = null;
 
 // 其实就是imclient，后续可能需要改下名字
@@ -128,7 +131,7 @@ class WfcManager {
         if (!self.isLogined) {
             return;
         }
-        self.eventEmitter.emit(EventType.RecallMessage, operatorUid, messageUid);
+        self.eventEmitter.emit(EventType.RecallMessage, operatorUid, Long.fromValue(messageUid));
     }
 
     onMessageDeleted(messageId) {
@@ -248,8 +251,6 @@ class WfcManager {
     getConnectionStatus() {
         return proto.getConnectionStatus();
     }
-
-
 
     getMyGroupList() {
         let str = proto.getUserSettings(UserSettingScope.FavoriteGroup);
@@ -964,7 +965,7 @@ class WfcManager {
     }
 
     getMessageByUid(messageUid) {
-        let mStr = proto.getMessageByUid(messageUid);
+        let mStr = proto.getMessageByUid(messageUid.toString());
         return Message.fromProtoMessage(JSON.parse(mStr));
     }
 
@@ -1002,8 +1003,9 @@ class WfcManager {
         proto.sendMessage(strConv, strCont, toUsers, 0,
             function (messageId, timestamp) { //preparedCB
                 message.memberId = messageId;
+                message.timestamp = Long.fromValue(timestamp).toNumber();
                 if (typeof preparedCB === 'function') {
-                    preparedCB(messageId, Number(timestamp));
+                    preparedCB(messageId, Long.fromValue(timestamp).toNumber());
                 }
             },
             function (uploaded, total) { //progressCB
@@ -1014,13 +1016,16 @@ class WfcManager {
                 //self.eventEmitter.emit(EventType.MessageStatusUpdate, message);
             },
             function (messageUid, timestamp) { //successCB
-                message.messageUid = messageUid;
+                message.status = MessageStatus.Sent;
+                message.messageUid = Long.fromValue(messageUid);
+                message.timestamp = Long.fromValue(timestamp).toNumber();
                 if (typeof successCB === 'function') {
-                    successCB(Number(messageUid), Number(timestamp));
+                    successCB(Long.fromValue(messageUid), Long.fromValue(timestamp).toNumber());
                 }
                 self.eventEmitter.emit(EventType.MessageStatusUpdate, message);
             },
             function (errorCode) { //errorCB
+                message.status = MessageStatus.SendFailure;
                 if (typeof failCB === 'function') {
                     failCB(errorCode);
                 }
@@ -1033,13 +1038,13 @@ class WfcManager {
     // 更新了原始消息的内容
     async recallMessage(messageUid, successCB, failCB) {
         console.log('recall', messageUid);
-        proto.recall(messageUid,
+        proto.recall(messageUid.toString(),
             () => {
                 console.log('recall, s', messageUid);
                 if (successCB) {
                     successCB();
-                    this.onRecallMessage(this.getUserId(), messageUid);
                 }
+                this.onRecallMessage(this.getUserId(), messageUid);
             },
             (errorCode) => {
                 console.log('recall, f', messageUid, errorCode);

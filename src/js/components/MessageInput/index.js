@@ -9,7 +9,7 @@ import Emoji from './Emoji';
 import Tribute from "tributejs";
 import TextMessageContent from '../../wfc/messages/textMessageContent';
 import ConversationType from '../../wfc/model/conversationType';
-import wfc from '../../wfc/wfc'
+import wfc from '../../wfc/client/wfc'
 import pinyin from '../../han';
 
 export default class MessageInput extends Component {

@@ -1,5 +1,6 @@
 import Conversation from "./conversation";
 import Message from "../messages/message";
+import Long from 'long';
 
 export default class ConversationSearchResult {
     conversation;
@@ -15,7 +16,7 @@ export default class ConversationSearchResult {
         if (obj.matchCount === 1) {
             conversationSearchResult.matchMessage = Message.fromProtoMessage(obj.marchedMessage);
         }
-        conversationSearchResult.timestamp = Number(obj.timestamp);
+        conversationSearchResult.timestamp = Long.fromValue(obj.timestamp).toNumber();
 
         return conversationSearchResult;
     }

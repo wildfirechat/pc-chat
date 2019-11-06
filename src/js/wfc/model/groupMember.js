@@ -1,4 +1,4 @@
-import wfc from '../wfc'
+import wfc from '../client/wfc'
 export default class GroupMember {
     groupId = '';
     memberId = '';

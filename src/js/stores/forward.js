@@ -3,7 +3,7 @@ import { observable, action } from 'mobx';
 import pinyin from '../han';
 
 import contacts from './contacts';
-import wfc from '../wfc/wfc'
+import wfc from '../wfc/client/wfc'
 import UserInfo from '../wfc/model/userInfo';
 import GroupInfo from '../wfc/model/groupInfo';
 import Conversation from '../wfc/model/conversation';
