@@ -451,7 +451,8 @@ class WfcManager {
 
         let payload = notifyContent.encode();
         let notifyContentStr = JSON.stringify(payload);
-        proto.createGroup(groupId, name, portrait, memberIds, lines, notifyContentStr,
+        //群组类型0，管理员和群主才能加人和退群，修改群信息；2，严格模式，只有群主和管理员才能操作群
+        proto.createGroup(groupId, 2, name, portrait, memberIds, lines, notifyContentStr,
             (groupId) => {
                 if (successCB) {
                     successCB(groupId);
