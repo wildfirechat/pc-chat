@@ -61,6 +61,7 @@ export default class NewChat extends Component {
             groupName = groupName.substr(0, groupName.lastIndexOf('、'))
 
             var portraits = [];
+            selected.splice(0, 0, wfc.getUserId());
             for (let i = 0; i < 9 && i < selected.length; i++) {
                 let userInfo = wfc.getUserInfo(selected[i]);
                 portraits.push(userInfo.portrait);
