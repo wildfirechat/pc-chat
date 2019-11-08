@@ -1082,7 +1082,8 @@ class WfcManager {
     }
 
     async updateMessageContent(messageId, messageContent) {
-        proto.updateMessage(messageId, JSON.stringify(messageContent))
+        let protoMessageContent = messageContent.encode();
+        proto.updateMessage(messageId, JSON.stringify(protoMessageContent))
     }
 
     async uploadMedia(fileName, data, mediaType, successCB, failCB, progressCB) {
