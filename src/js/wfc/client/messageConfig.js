@@ -1,4 +1,5 @@
 import TextMessageContent from '../messages/textMessageContent'
+import PTextMessageContent from '../messages/ptextMessageContent'
 import ImageMessageContent from '../messages/imageMessageContent';
 
 import MessageContentType from '../messages/messageContentType';
@@ -81,6 +82,12 @@ export default class MessageConfig {
             flag: PersistFlag.Persist_And_Count,
             type: MessageContentType.Text,
             contentClazz: TextMessageContent,
+        },
+        {
+            name: 'ptext',
+            flag: PersistFlag.Persist,
+            type: MessageContentType.P_Text,
+            contentClazz: PTextMessageContent,
         },
         {
             name: 'voice',

@@ -8,6 +8,7 @@ import classes from './style.css';
 import Emoji from './Emoji';
 import Tribute from "tributejs";
 import TextMessageContent from '../../wfc/messages/textMessageContent';
+import PTextMessageContent from '../../wfc/messages/ptextMessageContent';
 import ConversationType from '../../wfc/model/conversationType';
 import wfc from '../../wfc/client/wfc'
 import pinyin from '../../han';

@@ -126,6 +126,7 @@ export default class ChatContent extends Component {
                 console.log('unknown', unknownMessageContent.digest(), message);
                 return emojiParse(unknownMessageContent.digest());
             case MessageContentType.Text:
+            case MessageContentType.P_Text:
                 if (message.location) {
                     return `
                         <img class="open-map unload" data-map="${message.location.href}" src="${message.location.image}" />
@@ -347,7 +348,7 @@ export default class ChatContent extends Component {
 
                         [classes.isme]: message.direction === 0,
                         //[classes.isText]: type === 1 && !message.location,
-                        [classes.isText]: type === MessageContentType.Text || (message.messageContent instanceof UnknownMessageContent) || (message.messageContent instanceof UnsupportMessageContent),
+                        [classes.isText]: type === MessageContentType.Text || type === MessageContentType.P_Text || (message.messageContent instanceof UnknownMessageContent) || (message.messageContent instanceof UnsupportMessageContent),
                         [classes.isLocation]: type === MessageContentType.Location,
                         [classes.isImage]: type === MessageContentType.Image,
                         //[classes.isEmoji]: type === 47 || type === 49 + 8,

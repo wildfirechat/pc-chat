@@ -9,6 +9,7 @@ export default class MessageContentType {
     static Video = 6;
     static Sticker = 7;
     static ImageText = 8;
+    static P_Text = 9;
 
     // 提醒消息
     static RecallMessage_Notification = 80;
