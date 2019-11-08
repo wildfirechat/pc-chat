@@ -7,7 +7,7 @@ import randomColor from 'randomcolor';
 import classes from './style.css';
 import EventType from '../../../wfc/client/wfcEvent';
 import stores from '../../../stores';
-import wfc from '../../wfc/client/wfc';
+import wfc from '../../../wfc/client/wfc';
 
 @inject(stores => ({
     filter: stores.contacts.filter,

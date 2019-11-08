@@ -664,6 +664,12 @@ export default class ChatContent extends Component {
         }
     }
 
+    componentWillMount() {
+        console.log('componentWillMount');
+        wfc.eventEmitter.on(EventType.UserInfoUpdate, this.onUserInfoUpdate);
+        wfc.eventEmitter.on(EventType.GroupInfoUpdate, this.onGroupInfoUpdate);
+    }
+
     componentWillUnmount() {
         !this.props.rememberConversation && this.props.reset();
         this.stopAudio();
@@ -845,5 +851,17 @@ export default class ChatContent extends Component {
                 </div>
             </div>
         );
+    }
+
+    onUserInfoUpdate = (userId) => {
+        this.props.messages.map((c, index) => {
+            if (c.conversation.conversationType === ConversationType.Single && c.conversation.target === userId) {
+                // Todo update user info
+            }
+        });
+    }
+
+    onGroupInfoUpdate = (groupId) => {
+        // Todo update group info
     }
 }
