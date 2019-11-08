@@ -7,13 +7,17 @@ import randomColor from 'randomcolor';
 import classes from './style.css';
 import EventType from '../../../wfc/client/wfcEvent';
 import stores from '../../../stores';
+import wfc from '../../wfc/client/wfc';
 
 @inject(stores => ({
     filter: stores.contacts.filter,
     searching: stores.search.searching,
     filtered: stores.contacts.filtered,
     getContacts: stores.contacts.getContacts,
-    showUserinfo: stores.contactInfo.toggle,
+    showUserinfo: async (user, e) => {
+        wfc.getUserInfo(user.uid, true);
+        stores.userinfo.toggle(user, e);
+    },
     contactItemName: stores.contacts.contactItemName,
     event: stores.wfc.eventEmitter,
 }))

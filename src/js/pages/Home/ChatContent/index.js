@@ -58,6 +58,8 @@ import ConversationType from '../../../wfc/model/conversationType';
             }
         }
 
+        wfc.getUserInfo(user.uid, true);
+
         stores.userinfo.toggle(true, stores.chat.conversation, user, caniremove);
     },
     getMessage: (messageId) => {
