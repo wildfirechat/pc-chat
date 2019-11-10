@@ -441,7 +441,13 @@ function updateTray(unread = 0) {
         }
 
         let contextmenu = Menu.buildFromTemplate(trayMenu);
-        let icon = `${__dirname}/src/assets/images/tray.png`;
+        let icon;
+        if (!isOsx) {
+          icon = `${__dirname}/src/assets/images/icon.png`;
+        } else {
+          icon = `${__dirname}/src/assets/images/tray.png`;
+        }
+
 
         // Make sure the last tray has been destroyed
         setTimeout(() => {
@@ -802,20 +808,27 @@ function clearBlink() {
 
 function execBlink (flag, _interval) {
     let interval = _interval ? _interval : 500;
-    let icon= [`${__dirname}/src/assets/images/tray.png`,
-            `${__dirname}/src/assets/images/Remind_icon.png`];
+    let icons;
+    if (!isOsx) {
+      icons = [`${__dirname}/src/assets/images/icon.png`,
+              `${__dirname}/src/assets/images/Remind_icon.png`];
+    } else {
+      icons = [`${__dirname}/src/assets/images/tray.png`,
+              `${__dirname}/src/assets/images/Remind_icon.png`];
+    }
+
     let count = 0;
     if(flag){
         if (blink) {
             return;
         }
         blink = setInterval(function(){
-            toggleTrayIcon(icon[count++]);
+            toggleTrayIcon(icons[count++]);
             count = count > 1 ? 0 : 1;
         }, interval);
     } else {
         clearBlink();
-        toggleTrayIcon(icon[0]);
+        toggleTrayIcon(icons[0]);
     }
 
 }
