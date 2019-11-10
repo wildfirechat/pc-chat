@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import { ipcRenderer, remote } from 'electron';
+import { ipcRenderer, remote, isElectron } from '../utils/platform';
 
 import classes from './Layout.css';
 import Header from './Header';
@@ -46,6 +46,7 @@ export default class Layout extends Component {
     };
 
     componentDidMount() {
+        if (isElectron()) {
         var templates = [
             {
                 label: 'Undo',
@@ -72,7 +73,6 @@ export default class Layout extends Component {
             },
         ];
         var menu = new remote.Menu.buildFromTemplate(templates);
-        var canidrag = this.props.canidrag;
 
         document.body.addEventListener('contextmenu', e => {
             e.preventDefault();
@@ -88,7 +88,9 @@ export default class Layout extends Component {
                 node = node.parentNode;
             }
         });
+        }
 
+        var canidrag = this.props.canidrag;
         // window.addEventListener('offline', () => {
         //     this.setState({
         //         offline: true,
@@ -103,12 +105,13 @@ export default class Layout extends Component {
         //     });
         // });
 
-        if (window.process.platform === 'win32') {
+
+        if (window.process && window.process.platform === 'win32') {
             document.body.classList.add('isWin');
         }
 
         window.ondragover = e => {
-            if (canidrag()) {
+            if (this.props.canidrag()) {
                 this.refs.holder.classList.add(classes.show);
                 this.refs.viewport.classList.add(classes.blur);
             }
@@ -119,7 +122,7 @@ export default class Layout extends Component {
         };
 
         window.ondragleave = () => {
-            if (!canidrag()) return false;
+            if (!this.props.canidrag()) return false;
 
             this.refs.holder.classList.remove(classes.show);
             this.refs.viewport.classList.remove(classes.blur);
@@ -135,7 +138,7 @@ export default class Layout extends Component {
             e.preventDefault();
             e.stopPropagation();
 
-            if (files.length && canidrag()) {
+            if (files.length && this.props.canidrag()) {
                 Array.from(files).map(e => this.props.process(e));
             }
 
@@ -151,6 +154,7 @@ export default class Layout extends Component {
 
 
     componentWillMount() {
+        console.log('lyaout--------------wfc', wfc);
         wfc.eventEmitter.on(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
     }
 
@@ -176,7 +180,9 @@ export default class Layout extends Component {
             return <Login />;
         }
 
-        ipcRenderer.send('logined');
+        if (ipcRenderer) {
+            ipcRenderer.send('logined');
+        }
         loading = !wfc.isLogin() && (this.connectionStatus === 0 || this.connectionStatus === 2/** receving */);
 
         return (
@@ -187,7 +193,9 @@ export default class Layout extends Component {
                     text={message} />
 
                 <Loader show={loading} />
-                <Header location={location} />
+                {
+                    isElectron() ? <Header location={location} /> : ''
+                }
                 <div
                     className={classes.container}
                     ref="viewport">

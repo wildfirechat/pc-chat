@@ -2,7 +2,7 @@ import MessageContent from './messageContent'
 import MessagePayload from './messagePayload';
 import MessageContentType from './messageContentType';
 // fixme 下面这行，不知道为什么，会有问题，可能是因为循环import
-// import { ContentType.Text } from '../messageConfig';
+// import { ContentType.Text } from '../client/messageConfig';
 export default class TextMessageContent extends MessageContent {
     content;
 

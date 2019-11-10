@@ -26,4 +26,9 @@ export default class MessageContentType {
     static ChangeGroupName_Notification = 110;
     static ModifyGroupAlias_Notification = 111;
     static ChangeGroupPortrait_Notification = 112;
+    static MuteGroupMember_Notification = 113;
+    static ChangeJoinType_Notification = 114;
+    static ChangePrivateChat_Notification = 115;
+    static ChangeSearchable_Notificaiton = 116;
+    static SetGroupManager_Notification = 117;
 }

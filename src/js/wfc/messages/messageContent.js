@@ -2,8 +2,11 @@ import MessagePayload from "./messagePayload";
 
 export default class MessageContent {
     type;
+    //0 普通消息, 1 部分提醒, 2 提醒全部
     mentionedType = 0;
+    //提醒对象，mentionedType 1时有效
     mentionedTargets = [];
+    extra;
 
     constructor(type, mentionedType = 0, mentionedTargets = []) {
         this.type = type;

@@ -35,8 +35,12 @@ import wfc from '../client/wfc'
 import MessageConfig from '../client/messageConfig';
 import UnknownMessageContent from './unknownMessageContent';
 import PersistFlag from './persistFlag';
+import MessageStatus from './messageStatus';
+import ConversationType from '../model/conversationType';
+import { encode } from 'base64-arraybuffer';
+import Config from '../client/config';
 import Long from 'long'
-import { observable, action } from 'mobx';
+import { observable } from 'mobx';
 export default class Message {
     conversation = {};
     from = '';
@@ -49,7 +53,12 @@ export default class Message {
     timestamp = 0;
     to = '';
 
+    constructor(conversation, messageContent) {
+        this.conversation = conversation;
+        this.messageContent = messageContent;
+    }
     static fromProtoMessage(obj) {
+        if (Config.SDK_PLATFORM === Config.SDK_PLATFORM_PC) {
         let msg = Object.assign(new Message(), obj);
         // big integer to number
         msg.messageId = Number(msg.messageId);
@@ -84,5 +93,69 @@ export default class Message {
         }
 
         return msg;
+        } else {
+            let msg = new Message();
+            msg.from = obj.fromUser;
+            msg.content = obj.content;
+            msg.messageUid = obj.messageId;
+
+            msg.timestamp = Number(obj.serverTimestamp);
+            let contentClazz = MessageConfig.getMessageContentClazz(obj.content.type);
+            if (contentClazz) {
+                let content = new contentClazz();
+                try {
+                    if (obj.content.data && obj.content.data.length > 0) {
+                        obj.content.binaryContent = encode(obj.content.data);
+    }
+                    content.decode(obj.content);
+                    content.extra = obj.content.extra;
+                    if (content instanceof NotificationMessageContent) {
+                        content.fromSelf = msg.from === wfc.getUserId();
+                    }
+                } catch (error) {
+                    console.log('decode message payload failed, fallback to unkownMessage', obj.content, error);
+                    let flag = MessageConfig.getMessageContentPersitFlag(obj.content.type);
+                    if (PersistFlag.Persist === flag || PersistFlag.Persist_And_Count === flag) {
+                        content = new UnknownMessageContent(obj.content);
+                    } else {
+                        return null;
+                    }
+                }
+                msg.messageContent = content;
+
+            } else {
+                console.error('message content not register', obj);
+            }
+
+
+            if (msg.from === wfc.getUserId()) {
+                msg.conversation = new Conversation(obj.conversation.type, obj.conversation.target, obj.conversation.line);
+                // out
+                msg.direction = 0;
+                msg.status = MessageStatus.Sent;
+            } else {
+                if (obj.conversation.type === ConversationType.Single) {
+                    msg.conversation = new Conversation(obj.conversation.type, obj.fromUser, obj.conversation.line);
+                } else {
+                    msg.conversation = new Conversation(obj.conversation.type, obj.conversation.target, obj.conversation.line);
+                }
+
+                // in
+                msg.direction = 1;
+                msg.status = MessageStatus.Unread;
+
+                if (msg.content.mentionedType === 2) {
+                    msg.status = MessageStatus.AllMentioned;
+                } else if (msg.content.mentionedType === 1) {
+                    for (const target of msg.content.mentionedTarget) {
+                        if (target === wfc.getUserId()) {
+                            msg.status = MessageStatus.Mentioned;
+                            break;
+                        }
+                    }
+                }
+            }
+            return msg;
+        }
     }
 }

@@ -1,8 +1,11 @@
-import { Base64 } from 'js-base64';
-import wfc from '../../client/wfc';
+import NotificationMessageContent from './notificationMessageContent'
+import wfc from '../../client/wfc'
 import MessageContentType from '../messageContentType';
-import GroupNotificationMessageContent from './groupNotification';
-export default class AddGroupMemberNotification extends GroupNotificationMessageContent {
+import atob from 'atob';
+import btoa from 'btoa';
+import GroupNotificationContent from './groupNotification';
+
+export default class AddGroupMemberNotification extends GroupNotificationContent {
     invitor = '';
     invitees = [];
 
@@ -23,7 +26,7 @@ export default class AddGroupMemberNotification extends GroupNotificationMessage
 
         let membersStr = '';
         this.invitees.forEach(m => {
-            let u = wfc.getUserInfo(m, false);
+            let u = wfc.getUserInfo(m, true);
             membersStr += ' ' + u.displayName;
         });
 
@@ -37,13 +40,13 @@ export default class AddGroupMemberNotification extends GroupNotificationMessage
             o: this.invitor,
             ms: this.invitees,
         };
-        payload.binaryContent = Base64.encode(JSON.stringify(obj));
+        payload.binaryContent = btoa(JSON.stringify(obj));
         return payload;
     };
 
     decode(payload) {
         super.decode(payload);
-        let json = Base64.decode(payload.binaryContent);
+        let json = atob(payload.binaryContent);
         let obj = JSON.parse(json);
         this.groupId = obj.g;
         this.invitor = obj.o;

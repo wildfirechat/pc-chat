@@ -1,5 +1,5 @@
-import { Base64 } from 'js-base64';
-import wfc from '../../client/wfc';
+import NotificationMessageContent from './notificationMessageContent'
+import wfc from '../../client/wfc'
 import MessageContentType from '../messageContentType';
 import GroupNotificationContent from './groupNotification';
 
@@ -30,13 +30,13 @@ export default class TransferGroupOwnerNotification extends GroupNotificationCon
             o: this.operator,
             m: this.newOwner,
         };
-        payload.binaryContent = Base64.encode(JSON.stringify(obj));
+        payload.binaryContent = btoa(JSON.stringify(obj));
         return payload;
     }
 
     decode(payload) {
         super.decode(payload);
-        let json = Base64.decode(payload.binaryContent)
+        let json = atob(payload.binaryContent)
         let obj = JSON.parse(json);
         this.groupId = obj.g;
         this.operator = obj.o;

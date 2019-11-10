@@ -19,5 +19,6 @@ export default class GroupInfo {
     type = GroupType.Normal;
     memberCount = 0;
     extra = '';
-    updateDt;
+    updateDt = 0;
+    memberUpdateDt = 0;
 }

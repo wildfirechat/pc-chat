@@ -9,7 +9,7 @@ import NullUserInfo from '../model/nullUserInfo';
 import NullGroupInfo from '../model/nullGroupInfo';
 import GroupInfo from '../model/groupInfo';
 import GroupMember from '../model/groupMember';
-import { UserSettingScope } from './userSettingScope';
+import UserSettingScope from './userSettingScope';
 import CreateGroupNotification from '../messages/notification/createGroupNotification';
 import MessageContentMediaType from '../messages/messageContentMediaType';
 import AddGroupMemberNotification from '../messages/notification/addGroupMemberNotification';
@@ -437,7 +437,7 @@ class WfcManager {
         return [];
     }
 
-    async createGroup(groupId, name, portrait, memberIds = [], lines = [0], notifyContent, successCB, failCB) {
+    async createGroup(groupId, groupType, name, portrait, memberIds = [], lines = [0], notifyContent, successCB, failCB) {
         groupId = !groupId ? '' : groupId;
         let myUid = self.getUserId();
 
@@ -452,7 +452,7 @@ class WfcManager {
         let payload = notifyContent.encode();
         let notifyContentStr = JSON.stringify(payload);
         //群组类型0，管理员和群主才能加人和退群，修改群信息；2，严格模式，只有群主和管理员才能操作群
-        proto.createGroup(groupId, 2, name, portrait, memberIds, lines, notifyContentStr,
+        proto.createGroup(groupId, groupType, name, portrait, memberIds, lines, notifyContentStr,
             (groupId) => {
                 if (successCB) {
                     successCB(groupId);
@@ -944,7 +944,7 @@ class WfcManager {
      * @param {number} count
      * @param {string} withUser
      */
-    async getMessages(conversation, fromIndex, before = true, count = 20, withUser = '') {
+    getMessages(conversation, fromIndex, before = true, count = 20, withUser = '') {
         let protoMsgsStr = proto.getMessages(JSON.stringify(conversation), [], fromIndex, before, count, withUser);
         // let protoMsgsStr = proto.getMessages('xxx', [0], fromIndex, before, count, withUser);
         var protoMsgs = JSON.parse(protoMsgsStr);

@@ -15,17 +15,16 @@ class Members {
     @observable query = '';
 
     @action async toggle(show = self.show, target = self.target) {
+        let userIds = [];
         let users = [];
         if (target instanceof GroupInfo) {
             let members = wfc.getGroupMembers(target.target);
             members.forEach(m => {
-                let u = wfc.getUserInfo(m.memberId);
-                // member alias
-                if (m.alias !== '') {
-                    u.displayName = m.alias;
-                }
-                users.push(u);
+                userIds.push(m.memberId);
             });
+            users = wfc.getUserInfos(userIds, target);
+        } else {
+            return;
         }
 
         var list = [];

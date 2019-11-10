@@ -1,13 +1,13 @@
-import MediaMessageContent from './mediaMessageContent'
+import MediaMessageContent from './mediaMessageContent';
 import MessageContentMediaType from './messageContentMediaType';
 import MessageContentType from './messageContentType';
 
 export default class ImageMessageContent extends MediaMessageContent {
-    // base64 encoded
+    // base64 encoded, 不包含头部:data:image/png;base64,
     thumbnail;
 
     constructor(file, thumbnail) {
-        super(MessageContentType.Image, file);
+        super(MessageContentType.Image, MessageContentMediaType.Image, file);
         this.thumbnail = thumbnail;
     }
 
@@ -15,7 +15,7 @@ export default class ImageMessageContent extends MediaMessageContent {
         return '[图片]';
     }
 
-    async encode() {
+    encode() {
         let payload = super.encode();
         payload.mediaType = MessageContentMediaType.Image;
         payload.binaryContent = this.thumbnail;
