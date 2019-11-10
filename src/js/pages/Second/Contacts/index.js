@@ -14,9 +14,9 @@ import wfc from '../../../wfc/client/wfc';
     searching: stores.search.searching,
     filtered: stores.contacts.filtered,
     getContacts: stores.contacts.getContacts,
-    showUserinfo: async (user, e) => {
-        wfc.getUserInfo(user.uid, true);
-        stores.userinfo.toggle(user, e);
+    showUserinfo: async (show, user) => {
+        user = wfc.getUserInfo(user.uid, true);
+        stores.contactInfo.toggle(show, user);
     },
     contactItemName: stores.contacts.contactItemName,
     event: stores.wfc.eventEmitter,
