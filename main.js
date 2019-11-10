@@ -426,10 +426,10 @@ function checkForUpdates() {
 }
 
 function updateTray(unread = 0) {
-    if (!isOsx) {
+    // if (!isOsx) {
         // Always show the tray icon on windows
         settings.showOnTray = true;
-    }
+    // }
 
     // Update unread mesage count
     // trayMenu[0].label = `你有 ${unread} 条信息`;
@@ -441,7 +441,7 @@ function updateTray(unread = 0) {
         }
 
         let contextmenu = Menu.buildFromTemplate(trayMenu);
-        let icon = `${__dirname}/src/assets/images/icon.png`;
+        let icon = `${__dirname}/src/assets/images/tray.png`;
 
         // Make sure the last tray has been destroyed
         setTimeout(() => {
@@ -468,9 +468,9 @@ function updateTray(unread = 0) {
     } else {
         if (!tray) return;
 
-        if (!isOsx) {
+        // if (!isOsx) {
           tray.destroy();
-        }
+        // }
         tray = null;
     }
 
@@ -783,9 +783,9 @@ app.on('ready', createMainWindow);
 app.on('before-quit', () => {
     // Fix issues #14
     forceQuit = true;
-    if (!isOsx) {
+    // if (!isOsx) {
       tray.destroy();
-    }
+    // }
 });
 app.on('activate', e => {
     if (!mainWindow.isVisible()) {
@@ -802,7 +802,7 @@ function clearBlink() {
 
 function execBlink (flag, _interval) {
     let interval = _interval ? _interval : 500;
-    let icon= [`${__dirname}/src/assets/images/icon.png`,
+    let icon= [`${__dirname}/src/assets/images/tray.png`,
             `${__dirname}/src/assets/images/Remind_icon.png`];
     let count = 0;
     if(flag){
