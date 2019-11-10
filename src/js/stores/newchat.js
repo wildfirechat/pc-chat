@@ -105,6 +105,7 @@ class NewChat {
 
                 // Resolve source and img when loaded
                 const img = new Image();
+                img.setAttribute('crossOrigin', 'anonymous');
                 //img.onerror = () => reject(new Error('Couldn\'t load image'));
                 img.onerror = () => resolve(null);
                 img.onload = () => resolve(Object.assign({}, source, { data: resizeImage.resize(img, size, size, resizeImage.PNG) }));
@@ -114,6 +115,7 @@ class NewChat {
             const loadResizedImages = (resizedImagesBase64) => resizedImagesBase64.map(image => new Promise((resolve, reject) => {
                 // Resolve source and img when loaded
                 const img = new Image();
+                img.setAttribute('crossOrigin', 'anonymous');
                 //img.onerror = () => reject(new Error('Couldn\'t load image2'));
                 img.onerror = () => resolve(null);
                 img.onload = () => resolve(Object.assign({}, { img }));

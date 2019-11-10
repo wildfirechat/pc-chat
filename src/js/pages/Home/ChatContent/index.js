@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
-import { ipcRenderer, remote } from 'electron';
+import { ipcRenderer, popMenu, isElectron, fs, ContextMenuTrigger, hideMenu } from '../../../utils/platform';
 import clazz from 'classname';
 import moment from 'moment';
 import axios from 'axios';
@@ -18,7 +18,6 @@ import UserInfo from '../../../wfc/model/userInfo';
 import GroupInfo from '../../../wfc/model/groupInfo';
 import NotificationMessageContent from '../../../wfc/messages/notification/notificationMessageContent';
 import MessageStatus from '../../../wfc/messages/messageStatus';
-import { fs } from 'file-system';
 import BenzAMRRecorder from 'benz-amr-recorder';
 import MessageConfig from '../../../wfc/client/messageConfig';
 import UnknownMessageContent from '../../../wfc/messages/unknownMessageContent';
@@ -144,7 +143,7 @@ export default class ChatContent extends Component {
                 if (uploading) {
                     return `
                         <div>
-                            <img class="open-image unload" data-id="${message.messageId}" src="${image.localPath}" data-fallback="${image.fallback}" />
+                            <img class="open-image unload" data-id="${message.messageId}" src="data:image/jpeg;base64, ${image.thumbnail}" data-fallback="${image.fallback}" />
                             <i class="icon-ion-android-arrow-up"></i>
                         </div>
                     `;
@@ -238,7 +237,7 @@ export default class ChatContent extends Component {
                 if (uploading) {
                     return `
                         <div>
-                            <video preload="metadata" controls src="${video.localPath}"></video>
+                            <video preload="metadata" controls src="data:image/jpeg;base64,${video.localPath}"></video>
 
                             <i class="icon-ion-android-arrow-up"></i>
                         </div>
@@ -278,7 +277,10 @@ export default class ChatContent extends Component {
             case MessageContentType.File:
                 // File message
                 let file = message.messageContent;
-                let download = fs.existsSync(file.localPath);
+                let download = false;
+                if (fs) {
+                    download = fs.existsSync(file.localPath);
+                }
 
                 /* eslint-disable */
                 return `
@@ -316,7 +318,7 @@ export default class ChatContent extends Component {
             // var { message, user } = this.props.parseMessage(e, from);
             var message = e;
             let user;
-            if (message.conversation.conversationType === ConversationType.Group) {
+            if (message.conversation.type === ConversationType.Group) {
                 user = wfc.getUserInfo(message.from, false, message.conversation.target);
             } else {
                 user = wfc.getUserInfo(message.from);
@@ -326,7 +328,7 @@ export default class ChatContent extends Component {
             if (message.messageContent instanceof NotificationMessageContent) {
                 return (
                     <div
-                        key={message.messageId}
+                        key={message.timestamp}
                         className={clazz('unread', classes.message, classes.system)}
                         dangerouslySetInnerHTML={{ __html: message.messageContent.formatNotification() }} />
                 );
@@ -378,16 +380,42 @@ export default class ChatContent extends Component {
                                 dangerouslySetInnerHTML={{ __html: user.displayName }}
                             />
 
-                            <div className={classes.content}>
-                                <p
-                                    onContextMenu={e => this.showMessageAction(message)}
-                                    dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
-                            </div>
+                            {
+                                this.messageContentLayout(message)
+                            }
+
                         </div>
                     </div>
                 </div>
             );
         });
+    }
+
+    messageContentLayout(message) {
+        if (isElectron()) {
+            return (
+                <div className={classes.content}>
+                    <p
+                        onContextMenu={e => this.showMessageAction(message)}
+                        dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <ContextMenuTrigger id={`menu_item_${message.messageId}`} >
+                        <div className={classes.content}>
+                            <p
+                                // onContextMenu={e => this.showMessageAction(message)}
+                                dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
+                        </div>
+                    </ContextMenuTrigger>
+                    {
+                        this.showMessageAction(message, `menu_item_${message.messageId}`)
+                    }
+                </div>
+            );
+        }
     }
 
     // 点击消息的响应
@@ -403,10 +431,14 @@ export default class ChatContent extends Component {
             // eslint-disable-next-line
             let base64 = new window.Buffer(response.data, 'binary').toString('base64');
 
-            ipcRenderer.send('open-image', {
-                dataset: target.dataset,
-                base64,
-            });
+            if (isElectron()) {
+                ipcRenderer.send('open-image', {
+                    dataset: target.dataset,
+                    base64,
+                });
+            } else {
+                // TODO
+            }
 
             return;
         }
@@ -468,9 +500,14 @@ export default class ChatContent extends Component {
         // Open the location
         if (target.tagName === 'IMG'
             && target.classList.contains('open-map')) {
-            ipcRenderer.send('open-map', {
-                map: target.dataset.map,
-            });
+            if (isElectron()) {
+
+                ipcRenderer.send('open-map', {
+                    map: target.dataset.map,
+                });
+            } else {
+                // TODO
+            }
         }
 
         // Show contact card
@@ -511,13 +548,18 @@ export default class ChatContent extends Component {
             let response = await axios.get(file.remotePath, { responseType: 'arraybuffer' });
             // eslint-disable-next-line
             let base64 = new window.Buffer(response.data, 'binary').toString('base64');
-            let filename = ipcRenderer.sendSync(
-                'file-download',
-                {
-                    filename: `${this.props.downloads}/${message.messageId}_${file.name}`,
-                    raw: base64,
-                },
-            );
+            if (isElectron()) {
+                let filename = ipcRenderer.sendSync(
+                    'file-download',
+                    {
+                        filename: `${this.props.downloads}/${message.messageId}_${file.name}`,
+                        raw: base64,
+                    },
+                );
+            } else {
+                // TODO
+
+            }
 
             file.localPath = filename;
             wfc.updateMessageContent(message.messageId, file);
@@ -546,12 +588,14 @@ export default class ChatContent extends Component {
                 }
             },
         ];
+
+        // TODO fixme
         var menu = new remote.Menu.buildFromTemplate(templates);
 
         menu.popup(remote.getCurrentWindow());
     }
 
-    showMessageAction(message) {
+    showMessageAction(message, menuId) {
 
         if (message.messageContent instanceof NotificationMessageContent) {
             return;
@@ -566,7 +610,7 @@ export default class ChatContent extends Component {
                 }
             },
         ];
-        var menu;
+
 
         if (caniforward) {
             templates.unshift({
@@ -589,8 +633,7 @@ export default class ChatContent extends Component {
 
         if (message.uploading) return;
 
-        menu = new remote.Menu.buildFromTemplate(templates);
-        menu.popup(remote.getCurrentWindow());
+        return popMenu(templates, message, menuId);
     }
 
     showMenu() {
@@ -633,6 +676,7 @@ export default class ChatContent extends Component {
     }
 
     handleScroll(e) {
+        hideMenu();
         var tips = this.refs.tips;
         var viewport = e.target;
         var unread = viewport.querySelectorAll(`.${classes.message}.unread`);
@@ -780,6 +824,7 @@ export default class ChatContent extends Component {
         } else if (target instanceof GroupInfo) {
             title = target.name;
         } else {
+            console.log('chatTo.........', target);
             title = 'TODO';
         }
         return title;
@@ -818,9 +863,13 @@ export default class ChatContent extends Component {
                                         title={signature} />
                                 </div>
 
-                                <i
-                                    className="icon-ion-android-more-vertical"
-                                    onClick={() => this.showMenu()} />
+                                {
+                                    isElectron() ? (
+                                        <i
+                                            className="icon-ion-android-more-vertical"
+                                            onClick={() => this.showMenu()} />
+                                    ) : ''
+                                }
                             </header>
 
                             <div

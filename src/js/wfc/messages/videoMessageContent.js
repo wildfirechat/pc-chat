@@ -6,7 +6,7 @@ export default class VideoMessageContent extends MediaMessageContent {
     // base64 encoded
     thumbnail;
     constructor(file, thumbnail) {
-        super(MessageContentType.Video, file);
+        super(MessageContentType.Video, MessageContentMediaType.Video, file);
         this.thumbnail = thumbnail;
     }
 
@@ -14,7 +14,7 @@ export default class VideoMessageContent extends MediaMessageContent {
         return '[视频]';
     }
 
-    async encode() {
+    encode() {
         let payload = super.encode();
         payload.binaryContent = this.thumbnail;
         payload.mediaType = MessageContentMediaType.Video;

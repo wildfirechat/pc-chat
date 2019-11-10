@@ -28,7 +28,7 @@ import KickoffGroupMemberNotification from '../../wfc/messages/notification/kick
     removeMember: async (user) => {
 
         let conversation = stores.userinfo.conversation;
-        if (conversation.conversationType === ConversationType.Group) {
+        if (conversation.type === ConversationType.Group) {
             let kickOffNotify = new KickoffGroupMemberNotification(wfc.getUserId(), [user.uid]);
             wfc.kickoffGroupMembers(conversation.target, [user.uid], [0], kickOffNotify,
                 () => {

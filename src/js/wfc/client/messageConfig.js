@@ -21,6 +21,7 @@ import FileMessageContent from '../messages/fileMessageContent';
 import VideoMessageContent from '../messages/videoMessageContent';
 import StickerMessageContent from '../messages/stickerMessageContent';
 import SoundMessageContent from '../messages/soundMessageContent';
+import TypingMessageContent from '../messages/typingMessageContent';
 import RecallMessageNotification from '../messages/notification/recallMessageNotification';
 
 export default class MessageConfig {
@@ -37,6 +38,15 @@ export default class MessageConfig {
         return UnknownMessageContent;
     }
 
+    static getMessageContentFlag(type) {
+        let flag = PersistFlag.No_Persist;
+        for (const content of MessageConfig.MessageContents) {
+            if (content.type === type) {
+                flag = content.flag;
+            }
+        }
+        return flag;
+    }
     static getMessageContentPersitFlag(type) {
         for (const content of MessageConfig.MessageContents) {
             if (content.type === type) {
@@ -136,6 +146,12 @@ export default class MessageConfig {
             contentClazz: TipNotificationMessageContent,
         },
         {
+            name: 'typing',
+            flag: PersistFlag.Transparent,
+            type: MessageContentType.Typing,
+            contentClazz: TypingMessageContent,
+        },
+        {
             name: 'addGroupMemberNotification',
             flag: PersistFlag.Persist,
             type: MessageContentType.AddGroupMember_Notification,
@@ -190,7 +206,7 @@ export default class MessageConfig {
             contentClazz: TransferGroupOwnerNotification,
         },
         {
-            name: 'recallMessageNotification',
+            name: 'recall',
             flag: PersistFlag.Persist,
             type: MessageContentType.RecallMessage_Notification,
             contentClazz: RecallMessageNotification,

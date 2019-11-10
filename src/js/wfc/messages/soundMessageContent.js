@@ -1,7 +1,12 @@
 import MediaMessageContent from './mediaMessageContent'
 import MessageContentMediaType from './messageContentMediaType';
+import MessageContentType from './messageContentType';
 export default class SoundMessageContent extends MediaMessageContent {
     duration;
+    constructor(file, duration) {
+        super(MessageContentType.Voice, MessageContentMediaType.File, file);
+        this.duration = duration;
+    }
 
     digest() {
         return '[语音]';

@@ -1,6 +1,6 @@
 
 import { observable, action } from 'mobx';
-import { ipcRenderer } from 'electron';
+import { ipcRenderer } from '../utils/platform';
 import axios from 'axios';
 import pinyin from '../han';
 
@@ -184,10 +184,12 @@ class Contacts {
         self.memberList = self.memberList.filter(e => e.UserName !== id);
 
         // Update contact in menu
-        ipcRenderer.send('menu-update', {
-            contacts: JSON.stringify(self.memberList.filter(e => helper.isContact(e))),
-            cookies: await helper.getCookie(),
-        });
+        if (ipcRenderer) {
+            ipcRenderer.send('menu-update', {
+                contacts: JSON.stringify(self.memberList.filter(e => helper.isContact(e))),
+                cookies: await helper.getCookie(),
+            });
+        }
     }
 
     @action async updateUser(user) {

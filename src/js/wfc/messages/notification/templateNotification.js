@@ -2,8 +2,9 @@ import NotificationMessageContent from './notificationMessageContent'
 export default class TemplateNotification extends NotificationMessageContent {
     tip = '';
 
-    constructor(tip) {
-        this.tip = tip;
+    constructor(type) {
+        super(type)
+        this.tip = '';
     }
 
     formatNotification() {

@@ -95,22 +95,18 @@ export default class Chats extends Component {
 
     onUserInfoUpdate = (userId) => {
         this.props.chats.map((c, index) => {
-            if (c.conversation.conversationType === ConversationType.Single && c.conversation.target === userId) {
+            if (c.conversation.type === ConversationType.Single && c.conversation.target === userId) {
                 this.props.reloadConversation(c.conversation);
             }
         });
     }
 
     onGroupInfoUpdate = (groupId) => {
-        this.props.chats.map((c, index) => {
-            if (c.conversation.conversationType === ConversationType.Group && c.conversation.target === groupId) {
-                this.props.reloadConversation(c.conversation);
-            }
-        });
+        this.props.loadConversations();
     }
 
     componentWillMount() {
-        console.log('componentWillMount');
+        console.log('chats----------componentWillMount');
         this.props.loadConversations();
         this.props.event.on(EventType.ReceiveMessage, this.onReceiveMessage);
         this.props.event.on(EventType.SendMessage, this.onSendMessage);
@@ -119,8 +115,8 @@ export default class Chats extends Component {
         this.props.event.on(EventType.DeleteMessage, this.onRecallMessage);
         this.props.event.on(EventType.SettingUpdate, this.onSettingUpdate);
         this.props.event.on(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
-        this.props.event.on(EventType.UserInfoUpdate, this.onUserInfoUpdate);
-        this.props.event.on(EventType.GroupInfoUpdate, this.onGroupInfoUpdate);
+        this.props.event.on(EventType.UserInfosUpdate, this.onUserInfoUpdate);
+        this.props.event.on(EventType.GroupInfosUpdate, this.onGroupInfoUpdate);
 
         setTimeout(() => {
             this.props.loadConversations();
@@ -171,8 +167,8 @@ export default class Chats extends Component {
                     {
                         !searching && chats.map((e, index) => {
                             return (
-                                <div key={e.conversation.target}>
-                                    <ConversationItem key={e.conversation.target} chatTo={chatTo} markedRead={markedRead} sticky={sticky} removeChat={removeChat} currentConversation={conversation} conversationInfo={e} />
+                                <div key={e.conversation.type + e.conversation.target + e.conversation.line}>
+                                    <ConversationItem key={e.conversation.target + e.conversation.type + e.conversation.line} chatTo={chatTo} markedRead={markedRead} sticky={sticky} removeChat={removeChat} currentConversation={conversation} conversationInfo={e} />
                                 </div>
                             )
                             // return <this.conversationItem key={e.conversation.target} chatTo={chatTo} currentConversation={conversation} conversationInfo={e} />

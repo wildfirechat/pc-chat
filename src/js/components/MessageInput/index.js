@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, isElectron } from '../../utils/platform';
 import clazz from 'classname';
 
 import classes from './style.css';
@@ -12,6 +12,7 @@ import PTextMessageContent from '../../wfc/messages/ptextMessageContent';
 import ConversationType from '../../wfc/model/conversationType';
 import wfc from '../../wfc/client/wfc'
 import pinyin from '../../han';
+import EventType from '../../wfc/client/wfcEvent';
 
 export default class MessageInput extends Component {
     static propTypes = {
@@ -40,9 +41,12 @@ export default class MessageInput extends Component {
         }
 
         let mentionMenuItems = [];
-        if (type === ConversationType.Group) {
+
             let groupInfo = wfc.getGroupInfo(conversation.target);
             let members = wfc.getGroupMembers(conversation.target);
+        if (!members) {
+            return;
+        }
             mentionMenuItems.push({ key: "所有人", value: '@' + conversation.target, avatar: groupInfo.portrait, searchKey: '所有人' + pinyin.letter('所有人', '', null) });
             let userIds = [];
             members.forEach(e => {
@@ -53,7 +57,7 @@ export default class MessageInput extends Component {
             userInfos.forEach((e) => {
                 mentionMenuItems.push({ key: e.displayName, value: '@' + e.uid, avatar: e.portrait, searchKey: e.displayName + pinyin.letter(e.displayName, '', null) });
             });
-        }
+
 
         this.tribute = new Tribute({
             // menuContainer: document.getElementById('content'),
@@ -149,6 +153,9 @@ export default class MessageInput extends Component {
     }
 
     async screenShot() {
+        if (!isElectron()) {
+            return;
+        }
         let ret = wfc.screenShot();
         if ('done' === ret) {
             var args = ipcRenderer.sendSync('file-paste');
@@ -205,12 +212,42 @@ export default class MessageInput extends Component {
         }
     }
 
+    onGroupInfosUpdate = (groupInfos) => {
+        console.log('onGroupInfosupdate', groupInfos);
+        if (!this.props || !this.shouldHandleMention(this.props.conversation)) {
+            return;
+        }
+        for (const groupInfo of groupInfos) {
+            if (groupInfo.target === this.props.conversation.target) {
+                if (this.tribute) {
+                    this.tribute.detach(document.getElementById('messageInput'));
+                    this.tribute = null;
+                }
+                this.initMention(this.props.conversation);
+                break;
+            }
+        }
+    }
     componentDidMount() {
+        wfc.eventEmitter.on(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
+        if (!this.shouldHandleMention(this.props.conversation)) {
+            return;
+        }
         if (this.props.conversation && !this.tribute) {
             this.initMention(this.props.conversation);
         }
     }
 
+    componentWillUnmount() {
+        wfc.eventEmitter.removeListener(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
+    }
+
+    shouldHandleMention(conversation) {
+        if (!conversation) {
+            return false;
+        }
+        return conversation.type === ConversationType.Group;
+    }
     componentWillReceiveProps(nextProps) {
         var input = this.refs.input;
 
@@ -231,7 +268,7 @@ export default class MessageInput extends Component {
             this.tribute = null;
         }
 
-        if (nextProps.conversation) {
+        if (this.shouldHandleMention(nextProps.conversation)) {
             this.initMention(nextProps.conversation);
         }
     }

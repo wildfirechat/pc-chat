@@ -90,6 +90,7 @@
 		var that = this;
 
 		this.image = new Image();
+        this.image.setAttribute('crossOrigin', 'anonymous');
 
 		this.image.onload = function() {
 			if (callback) {

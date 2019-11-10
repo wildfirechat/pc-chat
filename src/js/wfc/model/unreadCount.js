@@ -1,8 +1,8 @@
 export default class UnreadCount {
     // 单聊未读数
-    unread;
+    unread = 0;
     // 群聊@数
-    unreadMention;
+    unreadMention = 0;
     // 群聊@All数
-    unreadMentionAll;
+    unreadMentionAll = 0;
 }

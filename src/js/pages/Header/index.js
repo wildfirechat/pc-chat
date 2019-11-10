@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { remote, ipcRenderer } from 'electron';
+import { remote, ipcRenderer } from '../../utils/platform';
 
 import classes from './style.css';
 
@@ -32,11 +32,11 @@ export default class Header extends Component {
     }
 
     render() {
-        var isWin = window.process.platform === 'win32';
+        var isWin = window.process && window.process.platform === 'win32';
         return (
             <header className={classes.container}>
                 <h1>{this.getTitle()}</h1>
-                 {
+                {
                     (isWin) && (
                         <div>
 
@@ -48,7 +48,7 @@ export default class Header extends Component {
 
                         </div>
                     )
-                 }
+                }
             </header>
         );
     }
