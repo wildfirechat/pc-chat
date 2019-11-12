@@ -81,6 +81,13 @@ import GroupMemberType from '../../../wfc/model/groupMemberType';
     showMembers: (target) => {
         // TODO show channel members
         if (target instanceof GroupInfo) {
+            let groupInfo = target;
+            let groupMember = wfc.getGroupMember(groupInfo.target, wfc.getUserId());
+            if (groupInfo.type === GroupType.Restricted) {
+                if (!groupMember || groupMember.type === GroupMemberType.Normal) {
+                    return;
+                }
+            }
             stores.members.toggle(true, target);
         }
     },
