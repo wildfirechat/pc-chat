@@ -23,6 +23,8 @@ import MessageConfig from '../../../wfc/client/messageConfig';
 import UnknownMessageContent from '../../../wfc/messages/unknownMessageContent';
 import EventType from '../../../wfc/client/wfcEvent';
 import ConversationType from '../../../wfc/model/conversationType';
+import GroupType from '../../../wfc/model/groupType';
+import GroupMemberType from '../../../wfc/model/groupMemberType';
 
 
 @inject(stores => ({
@@ -55,6 +57,13 @@ import ConversationType from '../../../wfc/model/conversationType';
             if (groupInfo.target === wfc.getUserId()) {
                 caniremove = true;
             }
+            let groupMember = wfc.getGroupMember(groupInfo.target, wfc.getUserId());
+            if (groupInfo.type === GroupType.Restricted) {
+                if (!groupMember || groupMember.type === GroupMemberType.Normal) {
+                    return;
+                }
+            }
+
         }
 
         wfc.getUserInfo(user.uid, true);
