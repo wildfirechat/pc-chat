@@ -126,8 +126,8 @@ export default {
     resolve: {
         extensions: ['.js', '.jsx', '.json'],
         alias: {
-            components: path.join(config.client, 'js/components/'),
-            utils: path.join(config.client, 'js/utils/'),
+            components: path.join(config.client, 'js/ui/components/'),
+            utils: path.join(config.client, 'js/ui/utils/'),
             images: path.join(config.client, 'assets/images/'),
             fonts: path.join(config.client, 'assets/fonts/'),
         },
