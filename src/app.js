@@ -8,8 +8,8 @@ import { ipcRenderer, remote } from 'electron';
 import './global.css';
 import './assets/fonts/icomoon/style.css';
 import 'utils/albumcolors';
-import getRoutes from './js/routes';
-import stores from './js/stores';
+import getRoutes from './js/ui/routes';
+import stores from './js/ui/stores';
 
 var sharedObj = remote.getGlobal('sharedObj');
 
@@ -19,8 +19,7 @@ class App extends Component {
             // await stores.sessions.hasLogin();
             // await stores.settings.init();
             // await stores.search.getHistory();
-            stores.wfc.proto = sharedObj.proto;
-            await stores.wfc.init();
+            await stores.wfc.init([sharedObj.proto]);
         }
     }
 
