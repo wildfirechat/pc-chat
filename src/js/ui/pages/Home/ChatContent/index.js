@@ -254,11 +254,11 @@ export default class ChatContent extends Component {
 
                 let videoThumbnailSrc;
                 if (video.localPath) {
-                    videoThumbnailSrc = video.localPath;
+                    videoThumbnailSrc = `${video.localPath}#t=0.1`;
                 } else if (video.thumbnail) {
                     videoThumbnailSrc = `data:image/jpeg;base64, ${video.thumbnail}`;
                 } else {
-                    videoThumbnailSrc = video.remotePath;
+                    videoThumbnailSrc = `${video.remotePath}#t=0.1`;
                 }
 
                 if (uploading) {
@@ -281,11 +281,11 @@ export default class ChatContent extends Component {
 
                 if (video.localPath) {
                     return `
-                        <video preload="metadata" controls src="${video.localPath}" />
+                        <video preload="metadata" controls src="${video.localPath}#t=0.1" />
                     `;
                 } else {
                     return `
-                        <video preload="metadata" poster="data:image/jpeg;base64, ${video.thumbnail}" controls src="${video.remotePath}" />
+                        <video preload="metadata" poster="data:image/jpeg;base64, ${video.thumbnail}" controls src="${video.remotePath}#t=0.1" />
                     `;
                 }
 
