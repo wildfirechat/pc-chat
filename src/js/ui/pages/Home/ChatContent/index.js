@@ -156,22 +156,24 @@ export default class ChatContent extends Component {
                 // Image
                 let image = message.messageContent;
 
+                let imgSrc;
+                if (image.localPath) {
+                    imgSrc = image.localPath;
+                } else if (image.thumbnail) {
+                    imgSrc = `data:image/jpeg;base64, ${image.thumbnail}`;
+                } else {
+                    imgSrc = image.remotePath;
+                }
+
                 if (uploading) {
                     return `
                         <div>
-                            <img class="open-image unload" data-id="${message.messageId}" src="data:image/jpeg;base64, ${image.thumbnail}" data-fallback="${image.fallback}" />
+                            <img class="open-image unload" data-id="${message.messageId}" src="${imgSrc}" data-fallback="${image.fallback}" />
                             <i class="icon-ion-android-arrow-up"></i>
                         </div>
                     `;
                 }
-                // return `<img class="open-image unload" data-id="${message.messageId}" src="${image.remotePath}" data-fallback="${image.fallback}" />`;
-                // TODO: 图片数据，需要base64编码
-                if (image.localPath) {
-                    return `<img class="open-image unload" data-id="${message.messageId}" src="${image.localPath}" data-fallback="${image.fallback}" />`;
-                } else {
-                    //return `<img class="open-image unload" data-id="${message.messageId}" src="data:image/jpeg;base64, ${image.thumbnail}" data-fallback="${image.fallback}" />`;
-                    return `<img class="open-image unload" data-id="${message.messageId}" src="${image.remotePath}" data-fallback="${image.fallback}" />`;
-                }
+                return `<img class="open-image unload" data-id="${message.messageId}" src="${imgSrc}" data-fallback="${image.fallback}" />`;
             case MessageContentType.Voice:
                 /* eslint-disable */
                 // Voice
@@ -250,10 +252,19 @@ export default class ChatContent extends Component {
                 // Video message
                 let video = message.messageContent;
 
+                let videoThumbnailSrc;
+                if (video.localPath) {
+                    videoThumbnailSrc = video.localPath;
+                } else if (video.thumbnail) {
+                    videoThumbnailSrc = `data:image/jpeg;base64, ${video.thumbnail}`;
+                } else {
+                    videoThumbnailSrc = video.remotePath;
+                }
+
                 if (uploading) {
                     return `
                         <div>
-                            <video preload="metadata" controls src="data:image/jpeg;base64,${video.localPath}"></video>
+                            <video preload="metadata" controls src="data:image/jpeg;base64,${videoThumbnailSrc}"></video>
 
                             <i class="icon-ion-android-arrow-up"></i>
                         </div>
