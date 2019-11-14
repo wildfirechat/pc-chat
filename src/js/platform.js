@@ -19,6 +19,7 @@ export function isElectron() {
     return false;
 }
 
+// 后两个参数是针对web的
 export function popMenu(templates, data, menuId) {
     if (isElectron()) {
         let menu;
