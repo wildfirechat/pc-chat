@@ -13,13 +13,13 @@ import pkg from './package.json';
 
 let Locales = {};
 i18n.configure({
-    locales:['en', 'ch'],
+    locales: ['en', 'ch'],
     directory: __dirname + '/locales',
     register: Locales
 });
 Locales.setLocale('ch');
 
-global.sharedObj = {proto: proto};
+global.sharedObj = { proto: proto };
 
 let forceQuit = false;
 let downloading = false;
@@ -427,8 +427,8 @@ function checkForUpdates() {
 
 function updateTray(unread = 0) {
     // if (!isOsx) {
-        // Always show the tray icon on windows
-        settings.showOnTray = true;
+    // Always show the tray icon on windows
+    settings.showOnTray = true;
     // }
 
     // Update unread mesage count
@@ -443,9 +443,9 @@ function updateTray(unread = 0) {
         let contextmenu = Menu.buildFromTemplate(trayMenu);
         let icon;
         if (!isOsx) {
-          icon = `${__dirname}/src/assets/images/icon.png`;
+            icon = `${__dirname}/src/assets/images/icon.png`;
         } else {
-          icon = `${__dirname}/src/assets/images/tray.png`;
+            icon = `${__dirname}/src/assets/images/tray.png`;
         }
 
 
@@ -475,7 +475,7 @@ function updateTray(unread = 0) {
         if (!tray) return;
 
         // if (!isOsx) {
-          tray.destroy();
+        tray.destroy();
         // }
         tray = null;
     }
@@ -518,9 +518,9 @@ function createMenu() {
 
 function regShortcut() {
     // if(isWin) {
-        globalShortcut.register('CommandOrControl+G', () => {
-            mainWindow.webContents.toggleDevTools();
-        })
+    globalShortcut.register('CommandOrControl+G', () => {
+        mainWindow.webContents.toggleDevTools();
+    })
     // }
 }
 
@@ -610,7 +610,7 @@ const createMainWindow = () => {
 
     ipcMain.on('toggle-max', event => {
         var isMax = mainWindow.isMaximized();
-        if(isMax){
+        if (isMax) {
             mainWindow.unmaximize();
         } else {
             mainWindow.maximize();
@@ -687,7 +687,7 @@ const createMainWindow = () => {
     ipcMain.on('message-unread', (event, args) => {
         var counter = args.counter;
         //if (settings.showOnTray) {
-            updateTray(counter);
+        updateTray(counter);
         //}
     });
 
@@ -714,12 +714,16 @@ const createMainWindow = () => {
         var filename = args.filename;
 
         // TODO bug here
-        fs.writeFileSync(filename, args.raw.replace(/^data:image\/png;base64,/, ''), {
-            encoding: 'base64',
-            // Overwrite file
-            flag: 'wx',
+        fs.exists(filename, (exists) => {
+            if (!exists) {
+                fs.writeFileSync(filename, args.raw.replace(/^data:image\/png;base64,/, ''), {
+                    encoding: 'base64',
+                    // Overwrite file
+                    flag: 'wx',
+                });
+            }
+            event.returnValue = filename;
         });
-        event.returnValue = filename;
     });
 
     ipcMain.on('open-file', async (event, filename) => {
@@ -790,7 +794,7 @@ app.on('before-quit', () => {
     // Fix issues #14
     forceQuit = true;
     // if (!isOsx) {
-      tray.destroy();
+    tray.destroy();
     // }
 });
 app.on('activate', e => {
@@ -800,29 +804,29 @@ app.on('activate', e => {
 });
 
 function clearBlink() {
-    if(blink){
+    if (blink) {
         clearInterval(blink)
     }
     blink = null
 }
 
-function execBlink (flag, _interval) {
+function execBlink(flag, _interval) {
     let interval = _interval ? _interval : 500;
     let icons;
     if (!isOsx) {
-      icons = [`${__dirname}/src/assets/images/icon.png`,
-              `${__dirname}/src/assets/images/Remind_icon.png`];
+        icons = [`${__dirname}/src/assets/images/icon.png`,
+        `${__dirname}/src/assets/images/Remind_icon.png`];
     } else {
-      icons = [`${__dirname}/src/assets/images/tray.png`,
-              `${__dirname}/src/assets/images/Remind_icon.png`];
+        icons = [`${__dirname}/src/assets/images/tray.png`,
+        `${__dirname}/src/assets/images/Remind_icon.png`];
     }
 
     let count = 0;
-    if(flag){
+    if (flag) {
         if (blink) {
             return;
         }
-        blink = setInterval(function(){
+        blink = setInterval(function () {
             toggleTrayIcon(icons[count++]);
             count = count > 1 ? 0 : 1;
         }, interval);
@@ -833,7 +837,7 @@ function execBlink (flag, _interval) {
 
 }
 
-function toggleTrayIcon(icon){
+function toggleTrayIcon(icon) {
     tray.setImage(icon);
 }
 
