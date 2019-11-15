@@ -36,6 +36,7 @@ import GroupMemberType from '../../../../wfc/model/groupMemberType';
     loadOldMessages: stores.chat.loadOldMessages,
     conversation: stores.chat.conversation,
     target: stores.chat.target,
+    forceRerenderMessage: stores.chat.forceRerenderMessage,
     getTimePanel: (messageTime) => {
         // 当天的消息，以每5分钟为一个跨度显示时间；
         // 消息超过1天、小于1周，显示为“星期 消息发送时间”；
@@ -157,7 +158,7 @@ export default class ChatContent extends Component {
                 let image = message.messageContent;
 
                 let imgSrc;
-                if (image.localPath) {
+                if (fs && image.localPath && fs.existsSync(image.localPath)) {
                     imgSrc = image.localPath;
                 } else if (image.thumbnail) {
                     imgSrc = `data:image/jpeg;base64, ${image.thumbnail}`;
@@ -173,7 +174,7 @@ export default class ChatContent extends Component {
                         </div>
                     `;
                 }
-                return `<img class="open-image unload" data-id="${message.messageId}" src="${imgSrc}" data-fallback="${image.fallback}" />`;
+                return `<img class="open-image unload" data-remote-path="${image.remotePath}" data-id="${message.messageId}" src="${imgSrc}" data-fallback="${image.fallback}" />`;
             case MessageContentType.Voice:
                 /* eslint-disable */
                 // Voice
@@ -370,6 +371,7 @@ export default class ChatContent extends Component {
                 <div key={message.messageId}>
                     <div
                         className={clazz('unread', classes.message, classes.system)}
+                        data-force-rerennder={message.forceRerender}
                         dangerouslySetInnerHTML={{ __html: helper.timeFormat(message.timestamp) }} />
                     <div className={clazz('unread', classes.message, {
                         // File is uploading
@@ -453,10 +455,24 @@ export default class ChatContent extends Component {
         // Open the image
         if (target.tagName === 'IMG'
             && target.classList.contains('open-image')) {
-            // Get image from cache and convert to base64
-            let response = await axios.get(target.src, { responseType: 'arraybuffer' });
-            // eslint-disable-next-line
-            let base64 = new window.Buffer(response.data, 'binary').toString('base64');
+            let base64;
+            let src;
+            if (target.src.startsWith('file') || target.src.startsWith('http')) {
+                src = target.src;
+            } else {
+                // thumbnail
+                if (target.src.startsWith('data')) {
+                    base64 = target.src.split(',')[1];
+                }
+                src = target.dataset.remotePath;
+            }
+            // file
+            if (src) {
+                // Get image from cache and convert to base64
+                let response = await axios.get(src, { responseType: 'arraybuffer' });
+                // eslint-disable-next-line
+                base64 = Buffer.from(response.data, 'binary').toString('base64');
+            }
 
             if (isElectron()) {
                 ipcRenderer.send('open-image', {
@@ -464,7 +480,7 @@ export default class ChatContent extends Component {
                     base64,
                 });
             } else {
-                // TODO
+                // TODO show big image
             }
 
             return;
@@ -574,7 +590,7 @@ export default class ChatContent extends Component {
             let file = message.messageContent;
             let response = await axios.get(file.remotePath, { responseType: 'arraybuffer' });
             // eslint-disable-next-line
-            let base64 = new window.Buffer(response.data, 'binary').toString('base64');
+            let base64 = Buffer.from(response.data, 'binary').toString('base64');
             if (isElectron()) {
                 let filename = ipcRenderer.sendSync(
                     'file-download',
@@ -583,19 +599,14 @@ export default class ChatContent extends Component {
                         raw: base64,
                     },
                 );
+                file.localPath = filename;
+
+                wfc.updateMessageContent(message.messageId, file);
+                this.props.forceRerenderMessage(message.messageId);
             } else {
                 // TODO
 
             }
-
-            file.localPath = filename;
-            wfc.updateMessageContent(message.messageId, file);
-            setTimeout(() => {
-                message.download = {
-                    done: true,
-                    path: filename,
-                };
-            });
         }
     }
 
@@ -615,11 +626,7 @@ export default class ChatContent extends Component {
                 }
             },
         ];
-
-        // TODO fixme
-        var menu = new remote.Menu.buildFromTemplate(templates);
-
-        menu.popup(remote.getCurrentWindow());
+        popMenu(templates);
     }
 
     showMessageAction(message, menuId) {
