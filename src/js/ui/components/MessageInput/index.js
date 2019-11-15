@@ -42,21 +42,21 @@ export default class MessageInput extends Component {
 
         let mentionMenuItems = [];
 
-            let groupInfo = wfc.getGroupInfo(conversation.target);
-            let members = wfc.getGroupMembers(conversation.target);
+        let groupInfo = wfc.getGroupInfo(conversation.target);
+        let members = wfc.getGroupMembers(conversation.target);
         if (!members) {
             return;
         }
-            mentionMenuItems.push({ key: "所有人", value: '@' + conversation.target, avatar: groupInfo.portrait, searchKey: '所有人' + pinyin.letter('所有人', '', null) });
-            let userIds = [];
-            members.forEach(e => {
-                userIds.push(e.memberId);
-            });
+        mentionMenuItems.push({ key: "所有人", value: '@' + conversation.target, avatar: groupInfo.portrait, searchKey: '所有人' + pinyin.letter('所有人', '', null) });
+        let userIds = [];
+        members.forEach(e => {
+            userIds.push(e.memberId);
+        });
 
-            let userInfos = wfc.getUserInfos(userIds, groupInfo.target);
-            userInfos.forEach((e) => {
-                mentionMenuItems.push({ key: e.displayName, value: '@' + e.uid, avatar: e.portrait, searchKey: e.displayName + pinyin.letter(e.displayName, '', null) });
-            });
+        let userInfos = wfc.getUserInfos(userIds, groupInfo.target);
+        userInfos.forEach((e) => {
+            mentionMenuItems.push({ key: e.displayName, value: '@' + e.uid, avatar: e.portrait, searchKey: e.displayName + pinyin.letter(e.displayName, '', null) });
+        });
 
 
         this.tribute = new Tribute({
@@ -191,6 +191,10 @@ export default class MessageInput extends Component {
     }
 
     async handlePaste(e) {
+        if (!isElectron()) {
+            return;
+        }
+
         var args = ipcRenderer.sendSync('file-paste');
 
         if (args.hasImage && this.canisend()) {
