@@ -243,6 +243,29 @@ class Chat {
 
     @observable messageList = [];
 
+    @observable previewImage = false;
+
+    toPreivewImageOption = {};
+
+    @action togglePreviewImage(e, show = false, messageId) {
+        self.previewImage = show;
+        if (self.previewImage) {
+            let imgs = [];
+            let current = 0;
+            let imageMsgs = self.messageList.filter(m => m.messageContent instanceof ImageMessageContent);
+            for (let i = 0; i < imageMsgs.length; i++) {
+                if (imageMsgs[i].messageId === messageId) {
+                    current = i;
+        }
+                // when in electron, can not load local path
+                let src = imageMsgs[i].messageContent.remotePath;
+                imgs.push({ src: src });
+            }
+
+            self.toPreivewImageOption.images = imgs;
+            self.toPreivewImageOption.current = current;
+        }
+    }
     @action toggleConversation(show = !self.showConversation) {
         self.showConversation = show;
     }

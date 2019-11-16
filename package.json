@@ -123,6 +123,7 @@
     "randomcolor": "^0.5.3",
     "react-addons-css-transition-group": "^15.6.2",
     "react-dom": "^16.0.0",
+    "react-images": "^1.0.0",
     "react-router-dom": "^4.2.2",
     "resize-image": "^0.1.0",
     "tmp": "0.0.33",
