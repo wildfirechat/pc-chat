@@ -595,7 +595,7 @@ export default class ChatContent extends Component {
                 let filename = ipcRenderer.sendSync(
                     'file-download',
                     {
-                        filename: `${this.props.downloads}/${message.messageId}_${file.name}`,
+                        filename: `${message.messageId}_${file.name}`,
                         raw: base64,
                     },
                 );
