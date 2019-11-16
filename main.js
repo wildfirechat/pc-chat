@@ -713,16 +713,33 @@ const createMainWindow = () => {
     ipcMain.on('file-download', async (event, args) => {
         var filename = args.filename;
 
-        // TODO bug here
-        fs.exists(filename, (exists) => {
-            if (!exists) {
-                fs.writeFileSync(filename, args.raw.replace(/^data:image\/png;base64,/, ''), {
-                    encoding: 'base64',
-                    // Overwrite file
-                    flag: 'wx',
-                });
+        // // TODO bug here
+        // fs.exists(filename, (exists) => {
+        //     if (!exists) {
+        //         fs.writeFileSync(filename, args.raw.replace(/^data:image\/png;base64,/, ''), {
+        //             encoding: 'base64',
+        //             // Overwrite file
+        //             flag: 'wx',
+        //         });
+        //     }
+        //     event.returnValue = filename;
+        // });
+
+        dialog.showSaveDialog({ defaultPath: filename, }, (fileName) => {
+            if (fileName === undefined) {
+                console.log("You didn't save the file");
+                event.returnValue = '';
+                return;
             }
-            event.returnValue = filename;
+
+            let content = args.raw.replace(/^data:image\/png;base64,/, '');
+            // fileName is a string that contains the path and filename created in the save file dialog.  
+            fs.writeFileSync(fileName, content, 'base64', (err) => {
+                if (err) {
+                    console.log("An error ocurred creating the file " + err.message)
+                }
+            });
+            event.returnValue = fileName;
         });
     });
 
@@ -740,7 +757,7 @@ const createMainWindow = () => {
     });
 
     ipcMain.on('open-image', async (event, args) => {
-        var filename = `${imagesCacheDir}/img_${args.dataset.id}`;
+        var filename = `${imagesCacheDir}/img_${args.dataset.id}.png`;
 
         fs.writeFileSync(filename, args.base64.replace(/^data:image\/png;base64,/, ''), 'base64');
         shell.openItem(filename);
