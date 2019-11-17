@@ -41,7 +41,6 @@ export default class MessageInput extends Component {
         }
 
         let mentionMenuItems = [];
-
         let groupInfo = wfc.getGroupInfo(conversation.target);
         let members = wfc.getGroupMembers(conversation.target);
         if (!members) {
@@ -57,7 +56,6 @@ export default class MessageInput extends Component {
         userInfos.forEach((e) => {
             mentionMenuItems.push({ key: e.displayName, value: '@' + e.uid, avatar: e.portrait, searchKey: e.displayName + pinyin.letter(e.displayName, '', null) });
         });
-
 
         this.tribute = new Tribute({
             // menuContainer: document.getElementById('content'),
@@ -192,9 +190,19 @@ export default class MessageInput extends Component {
 
     async handlePaste(e) {
         if (!isElectron()) {
+            let result = this.readClipImage(e);
+            if (this.canisend() && result.hasImage) {
+                e.preventDefault();
+                let url = URL.createObjectURL(result.file);
+                if ((await this.props.confirmSendImage(url)) === false) {
+                    URL.revokeObjectURL(url);
+                    return;
+                }
+                this.batchProcess(result.file);
+                URL.revokeObjectURL(url);
+            }
             return;
         }
-
         var args = ipcRenderer.sendSync('file-paste');
 
         if (args.hasImage && this.canisend()) {
@@ -215,6 +223,24 @@ export default class MessageInput extends Component {
             this.batchProcess(file);
         }
     }
+    readClipImage(event) {
+        let result = { hasImage: false, file: null };
+        if (event.clipboardData || event.originalEvent) {
+            const clipboardData = (event.clipboardData || event.originalEvent.clipboardData);
+            if (clipboardData.items) {
+                let blob;
+                for (let i = 0; i < clipboardData.items.length; i++) {
+                    if (clipboardData.items[i].type.indexOf('image') !== -1) {
+                        blob = clipboardData.items[i].getAsFile();
+                        result.hasImage = true;
+                        result.file = blob;
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
+    };
 
     onGroupInfosUpdate = (groupInfos) => {
         console.log('onGroupInfosupdate', groupInfos);
@@ -232,6 +258,7 @@ export default class MessageInput extends Component {
             }
         }
     }
+
     componentDidMount() {
         wfc.eventEmitter.on(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
         if (!this.shouldHandleMention(this.props.conversation)) {
@@ -252,6 +279,7 @@ export default class MessageInput extends Component {
         }
         return conversation.type === ConversationType.Group;
     }
+
     componentWillReceiveProps(nextProps) {
         var input = this.refs.input;
 

@@ -8,6 +8,12 @@ import Loader from 'components/Loader';
 import SearchBar from '../SearchBar';
 import Chats from './Chats';
 import ChatContent from './ChatContent';
+import wfc from '../../../wfc/client/wfc';
+import EventType from '../../../wfc/client/wfcEvent';
+import Push from 'push.js'
+import MessageConfig from '../../../wfc/client/messageConfig';
+import PersistFlag from '../../../wfc/messages/persistFlag';
+import { isElectron } from '../../../platform'
 
 @inject(stores => ({
     loading: stores.sessions.loading,
@@ -20,6 +26,26 @@ import ChatContent from './ChatContent';
 export default class Home extends Component {
     componentDidMount() {
         this.props.toggleConversation(true);
+        if (!isElectron()) {
+            wfc.eventEmitter.on(EventType.ReceiveMessage, this.onReceiveMessage);
+        }
+    }
+
+    onReceiveMessage(msg) {
+        if (document.hidden) {
+            let content = msg.messageContent;
+            if (MessageConfig.getMessageContentPersitFlag(content.type) === PersistFlag.Persist_And_Count) {
+                Push.create("新消息来了", {
+                    body: content.digest(),
+                    icon: '../../../../assets/images/icon.png',
+                    timeout: 4000,
+                    onClick: function () {
+                        window.focus();
+                        this.close();
+                    }
+                });
+            }
+        }
     }
 
     render() {
