@@ -47,47 +47,47 @@ export default class Layout extends Component {
 
     componentDidMount() {
         if (isElectron()) {
-        var templates = [
-            {
-                label: 'Undo',
-                role: 'undo',
-            }, {
-                label: 'Redo',
-                role: 'redo',
-            }, {
-                type: 'separator',
-            }, {
-                label: 'Cut',
-                role: 'cut',
-            }, {
-                label: 'Copy',
-                role: 'copy',
-            }, {
-                label: 'Paste',
-                role: 'paste',
-            }, {
-                type: 'separator',
-            }, {
-                label: 'Select all',
-                role: 'selectall',
-            },
-        ];
-        var menu = new remote.Menu.buildFromTemplate(templates);
+            var templates = [
+                {
+                    label: 'Undo',
+                    role: 'undo',
+                }, {
+                    label: 'Redo',
+                    role: 'redo',
+                }, {
+                    type: 'separator',
+                }, {
+                    label: 'Cut',
+                    role: 'cut',
+                }, {
+                    label: 'Copy',
+                    role: 'copy',
+                }, {
+                    label: 'Paste',
+                    role: 'paste',
+                }, {
+                    type: 'separator',
+                }, {
+                    label: 'Select all',
+                    role: 'selectall',
+                },
+            ];
+            var menu = new remote.Menu.buildFromTemplate(templates);
 
-        document.body.addEventListener('contextmenu', e => {
-            e.preventDefault();
+            document.body.addEventListener('contextmenu', e => {
+                e.preventDefault();
 
-            let node = e.target;
+                let node = e.target;
 
-            while (node) {
-                if (node.nodeName.match(/^(input|textarea)$/i)
-                    || node.isContentEditable) {
-                    menu.popup(remote.getCurrentWindow());
-                    break;
+                while (node) {
+                    if (node.nodeName.match(/^(input|textarea)$/i)
+                        || node.isContentEditable) {
+                        menu.popup(remote.getCurrentWindow());
+                        break;
+                    }
+                    node = node.parentNode;
                 }
-                node = node.parentNode;
-            }
-        });
+            });
         }
 
         var canidrag = this.props.canidrag;
@@ -176,6 +176,9 @@ export default class Layout extends Component {
 
         if (this.connectionStatus === ConnectionStatus.ConnectionStatusRejected
             || this.connectionStatus === ConnectionStatus.ConnectionStatusLogout
+            || this.connectionStatus === ConnectionStatus.ConnectionStatusSecretKeyMismatch
+            || this.connectionStatus === ConnectionStatus.ConnectionStatusTokenIncorrect
+            || this.connectionStatus === ConnectionStatus.ConnectionStatusUnconnected
             || wfc.getUserId() === '') {
             return <Login />;
         }
