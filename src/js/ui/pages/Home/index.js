@@ -20,6 +20,7 @@ import { isElectron } from '../../../platform'
     showConversation: stores.chat.showConversation,
     toggleConversation: stores.chat.toggleConversation,
     showRedIcon: stores.settings.showRedIcon,
+    chatTo: stores.chat.chatToN,
     newChat: () => stores.newchat.toggle(true),
 }))
 @observer
@@ -31,7 +32,8 @@ export default class Home extends Component {
         }
     }
 
-    onReceiveMessage(msg) {
+    onReceiveMessage = (msg) => {
+        let chatTo = this.props.chatTo;
         if (document.hidden) {
             let content = msg.messageContent;
             if (MessageConfig.getMessageContentPersitFlag(content.type) === PersistFlag.Persist_And_Count) {
@@ -42,6 +44,7 @@ export default class Home extends Component {
                     onClick: function () {
                         window.focus();
                         this.close();
+                        chatTo(msg.conversation);
                     }
                 });
             }

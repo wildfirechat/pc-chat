@@ -20,16 +20,20 @@ export default class Login extends Component {
     @observable qrCode;
     token;
     loginTimer;
+    qrCodeTimer;
 
     componentDidMount() {
         axios.defaults.baseURL = Config.APP_SERVER;
 
         this.getCode();
         this.keepLogin();
+        this.refreshQrCode();
     }
 
     componentWillUnmount() {
         console.log('login will disappear');
+        clearInterval(this.loginTimer);
+        clearInterval(this.qrCodeTimer);
     }
 
     renderUser() {
@@ -67,6 +71,11 @@ export default class Login extends Component {
         }, 1 * 1000);
     }
 
+    async refreshQrCode() {
+        this.qrCodeTimer = setInterval(() => {
+            this.getCode();
+        }, 30 * 1000);
+    }
     async login() {
         if (!this.token) {
             console.log('-------- t e');
@@ -77,7 +86,6 @@ export default class Login extends Component {
         if (response.data) {
             switch (response.data.code) {
                 case 0:
-                    clearInterval(this.loginTimer);
                     let userId = response.data.result.userId;
                     let token = response.data.result.token;
                     connect(userId, token);
