@@ -29,10 +29,7 @@ export default {
         new webpack.NoEmitOnErrorsPlugin(),
 
         // https://webpack.github.io/docs/hot-module-replacement-with-webpack.html
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.DefinePlugin({
-            'process.env.FLUENTFFMPEG_COV': false
-        })
+        new webpack.HotModuleReplacementPlugin()
     ],
 
     // https://github.com/chentsulin/webpack-target-electron-renderer#how-this-module-works

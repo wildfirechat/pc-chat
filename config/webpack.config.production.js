@@ -60,9 +60,6 @@ export default {
             minify: {
                 collapseWhitespace: true
             }
-        }),
-        new webpack.DefinePlugin({
-            'process.env.FLUENTFFMPEG_COV': false
         })
     ],
 
