@@ -28,6 +28,7 @@ import GroupType from '../../../../wfc/model/groupType';
 import GroupMemberType from '../../../../wfc/model/groupMemberType';
 import FileSaver from 'file-saver';
 
+import InfiniteScroll from 'react-infinite-scroller';
 
 @inject(stores => ({
     sticky: stores.sessions.sticky,
@@ -814,6 +815,7 @@ export default class ChatContent extends Component {
                 return;
             }
 
+            /*
             // Show the unread messages count
             // TODO unread logic
             if (viewport.scrollTop < this.scrollTop) {
@@ -856,6 +858,7 @@ export default class ChatContent extends Component {
 
             // Mark message has been loaded
             Array.from(viewport.querySelectorAll(`.${classes.message}.unread`)).map(e => e.classList.remove('unread'));
+            */
         }
     }
 
@@ -927,12 +930,22 @@ export default class ChatContent extends Component {
 
                             <div
                                 className={classes.messages}
-                                onScroll={e => this.handleScroll(e)}
+                                // onScroll={e => this.handleScroll(e)}
                                 ref="viewport">
-                                {
-                                    //this.renderMessages(messages.get(user.UserName), user)
-                                    this.renderMessages(messages, target)
-                                }
+                                <InfiniteScroll
+                                    pageStart={0}
+                                    loadMore={this.loadFunc}
+                                    initialLoad={false}
+                                    isReverse={true}
+                                    hasMore={true}
+                                    loader={<div className="loader" key={0}>Loading ...</div>}
+                                    useWindow={false}
+                                >
+                                    {
+                                        //this.renderMessages(messages.get(user.UserName), user)
+                                        this.renderMessages(messages, target)
+                                    }
+                                </InfiniteScroll>
                             </div>
                         </div>
                     ) : (
@@ -955,6 +968,11 @@ export default class ChatContent extends Component {
                 <PreviewImage onRef={ref => (this.previewImage = ref)} />
             </div>
         );
+    }
+
+    loadFunc = () => {
+        console.log('---------------loadFunc');
+        this.props.loadOldMessages();
     }
 
     onUserInfoUpdate = (userId) => {
