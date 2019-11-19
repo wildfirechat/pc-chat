@@ -21,13 +21,13 @@ export default class RecallMessageNotification extends NotificationMessageConten
     encode() {
         let payload = super.encode();
         payload.content = this.operatorId;
-        payload.binaryContent = btoa(this.messageUid.toString());
+        payload.binaryContent = Message.utf8_to_b64(this.messageUid.toString());
         return payload;
     };
 
     decode(payload) {
         super.decode(payload);
         this.operatorId = payload.content;
-        this.messageUid = Long.fromString(atob(payload.binaryContent));
+        this.messageUid = Long.fromString(Message.b64_to_utf8(payload.binaryContent));
     }
 }

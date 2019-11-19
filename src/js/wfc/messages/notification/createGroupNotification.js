@@ -1,9 +1,9 @@
 import NotificationMessageContent from './notificationMessageContent'
 import wfc from '../../client/wfc'
 import MessageContentType from '../messageContentType';
-import atob from 'atob';
-import btoa from 'btoa';
+
 import GroupNotificationContent from './groupNotification';
+import Message from '../message';
 
 export default class CreateGroupNotification extends GroupNotificationContent {
     creator = '';
@@ -31,13 +31,13 @@ export default class CreateGroupNotification extends GroupNotificationContent {
             n: this.groupName,
             o: this.creator,
         };
-        payload.binaryContent = btoa(JSON.stringify(obj));
+        payload.binaryContent = Message.utf8_to_b64(JSON.stringify(obj));
         return payload;
     }
 
     decode(payload) {
         super.decode(payload);
-        let json = atob(payload.binaryContent)
+        let json = Message.b64_to_utf8(payload.binaryContent)
         let obj = JSON.parse(json);
         this.groupId = obj.g;
         this.creator = obj.o;
