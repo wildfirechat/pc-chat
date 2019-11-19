@@ -24,10 +24,10 @@ import MessageConfig from '../../../../wfc/client/messageConfig';
 import UnknownMessageContent from '../../../../wfc/messages/unknownMessageContent';
 import EventType from '../../../../wfc/client/wfcEvent';
 import ConversationType from '../../../../wfc/model/conversationType';
+
 import GroupType from '../../../../wfc/model/groupType';
 import GroupMemberType from '../../../../wfc/model/groupMemberType';
 import FileSaver from 'file-saver';
-
 import InfiniteScroll from 'react-infinite-scroller';
 
 @inject(stores => ({
@@ -55,7 +55,6 @@ import InfiniteScroll from 'react-infinite-scroller';
         return helper.isContact(user);
     },
     showUserinfo: async (isme, user) => {
-
         var caniremove = false;
         if (stores.chat.target instanceof GroupInfo) {
             let groupInfo = stores.chat.target;
@@ -70,7 +69,6 @@ import InfiniteScroll from 'react-infinite-scroller';
             }
 
         }
-
         wfc.getUserInfo(user.uid, true);
 
         stores.userinfo.toggle(true, stores.chat.conversation, user, caniremove);
@@ -169,7 +167,6 @@ export default class ChatContent extends Component {
                 } else {
                     imgSrc = image.remotePath;
                 }
-
                 if (uploading) {
                     return `
                         <div>
@@ -256,7 +253,6 @@ export default class ChatContent extends Component {
             case MessageContentType.Video:
                 // Video message
                 let video = message.messageContent;
-
                 let videoThumbnailSrc;
                 if (video.localPath) {
                     videoThumbnailSrc = `${video.localPath}#t=0.1`;
@@ -400,12 +396,9 @@ export default class ChatContent extends Component {
                     })}>
 
                         <div>
-                            <Avatar
-                                //src={message.isme ? message.HeadImgUrl : user.HeadImgUrl}
-                                src={user.portrait ? user.portrait : 'assets/images/user-fallback.png'}
-                                className={classes.avatar}
-                                onClick={ev => this.props.showUserinfo(message.direction === 0, user)}
-                            />
+                            {
+                                this.userInfoLayout(user, message)
+                            }
 
                             <p
                                 className={classes.username}
@@ -422,6 +415,37 @@ export default class ChatContent extends Component {
                 </div>
             );
         });
+    }
+
+    userInfoLayout(user, message) {
+        if (isElectron()) {
+            return (
+                <Avatar
+                    //src={message.isme ? message.HeadImgUrl : user.HeadImgUrl}
+                    src={user.portrait ? user.portrait : 'assets/images/user-fallback.png'}
+                    className={classes.avatar}
+                    onContextMenu={e => this.showUserAction(user)}
+                    onClick={ev => this.props.showUserinfo(message.direction === 0, user)}
+                />
+            );
+        } else {
+            return (
+                <div>
+                    <ContextMenuTrigger id={`user_item_${user.uid}_${message.messageId}`} >
+                        <Avatar
+                            //src={message.isme ? message.HeadImgUrl : user.HeadImgUrl}
+                            src={user.portrait ? user.portrait : 'assets/images/user-fallback.png'}
+                            className={classes.avatar}
+                            onClick={ev => this.props.showUserinfo(message.direction === 0, user)}
+                        />
+                    </ContextMenuTrigger>
+                    {
+                        this.showUserAction(user, `user_item_${user.uid}_${message.messageId}`)
+                    }
+                </div>
+            );
+        }
+
     }
 
     messageContentLayout(message) {
@@ -473,6 +497,7 @@ export default class ChatContent extends Component {
         messageId = Number(currentElement.dataset.messageId);
 
         console.log('handle message click', messageId);
+
         // Open the image
         if (target.tagName === 'IMG'
             && target.classList.contains('open-image')) {
@@ -494,6 +519,7 @@ export default class ChatContent extends Component {
                 // eslint-disable-next-line
                 base64 = Buffer.from(response.data, 'binary').toString('base64');
             }
+
 
             if (false) {
                 ipcRenderer.send('open-image', {
@@ -565,7 +591,6 @@ export default class ChatContent extends Component {
         if (target.tagName === 'IMG'
             && target.classList.contains('open-map')) {
             if (isElectron()) {
-
                 ipcRenderer.send('open-map', {
                     map: target.dataset.map,
                 });
@@ -626,7 +651,6 @@ export default class ChatContent extends Component {
                 this.props.forceRerenderMessage(message.messageId);
             } else {
                 FileSaver.saveAs(new Blob([response.data]), file.name);
-
             }
         }
     }
@@ -650,6 +674,22 @@ export default class ChatContent extends Component {
         popMenu(templates);
     }
 
+    showUserAction(userInfo, menuId) {
+        if (this.props.conversation.type !== ConversationType.Group || userInfo.uid === wfc.getUserId()) {
+            return;
+        }
+
+        var templates = [
+            {
+                label: `@${userInfo.displayName}`,
+                click: () => {
+                    wfc.eventEmitter.emit('mention', userInfo);
+                }
+            },
+        ];
+        return popMenu(templates, userInfo, menuId);
+    }
+
     showMessageAction(message, menuId) {
 
         if (message.messageContent instanceof NotificationMessageContent) {
@@ -665,7 +705,6 @@ export default class ChatContent extends Component {
                 }
             },
         ];
-
 
         if (caniforward) {
             templates.unshift({
@@ -926,6 +965,7 @@ export default class ChatContent extends Component {
                                             onClick={() => this.showMenu()} />
                                     ) : ''
                                 }
+
                             </header>
 
                             <div

@@ -83,7 +83,7 @@ export default class MessageInput extends Component {
     handleMention(text) {
         let textMessageContent = new TextMessageContent();
         textMessageContent.content = text;
-        this.mentions.map(e => {
+        this.mentions.forEach(e => {
             if (text.indexOf(e.key) > -1) {
                 if (e.value === '@' + this.props.conversation.target) {
                     textMessageContent.mentionedType = 2;
@@ -261,6 +261,7 @@ export default class MessageInput extends Component {
 
     componentDidMount() {
         wfc.eventEmitter.on(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
+        wfc.eventEmitter.on('mention', this.updateMention);
         if (!this.shouldHandleMention(this.props.conversation)) {
             return;
         }
@@ -271,6 +272,7 @@ export default class MessageInput extends Component {
 
     componentWillUnmount() {
         wfc.eventEmitter.removeListener(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
+        wfc.eventEmitter.removeListener('mention', this.updateMention);
     }
 
     shouldHandleMention(conversation) {
@@ -283,8 +285,6 @@ export default class MessageInput extends Component {
     componentWillReceiveProps(nextProps) {
         var input = this.refs.input;
 
-        // When user has changed clear the input
-        // TODO save draft
         if (
             true
             && input
@@ -292,16 +292,31 @@ export default class MessageInput extends Component {
             && this.props.conversation
             && !this.props.conversation.equal(nextProps.conversation)
         ) {
+            // When user has changed clear the input
+            // TODO save draft
             input.value = '';
+            if (this.tribute) {
+                this.tribute.detach(document.getElementById('messageInput'));
+                this.tribute = null;
+            }
+
+            if (this.shouldHandleMention(nextProps.conversation)) {
+                this.initMention(nextProps.conversation);
+            }
+        } else if (nextProps.conversation) {
+            if (!this.tribute && this.shouldHandleMention(nextProps.conversation)) {
+                this.initMention(nextProps.conversation);
+            }
         }
 
-        if (this.tribute) {
-            this.tribute.detach(document.getElementById('messageInput'));
-            this.tribute = null;
-        }
+    }
 
-        if (this.shouldHandleMention(nextProps.conversation)) {
-            this.initMention(nextProps.conversation);
+    updateMention = (mentionUser) => {
+        var input = this.refs.input;
+        if (mentionUser) {
+            input.value += ' @' + mentionUser.displayName + ' ';
+            this.mentions.push({ key: mentionUser.displayName, value: '@' + mentionUser.uid });
+            input.focus();
         }
     }
 

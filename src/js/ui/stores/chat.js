@@ -196,7 +196,6 @@ function hasUnreadMessage(messages) {
             counter += (item.data.length - item.unread);
         }
     );
-
     if (isElectron()) {
         ipcRenderer.send(
             'message-unread',
@@ -256,7 +255,7 @@ class Chat {
             for (let i = 0; i < imageMsgs.length; i++) {
                 if (imageMsgs[i].messageId === messageId) {
                     current = i;
-        }
+                }
                 // when in electron, can not load local path
                 let src = imageMsgs[i].messageContent.remotePath;
                 imgs.push({ src: src });
@@ -266,6 +265,7 @@ class Chat {
             self.toPreivewImageOption.current = current;
         }
     }
+
     @action toggleConversation(show = !self.showConversation) {
         self.showConversation = show;
     }
@@ -376,7 +376,6 @@ class Chat {
                 self.loading = false;
             });
         }
-
     }
 
     @action chatToPrev() {
@@ -618,6 +617,7 @@ class Chat {
                 console.log('----------', video);
             });
     }
+
 
     @action async process(file, user = self.user) {
         var showMessage = snackbar.showMessage;
