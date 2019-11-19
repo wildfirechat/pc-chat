@@ -80,7 +80,7 @@ $ npm run dev
 ##### 打包
 
 1. ```npm install``` 安装依赖
-2. ```npm run package-win32``` 打包window版本，软件生成在release目录下
+2. ```npm run package-win32``` 打包window版本，软件生成在release目录下(最新版mac系统移除对32位程序的支持，会打包失败，请在window下打包win平台）
 3. ```npm run package-mac``` 打包mac版本，软件生成在release目录下
 
 
