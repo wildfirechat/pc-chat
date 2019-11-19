@@ -1,8 +1,7 @@
 import MessageContentMediaType from "./messageContentMediaType";
 import MediaMessageContent from "./mediaMessageContent";
 import MessageContentType from "./messageContentType";
-import atob from 'atob';
-import btoa from 'btoa';
+
 
 
 export default class StickerMessageContent extends MediaMessageContent {
@@ -25,13 +24,13 @@ export default class StickerMessageContent extends MediaMessageContent {
             x: this.width,
             y: this.height,
         }
-        payload.binaryContent = btoa(JSON.stringify(obj));
+        payload.binaryContent = Message.utf8_to_b64(JSON.stringify(obj));
         return payload;
     };
 
     decode(payload) {
         super.decode(payload);
-        let obj = JSON.parse(atob(payload.binaryContent));
+        let obj = JSON.parse(Message.b64_to_utf8(payload.binaryContent));
         this.width = obj.x;
         this.height = obj.y;
     }
