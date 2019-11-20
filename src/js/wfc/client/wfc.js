@@ -406,9 +406,17 @@ export class WfcManager {
 
     _getStore() {
         return impl._getStore();
-}
+    }
     init(args = []) {
         impl.init(args);
+    }
+
+    utf8_to_b64(str) {
+        return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    b64_to_utf8(str) {
+        return decodeURIComponent(escape(atob(str)));
     }
 }
 const self = new WfcManager();
