@@ -2,6 +2,8 @@ import Conversation from '../model/conversation';
 import { EventEmitter } from 'events';
 import MessageStatus from '../messages/messageStatus';
 import MessageContent from '../messages/messageContent';
+import atob from 'atob';
+import btoa from 'btoa';
 
 import impl from '../proto/proto.min';
 
