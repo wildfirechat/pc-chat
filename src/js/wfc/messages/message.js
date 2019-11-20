@@ -41,8 +41,7 @@ import { encode } from 'base64-arraybuffer';
 import Config from '../../config';
 import Long from 'long'
 import { observable } from 'mobx';
-import atob from 'atob';
-import btoa from 'btoa';
+
 export default class Message {
     conversation = {};
     from = '';
