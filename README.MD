@@ -78,6 +78,9 @@ $ npm install
 $ npm run dev
 ```
 
+> 如果```npm run dev```之后，不能显示二维码且调试窗口(```option + command + R```进入调试窗口)打印出```ERR_CONNECTION_REFUSED```，请```command + R```强制刷新一下
+
+
 ##### 打包
 
 1. ```npm install``` 安装依赖
