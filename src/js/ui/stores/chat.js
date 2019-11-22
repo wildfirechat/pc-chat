@@ -678,7 +678,9 @@ class Chat {
                 // progress
             },
             function (messageUid, timestamp) {
+                let msg = wfc.getMessageByUid(messageUid);
                 m.messageUid = messageUid;
+                m.messageContent = msg.messageContent;
                 m.status = MessageStatus.Sent;
                 m.timestamp = timestamp;
             },
