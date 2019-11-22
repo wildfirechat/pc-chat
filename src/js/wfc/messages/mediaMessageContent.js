@@ -3,13 +3,14 @@ import MessageContentMediaType from './messageContentMediaType';
 export default class MediaMessageContent extends MessageContent {
     file;
     remotePath = '';
+    localPath = '';
     mediaType = 0;
 
     constructor(messageType, mediaType = 0, file) {
         super(messageType);
         this.mediaType = mediaType;
         this.file = file;
-        if (file && file.path) {
+        if (file) {
             this.localPath = file.path;
             // attention: 粘贴的时候，path是空字符串，故采用了这个trick
             if (this.localPath.indexOf(file.name) < 0) {
