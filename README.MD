@@ -4,16 +4,16 @@
 
 | 仓库                                                         | 说明                                                    | 备注 |
 | ------------------------------------------------------------ | ------------------------------------------------------- | ---- |
-| [android-chat](https://github.com/wildfirechat/android-chat) | Android平台的SDK和Demo                                  |      |
-| [ios-chat](https://github.com/wildfirechat/ios-chat)         | iOS平台的SDK和Demo                                      |      |
-| [pc-chat](https://github.com/wildfirechat/pc-chat)           | 基于[Electron](https://electronjs.org/)开发的PC平台Demo |      |
-| [proto](https://github.com/wildfirechat/proto)               | 野火IM的协议栈实现                                      |      |
+| [android-chat](https://github.com/wildfirechat/android-chat) | 野火IM Android SDK源码和App源码                       |可以很方便地进行二次开发，或集成到现有应用当中      |
+| [ios-chat](https://github.com/wildfirechat/ios-chat)         | 野火IM iOS SDK源码和App源码                            |可以很方便地进行二次开发，或集成到现有应用当中      |
+| [pc-chat](https://github.com/wildfirechat/pc-chat)           | 基于[Electron](https://electronjs.org/)开发的PC平台应用 |      |
+| [web-chat](https://github.com/wildfirechat/web-chat)          | Web平台的Demo, [体验地址](http://web.wildfirechat.cn)   |      |
+| [wx-chat](https://github.com/wildfirechat/wx-chat)           | 微信小程序平台的Demo   |      |
 | [server](https://github.com/wildfirechat/server)             | IM server                                               |      |
-| [app server](https://github.com/wildfirechat/app_server)     | 应用服务端Demo                                          |      |
-| [robot_server](https://github.com/wildfirechat/robot_server) | 机器人服务端Demo                                        |      |
+| [app server](https://github.com/wildfirechat/app_server)     | 应用服务端                                          |      |
+| [robot_server](https://github.com/wildfirechat/robot_server) | 机器人服务端                                        |      |
 | [push_server](https://github.com/wildfirechat/push_server)   | 推送服务器                                              |      |
-| [docs](https://github.com/wildfirechat/docs)                 | 野火IM相关文档，包含设计、概念、开发、使用说明          |      |
-> 上述仓库中只有PC有个功能库没有开源需要授权才能使用，其它代码全部开源。详细说明请参加[费用](http://docs.wildfirechat.cn/#费用)
+| [docs](https://github.com/wildfirechat/docs)                 | 野火IM相关文档，包含设计、概念、开发、使用说明          |      | |
 
 ## pc-chat说明
 
