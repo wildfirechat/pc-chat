@@ -129,6 +129,8 @@
     "react-infinite-scroller": "^1.2.4",
     "react-router-dom": "^4.2.2",
     "resize-image": "^0.1.0",
+    "scroll-into-view-if-needed": "^2.2.20",
+    "smooth-scroll-into-view-if-needed": "^1.1.23",
     "tmp": "0.0.33",
     "tributejs": "^3.6.0",
     "underscore": "^1.9.1",
