@@ -24,7 +24,7 @@ export default class AddGroupMemberNotification extends GroupNotificationContent
 
         let membersStr = '';
         this.invitees.forEach(m => {
-            let u = wfc.getUserInfo(m, true);
+            let u = wfc.getUserInfo(m, false);
             membersStr += ' ' + u.displayName;
         });
 

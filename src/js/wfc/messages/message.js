@@ -60,7 +60,8 @@ export default class Message {
         this.messageContent = messageContent;
     }
     static fromProtoMessage(obj) {
-        if (Config.SDK_PLATFORM === Config.SDK_PLATFORM_PC) {
+        // osx or windows
+        if (Config.getWFCPlatform() === 3 || Config.getWFCPlatform() === 4) {
             let msg = Object.assign(new Message(), obj);
             // big integer to number
             msg.messageId = Number(msg.messageId);

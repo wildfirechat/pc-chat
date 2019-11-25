@@ -186,7 +186,7 @@ export default class Layout extends Component {
         if (ipcRenderer) {
             ipcRenderer.send('logined');
         }
-        loading = !wfc.isLogin() && (this.connectionStatus === 0 || this.connectionStatus === 2/** receving */);
+        loading = wfc.isLogin() && (this.connectionStatus === 0 || this.connectionStatus === 2/** receving */);
 
         return (
             <div>

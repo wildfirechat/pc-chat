@@ -56,6 +56,7 @@ export default class Login extends Component {
             token: '',
             device_name: 'my mac',
             clientId: wfc.getClientId(),
+            platform: Config.getWFCPlatform()
         });
         console.log('----------- getCode', response.data);
         if (response.data) {

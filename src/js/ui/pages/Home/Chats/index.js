@@ -7,6 +7,8 @@ import ConversationItem from './conversationItem';
 import classes from './style.css';
 import ConversationType from '../../../../wfc/model/conversationType';
 
+import scrollIntoView from 'scroll-into-view-if-needed'
+import smoothScrollIntoView from 'smooth-scroll-into-view-if-needed'
 
 moment.updateLocale('en', {
     relativeTime: {
@@ -142,7 +144,11 @@ export default class Chats extends Component {
             // Keep the conversation always in the viewport
             if (!(rect4active.top >= rect4viewport.top
                 && rect4active.bottom <= rect4viewport.bottom)) {
-                active.scrollIntoViewIfNeeded();
+                const scrollIntoViewSmoothly =
+                    'scrollBehavior' in document.documentElement.style
+                        ? scrollIntoView
+                        : smoothScrollIntoView
+                scrollIntoViewSmoothly(active, { behavior: 'smooth' })
             }
         }
     }
