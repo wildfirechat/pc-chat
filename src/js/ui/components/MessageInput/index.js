@@ -13,6 +13,9 @@ import ConversationType from '../../../wfc/model/conversationType';
 import wfc from '../../../wfc/client/wfc'
 import pinyin from '../../han';
 import EventType from '../../../wfc/client/wfcEvent';
+import GroupInfo from '../../../wfc/model/groupInfo';
+import GroupType from '../../../wfc/model/groupType';
+import GroupMemberType from '../../../wfc/model/groupMemberType';
 
 export default class MessageInput extends Component {
     static propTypes = {
@@ -22,6 +25,7 @@ export default class MessageInput extends Component {
         confirmSendImage: PropTypes.func.isRequired,
         process: PropTypes.func.isRequired,
         conversation: PropTypes.object,
+        target: PropTypes.object,
     };
 
     static defaultProps = {
@@ -101,16 +105,16 @@ export default class MessageInput extends Component {
     }
 
     canisend() {
-        // var user = this.props.user;
-
-        // if (
-        //     true
-        //     && user.length === 1
-        //     && user.slice(-1).pop().UserName === this.props.me.UserName
-        // ) {
-        //     this.props.showMessage('Can\'t send messages to yourself.');
-        //     return false;
-        // }
+        let target = this.props.target;
+        if (target instanceof GroupInfo) {
+            let groupInfo = target;
+            if (groupInfo.type === GroupType.Restricted) {
+                let groupMember = wfc.getGroupMember(groupInfo.target, wfc.getUserId());
+                if (groupInfo.mute === 1 && groupMember.type === GroupMemberType.Normal) {
+                    return false;
+                }
+            }
+        }
 
         if (this.props.conversation) {
             return true;
@@ -338,7 +342,7 @@ export default class MessageInput extends Component {
                 <div
                     className={classes.tips}
                 >
-                    请先选择一个会话。
+                    请先选择一个会话 或 已禁言。
                 </div>
 
                 <input
