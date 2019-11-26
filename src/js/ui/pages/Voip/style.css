@@ -1,0 +1,174 @@
+.container {
+    position: relative;
+    box-sizing: border-box;
+    display:block;
+    flex-direction: column;
+    width: 600px;
+    height: 800px;
+    justify-content: center;    
+    align-items: center;
+    background: #fff;
+}
+
+.videoOutgoing{
+    position: absolute;
+    display: flex;
+    height: 200px;
+    top: 40px;
+    left: 20px;
+    right: 20px;
+
+    & .desc{
+        height: 150px;
+    }
+
+    & img {
+        width: 150px;
+        height: 150px;
+    }
+
+    & p {
+        color: #000;
+        font-family: "Helvetica-Light";
+    }
+}
+
+.videoInviter{
+    position: absolute;
+    height: 300px;
+    top: 100px;
+    left: 200px;
+    width: 200px;
+    text-align: center;
+
+    & img {
+        display: inline;
+        width: 150px;
+        height: 150px;
+        margin:5px;
+    }
+
+    & p {
+        color: #000;
+        font-family: "Helvetica-Light";
+    }
+}
+
+.localVideo{
+    visibility: hidden;
+    position: absolute;
+    z-index: 99;
+    display: block;
+    background: #000;
+    width: 150px;
+    height: 200px;
+    top: 40px;
+    left: 20px;
+}
+
+.remoteVideo{
+    position: absolute;
+    display: block;
+    background:#aaa;
+    width: 100%;
+    height: 100%;
+}
+
+.audioAccept{
+    position: absolute;
+    display: block;
+    top: 450px;
+    right: 100px;
+    width: 200px;
+    height: 200px;
+    text-align: center;
+
+    & img {
+        display: block;
+        margin:0 auto;
+        width: 100px;
+    }
+
+    & p {
+        color: #000;
+        font-family: "Helvetica-Light";
+    }
+}
+
+.videoOutgoingOrConnectedAction{
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    position: absolute;
+    top: 500px;
+    justify-content:space-around;
+    width: 100%;
+
+    & img {
+        width: 150px;
+        height: 150px;
+    }
+
+    & p {
+        color: #000;
+        font-family: "Helvetica-Light";
+    }
+}
+
+.videoIncomingAction {
+    display: block;
+    position: absolute;
+    top: 600px;
+    left: 125px;
+    width: 350px;
+    height: 150px;
+    white-space:nowrap;
+    text-align: center;
+
+    & img {
+        width: 150px;
+        height: 150px;
+    }
+
+    & p {
+        color: #000;
+        font-family: "Helvetica-Light";
+    }
+
+}
+
+.audioConnectedAction{
+    display: block;
+    position: absolute;
+    top: 400px;
+    width: 100%;
+    white-space:nowrap;
+    text-align: center;
+    & img {
+        width: 150px;
+        height: 150px;
+    }
+
+    & p {
+        color: #000;
+        font-family: "Helvetica-Light";
+    }
+}
+
+
+.incomingAccept{
+    float: right; 
+    width: 150px;
+    height: 150px;
+}
+
+.incomingHangup{
+    float: left; 
+    width: 150px;
+    height: 150px;
+}
+
+.audioIncomingHangup{
+    width: 150px;
+    height: 150px;
+}
