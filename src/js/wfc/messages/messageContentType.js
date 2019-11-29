@@ -31,4 +31,10 @@ export default class MessageContentType {
     static ChangePrivateChat_Notification = 115;
     static ChangeSearchable_Notificaiton = 116;
     static SetGroupManager_Notification = 117;
+    static VOIP_CONTENT_TYPE_START = 400;
+    static VOIP_CONTENT_TYPE_END = 402;
+    static VOIP_CONTENT_TYPE_ACCEPT = 401;
+    static VOIP_CONTENT_TYPE_SIGNAL = 403;
+    static VOIP_CONTENT_TYPE_MODIFY = 404;
+    static VOIP_CONTENT_TYPE_ACCEPT_T = 405;
 }

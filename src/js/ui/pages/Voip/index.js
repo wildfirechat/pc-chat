@@ -10,6 +10,7 @@ import wfc from '../../../wfc/client/wfc'
 import PCSession from '../../../wfc/model/pcsession';
 import { observable } from 'mobx';
 import axios from 'axios';
+var ipcRenderer = require('electron').ipcRenderer;
 import { connect } from '../../../platform'
 
 @inject(stores => ({
@@ -25,6 +26,10 @@ export default class Voip extends Component {
     status;
 
     componentDidMount() {
+        ipcRenderer.on('webContentsId', function (event, message) {
+            webContentsId = message;
+            ipcRenderer.sendTo('onCallButton', 'xxxxxxxxxxxx');
+        });
     }
 
     componentWillUnmount() {

@@ -13,14 +13,14 @@ var ipcRenderer = require('electron').ipcRenderer;
 var moCall;
 
 function playIncommingRing() {
-  //在界面初始化时播放来电铃声
+    //在界面初始化时播放来电铃声
 }
 
 function stopIncommingRing() {
-  //再接听/语音接听/结束媒体时停止播放来电铃声，可能有多次，需要避免出问题
+    //再接听/语音接听/结束媒体时停止播放来电铃声，可能有多次，需要避免出问题
 }
 
-ipcRenderer.on('initCallUI', function(event, message) { // 监听父页面定义的端口
+ipcRenderer.on('initCallUI', function (event, message) { // 监听父页面定义的端口
     moCall = message.moCall;
     if (message.moCall) {
         callButton.disabled = false;
@@ -28,11 +28,11 @@ ipcRenderer.on('initCallUI', function(event, message) { // 监听父页面定义
         toVoiceButton.hidden = true;
         switchMicorphone.hidden = true;
         if (message.audioOnly) {
-          localVideo.hidden = true;
-          remoteVideo.hidden = true;
+            localVideo.hidden = true;
+            remoteVideo.hidden = true;
         } else {
-          toVoiceButton.hidden = false;
-          toVoiceButton.disabled = false;
+            toVoiceButton.hidden = false;
+            toVoiceButton.disabled = false;
         }
         starPreview(false, message.voiceOnly);
     } else {
@@ -41,18 +41,18 @@ ipcRenderer.on('initCallUI', function(event, message) { // 监听父页面定义
         callButton.disabled = false;
         hangupButton.disabled = false;
         if (message.audioOnly) {
-          localVideo.hidden = true;
-          remoteVideo.hidden = true;
-          toVoiceButton.hidden = true;
+            localVideo.hidden = true;
+            remoteVideo.hidden = true;
+            toVoiceButton.hidden = true;
         } else {
-          toVoiceButton.hidden = false;
-          toVoiceButton.disabled = false;
+            toVoiceButton.hidden = false;
+            toVoiceButton.disabled = false;
         }
         switchMicorphone.hidden = true;
     }
 });
 
-ipcRenderer.on('startMedia', function(event, message) { // 监听父页面定义的端口
+ipcRenderer.on('startMedia', function (event, message) { // 监听父页面定义的端口
     startMedia(message.isInitiator, message.audioOnly);
 });
 
@@ -76,17 +76,17 @@ ipcRenderer.on('setRemoteIceCandidate', (event, message) => {
     }
 });
 
-ipcRenderer.on('endCall', function() { // 监听父页面定义的端口
+ipcRenderer.on('endCall', function () { // 监听父页面定义的端口
     endCall();
 });
 
-ipcRenderer.on('downgrade2Voice', function() {
+ipcRenderer.on('downgrade2Voice', function () {
     downgrade2Voice();
 });
 
-ipcRenderer.on('ping', function() {
-  console.log('receive ping');
-  ipcRenderer.send('pong');
+ipcRenderer.on('ping', function () {
+    console.log('receive ping');
+    ipcRenderer.send('pong');
 });
 
 async function starPreview(continueStartMedia, audioOnly) {
@@ -179,9 +179,9 @@ async function startMedia(initiator, audioOnly) {
     remoteVideo.hidden = false;
     switchMicorphone.hidden = false;
     if (!audioOnly) {
-      if (moCall) {
-        toVoiceButton.hidden = false;
-      }
+        if (moCall) {
+            toVoiceButton.hidden = false;
+        }
     }
     remoteVideo.setAttribute('style', 'width:200px; z-index:100px; position:absolute; right:20px; float:right;');
     if (audioOnly) {
@@ -220,11 +220,11 @@ let startTime;
 const localVideo = document.getElementById('localVideo');
 const remoteVideo = document.getElementById('remoteVideo');
 
-localVideo.addEventListener('loadedmetadata', function() {
+localVideo.addEventListener('loadedmetadata', function () {
     console.log(`Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
 });
 
-remoteVideo.addEventListener('loadedmetadata', function() {
+remoteVideo.addEventListener('loadedmetadata', function () {
     console.log(`Remote video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
 });
 
@@ -383,9 +383,9 @@ function onAddIceCandidateError(pc, error) {
 }
 
 function onUpdateTime() {
-  elapsedTime = window.performance.now() - startTime;
-  console.log('Setup time: ' + elapsedTime.toFixed(3) + 'ms');
-  document.getElementById("callTime").innerHTML = elapsedTime/1000;
+    elapsedTime = window.performance.now() - startTime;
+    console.log('Setup time: ' + elapsedTime.toFixed(3) + 'ms');
+    document.getElementById("callTime").innerHTML = elapsedTime / 1000;
 }
 
 var callTimer;
@@ -394,8 +394,8 @@ function onIceStateChange(pc, event) {
         console.log(`${getName(pc)} ICE state: ${pc.iceConnectionState}`);
         console.log('ICE state change event: ', event);
         if (pc.iceConnectionState === 'connected') {
-          //todo 界面计时开始
-          callTimer = window.setInterval(onUpdateTime, milliseconds);
+            //todo 界面计时开始
+            callTimer = window.setInterval(onUpdateTime, milliseconds);
         }
         ipcRenderer.send('onIceStateChange', pc.iceConnectionState);
     }
@@ -410,13 +410,13 @@ function hangup() {
 }
 
 function triggerMicrophone() {
-  console.log('trigger microphone');
-  if (localStream) {
-    const audioTracks = localStream.getAudioTracks();
-    if (audioTracks && audioTracks.length > 0) {
-      audioTracks[0].enabled = !audioTracks[0].enabled;
+    console.log('trigger microphone');
+    if (localStream) {
+        const audioTracks = localStream.getAudioTracks();
+        if (audioTracks && audioTracks.length > 0) {
+            audioTracks[0].enabled = !audioTracks[0].enabled;
+        }
     }
-  }
 }
 
 function downToVoice() {
@@ -433,7 +433,7 @@ function endCall() {
     console.log('Ending media');
     stopIncommingRing();//可能没有接听就挂断了
     if (callTimer) {
-      clearInterval(callTimer);
+        clearInterval(callTimer);
     }
 
 
@@ -442,7 +442,7 @@ function endCall() {
             // Support legacy browsers, like phantomJs we use to run tests.
             localStream.stop();
         } else {
-            localStream.getTracks().forEach(function(track) {
+            localStream.getTracks().forEach(function (track) {
                 track.stop();
             });
         }
@@ -475,5 +475,5 @@ function endCall() {
     // 停几秒，显示通话时间，再结束
     // 页面释放有问题没有真正释放掉
     // eslint-disable-next-line no-const-assign
-    setTimeout(function() { if (currentWindow) { currentWindow.close(); currentWindow = null; } }, 2000);
+    setTimeout(function () { if (currentWindow) { currentWindow.close(); } }, 2000);
 }

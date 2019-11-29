@@ -11,8 +11,7 @@ import AVEngineState from './AVEngineState';
 import AVEngineEvent from './avEngineEvent';
 import AVCallEndReason from './avCallEndReason';
 import wfc from '../client/wfc';
-import controlAdapter from './controlAdapter_electron';
-
+import controlAdapter from './controlAdapter';
 
 class WfcAVSession {
   callId;
@@ -141,7 +140,7 @@ export class WfcAVEngineKit {
                       }
                   }
               } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
-                  if (content.targetId !== wfc.userId) {
+                  if (content.targetId !== wfc.getUserId()) {
                       return;
                   }
                   if (self.currentSession && self.currentSession.state !== AVEngineState.kWFAVEngineStateIdle) {
@@ -251,13 +250,13 @@ export class WfcAVEngineKit {
     }
   }
 
-  onCallButton() {
+  answerCall() {
     if (self.currentSession) {
         self.currentSession.answerCall(false);
     }
   }
 
-  onHangupButton() {
+  hangup() {
     if (self.currentSession) {
         self.currentSession.endCallByUser();
     }
@@ -269,14 +268,14 @@ export class WfcAVEngineKit {
     }
   }
   showCallUI(isMoCall, audioOnly) {
-      controlAdapter.setOnCallWindowsClose(self.onCallWindowClose);
+    //   controlAdapter.setOnCallWindowsClose(self.onCallWindowClose);
       controlAdapter.setOnReceiveOffer(self.onReceiveOffer);
       controlAdapter.setOnCreateAnswerOffer(self.onCreateAnswerOffer);
       controlAdapter.setOnIceCandidate(self.onIceCandidate);
       controlAdapter.setOnIceStateChange(self.onIceStateChange);
 
-      controlAdapter.setOnCallButton(self.onCallButton);
-      controlAdapter.setOnHangupButton(self.onHangupButton);
+      controlAdapter.setOnCallButton(self.answerCall);
+      controlAdapter.setOnHangupButton(self.hangup);
       controlAdapter.setDownToVoice(self.downToVoice);
 
       controlAdapter.showCallUI(isMoCall, audioOnly);

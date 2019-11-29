@@ -523,44 +523,6 @@ function regShortcut() {
     })
     // }
 }
-const createMainWindowV = () => {
-            console.log('xxxxxxxxxxxxxxxx receive voip');
-    let mainWindowStateV = windowStateKeeper({
-        defaultWidth: 900,
-        defaultHeight: 600,
-    });
-
-    mainWindow = new BrowserWindow({
-        x: mainWindowStateV.x,
-        y: mainWindowStateV.y,
-        minWidth: 400,
-        minHeight: 400,
-        titleBarStyle: 'hiddenInset',
-        backgroundColor: 'none',
-        // 以下两属性设置时会导致win不能正常unmaximize. electron bug
-        // transparent: true,
-        // resizable: false,
-        webPreferences: {
-            scrollBounce: true,
-            nodeIntegration: true,
-            nativeWindowOpen: true,
-        },
-        frame: !isWin,
-        icon
-    });
-
-    mainWindow.setSize(400, 480);
-    mainWindow.loadURL(
-        `file://${__dirname}/src/index.html?voip`
-    );
-    mainWindow.webContents.on('did-finish-load', () => {
-        try {
-            mainWindow.show();
-            mainWindow.focus();
-        } catch (ex) { }
-    });
-
-}
 
 const createMainWindow = () => {
     var mainWindowState = windowStateKeeper({
@@ -611,6 +573,50 @@ const createMainWindow = () => {
             e.preventDefault();
             mainWindow.hide();
         }
+    });
+
+    var offerCount = 0;
+
+    ipcMain.on('onReceiveOffer', (event, msg) => {
+        console.log('hello world' + msg);
+        mainWindow.webContents.send('onReceiveOffer', msg);
+    });
+
+    ipcMain.on('onCreateAnswerOffer', (event, msg) => {
+        console.log('hello world111111111111111111111111111111111111111111111111111111' + msg);
+        mainWindow.webContents.send('onCreateAnswerOffer', msg);
+        offerCount = offerCount + 1;
+        mainWindow.webContents.send('offerCount', 'hello offer count: ' + offerCount);
+    });
+
+    ipcMain.on('onIceCandidate', (event, msg) => {
+        console.log('hello world' + msg);
+        mainWindow.webContents.send('onIceCandidate', msg);
+    });
+
+    ipcMain.on('onCallButton', (event) => {
+        console.log('onCallButton');
+        mainWindow.webContents.send('onCallButton');
+    });
+
+    ipcMain.on('onHangupButton', (event) => {
+        console.log('onHangupButton');
+        mainWindow.webContents.send('onHangupButton');
+    });
+
+    ipcMain.on('downToVoice', (event) => {
+        console.log('downToVoice');
+        mainWindow.webContents.send('downToVoice');
+    });
+
+    ipcMain.on('onIceStateChange', (event, msg) => {
+        console.log('onIceStateChange');
+        mainWindow.webContents.send('onIceStateChange', msg);
+    });
+
+    ipcMain.on('pong', (event) => {
+        console.log('pong');
+        mainWindow.webContents.send('pong');
     });
 
     ipcMain.on('settings-apply', (event, args) => {
@@ -811,11 +817,6 @@ const createMainWindow = () => {
         mainWindow.setResizable(true);
         mainWindow.setSize(mainWindowState.width, mainWindowState.height);
         mainWindowState.manage(mainWindow);
-    });
-
-    ipcMain.once('voip', event => {
-        console.log('xxxxxxxxxx receive voip');
-        createMainWindowV();
     });
 
     powerMonitor.on('resume', () => {

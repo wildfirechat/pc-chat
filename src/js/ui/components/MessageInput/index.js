@@ -25,7 +25,7 @@ export default class MessageInput extends Component {
         confirmSendImage: PropTypes.func.isRequired,
         process: PropTypes.func.isRequired,
         conversation: PropTypes.object,
-        target: PropTypes.object,
+        target: PropTypes.any,
     };
 
     static defaultProps = {
