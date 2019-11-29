@@ -51,6 +51,40 @@ export function connect(userId, token) {
     wfc.connect(userId, token);
 }
 
+export function voipEventEmitter() {
+    if (isElectron()) {
+        // renderer
+        if ((process && process.type === 'renderer')) {
+            return require('electron').ipcRenderer;
+        } else {
+            return require('electron').ipcMain;
+        }
+    } else {
+        wfc.eventEmitter;
+    }
+}
+
+export function voipEventEmit(webContents, event, args) {
+    if (webContents) {
+        webContents.send(event, args);
+    } else {
+        wfc.eventEmitter.emit(event, args);
+    }
+}
+
+export function voipEventOn(event, listener) {
+    if (isElectron()) {
+        // renderer
+        if ((process && process.type === 'renderer')) {
+            require('electron').ipcRenderer.on(event, listener);
+        } else {
+            require('electron').ipcMain.on(event, listener);
+        }
+    } else {
+        wfc.eventEmitter.on(event, listener);
+    }
+}
+
 // pc
 export const remote = require('electron').remote;
 export const ipcRenderer = require('electron').ipcRenderer;
