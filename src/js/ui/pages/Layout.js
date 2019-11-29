@@ -24,7 +24,6 @@ import wfc from '../../wfc/client/wfc'
 import { observable, action } from 'mobx';
 import EventType from '../../wfc/client/wfcEvent';
 import ConnectionStatus from '../../wfc/client/connectionStatus';
-import Voip from './Voip';
 
 @inject(stores => ({
     isLogin: () => !!stores.sessions.auth,
@@ -181,11 +180,13 @@ export default class Layout extends Component {
             || this.connectionStatus === ConnectionStatus.ConnectionStatusTokenIncorrect
             || this.connectionStatus === ConnectionStatus.ConnectionStatusUnconnected
             || wfc.getUserId() === '') {
-            return <Voip />;
+            return <Login />;
         }
 
         if (ipcRenderer) {
             ipcRenderer.send('logined');
+            console.log('xxxxxxxxxxxxxxxx send voip');
+            ipcRenderer.send('voip');
         }
         loading = wfc.isLogin() && (this.connectionStatus === 0 || this.connectionStatus === 2/** receving */);
 
