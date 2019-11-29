@@ -15,7 +15,7 @@ export default {
     entry: [
         `webpack-hot-middleware/client?path=http://${host}:${port}/__webpack_hmr`,
         'babel-polyfill',
-        `${config.client}/app.js`,
+        `${config.client}/index.js`,
     ],
 
     output: {

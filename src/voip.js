@@ -10,10 +10,11 @@ import './assets/fonts/icomoon/style.css';
 import 'utils/albumcolors';
 import getRoutes from './js/ui/routes';
 import stores from './js/ui/stores';
+import Voip from './js/ui/pages/Voip';
 
 var sharedObj = remote.getGlobal('sharedObj');
 
-export default class App extends Component {
+export default class VoipApp extends Component {
     async componentWillMount() {
         if (window.navigator.onLine) {
             // await stores.sessions.hasLogin();
@@ -132,15 +133,11 @@ export default class App extends Component {
     render() {
         return (
             <Provider {...stores}>
-                <HashRouter ref="navigator">
+                {/* <HashRouter ref="navigator">
                     {getRoutes()}
-                </HashRouter>
+                </HashRouter> */}
+                <Voip />
             </Provider>
         );
     }
 }
-
-// render(
-//     <App />,
-//     document.getElementById('root')
-// );

@@ -523,6 +523,44 @@ function regShortcut() {
     })
     // }
 }
+const createMainWindowV = () => {
+            console.log('xxxxxxxxxxxxxxxx receive voip');
+    let mainWindowStateV = windowStateKeeper({
+        defaultWidth: 900,
+        defaultHeight: 600,
+    });
+
+    mainWindow = new BrowserWindow({
+        x: mainWindowStateV.x,
+        y: mainWindowStateV.y,
+        minWidth: 400,
+        minHeight: 400,
+        titleBarStyle: 'hiddenInset',
+        backgroundColor: 'none',
+        // 以下两属性设置时会导致win不能正常unmaximize. electron bug
+        // transparent: true,
+        // resizable: false,
+        webPreferences: {
+            scrollBounce: true,
+            nodeIntegration: true,
+            nativeWindowOpen: true,
+        },
+        frame: !isWin,
+        icon
+    });
+
+    mainWindow.setSize(400, 480);
+    mainWindow.loadURL(
+        `file://${__dirname}/src/index.html?voip`
+    );
+    mainWindow.webContents.on('did-finish-load', () => {
+        try {
+            mainWindow.show();
+            mainWindow.focus();
+        } catch (ex) { }
+    });
+
+}
 
 const createMainWindow = () => {
     var mainWindowState = windowStateKeeper({
@@ -541,7 +579,9 @@ const createMainWindow = () => {
         // transparent: true,
         // resizable: false,
         webPreferences: {
-            scrollBounce: true
+            scrollBounce: true,
+            nodeIntegration: true,
+            nativeWindowOpen: true,
         },
         frame: !isWin,
         icon
@@ -549,7 +589,7 @@ const createMainWindow = () => {
 
     mainWindow.setSize(400, 480);
     mainWindow.loadURL(
-        `file://${__dirname}/src/index.html`
+        `file://${__dirname}/src/index.html?main`
     );
     mainWindow.webContents.on('did-finish-load', () => {
         try {
@@ -771,6 +811,11 @@ const createMainWindow = () => {
         mainWindow.setResizable(true);
         mainWindow.setSize(mainWindowState.width, mainWindowState.height);
         mainWindowState.manage(mainWindow);
+    });
+
+    ipcMain.once('voip', event => {
+        console.log('xxxxxxxxxx receive voip');
+        createMainWindowV();
     });
 
     powerMonitor.on('resume', () => {
