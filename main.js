@@ -856,6 +856,8 @@ app.on('ready', createMainWindow);
 app.on('before-quit', () => {
     // Fix issues #14
     forceQuit = true;
+
+    if (!tray) return;
     // if (!isOsx) {
     tray.destroy();
     // }
