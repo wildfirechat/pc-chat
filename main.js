@@ -78,7 +78,7 @@ let mainMenu = [
                 click() {
                     forceQuit = true;
                     mainWindow = null;
-                    app.quit();
+                    disconnectAndQuit();
                 }
             }
         ]
@@ -566,7 +566,7 @@ const createMainWindow = () => {
     mainWindow.on('close', e => {
         if (forceQuit || !tray) {
             mainWindow = null;
-            app.quit();
+            disconnectAndQuit();
         } else {
             e.preventDefault();
             mainWindow.hide();
@@ -733,7 +733,7 @@ const createMainWindow = () => {
             }
 
             let content = args.raw.replace(/^data:image\/png;base64,/, '');
-            // fileName is a string that contains the path and filename created in the save file dialog.  
+            // fileName is a string that contains the path and filename created in the save file dialog.
             fs.writeFileSync(fileName, content, 'base64', (err) => {
                 if (err) {
                     console.log("An error ocurred creating the file " + err.message)
@@ -819,6 +819,18 @@ app.on('activate', e => {
         mainWindow.show();
     }
 });
+
+function disconnectAndQuit() {
+  global.sharedObj.proto.disconnect(0);
+  var now = new Date();
+  var exitTime = now.getTime() + 500;
+  while (true) {
+      now = new Date();
+      if (now.getTime() > exitTime)
+          break;
+  }
+  app.quit();
+}
 
 function clearBlink() {
     if (blink) {
@@ -906,6 +918,6 @@ autoUpdater.on('update-downloaded', info => {
     autoUpdater.quitAndInstall();
     setTimeout(() => {
         mainWindow = null;
-        app.quit();
+        disconnectAndQuit();
     });
 });
