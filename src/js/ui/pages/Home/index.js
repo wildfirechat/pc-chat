@@ -32,6 +32,12 @@ export default class Home extends Component {
         }
     }
 
+    componentWillUnmount() {
+        if (!isElectron()) {
+            wfc.eventEmitter.removeListener(EventType.ReceiveMessage, this.onReceiveMessage);
+        }
+    }
+
     onReceiveMessage = (msg) => {
         let chatTo = this.props.chatTo;
         if (document.hidden) {

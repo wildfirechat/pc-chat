@@ -813,6 +813,9 @@ export default class ChatContent extends Component {
     componentWillUnmount() {
         !this.props.rememberConversation && this.props.reset();
         this.stopAudio();
+
+        wfc.eventEmitter.removeListener(EventType.UserInfoUpdate, this.onUserInfoUpdate);
+        wfc.eventEmitter.removeListener(EventType.GroupInfoUpdate, this.onGroupInfoUpdate);
     }
 
     stopAudio() {
