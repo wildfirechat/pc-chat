@@ -144,3 +144,5 @@ export default class App extends Component {
 //     <App />,
 //     document.getElementById('root')
 // );
+
+module.exports = App

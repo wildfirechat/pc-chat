@@ -66,7 +66,13 @@ export function voipEventEmitter() {
 
 export function voipEventEmit(webContents, event, args) {
     if (webContents) {
-        webContents.send(event, args);
+        if (webContents) {
+            // main to renderer
+            webContents.send(event, args);
+        } else {
+            // renderer to main
+            ipcRenderer.send(event, args);
+        }
     } else {
         wfc.eventEmitter.emit(event, args);
     }
