@@ -590,7 +590,7 @@ const createMainWindow = () => {
     });
 
     ipcMain.on('onIceCandidate', (event, msg) => {
-        console.log('hello world' + msg);
+        console.log('onIceCandidate' + msg);
         mainWindow.webContents.send('onIceCandidate', msg);
     });
 

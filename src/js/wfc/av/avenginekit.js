@@ -119,7 +119,7 @@ export class WfcAVEngineKit {
   }
 
   onReceiveMessage = (msg) => {
-      console.log('reveive message ' + msg);
+      console.log('reveive message ',  msg);
       var now = (new Date()).valueOf();
       if (msg.timestamp - now < 90 * 1000) { // 需要处理deltatime
           var content = msg.messageContent;

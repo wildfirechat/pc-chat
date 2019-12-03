@@ -146,8 +146,8 @@ class WfcControlAdaper {
       let BrowserWindow = require('electron').remote.BrowserWindow;
       let win = new BrowserWindow(
         {
-          width: 700,
-          height: 400,
+          width: 600,
+          height: 800,
           webPreferences: {
             scrollBounce: true,
             nativeWindowOpen: true,
@@ -175,7 +175,7 @@ class WfcControlAdaper {
       //   `file://${__dirname}/src/index.html?voip`
       // );
 
-      win.loadURL(path.join('file://', process.cwd(), 'src/js/wfc/av/engine/index.html'));
+      win.loadURL(path.join('file://', process.cwd(), 'src/index.html?voip'));
       win.show();
     }
   }
