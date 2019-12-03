@@ -126,11 +126,17 @@ export default class Chats extends Component {
     }
 
     componentWillUnmount() {
-        // this.props.event.removeListener(EventType.ReceiveMessage, this.onReceiveMessage);
-        // this.props.event.removeListener(EventType.SendMessage, this.onSendMessage);
-        // this.props.event.removeListener(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
-        // this.props.event.removeListener(EventType.RecallMessage, this.onRecallMessage);
-        // this.props.event.removeListener(EventType.DeleteMessage, this.onDeleteMessage);
+        console.log('chats -------------- componentWillUnmount');
+
+        this.props.event.removeListener(EventType.ReceiveMessage, this.onReceiveMessage);
+        this.props.event.removeListener(EventType.SendMessage, this.onSendMessage);
+        this.props.event.removeListener(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
+        this.props.event.removeListener(EventType.RecallMessage, this.onRecallMessage);
+        this.props.event.removeListener(EventType.DeleteMessage, this.onRecallMessage);
+        this.props.event.removeListener(EventType.SettingUpdate, this.onSettingUpdate);
+        this.props.event.removeListener(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
+        this.props.event.removeListener(EventType.UserInfosUpdate, this.onUserInfoUpdate);
+        this.props.event.removeListener(EventType.GroupInfosUpdate, this.onGroupInfoUpdate);
     }
 
     componentDidUpdate() {
