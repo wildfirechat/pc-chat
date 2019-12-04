@@ -28,12 +28,6 @@
     }
 }
 
-.row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 @media (width <= 800px) {
     .container {
         bottom: 46px;

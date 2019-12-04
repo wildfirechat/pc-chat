@@ -181,7 +181,8 @@ export default class MessageInput extends Component {
     writeEmoji(emoji) {
         var input = this.refs.input;
 
-        input.value += `[${emoji}]`;
+        //input.value += `[${emoji}]`;
+        input.value += emoji;
         input.focus();
     }
 
@@ -365,7 +366,7 @@ export default class MessageInput extends Component {
                     <i
                         className="icon-ion-ios-heart"
                         id="showEmoji"
-                        onClick={e => canisend && this.toggleEmoji(true)}
+                        onClick={e => canisend && this.toggleEmoji()}
                         style={{
                             color: 'red',
                         }}

@@ -2,12 +2,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import clazz from 'classname';
-import delegate from 'delegate';
 
 import classes from './style.css';
-import { emoji } from 'utils/emoji';
+import { Picker } from 'emoji-mart'
+import onClickOutside from "react-onclickoutside";
 
-export default class Emoji extends Component {
+export class Emoji extends Component {
     static propTypes = {
         output: PropTypes.func.isRequired,
         show: PropTypes.bool.isRequired,
@@ -15,70 +15,42 @@ export default class Emoji extends Component {
     };
 
     componentDidMount() {
-        delegate(this.refs.container, 'a.qqemoji', 'click', e => {
-            e.preventDefault();
-            e.stopPropagation();
-
-            this.props.output(e.target.title);
-            this.props.close();
-        });
     }
 
-    componentDidUpdate() {
-        if (this.props.show) {
-            this.refs.container.focus();
-        }
+    componentWillUnmount() {
     }
 
-    renderEmoji(emoji) {
-        return emoji.map((e, index) => {
-            var { key, className } = e;
-            return (
-                <a
-                    className={className}
-                    key={index}
-                    title={key} />
-            );
-        });
+    handleClickOutside = evt => {
+        // ..handling code goes here...
+        this.props.close();
+    };
+
+    onEmojiSelect = (emoji) => {
+        console.log('onEmojiSelect', emoji.native);
+        this.props.output(emoji.native);
+        this.props.close();
     }
 
     render() {
-        return (
+        return this.props.show ? (
             <div
                 ref="container"
                 tabIndex="-1"
-                className={clazz(classes.container, {
-                    [classes.show]: this.props.show
-                })}
+                className={clazz(classes.container, classes.show)}
                 onBlur={e => this.props.close()}>
-                <div className={classes.row}>
-                    {this.renderEmoji(emoji.slice(0, 15))}
-                </div>
 
-                <div className={classes.row}>
-                    {this.renderEmoji(emoji.slice(15, 30))}
-                </div>
+                <Picker set='emojione'
+                    ref='emojiPicker'
+                    onClick={this.onEmojiSelect}
+                    // onSelect={this.onEmojiSelect}
+                    title='WFC Emoji'
+                    showPreview={false}
+                    showSkinTones={false}
+                    emojiTooltip={false}
+                />
 
-                <div className={classes.row}>
-                    {this.renderEmoji(emoji.slice(30, 45))}
-                </div>
-
-                <div className={classes.row}>
-                    {this.renderEmoji(emoji.slice(45, 60))}
-                </div>
-
-                <div className={classes.row}>
-                    {this.renderEmoji(emoji.slice(60, 75))}
-                </div>
-
-                <div className={classes.row}>
-                    {this.renderEmoji(emoji.slice(75, 90))}
-                </div>
-
-                <div className={classes.row}>
-                    {this.renderEmoji(emoji.slice(90, 105))}
-                </div>
             </div>
-        );
+        ) : (null);
     }
 }
+export default onClickOutside(Emoji);
