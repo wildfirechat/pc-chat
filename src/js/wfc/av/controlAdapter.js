@@ -146,8 +146,8 @@ class WfcControlAdaper {
       let BrowserWindow = require('electron').remote.BrowserWindow;
       let win = new BrowserWindow(
         {
-          width: 600,
-          height: 800,
+          width: 360,
+          height: 640 + 25,
           webPreferences: {
             scrollBounce: true,
             nativeWindowOpen: true,

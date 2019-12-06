@@ -3,8 +3,8 @@
     box-sizing: border-box;
     display:block;
     flex-direction: column;
-    width: 600px;
-    height: 800px;
+    width: 360px;
+    height: 640px;
     justify-content: center;    
     align-items: center;
     background: #fff;
@@ -13,18 +13,18 @@
 .videoOutgoing{
     position: absolute;
     display: flex;
-    height: 200px;
+    height: 160px;
     top: 40px;
     left: 20px;
     right: 20px;
 
     & .desc{
-        height: 150px;
+        height: 120px;
     }
 
     & img {
-        width: 150px;
-        height: 150px;
+        width: 120px;
+        height: 120px;
     }
 
     & p {
@@ -35,16 +35,16 @@
 
 .videoInviter{
     position: absolute;
-    height: 300px;
-    top: 100px;
-    left: 200px;
-    width: 200px;
+    height: 240px;
+    top: 80px;
+    left: 120px;
+    width: 120px;
     text-align: center;
 
     & img {
         display: inline;
-        width: 150px;
-        height: 150px;
+        width: 100px;
+        height: 100px;
         margin:5px;
     }
 
@@ -55,13 +55,12 @@
 }
 
 .localVideo{
-    visibility: hidden;
     position: absolute;
     z-index: 99;
+    object-fit:fill;
     display: block;
-    background: #000;
-    width: 150px;
-    height: 200px;
+    width: 70px;
+    height: 100px;
     top: 40px;
     left: 20px;
 }
@@ -69,18 +68,18 @@
 .remoteVideo{
     position: absolute;
     display: block;
-    background:#aaa;
     width: 100%;
+    object-fit:fill;
     height: 100%;
 }
 
 .audioAccept{
     position: absolute;
     display: block;
-    top: 450px;
-    right: 100px;
-    width: 200px;
-    height: 200px;
+    top: 360px;
+    right: 60px;
+    width: 120px;
+    height: 160px;
     text-align: center;
 
     & img {
@@ -100,13 +99,13 @@
     flex-direction: row;
     text-align: center;
     position: absolute;
-    top: 500px;
+    top: 400px;
     justify-content:space-around;
     width: 100%;
 
     & img {
-        width: 150px;
-        height: 150px;
+        width: 120px;
+        height: 120px;
     }
 
     & p {
@@ -118,16 +117,17 @@
 .videoIncomingAction {
     display: block;
     position: absolute;
-    top: 600px;
-    left: 125px;
-    width: 350px;
-    height: 150px;
+    top: 480px;
+    left: 10px;
+    right: 10px;
+    width: 340px;
+    height: 120px;
     white-space:nowrap;
     text-align: center;
 
     & img {
-        width: 150px;
-        height: 150px;
+        width: 120px;
+        height: 120px;
     }
 
     & p {
@@ -140,13 +140,13 @@
 .audioConnectedAction{
     display: block;
     position: absolute;
-    top: 400px;
+    top: 320px;
     width: 100%;
     white-space:nowrap;
     text-align: center;
     & img {
-        width: 150px;
-        height: 150px;
+        width: 120px;
+        height: 120px;
     }
 
     & p {
@@ -158,17 +158,17 @@
 
 .incomingAccept{
     float: right; 
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
 }
 
 .incomingHangup{
     float: left; 
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
 }
 
 .audioIncomingHangup{
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
 }

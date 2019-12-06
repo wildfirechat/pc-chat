@@ -16,9 +16,16 @@ import { observable, action } from 'mobx';
 @observer
 export default class Voip extends Component {
 
-    @observable status = 0;
+    static STATUS_IDEL = 0;
+    static STATUS_OUTGOING = 1;
+    static STATUS_INCOMING = 2;
+    static STATUS_CONNECTING = 3;
+    static STATUS_CONNECTED = 4;
 
-    moCall;
+    @observable status = 0;
+    @observable audioOnly = false;
+
+    moCall; // true, outgoing; false, incoming
     isInitiator;
     pcSetuped;
     pooledSignalingMsg = [];
@@ -46,33 +53,13 @@ export default class Voip extends Component {
         if (isElectron()) {
             ipcRenderer.on('initCallUI', (event, message) => { // 监听父页面定义的端口
                 this.moCall = message.moCall;
+                this.audioOnly = message.audioOnly;
                 if (message.moCall) {
-                    this.callButton.disabled = false;
-                    this.hangupButton.disabled = false;
-                    this.toVoiceButton.hidden = true;
-                    this.switchMicorphone.hidden = true;
-                    if (message.audioOnly) {
-                        this.localVideo.hidden = true;
-                        this.remoteVideo.hidden = true;
-                    } else {
-                        this.toVoiceButton.hidden = false;
-                        this.toVoiceButton.disabled = false;
-                    }
+                    this.status = Voip.STATUS_OUTGOING;
                     this.starPreview(false, message.voiceOnly);
                 } else {
+                    this.status = Voip.STATUS_INCOMING;
                     this.playIncommingRing();
-
-                    this.callButton.disabled = false;
-                    this.hangupButton.disabled = false;
-                    if (message.audioOnly) {
-                        this.localVideo.hidden = true;
-                        this.remoteVideo.hidden = true;
-                        this.toVoiceButton.hidden = true;
-                    } else {
-                        this.toVoiceButton.hidden = false;
-                        this.toVoiceButton.disabled = false;
-                    }
-                    // this.switchMicorphone.hidden = true;
                 }
             });
 
@@ -133,12 +120,12 @@ export default class Voip extends Component {
             console.log('getUserMedia error', e);
             alert(`getUserMedia() error: ${e.name}`);
         }
-        this.callButton.disabled = true;
     }
 
     async startMedia(initiator, audioOnly) {
         console.log('start media', initiator);
         this.isInitiator = initiator;
+        this.status = Voip.STATUS_CONNECTING;
         this.startTime = window.performance.now();
         if (!this.localStream) {
             this.starPreview(true, audioOnly);
@@ -217,8 +204,7 @@ export default class Voip extends Component {
     }
 
     downgrade2Voice() {
-        this.localVideo.hidden = true;
-        this.remoteVideo.hidden = true;
+        this.audioOnly = true;
 
         const localVideoTracks = localStream.getVideoTracks();
         if (localVideoTracks && localVideoTracks.length > 0) {
@@ -227,8 +213,6 @@ export default class Voip extends Component {
 
         this.localVideo.srcObject = null;
         this.remoteVideo.srcObject = null;
-
-        this.toVoiceButton.hidden = true;
     }
 
     getName(pc) {
@@ -246,8 +230,7 @@ export default class Voip extends Component {
         console.log('voip on call button click');
         this.stopIncommingRing();
 
-        this.callButton.hidden = true;
-        this.hangupButton.disabled = false;
+        this.status = Voip.STATUS_CONNECTING;
         console.log('on call button call');
         ipcRenderer.send('onCallButton');
     }
@@ -386,8 +369,8 @@ export default class Voip extends Component {
             console.log('ICE state change event: ', event);
             if (pc.iceConnectionState === 'connected') {
                 //todo 界面计时开始
+                this.status = Voip.STATUS_CONNECTED;
                 this.callTimer = window.setInterval(this.onUpdateTime, 1000);
-                this.status = 2;
             }
             ipcRenderer.send('onIceStateChange', pc.iceConnectionState);
         }
@@ -423,6 +406,7 @@ export default class Voip extends Component {
 
     endCall() {
         console.log('Ending media');
+        this.status = Voip.STATUS_IDEL;
         this.stopIncommingRing();//可能没有接听就挂断了
         if (this.callTimer) {
             clearInterval(this.callTimer);
@@ -691,13 +675,16 @@ export default class Voip extends Component {
     renderVideo() {
         return (
             <div className={classes.container}>
-                <video ref="localVideo" className={classes.remoteVideo} playsInline autoPlay muted >
+                <video ref="localVideo" className={classes.localVideo} playsInline autoPlay muted >
 
                 </video>
 
-                <video ref="remoteVideo" className={classes.localVideo} playsInline autoPlay hidden={false} >
+                <video ref="remoteVideo" className={classes.remoteVideo} playsInline autoPlay hidden={false} >
                 </video>
-                {this.status < 2 ? this.renderIncomingVideo() : this.renderConnectedVideo()
+                {
+                    // this.status < 2 ? this.renderIncomingVideo() : this.renderConnectedVideo()
+                    this.status === Voip.STATUS_INCOMING ? this.renderIncomingVideo()
+                        : (this.status === Voip.STATUS_OUTGOING ? this.renderOutgoingVideo() : this.renderConnectedVideo())
                 }
 
             </div>
@@ -705,35 +692,20 @@ export default class Voip extends Component {
     }
 
     renderAudio() {
+        return (
+            <div className={classes.container}>
+                {
+                    // this.status < 2 ? this.renderIncomingVideo() : this.renderConnectedVideo()
+                    this.status === Voip.STATUS_INCOMING ? this.renderIncomingAudio()
+                        : (this.status === Voip.STATUS_OUTGOING ? this.renderOutgoingAudio() : this.renderConnectedAudio())
+                }
+
+            </div>
+        );
 
     }
 
     render() {
-        // incominig
-        return this.renderVideo();
-        // if (this.status === 1) {
-        //     return this.renderVideo();
-        //     // incoming connected
-        // } else if (this.status === 2) {
-        //     return (
-        //         <div className={classes.cobntainer}>
-        //             <video className={classes.localVideo}>
-
-        //             </video>
-
-        //             <video className={classes.remoteVideo}>
-
-        //             </video>
-        //             <div className={classes.action}>
-        //                 <img className={classes.hangup} src='assets/images/offline.png'></img>
-        //                 <img className={classes.accept} src='assets/images/offline.png'></img>
-        //             </div>
-        //         </div>
-        //     );
-
-        //     // outgoing
-        // } else {
-
-        // }
+        return this.audioOnly ? this.renderAudio() : this.renderVideo();
     }
 }
