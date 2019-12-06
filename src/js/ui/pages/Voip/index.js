@@ -187,20 +187,6 @@ export default class Voip extends Component {
                 this.onCreateSessionDescriptionError(e);
             }
         }
-
-        this.callButton.hidden = true;
-        this.remoteVideo.hidden = false;
-        // this.switchMicorphone.hidden = false;
-        if (!audioOnly) {
-            if (this.moCall) {
-                this.toVoiceButton.hidden = false;
-            }
-        }
-        // this.remoteVideo.setAttribute('style', 'width:200px; z-index:100px; position:absolute; right:20px; float:right;');
-        if (audioOnly) {
-            this.localVideo.hidden = true;
-            this.remoteVideo.hidden = true;
-        }
     }
 
     downgrade2Voice() {
@@ -378,8 +364,6 @@ export default class Voip extends Component {
 
     hangup() {
         console.log('Ending call');
-        this.callButton.hidden = true;
-        this.hangupButton.hidden = true;
         ipcRenderer.send('onHangupButton');
         this.endCall();
     }
@@ -397,10 +381,6 @@ export default class Voip extends Component {
     downToVoice() {
         console.log('down to voice');
         this.stopIncommingRing();
-        this.toVoiceButton.disabled = true;
-        this.toVoiceButton.hidden = true;
-        this.callButton.hidden = true;
-        this.hangupButton.disabled = false;
         ipcRenderer.send('downToVoice');
     }
 
@@ -456,20 +436,10 @@ export default class Voip extends Component {
         this.localVideo = this.refs.localVideo;
         this.remoteVideo = this.refs.remoteVideo;
 
-        console.log('yyyyyyy', this.remoteVideo, this.localVideo);
-
         // TODO more
     }
 
     componentWillUnmount() {
-    }
-
-    renderAudioIncomingAction() {
-
-    }
-
-    renderAudioOutgoingOrConnectedAction() {
-
     }
 
     videoOutgoingDesc() {
@@ -489,17 +459,26 @@ export default class Voip extends Component {
             <div className={classes.videoOutgoingOrConnectedAction}>
                 <div>
                     <p style={{ visibility: 'hidden' }}>holder</p>
-                    <img ref="switchMicorphone" src='assets/images/av_mute.png' ref="videoMute"></img>
+                    <img ref="switchMicorphone"
+                        src='assets/images/av_mute.png'
+                        onClick={() => this.triggerMicrophone()}
+                    >
+                    </img>
                     <p>关闭麦克风</p>
                 </div>
                 <div>
                     <p>10:00</p>
-                    <img ref="hangupButton" src='assets/images/av_hang_up.png'></img>
+                    <img ref="hangupButton"
+                        onClick={() => this.hangup()}
+                        src='assets/images/av_hang_up.png'></img>
                     <p style={{ visibility: 'hidden' }}>holder</p>
                 </div>
                 <div>
                     <p style={{ visibility: 'hidden' }}>holder</p>
-                    <img ref="toVoiceButton" src='assets/images/av_phone.png'></img>
+                    <img ref="toVoiceButton"
+                        src='assets/images/av_phone.png'
+                        onClick={() => this.downgrade2Voice()}
+                    />
                     <p>切换到语音聊天</p>
                 </div>
             </div>
@@ -520,12 +499,23 @@ export default class Voip extends Component {
         return (
             <div>
                 <div className={classes.audioAccept}>
-                    <img ref="toVoiceButton" src='assets/images/offline.png'></img>
+                    <img ref="toVoiceButton"
+                        onClick={() => this.downToVoice()}
+                        src='assets/images/av_float_audio.png'>
+                    </img>
                     <p>切换到语音聊天</p>
                 </div>
                 <div className={classes.videoIncomingAction}>
-                    <img ref="hangupButton" className={classes.incomingHangup} src='assets/images/offline.png'></img>
-                    <img ref="callButton" onClick={() => this.call()} className={classes.incomingAccept} src='assets/images/offline.png'></img>
+                    <img ref="hangupButton"
+                        onClick={() => this.hangup()}
+                        className={classes.incomingHangup}
+                        src='assets/images/av_hang_up.png'>
+
+                    </img>
+                    <img ref="callButton"
+                        onClick={() => this.call()}
+                        className={classes.incomingAccept}
+                        src='assets/images/av_video_answer.png'></img>
                 </div>
             </div >
         )
@@ -544,8 +534,8 @@ export default class Voip extends Component {
     audioIncomingAction() {
         return (
             <div className={classes.videoIncomingAction}>
-                <img className={classes.incomingHangup} src='assets/images/offline.png'></img>
-                <img className={classes.incomingAccept} src='assets/images/offline.png'></img>
+                <img className={classes.incomingHangup} src='assets/images/av_hang_up.png'></img>
+                <img className={classes.incomingAccept} src='assets/images/av_video_answer.png'></img>
             </div>
         )
     }
@@ -563,7 +553,7 @@ export default class Voip extends Component {
     audioOutgoingAction() {
         return (
             <div className={classes.videoIncomingAction}>
-                <img className={classes.audioIncomingHangup} src='assets/images/offline.png'></img>
+                <img className={classes.audioIncomingHangup} src='assets/images/av_hang_up.png'></img>
             </div>
         )
     }
@@ -582,10 +572,14 @@ export default class Voip extends Component {
         return (
             <div className={classes.audioConnectedAction}>
                 <div>
-                    <img className={classes.audioIncomingHangup} src='assets/images/offline.png'></img>
+                    <img className={classes.audioIncomingHangup}
+                        onClick={e => this.triggerMicrophone()}
+                        src='assets/images/av_mute.png'></img>
                     <p>关闭麦克风</p>
                 </div>
-                <img className={classes.audioIncomingHangup} src='assets/images/offline.png'></img>
+                <img className={classes.audioIncomingHangup}
+                    onClick={e => this.hangup()}
+                    src='assets/images/av_hang_up.png'></img>
             </div>
         )
     }
@@ -593,8 +587,14 @@ export default class Voip extends Component {
     audioIncomingAction() {
         return (
             <div className={classes.videoIncomingAction}>
-                <img className={classes.incomingHangup} src='assets/images/offline.png'></img>
-                <img className={classes.incomingAccept} src='assets/images/offline.png'></img>
+                <img className={classes.incomingHangup}
+                    onClick={e => this.hangup()}
+                    src='assets/images/av_hang_up.png'
+                ></img>
+                <img className={classes.incomingAccept}
+                    onClick={e => this.call()}
+                    src='assets/images/av_video_answer.png'
+                ></img>
             </div>
         )
     }
@@ -606,7 +606,6 @@ export default class Voip extends Component {
                     this.audioIncomingDesc()
                 }
                 {
-
                     this.audioIncomingAction()
                 }
             </div>
@@ -672,7 +671,34 @@ export default class Voip extends Component {
         return this.videoOutgoingOrConnectedAction()
     }
 
+    renderIdle() {
+        return (
+            <div>
+                <p>WFC Voip</p>
+            </div>
+        );
+    }
+
     renderVideo() {
+        let renderFn;
+        switch (this.status) {
+            case Voip.STATUS_IDEL:
+                renderFn = this.renderIdle;
+                break;
+            case Voip.STATUS_INCOMING:
+                renderFn = this.renderIncomingVideo;
+                break;
+            case Voip.STATUS_OUTGOING:
+                renderFn = this.renderOutgoingVideo;
+                break;
+            case Voip.STATUS_CONNECTING:
+            case Voip.STATUS_CONNECTED:
+                renderFn = this.renderConnectedVideo;
+                break;
+            default:
+                break;
+
+        }
         return (
             <div className={classes.container}>
                 <video ref="localVideo" className={classes.localVideo} playsInline autoPlay muted >
@@ -682,9 +708,7 @@ export default class Voip extends Component {
                 <video ref="remoteVideo" className={classes.remoteVideo} playsInline autoPlay hidden={false} >
                 </video>
                 {
-                    // this.status < 2 ? this.renderIncomingVideo() : this.renderConnectedVideo()
-                    this.status === Voip.STATUS_INCOMING ? this.renderIncomingVideo()
-                        : (this.status === Voip.STATUS_OUTGOING ? this.renderOutgoingVideo() : this.renderConnectedVideo())
+                    renderFn.bind(this)()
                 }
 
             </div>
@@ -692,12 +716,29 @@ export default class Voip extends Component {
     }
 
     renderAudio() {
+        let renderFn;
+        switch (this.status) {
+            case Voip.STATUS_IDEL:
+                renderFn = this.renderIdle;
+                break;
+            case Voip.STATUS_INCOMING:
+                renderFn = this.renderIncomingAudio;
+                break;
+            case Voip.STATUS_OUTGOING:
+                renderFn = this.renderOutgoingAudio;
+                break;
+            case Voip.STATUS_CONNECTING:
+            case Voip.STATUS_CONNECTED:
+                renderFn = this.renderConnectedAudio;
+                break;
+            default:
+                break;
+
+        }
         return (
             <div className={classes.container}>
                 {
-                    // this.status < 2 ? this.renderIncomingVideo() : this.renderConnectedVideo()
-                    this.status === Voip.STATUS_INCOMING ? this.renderIncomingAudio()
-                        : (this.status === Voip.STATUS_OUTGOING ? this.renderOutgoingAudio() : this.renderConnectedAudio())
+                    renderFn.bind(this)()
                 }
 
             </div>
@@ -706,6 +747,7 @@ export default class Voip extends Component {
     }
 
     render() {
+        console.log('yyyyyyyyyyyyyyyy', this.audioOnly);
         return this.audioOnly ? this.renderAudio() : this.renderVideo();
     }
 }

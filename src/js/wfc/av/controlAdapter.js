@@ -148,8 +148,8 @@ class WfcControlAdaper {
         {
           width: 360,
           height: 640 + 25,
-          resizable: false,
-          maximizable: false,
+          // resizable: false,
+          // maximizable: false,
           webPreferences: {
             scrollBounce: true,
             nativeWindowOpen: true,
@@ -192,7 +192,7 @@ class WfcControlAdaper {
 
   initCallUI(isMoCall, audioOnly) {
     if (!this.destroyed) {
-      voipEventEmit(this.callWin.webContents, 'initCallUI', { voiceOnly: audioOnly, moCall: isMoCall });
+      voipEventEmit(this.callWin.webContents, 'initCallUI', { audioOnly: audioOnly, moCall: isMoCall });
     }
   }
 
