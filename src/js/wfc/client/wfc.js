@@ -59,8 +59,8 @@ export class WfcManager {
         return impl.getUserInfos(userIds, groupId);
     }
 
-    async searchUser(keyword, successCB, failCB) {
-        impl.searchUser(keyword, successCB, failCB);
+    async searchUser(keyword, searchType, page, successCB, failCB) {
+        impl.searchUser(keyword, searchType, page, successCB, failCB);
     }
 
     searchFriends(keyword) {
