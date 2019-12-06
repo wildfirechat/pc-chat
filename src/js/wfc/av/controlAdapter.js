@@ -148,6 +148,8 @@ class WfcControlAdaper {
         {
           width: 360,
           height: 640 + 25,
+          resizable: false,
+          maximizable: false,
           webPreferences: {
             scrollBounce: true,
             nativeWindowOpen: true,
