@@ -51,19 +51,6 @@ export function connect(userId, token) {
     wfc.connect(userId, token);
 }
 
-export function voipEventEmitter() {
-    if (isElectron()) {
-        // renderer
-        if ((process && process.type === 'renderer')) {
-            return require('electron').ipcRenderer;
-        } else {
-            return require('electron').ipcMain;
-        }
-    } else {
-        wfc.eventEmitter;
-    }
-}
-
 export function voipEventEmit(webContents, event, args) {
     if (webContents) {
         if (webContents) {
