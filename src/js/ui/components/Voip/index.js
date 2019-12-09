@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react';
 import clazz from 'classname';
 import classes from './style.css';
 const currentWindow = require('electron').remote.getCurrentWindow();
-import { voipEventOn, voipEventEmit, voipEventRemoveAllListeners } from '../../../platform'
+import { ipcRenderer, isElectron } from '../../../platform'
 import { observable, action } from 'mobx';
 
 @inject(stores => ({
@@ -47,9 +47,34 @@ export default class Voip extends Component {
     stopIncommingRing() {
         //再接听/语音接听/结束媒体时停止播放来电铃声，可能有多次，需要避免出问题
     }
+    voipEventEmit(event, args) {
+        if (isElectron()) {
+            // renderer to main
+            ipcRenderer.send(event, args);
+        } else {
+            wfc.eventEmitter.emit(event, args);
+        }
+    }
+
+    voipEventOn = (event, listener) => {
+        if (isElectron()) {
+            // listen for event from renderer
+            ipcRenderer.on(event, listener);
+        } else {
+            wfc.eventEmitter.on(event, listener);
+        }
+    }
+    voipEventRemoveAllListeners(events = []) {
+        if (isElectron()) {
+            // renderer
+            events.forEach(e => ipcRenderer.removeAllListeners(e));
+        } else {
+            // TODO
+        }
+    }
 
     setup() {
-        voipEventOn('initCallUI', (event, message) => { // 监听父页面定义的端口
+        this.voipEventOn('initCallUI', (event, message) => { // 监听父页面定义的端口
             this.moCall = message.moCall;
             this.audioOnly = message.audioOnly;
             if (message.moCall) {
@@ -61,19 +86,19 @@ export default class Voip extends Component {
             }
         });
 
-        voipEventOn('startMedia', (event, message) => { // 监听父页面定义的端口
+        this.voipEventOn('startMedia', (event, message) => { // 监听父页面定义的端口
             this.startMedia(message.isInitiator, message.audioOnly);
         });
 
-        voipEventOn('setRemoteOffer', (event, message) => {
+        this.voipEventOn('setRemoteOffer', (event, message) => {
             this.onReceiveRemoteCreateOffer(JSON.parse(message));
         });
 
-        voipEventOn('setRemoteAnswer', (event, message) => {
+        this.voipEventOn('setRemoteAnswer', (event, message) => {
             this.onReceiveRemoteAnswerOffer(JSON.parse(message));
         });
 
-        voipEventOn('setRemoteIceCandidate', (event, message) => {
+        this.voipEventOn('setRemoteIceCandidate', (event, message) => {
             console.log('setRemoteIceCandidate');
             console.log(message);
             if (!this.pcSetuped) {
@@ -85,17 +110,17 @@ export default class Voip extends Component {
             }
         });
 
-        voipEventOn('endCall', () => { // 监听父页面定义的端口
+        this.voipEventOn('endCall', () => { // 监听父页面定义的端口
             this.endCall();
         });
 
-        voipEventOn('downgrade2Voice', () => {
+        this.voipEventOn('downgrade2Voice', () => {
             this.downgrade2Voice();
         });
 
-        voipEventOn('ping', () => {
+        this.voipEventOn('ping', () => {
             console.log('receive ping');
-            voipEventEmit(null, 'pong');
+            this.voipEventEmit('pong');
         });
 
     }
@@ -213,7 +238,7 @@ export default class Voip extends Component {
 
         this.status = Voip.STATUS_CONNECTING;
         console.log('on call button call');
-        voipEventEmit(null, 'onCallButton');
+        this.voipEventEmit('onCallButton');
     }
 
     onCreateSessionDescriptionError(error) {
@@ -265,7 +290,7 @@ export default class Voip extends Component {
         }
 
         console.log(desc);
-        voipEventEmit(null, 'onCreateAnswerOffer', JSON.stringify(desc));
+        this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
     }
 
     onSetLocalSuccess(pc) {
@@ -309,7 +334,7 @@ export default class Voip extends Component {
             this.onSetSessionDescriptionError(e);
         }
         console.log(desc);
-        voipEventEmit(null, 'onCreateAnswerOffer', JSON.stringify(desc));
+        this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
     }
 
     async onReceiveRemoteIceCandidate(message) {
@@ -322,7 +347,7 @@ export default class Voip extends Component {
             return;
         }
         try {
-            voipEventEmit(null, 'onIceCandidate', JSON.stringify(event.candidate));
+            this.voipEventEmit('onIceCandidate', JSON.stringify(event.candidate));
             this.onAddIceCandidateSuccess(pc);
         } catch (e) {
             this.onAddIceCandidateError(pc, e);
@@ -353,13 +378,13 @@ export default class Voip extends Component {
                 this.status = Voip.STATUS_CONNECTED;
                 this.callTimer = window.setInterval(this.onUpdateTime, 1000);
             }
-            voipEventEmit(null, 'onIceStateChange', pc.iceConnectionState);
+            this.voipEventEmit('onIceStateChange', pc.iceConnectionState);
         }
     }
 
     hangup() {
         console.log('Ending call');
-        voipEventEmit(null, 'onHangupButton');
+        this.voipEventEmit('onHangupButton');
         this.endCall();
     }
 
@@ -376,7 +401,7 @@ export default class Voip extends Component {
     downToVoice() {
         console.log('down to voice');
         this.stopIncommingRing();
-        voipEventEmit(null, 'downToVoice');
+        this.voipEventEmit('downToVoice');
     }
 
     endCall() {
@@ -386,7 +411,6 @@ export default class Voip extends Component {
         if (this.callTimer) {
             clearInterval(this.callTimer);
         }
-
 
         if (this.localStream) {
             if (typeof this.localStream.getTracks === 'undefined') {
@@ -411,11 +435,12 @@ export default class Voip extends Component {
         // ipcRenderer.removeListener('setRemoteAnswer');
         // ipcRenderer.removeListener('setRemoteIceCandidate');
         // ipcRenderer.removeListener('endMedia');
-        voipEventRemoveAllListeners(['initCallUI', 'startPreview', 'startMedia', 'setRemoteOffer', 'setRemoteAnswer', 'setRemoteIceCandidate', 'endMedia']);
+        this.voipEventRemoveAllListeners(['initCallUI', 'startPreview', 'startMedia', 'setRemoteOffer', 'setRemoteAnswer', 'setRemoteIceCandidate', 'endMedia']);
 
         // 停几秒，显示通话时间，再结束
         // 页面释放有问题没有真正释放掉
         // eslint-disable-next-line no-const-assign
+        // TODO web
         setTimeout(function () { if (currentWindow) { currentWindow.close(); } }, 2000);
     }
 
