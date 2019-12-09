@@ -52,9 +52,9 @@ export function connect(userId, token) {
 }
 
 export function voipEventEmit(webContents, event, args) {
-    if (webContents) {
+    if (isElectron()) {
         if (webContents) {
-            // main to renderer
+            // renderer/main to renderer
             webContents.send(event, args);
         } else {
             // renderer to main
@@ -75,6 +75,19 @@ export function voipEventOn(event, listener) {
         }
     } else {
         wfc.eventEmitter.on(event, listener);
+    }
+}
+
+export function voipEventRemoveAllListeners(events) {
+    if (isElectron()) {
+        // renderer
+        if ((process && process.type === 'renderer')) {
+            require('electron').ipcRenderer.removeAllListeners(events);
+        } else {
+            require('electron').ipcMain.removeAllListeners(events);
+        }
+    } else {
+
     }
 }
 

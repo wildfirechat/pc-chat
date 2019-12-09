@@ -5,8 +5,7 @@ import { observer, inject } from 'mobx-react';
 import clazz from 'classname';
 import classes from './style.css';
 const currentWindow = require('electron').remote.getCurrentWindow();
-var ipcRenderer = require('electron').ipcRenderer;
-import { isElectron } from '../../../platform'
+import { voipEventOn, voipEventEmit, voipEventRemoveAllListeners } from '../../../platform'
 import { observable, action } from 'mobx';
 
 @inject(stores => ({
@@ -50,59 +49,55 @@ export default class Voip extends Component {
     }
 
     setup() {
-        if (isElectron()) {
-            ipcRenderer.on('initCallUI', (event, message) => { // 监听父页面定义的端口
-                this.moCall = message.moCall;
-                this.audioOnly = message.audioOnly;
-                if (message.moCall) {
-                    this.status = Voip.STATUS_OUTGOING;
-                    this.starPreview(false, message.voiceOnly);
-                } else {
-                    this.status = Voip.STATUS_INCOMING;
-                    this.playIncommingRing();
-                }
-            });
+        voipEventOn('initCallUI', (event, message) => { // 监听父页面定义的端口
+            this.moCall = message.moCall;
+            this.audioOnly = message.audioOnly;
+            if (message.moCall) {
+                this.status = Voip.STATUS_OUTGOING;
+                this.starPreview(false, message.voiceOnly);
+            } else {
+                this.status = Voip.STATUS_INCOMING;
+                this.playIncommingRing();
+            }
+        });
 
-            ipcRenderer.on('startMedia', (event, message) => { // 监听父页面定义的端口
-                this.startMedia(message.isInitiator, message.audioOnly);
-            });
+        voipEventOn('startMedia', (event, message) => { // 监听父页面定义的端口
+            this.startMedia(message.isInitiator, message.audioOnly);
+        });
 
-            ipcRenderer.on('setRemoteOffer', (event, message) => {
-                this.onReceiveRemoteCreateOffer(JSON.parse(message));
-            });
+        voipEventOn('setRemoteOffer', (event, message) => {
+            this.onReceiveRemoteCreateOffer(JSON.parse(message));
+        });
 
-            ipcRenderer.on('setRemoteAnswer', (event, message) => {
-                this.onReceiveRemoteAnswerOffer(JSON.parse(message));
-            });
+        voipEventOn('setRemoteAnswer', (event, message) => {
+            this.onReceiveRemoteAnswerOffer(JSON.parse(message));
+        });
 
-            ipcRenderer.on('setRemoteIceCandidate', (event, message) => {
-                console.log('setRemoteIceCandidate');
-                console.log(message);
-                if (!this.pcSetuped) {
-                    console.log('pc not setup yet pool it');
-                    this.pooledSignalingMsg.push(message);
-                } else {
-                    console.log('handle the candidiated');
-                    this.onReceiveRemoteIceCandidate(JSON.parse(message));
-                }
-            });
+        voipEventOn('setRemoteIceCandidate', (event, message) => {
+            console.log('setRemoteIceCandidate');
+            console.log(message);
+            if (!this.pcSetuped) {
+                console.log('pc not setup yet pool it');
+                this.pooledSignalingMsg.push(message);
+            } else {
+                console.log('handle the candidiated');
+                this.onReceiveRemoteIceCandidate(JSON.parse(message));
+            }
+        });
 
-            ipcRenderer.on('endCall', () => { // 监听父页面定义的端口
-                this.endCall();
-            });
+        voipEventOn('endCall', () => { // 监听父页面定义的端口
+            this.endCall();
+        });
 
-            ipcRenderer.on('downgrade2Voice', () => {
-                this.downgrade2Voice();
-            });
+        voipEventOn('downgrade2Voice', () => {
+            this.downgrade2Voice();
+        });
 
-            ipcRenderer.on('ping', () => {
-                console.log('receive ping');
-                ipcRenderer.send('pong');
-            });
+        voipEventOn('ping', () => {
+            console.log('receive ping');
+            voipEventEmit(null, 'pong');
+        });
 
-        } else {
-
-        }
     }
 
     async starPreview(continueStartMedia, audioOnly) {
@@ -218,7 +213,7 @@ export default class Voip extends Component {
 
         this.status = Voip.STATUS_CONNECTING;
         console.log('on call button call');
-        ipcRenderer.send('onCallButton');
+        voipEventEmit(null, 'onCallButton');
     }
 
     onCreateSessionDescriptionError(error) {
@@ -270,7 +265,7 @@ export default class Voip extends Component {
         }
 
         console.log(desc);
-        ipcRenderer.send('onCreateAnswerOffer', JSON.stringify(desc));
+        voipEventEmit(null, 'onCreateAnswerOffer', JSON.stringify(desc));
     }
 
     onSetLocalSuccess(pc) {
@@ -314,7 +309,7 @@ export default class Voip extends Component {
             this.onSetSessionDescriptionError(e);
         }
         console.log(desc);
-        ipcRenderer.send('onCreateAnswerOffer', JSON.stringify(desc));
+        voipEventEmit(null, 'onCreateAnswerOffer', JSON.stringify(desc));
     }
 
     async onReceiveRemoteIceCandidate(message) {
@@ -327,7 +322,7 @@ export default class Voip extends Component {
             return;
         }
         try {
-            ipcRenderer.send('onIceCandidate', JSON.stringify(event.candidate));
+            voipEventEmit(null, 'onIceCandidate', JSON.stringify(event.candidate));
             this.onAddIceCandidateSuccess(pc);
         } catch (e) {
             this.onAddIceCandidateError(pc, e);
@@ -358,13 +353,13 @@ export default class Voip extends Component {
                 this.status = Voip.STATUS_CONNECTED;
                 this.callTimer = window.setInterval(this.onUpdateTime, 1000);
             }
-            ipcRenderer.send('onIceStateChange', pc.iceConnectionState);
+            voipEventEmit(null, 'onIceStateChange', pc.iceConnectionState);
         }
     }
 
     hangup() {
         console.log('Ending call');
-        ipcRenderer.send('onHangupButton');
+        voipEventEmit(null, 'onHangupButton');
         this.endCall();
     }
 
@@ -381,7 +376,7 @@ export default class Voip extends Component {
     downToVoice() {
         console.log('down to voice');
         this.stopIncommingRing();
-        ipcRenderer.send('downToVoice');
+        voipEventEmit(null, 'downToVoice');
     }
 
     endCall() {
@@ -416,7 +411,7 @@ export default class Voip extends Component {
         // ipcRenderer.removeListener('setRemoteAnswer');
         // ipcRenderer.removeListener('setRemoteIceCandidate');
         // ipcRenderer.removeListener('endMedia');
-        ipcRenderer.removeAllListeners(['initCallUI', 'startPreview', 'startMedia', 'setRemoteOffer', 'setRemoteAnswer', 'setRemoteIceCandidate', 'endMedia']);
+        voipEventRemoveAllListeners(['initCallUI', 'startPreview', 'startMedia', 'setRemoteOffer', 'setRemoteAnswer', 'setRemoteIceCandidate', 'endMedia']);
 
         // 停几秒，显示通话时间，再结束
         // 页面释放有问题没有真正释放掉
