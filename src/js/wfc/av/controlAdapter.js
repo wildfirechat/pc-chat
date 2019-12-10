@@ -1,4 +1,4 @@
-import { isElectron, ipcRenderer } from '../../platform'
+import { isElectron, ipcRenderer, BrowserWindow, PostMessageEventEmitter } from '../../platform'
 const path = require('path');
 
 
@@ -14,13 +14,14 @@ class WfcControlAdaper {
   downToVoice;
   destroyed;
   callWin;
+  events;
 
   voipEventEmit(event, args) {
     if (isElectron()) {
       // renderer/main to renderer
       this.callWin.webContents.send(event, args);
     } else {
-      wfc.eventEmitter.emit(event, args);
+      this.events.emit(event, args);
     }
   }
 
@@ -29,7 +30,7 @@ class WfcControlAdaper {
       // listen for event from main
       ipcRenderer.on(event, listener);
     } else {
-      wfc.eventEmitter.on(event, listener);
+      this.events.on(event, listener);
     }
   }
 
@@ -38,7 +39,7 @@ class WfcControlAdaper {
       // renderer
       events.forEach(e => ipcRenderer.removeAllListeners(e));
     } else {
-      // TODO
+      this.events.stop();
     }
   }
 
@@ -46,6 +47,9 @@ class WfcControlAdaper {
     this.callWin = win;
     this.destroyed = false;
 
+    if (!isElectron()) {
+      this.events = new PostMessageEventEmitter(win, window.location.origin)
+    }
 
     this.voipEventOn('onReceiveOffer', (event, offer) => {
       if (!self.destroyed && self.onReceiveOffer) {
@@ -174,11 +178,10 @@ class WfcControlAdaper {
 
   showCallUI(isMoCall, audioOnly) {
     if (isElectron()) {
-      let BrowserWindow = require('electron').remote.BrowserWindow;
       let win = new BrowserWindow(
         {
           width: 360,
-          height: 640 + 25,
+          height: 640 + 15,
           // resizable: false,
           // maximizable: false,
           webPreferences: {
@@ -210,6 +213,12 @@ class WfcControlAdaper {
 
       win.loadURL(path.join('file://', process.cwd(), 'src/index.html?voip'));
       win.show();
+    } else {
+      let win = window.open(window.location.origin + '?voip', 'target', 'width=360,height=640,left=200,top=200,toolbar=no,menubar=no,resizable=no,location=no');
+      win.addEventListener('load', () => {
+        self.init(win);
+        self.initCallUI(isMoCall, audioOnly);
+      }, true);
     }
   }
 

@@ -4,8 +4,7 @@ import { observer, inject } from 'mobx-react';
 
 import clazz from 'classname';
 import classes from './style.css';
-const currentWindow = require('electron').remote.getCurrentWindow();
-import { ipcRenderer, isElectron } from '../../../platform'
+import { ipcRenderer, isElectron, currentWindow, PostMessageEventEmitter } from '../../../platform'
 import { observable, action } from 'mobx';
 
 @inject(stores => ({
@@ -40,6 +39,8 @@ export default class Voip extends Component {
     localVideo;
     remoteVideo;
 
+    events;
+
     playIncommingRing() {
         //在界面初始化时播放来电铃声
     }
@@ -52,7 +53,7 @@ export default class Voip extends Component {
             // renderer to main
             ipcRenderer.send(event, args);
         } else {
-            wfc.eventEmitter.emit(event, args);
+            this.events.emit(event, args);
         }
     }
 
@@ -61,7 +62,7 @@ export default class Voip extends Component {
             // listen for event from renderer
             ipcRenderer.on(event, listener);
         } else {
-            wfc.eventEmitter.on(event, listener);
+            this.events.on(event, listener);
         }
     }
     voipEventRemoveAllListeners(events = []) {
@@ -69,11 +70,15 @@ export default class Voip extends Component {
             // renderer
             events.forEach(e => ipcRenderer.removeAllListeners(e));
         } else {
-            // TODO
+            this.events.stop();
         }
     }
 
     setup() {
+        if (!isElectron()) {
+            this.events = new PostMessageEventEmitter(window.opener, window.location.origin);
+        }
+
         this.voipEventOn('initCallUI', (event, message) => { // 监听父页面定义的端口
             this.moCall = message.moCall;
             this.audioOnly = message.audioOnly;
@@ -441,7 +446,13 @@ export default class Voip extends Component {
         // 页面释放有问题没有真正释放掉
         // eslint-disable-next-line no-const-assign
         // TODO web
-        setTimeout(function () { if (currentWindow) { currentWindow.close(); } }, 2000);
+        setTimeout(() => {
+            if (currentWindow) {
+                currentWindow.close();
+            } else {
+                window.close();
+            }
+        }, 2000);
     }
 
     componentWillMount() {
