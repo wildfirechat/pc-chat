@@ -56,7 +56,10 @@ export const remote = require('electron').remote;
 export const ipcRenderer = require('electron').ipcRenderer;
 export const ipcMain = require('electron').ipcMain;
 export const fs = require('file-system').fs;
+export const currentWindow = require('electron').remote.getCurrentWindow();
+export const BrowserWindow = require('electron').remote.BrowserWindow;
 
 // for web
 export const ContextMenuTrigger = null;
 export function hideMenu() { }
+export const PostMessageEventEmitter = null;
