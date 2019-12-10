@@ -31,7 +31,7 @@
 }
 
 .action {
-    width: 85px;
+    width: 180px;
     margin-right: 17px;
     display: flex;
     justify-content: space-between;
@@ -76,7 +76,7 @@
     }
 
     & .action {
-        width: 80px;
+        width: 120px;
     }
 
     .tips {
