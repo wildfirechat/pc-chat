@@ -1,4 +1,5 @@
 import { isElectron, ipcRenderer, BrowserWindow, PostMessageEventEmitter } from '../../platform'
+import wfc from '../client/wfc';
 const path = require('path');
 
 
@@ -176,14 +177,14 @@ class WfcControlAdaper {
     this.downToVoice = downToVoice;
   }
 
-  showCallUI(isMoCall, audioOnly) {
+  showCallUI(isMoCall, audioOnly, targetUserInfo) {
     if (isElectron()) {
       let win = new BrowserWindow(
         {
           width: 360,
           height: 640 + 15,
-          // resizable: false,
-          // maximizable: false,
+          resizable: false,
+          maximizable: false,
           webPreferences: {
             scrollBounce: true,
             nativeWindowOpen: true,
@@ -193,7 +194,7 @@ class WfcControlAdaper {
 
       win.webContents.on('did-finish-load', () => {
         self.init(win);
-        self.initCallUI(isMoCall, audioOnly);
+        self.initCallUI(isMoCall, audioOnly, targetUserInfo);
         //self.sendPing();
       });
       // win.webContents.openDevTools();
@@ -214,10 +215,10 @@ class WfcControlAdaper {
       win.loadURL(path.join('file://', process.cwd(), 'src/index.html?voip'));
       win.show();
     } else {
-      let win = window.open(window.location.origin + '?voip', 'target', 'width=360,height=640,left=200,top=200,toolbar=no,menubar=no,resizable=no,location=no');
+      let win = window.open(window.location.origin + '?voip', 'target', 'width=360,height=640,left=200,top=200,toolbar=no,menubar=no,resizable=no,location=no, maximizable');
       win.addEventListener('load', () => {
         self.init(win);
-        self.initCallUI(isMoCall, audioOnly);
+        self.initCallUI(isMoCall, audioOnly, targetUserInfo);
       }, true);
     }
   }
@@ -230,9 +231,9 @@ class WfcControlAdaper {
 
   }
 
-  initCallUI(isMoCall, audioOnly) {
+  initCallUI(isMoCall, audioOnly, targetUserInfo) {
     if (!this.destroyed) {
-      this.voipEventEmit('initCallUI', { audioOnly: audioOnly, moCall: isMoCall });
+      this.voipEventEmit('initCallUI', { audioOnly: audioOnly, moCall: isMoCall, targetUserInfo: targetUserInfo });
     }
   }
 

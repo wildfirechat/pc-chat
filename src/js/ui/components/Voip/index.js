@@ -22,6 +22,10 @@ export default class Voip extends Component {
 
     @observable status = 0;
     @observable audioOnly = false;
+    @observable duration = '0:0';
+    @observable muted = false;
+
+    targetUserInfo;
 
     moCall; // true, outgoing; false, incoming
     isInitiator;
@@ -82,6 +86,7 @@ export default class Voip extends Component {
         this.voipEventOn('initCallUI', (event, message) => { // 监听父页面定义的端口
             this.moCall = message.moCall;
             this.audioOnly = message.audioOnly;
+            this.targetUserInfo = message.targetUserInfo;
             if (message.moCall) {
                 this.status = Voip.STATUS_OUTGOING;
                 this.starPreview(false, message.voiceOnly);
@@ -217,13 +222,15 @@ export default class Voip extends Component {
     downgrade2Voice() {
         this.audioOnly = true;
 
-        const localVideoTracks = localStream.getVideoTracks();
+        const localVideoTracks = this.localStream.getVideoTracks();
         if (localVideoTracks && localVideoTracks.length > 0) {
             localVideoTracks.forEach(track => track.stop());
         }
 
         this.localVideo.srcObject = null;
         this.remoteVideo.srcObject = null;
+
+        this.voipEventEmit('downToVoice');
     }
 
     getName(pc) {
@@ -368,10 +375,11 @@ export default class Voip extends Component {
         console.log(`${this.getName(pc)} failed to add ICE Candidate: ${error.toString()}`);
     }
 
-    onUpdateTime() {
-        this.elapsedTime = window.performance.now() - this.startTime;
-        console.log('Setup time: ' + elapsedTime.toFixed(3) + 'ms');
-        // document.getElementById("callTime").innerHTML = this.elapsedTime / 1000;
+    @action onUpdateTime = () => {
+        let elapsedTime = window.performance.now() - this.startTime;
+        elapsedTime /= 1000;
+        this.duration = parseInt(elapsedTime / 60) + ':' + parseInt(elapsedTime % 60);
+        console.log(this.duration);
     }
 
     @action onIceStateChange = (pc, event) => {
@@ -379,8 +387,8 @@ export default class Voip extends Component {
             console.log(`${this.getName(pc)} ICE state: ${pc.iceConnectionState}`);
             console.log('ICE state change event: ', event);
             if (pc.iceConnectionState === 'connected') {
-                //todo 界面计时开始
                 this.status = Voip.STATUS_CONNECTED;
+                this.startTime = window.performance.now();
                 this.callTimer = window.setInterval(this.onUpdateTime, 1000);
             }
             this.voipEventEmit('onIceStateChange', pc.iceConnectionState);
@@ -399,6 +407,7 @@ export default class Voip extends Component {
             const audioTracks = this.localStream.getAudioTracks();
             if (audioTracks && audioTracks.length > 0) {
                 audioTracks[0].enabled = !audioTracks[0].enabled;
+                this.muted = !this.muted;
             }
         }
     }
@@ -476,9 +485,9 @@ export default class Voip extends Component {
     videoOutgoingDesc() {
         return (
             <div className={classes.videoOutgoing}>
-                <img src='assets/images/offline.png'></img>
+                <img src={this.targetUserInfo.portrait} ></img>
                 <div className={classes.desc}>
-                    <p>xxx</p>
+                    <p>{this.targetUserInfo.displayName}</p>
                     <p>正在等待对方接受邀请</p>
                 </div>
             </div>
@@ -491,14 +500,14 @@ export default class Voip extends Component {
                 <div>
                     <p style={{ visibility: 'hidden' }}>holder</p>
                     <img ref="switchMicorphone"
-                        src='assets/images/av_mute.png'
+                        src={this.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'}
                         onClick={() => this.triggerMicrophone()}
                     >
                     </img>
                     <p>关闭麦克风</p>
                 </div>
                 <div>
-                    <p>10:00</p>
+                    <p>{this.duration}</p>
                     <img ref="hangupButton"
                         onClick={() => this.hangup()}
                         src='assets/images/av_hang_up.png'></img>
@@ -519,8 +528,8 @@ export default class Voip extends Component {
     videoIncomingDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src='assets/images/offline.png'></img>
-                <p>xxxx</p>
+                <img src={this.targetUserInfo.portrait} ></img>
+                <p>{this.targetUserInfo.displayName}</p>
                 <p>邀请你视频通话</p>
             </div>
         )
@@ -555,8 +564,8 @@ export default class Voip extends Component {
     audioIncomingDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src='assets/images/offline.png'></img>
-                <p>xxxx</p>
+                <img src={this.targetUserInfo.portrait}></img>
+                <p>{this.targetUserInfo.displayName}</p>
                 <p>邀请你语音聊天</p>
             </div>
         )
@@ -574,8 +583,8 @@ export default class Voip extends Component {
     audioOutgoingDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src='assets/images/offline.png'></img>
-                <p>xxxx</p>
+                <img src={this.targetUserInfo.portrait}></img>
+                <p>{this.targetUserInfo.displayName}</p>
                 <p>正在等待对方接受邀请</p>
             </div>
         )
@@ -592,9 +601,9 @@ export default class Voip extends Component {
     audioConnectedDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src='assets/images/offline.png'></img>
-                <p>xxxx</p>
-                <p>00:03</p>
+                <img src={this.targetUserInfo.portrait}></img>
+                <p>{this.targetUserInfo.displayName}</p>
+                <p>{this.duration}</p>
             </div>
         )
     }
@@ -605,7 +614,7 @@ export default class Voip extends Component {
                 <div>
                     <img className={classes.audioIncomingHangup}
                         onClick={e => this.triggerMicrophone()}
-                        src='assets/images/av_mute.png'></img>
+                        src={this.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'} />
                     <p>关闭麦克风</p>
                 </div>
                 <img className={classes.audioIncomingHangup}
@@ -703,11 +712,11 @@ export default class Voip extends Component {
     }
 
     renderIdle() {
-        return (
-            <div>
-                <p>WFC Voip</p>
-            </div>
-        );
+        // return (
+        //     <div>
+        //         <p>WFC Voip</p>
+        //     </div>
+        // );
     }
 
     renderVideo() {
