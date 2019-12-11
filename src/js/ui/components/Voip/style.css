@@ -7,7 +7,7 @@
     height: 640px;
     justify-content: center;    
     align-items: center;
-    background: #fff;
+    background: #dedede;
 }
 
 .videoOutgoing{
@@ -28,7 +28,7 @@
     }
 
     & p {
-        color: #000;
+        color: #fff;
         font-family: "Helvetica-Light";
     }
 }
@@ -49,7 +49,7 @@
     }
 
     & p {
-        color: #000;
+        color: #fff;
         font-family: "Helvetica-Light";
     }
 }
@@ -90,7 +90,7 @@
     }
 
     & p {
-        color: #000;
+        color: #fff;
         font-family: "Helvetica-Light";
     }
 }
@@ -112,7 +112,7 @@
     }
 
     & p {
-        color: #000;
+        color: #fff;
         font-family: "Helvetica-Light";
     }
 }
@@ -134,7 +134,7 @@
     }
 
     & p {
-        color: #000;
+        color: #fff;
         font-family: "Helvetica-Light";
     }
 
@@ -155,7 +155,7 @@
     }
 
     & p {
-        color: #000;
+        color: #fff;
         font-family: "Helvetica-Light";
     }
 }
