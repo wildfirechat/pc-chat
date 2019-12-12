@@ -336,6 +336,7 @@ export default class MessageInput extends Component {
 
     render() {
         var canisend = this.canisend();
+        let canStartVoip = this.props.conversation && this.props.conversation.type === ConversationType.Single;
 
         return (
             <div
@@ -375,13 +376,13 @@ export default class MessageInput extends Component {
                     <i
                         className="icon-ion-android-camera"
                         id="videoCall"
-                        onClick={e => canisend && this.videoCall()}
+                        onClick={e => canisend && canStartVoip && this.videoCall()}
                     />
 
                     <i
                         className="icon-ion-ios-telephone"
                         id="audioCall"
-                        onClick={e => canisend && this.audioCall()}
+                        onClick={e => canisend && canStartVoip && this.audioCall()}
                     />
 
                     <i
