@@ -220,6 +220,9 @@ export default class Voip extends Component {
     }
 
     downgrade2Voice() {
+        if (this.status !== Voip.STATUS_CONNECTED) {
+            return
+        }
         this.audioOnly = true;
 
         const localVideoTracks = this.localStream.getVideoTracks();
