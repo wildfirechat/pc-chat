@@ -13,8 +13,10 @@
     "build": "node scripts/del.js dist && npm run build-main && npm run build-renderer",
     "copy-mac": "node scripts/del.js ./marswrapper.node && node scripts/copy-proto.js ./proto_addon/marswrapper.mac.node ./",
     "copy-win": "node scripts/del.js ./marswrapper.node && node scripts/copy-proto.js ./proto_addon/marswrapper.win32.node ./",
+    "copy-linux": "node scripts/del.js ./marswrapper.node && node scripts/copy-proto.js ./proto_addon/marswrapper.linux.node ./",
     "package-win32": "npm run copy-win && npm run build && node scripts/del.js release && electron-builder --win --ia32 --projectDir ./dist -p never",
     "package-mac": "npm run copy-mac && npm run build && node scripts/del.js release && electron-builder --mac --projectDir ./dist -p never",
+    "package-linux": "npm run copy-linux && npm run build && node scripts/del.js release && electron-builder --linux --projectDir ./dist -p never",
     "hot-server": "cross-env NODE_ENV=development node -r babel-register scripts/dev.js",
     "start-hot": "cross-env HOT=1 NODE_ENV=development ./node_modules/.bin/electron -r babel-register -r babel-polyfill ./main",
     "dev": "concurrently --kill-others \"npm run hot-server\" \"npm run start-hot\""
