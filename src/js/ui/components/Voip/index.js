@@ -790,7 +790,6 @@ export default class Voip extends Component {
     }
 
     render() {
-        console.log('yyyyyyyyyyyyyyyy', this.audioOnly);
         return this.audioOnly ? this.renderAudio() : this.renderVideo();
     }
 }
