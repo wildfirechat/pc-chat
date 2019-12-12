@@ -337,6 +337,37 @@ export default class ChatContent extends Component {
                         Location sharing, Please check your phone.
                     </div>
                 `;
+
+            case MessageContentType.VOIP_CONTENT_TYPE_START:
+                /* eslint-disable */
+                let voip = message.messageContent;
+                let desc;
+                if (voip.status === 0) {
+                    desc = '对方未接听';
+
+                } else if (voip.status === 1) {
+                    desc = '通话中';
+                } else {
+                    if (voip.connectTime && voip.connectedTime > 0) {
+                        let duration = (voip.endTime - voip.connectTime()) / 1000;
+                        desc = `通话时长: ${duration}`
+
+                    } else {
+                        desc = '对方未接听';
+                    }
+                }
+                // fixme me
+                desc = '视频通话';
+
+                return `
+                    <div >
+                        <i class="icon-ion-android-volume-up"></i>
+                        <span>
+                            ${desc}
+                        </span>
+
+                    </div>
+                `;
         }
     }
 
@@ -1029,5 +1060,10 @@ export default class ChatContent extends Component {
 
     onGroupInfoUpdate = (groupId) => {
         // Todo update group info
+    }
+
+    zeroPad(nr, base) {
+        var len = (String(base).length - String(nr).length) + 1;
+        return len > 0 ? new Array(len).join('0') + nr : nr;
     }
 }
