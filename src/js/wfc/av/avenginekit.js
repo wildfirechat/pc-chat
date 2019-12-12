@@ -1,6 +1,5 @@
 import EventType from '../client/wfcEvent';
 import MessageContentType from '../messages/messageContentType';
-import AVCallEngReason from './avCallEndReason';
 import CallSignalMessageContent from './messages/callSignalMessageContent';
 import CallByeMessageContent from './messages/callByeMessageContent';
 import CallAnswerMessageContent from './messages/callAnswerMessageContent';
@@ -65,11 +64,11 @@ class WfcAVSession {
 
     onIceStateChange(msg) {
         if (msg === 'disconnected') {
-            this.endCall(avCallEndReason.kWFAVCallEndReasonMediaError);
+            this.endCall(AVCallEndReason.kWFAVCallEndReasonMediaError);
         } else if (msg === 'connected') {
             this.setState(AVEngineState.kWFAVEngineStateConnected);
         } else if (msg === 'failed') {
-            this.endCall(avCallEndReason.kWFAVCallEndReasonMediaError);
+            this.endCall(AVCallEndReason.kWFAVCallEndReasonMediaError);
         }
     }
 
@@ -168,7 +167,7 @@ export class WfcAVEngineKit {
                                 self.rejectOtherCall(content.callId, msg.fromUser);
                             } else {
                                 if (self.currentSession.state === AVEngineState.kWFAVEngineStateIncomming) {
-                                    self.currentSession.endCall(AVCallEngReason.AVCallEngReason.kWFAVCallEndReasonAcceptByOtherClient);
+                                    self.currentSession.endCall(AVCallEndReason.AVCallEndReason.kWFAVCallEndReasonAcceptByOtherClient);
                                 }
                             }
                         } else if (self.currentSession.state === AVEngineState.kWFAVEngineStateConnecting || self.currentSession.state === AVEngineState.kWFAVEngineStateConnected) {
@@ -187,7 +186,7 @@ export class WfcAVEngineKit {
                         || self.currentSession.clientId !== msg.from) {
                         console.log('invalid bye message, ignore it');
                     } else {
-                        self.currentSession.endCall(AVCallEngReason.kWFAVCallEndReasonRemoteHangup);
+                        self.currentSession.endCall(AVCallEndReason.kWFAVCallEndReasonRemoteHangup);
                     }
                 } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_MODIFY) {
                     if (self.currentSession && self.currentSession.state === AVEngineState.kWFAVEngineStateConnected
