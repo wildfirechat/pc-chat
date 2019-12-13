@@ -33,7 +33,7 @@ export default class Voip extends Component {
     pooledSignalingMsg = [];
     startTime;
     localStream;
-    pc1;
+    pc;
     callTimer;
 
     callButton;
@@ -190,28 +190,28 @@ export default class Voip extends Component {
         configuration.iceServers = iceServers;
         console.log('RTCPeerConnection configuration:', configuration);
 
-        this.pc1 = new RTCPeerConnection(configuration);
-        console.log('Created local peer connection object pc1');
-        this.pc1.addEventListener('icecandidate', e => this.onIceCandidate(this.pc1, e));
+        this.pc = new RTCPeerConnection(configuration);
+        console.log('Created local peer connection object pc');
+        this.pc.addEventListener('icecandidate', e => this.onIceCandidate(this.pc, e));
 
-        this.pc1.addEventListener('iceconnectionstatechange', e => this.onIceStateChange(this.pc1, e));
-        this.pc1.addEventListener('track', this.gotRemoteStream);
+        this.pc.addEventListener('iceconnectionstatechange', e => this.onIceStateChange(this.pc, e));
+        this.pc.addEventListener('track', this.gotRemoteStream);
 
         if (!audioOnly) {
-            this.localStream.getTracks().forEach(track => this.pc1.addTrack(track, this.localStream));
+            this.localStream.getTracks().forEach(track => this.pc.addTrack(track, this.localStream));
         } else {
-            this.localStream.getAudioTracks().forEach(track => this.pc1.addTrack(track, this.localStream));
+            this.localStream.getAudioTracks().forEach(track => this.pc.addTrack(track, this.localStream));
         }
-        console.log('Added local stream to pc1');
+        console.log('Added local stream to pc');
 
         if (this.isInitiator) {
             try {
-                console.log('pc1 createOffer start');
+                console.log('pc createOffer start');
                 var offerOptions = {
                     offerToReceiveAudio: 1,
                     offerToReceiveVideo: !audioOnly
                 }
-                const offer = await this.pc1.createOffer(offerOptions);
+                const offer = await this.pc.createOffer(offerOptions);
                 await this.onCreateOfferSuccess(offer);
             } catch (e) {
                 this.onCreateSessionDescriptionError(e);
@@ -234,10 +234,6 @@ export default class Voip extends Component {
         this.remoteVideo.srcObject = null;
 
         this.voipEventEmit('downToVoice');
-    }
-
-    getName(pc) {
-        return 'pc1';
     }
 
     getSelectedSdpSemantics() {
@@ -272,20 +268,20 @@ export default class Voip extends Component {
     }
 
     async onReceiveRemoteCreateOffer(desc) {
-        console.log('pc1 setRemoteDescription start');
+        console.log('pc setRemoteDescription start');
         try {
-            await this.pc1.setRemoteDescription(desc);
-            this.onSetRemoteSuccess(pc1);
+            await this.pc.setRemoteDescription(desc);
+            this.onSetRemoteSuccess(pc);
         } catch (e) {
             this.onSetSessionDescriptionError(e);
         }
 
-        console.log('pc1 createAnswer start');
+        console.log('pc createAnswer start');
         // Since the 'remote' side has no media stream we need
         // to pass in the right constraints in order for it to
         // accept the incoming offer of audio and video.
         try {
-            const answer = await this.pc1.createAnswer();
+            const answer = await this.pc.createAnswer();
             await this.onCreateAnswerSuccess(answer);
         } catch (e) {
             this.onCreateSessionDescriptionError(e);
@@ -293,11 +289,11 @@ export default class Voip extends Component {
     }
 
     async onCreateOfferSuccess(desc) {
-        console.log(`Offer from pc1\n${desc.sdp}`);
-        console.log('pc1 setLocalDescription start');
+        console.log(`Offer from pc\n${desc.sdp}`);
+        console.log('pc setLocalDescription start');
         try {
-            await this.pc1.setLocalDescription(desc);
-            this.onSetLocalSuccess(this.pc1);
+            await this.pc.setLocalDescription(desc);
+            this.onSetLocalSuccess(this.pc);
             this.pcSetuped = true;
             this.drainOutSingnalingMessage();
         } catch (e) {
@@ -309,11 +305,11 @@ export default class Voip extends Component {
     }
 
     onSetLocalSuccess(pc) {
-        console.log(`${this.getName(pc)} setLocalDescription complete`);
+        console.log(`setLocalDescription complete`);
     }
 
     onSetRemoteSuccess(pc) {
-        console.log(`${this.getName(pc)} setRemoteDescription complete`);
+        console.log(`setRemoteDescription complete`);
     }
 
     onSetSessionDescriptionError(error) {
@@ -323,26 +319,26 @@ export default class Voip extends Component {
     gotRemoteStream = (e) => {
         if (this.remoteVideo.srcObject !== e.streams[0]) {
             this.remoteVideo.srcObject = e.streams[0];
-            console.log('pc1 received remote stream', e.streams[0]);
+            console.log('pc received remote stream', e.streams[0]);
         }
     }
 
     async onReceiveRemoteAnswerOffer(desc) {
-        console.log('pc1 setRemoteDescription start');
+        console.log('pc setRemoteDescription start');
         try {
-            await this.pc1.setRemoteDescription(desc);
-            this.onSetRemoteSuccess(this.pc1);
+            await this.pc.setRemoteDescription(desc);
+            this.onSetRemoteSuccess(this.pc);
         } catch (e) {
             this.onSetSessionDescriptionError(e);
         }
     }
 
     async onCreateAnswerSuccess(desc) {
-        console.log(`Answer from pc1:\n${desc.sdp}`);
-        console.log('pc1 setLocalDescription start');
+        console.log(`Answer from pc:\n${desc.sdp}`);
+        console.log('pc setLocalDescription start');
         try {
-            await this.pc1.setLocalDescription(desc);
-            this.onSetLocalSuccess(this.pc1);
+            await this.pc.setLocalDescription(desc);
+            this.onSetLocalSuccess(this.pc);
             this.pcSetuped = true;
             this.drainOutSingnalingMessage();
         } catch (e) {
@@ -354,7 +350,7 @@ export default class Voip extends Component {
 
     async onReceiveRemoteIceCandidate(message) {
         console.log('on receive remote ice candidate');
-        await this.pc1.addIceCandidate(message);
+        await this.pc.addIceCandidate(message);
     }
 
     onIceCandidate = (pc, event) => {
@@ -367,15 +363,15 @@ export default class Voip extends Component {
         } catch (e) {
             this.onAddIceCandidateError(pc, e);
         }
-        console.log(`${this.getName(pc)} ICE candidate:\n${event.candidate ? event.candidate.candidate : '(null)'}`);
+        console.log(`ICE candidate:\n${event.candidate ? event.candidate.candidate : '(null)'}`);
     }
 
     onAddIceCandidateSuccess(pc) {
-        console.log(`${this.getName(pc)} send Ice Candidate success`);
+        console.log(`send Ice Candidate success`);
     }
 
     onAddIceCandidateError(pc, error) {
-        console.log(`${this.getName(pc)} failed to add ICE Candidate: ${error.toString()}`);
+        console.log(`failed to add ICE Candidate: ${error.toString()}`);
     }
 
     @action onUpdateTime = () => {
@@ -387,7 +383,7 @@ export default class Voip extends Component {
 
     @action onIceStateChange = (pc, event) => {
         if (pc) {
-            console.log(`${this.getName(pc)} ICE state: ${pc.iceConnectionState}`);
+            console.log(`ICE state: ${pc.iceConnectionState}`);
             console.log('ICE state change event: ', event);
             if (pc.iceConnectionState === 'connected') {
                 this.status = Voip.STATUS_CONNECTED;
@@ -441,9 +437,9 @@ export default class Voip extends Component {
             this.localStream = null;
         }
 
-        if (this.pc1) {
-            this.pc1.close();
-            this.pc1 = null;
+        if (this.pc) {
+            this.pc.close();
+            this.pc = null;
         }
 
         // ipcRenderer.removeListener('startPreview');
