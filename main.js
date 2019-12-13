@@ -583,7 +583,6 @@ const createMainWindow = () => {
     });
 
     ipcMain.on('onCreateAnswerOffer', (event, msg) => {
-        console.log('hello world111111111111111111111111111111111111111111111111111111' + msg);
         mainWindow.webContents.send('onCreateAnswerOffer', msg);
         offerCount = offerCount + 1;
         mainWindow.webContents.send('offerCount', 'hello offer count: ' + offerCount);
@@ -869,15 +868,15 @@ app.on('activate', e => {
 });
 
 function disconnectAndQuit() {
-  global.sharedObj.proto.disconnect(0);
-  var now = new Date();
-  var exitTime = now.getTime() + 500;
-  while (true) {
-      now = new Date();
-      if (now.getTime() > exitTime)
-          break;
-  }
-  app.quit();
+    global.sharedObj.proto.disconnect(0);
+    var now = new Date();
+    var exitTime = now.getTime() + 500;
+    while (true) {
+        now = new Date();
+        if (now.getTime() > exitTime)
+            break;
+    }
+    app.quit();
 }
 
 function clearBlink() {

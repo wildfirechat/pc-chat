@@ -199,7 +199,7 @@ export default class Layout extends Component {
 
                 <Loader show={loading} />
                 {
-                    isElectron() ? <Header location={location} /> : ''
+                    isElectron() && window.process.platform !== 'linux' ? <Header location={location} /> : ''
                 }
                 <div
                     className={classes.container}
