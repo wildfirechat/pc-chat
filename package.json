@@ -70,6 +70,12 @@
         "deb",
         "rpm",
         "AppImage"
+      ],
+      "extraResources": [
+        {
+          "from": "../linux-qt-denpendency",
+          "to": "../"
+        }
       ]
     },
     "win": {
