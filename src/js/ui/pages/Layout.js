@@ -183,9 +183,11 @@ export default class Layout extends Component {
             return <Login />;
         }
 
-        if (ipcRenderer) {
-            ipcRenderer.send('logined');
-        }
+        // if (ipcRenderer) {
+        //     ipcRenderer.send('logined');
+        //     console.log('xxxxxxxxxxxxxxxx send voip');
+        //     ipcRenderer.send('voip');
+        // }
         loading = wfc.isLogin() && (this.connectionStatus === 0 || this.connectionStatus === 2/** receving */);
 
         return (
@@ -197,7 +199,7 @@ export default class Layout extends Component {
 
                 <Loader show={loading} />
                 {
-                    isElectron() ? <Header location={location} /> : ''
+                    isElectron() && window.process.platform !== 'linux' ? <Header location={location} /> : ''
                 }
                 <div
                     className={classes.container}

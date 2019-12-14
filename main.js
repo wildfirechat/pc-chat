@@ -541,7 +541,9 @@ const createMainWindow = () => {
         // transparent: true,
         // resizable: false,
         webPreferences: {
-            scrollBounce: true
+            scrollBounce: true,
+            nodeIntegration: true,
+            nativeWindowOpen: true,
         },
         frame: !isWin,
         icon
@@ -549,7 +551,7 @@ const createMainWindow = () => {
 
     mainWindow.setSize(400, 480);
     mainWindow.loadURL(
-        `file://${__dirname}/src/index.html`
+        `file://${__dirname}/src/index.html?main`
     );
     mainWindow.webContents.on('did-finish-load', () => {
         try {
@@ -571,6 +573,49 @@ const createMainWindow = () => {
             e.preventDefault();
             mainWindow.hide();
         }
+    });
+
+    var offerCount = 0;
+
+    ipcMain.on('onReceiveOffer', (event, msg) => {
+        console.log('hello world' + msg);
+        mainWindow.webContents.send('onReceiveOffer', msg);
+    });
+
+    ipcMain.on('onCreateAnswerOffer', (event, msg) => {
+        mainWindow.webContents.send('onCreateAnswerOffer', msg);
+        offerCount = offerCount + 1;
+        mainWindow.webContents.send('offerCount', 'hello offer count: ' + offerCount);
+    });
+
+    ipcMain.on('onIceCandidate', (event, msg) => {
+        console.log('onIceCandidate' + msg);
+        mainWindow.webContents.send('onIceCandidate', msg);
+    });
+
+    ipcMain.on('onCallButton', (event) => {
+        console.log('onCallButton');
+        mainWindow.webContents.send('onCallButton');
+    });
+
+    ipcMain.on('onHangupButton', (event) => {
+        console.log('onHangupButton');
+        mainWindow.webContents.send('onHangupButton');
+    });
+
+    ipcMain.on('downToVoice', (event) => {
+        console.log('downToVoice');
+        mainWindow.webContents.send('downToVoice');
+    });
+
+    ipcMain.on('onIceStateChange', (event, msg) => {
+        console.log('onIceStateChange');
+        mainWindow.webContents.send('onIceStateChange', msg);
+    });
+
+    ipcMain.on('pong', (event) => {
+        console.log('pong');
+        mainWindow.webContents.send('pong');
     });
 
     ipcMain.on('settings-apply', (event, args) => {
@@ -823,15 +868,15 @@ app.on('activate', e => {
 });
 
 function disconnectAndQuit() {
-  global.sharedObj.proto.disconnect(0);
-  var now = new Date();
-  var exitTime = now.getTime() + 500;
-  while (true) {
-      now = new Date();
-      if (now.getTime() > exitTime)
-          break;
-  }
-  app.quit();
+    global.sharedObj.proto.disconnect(0);
+    var now = new Date();
+    var exitTime = now.getTime() + 500;
+    while (true) {
+        now = new Date();
+        if (now.getTime() > exitTime)
+            break;
+    }
+    app.quit();
 }
 
 function clearBlink() {

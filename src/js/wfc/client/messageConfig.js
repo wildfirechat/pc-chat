@@ -24,6 +24,12 @@ import SoundMessageContent from '../messages/soundMessageContent';
 import TypingMessageContent from '../messages/typingMessageContent';
 import RecallMessageNotification from '../messages/notification/recallMessageNotification';
 
+import CallStartMessageContent from '../av/messages/callStartMessageContent';
+import CallAnswerMessageContent from '../av/messages/callAnswerMessageContent';
+import CallAnswerTMessageContent from '../av/messages/callAnswerTMessageContent';
+import CallByeMessageContent from '../av/messages/callByeMessageContent';
+import CallSignalMessageContent from '../av/messages/callSignalMessageContent';
+import CallModifyMessageContent from '../av/messages/callModifyMessageContent';
 export default class MessageConfig {
     static getMessageContentClazz(type) {
         for (const content of MessageConfig.MessageContents) {
@@ -211,6 +217,42 @@ export default class MessageConfig {
             flag: PersistFlag.Persist,
             type: MessageContentType.RecallMessage_Notification,
             contentClazz: RecallMessageNotification,
+        },
+        {
+            name: 'callStartMessageContent',
+            flag: PersistFlag.Persist,
+            type: MessageContentType.VOIP_CONTENT_TYPE_START,
+            contentClazz: CallStartMessageContent,
+        },
+        {
+            name: 'callAnswerMessageContent',
+            flag: PersistFlag.No_Persist,
+            type: MessageContentType.VOIP_CONTENT_TYPE_ACCEPT,
+            contentClazz: CallAnswerMessageContent,
+        },
+        {
+            name: 'callAnswerTMessageContent',
+            flag: PersistFlag.Transparent,
+            type: MessageContentType.VOIP_CONTENT_TYPE_ACCEPT_T,
+            contentClazz: CallAnswerTMessageContent,
+        },
+        {
+            name: 'callByeMessageContent',
+            flag: PersistFlag.No_Persist,
+            type: MessageContentType.VOIP_CONTENT_TYPE_END,
+            contentClazz: CallByeMessageContent,
+        },
+        {
+            name: 'callSignalMessageContent',
+            flag: PersistFlag.Transparent,
+            type: MessageContentType.VOIP_CONTENT_TYPE_SIGNAL,
+            contentClazz: CallSignalMessageContent,
+        },
+        {
+            name: 'callModifyMessageContent',
+            flag: PersistFlag.No_Persist,
+            type: MessageContentType.VOIP_CONTENT_TYPE_MODIFY,
+            contentClazz: CallModifyMessageContent,
         },
     ];
 }

@@ -13,7 +13,7 @@ import stores from './js/ui/stores';
 
 var sharedObj = remote.getGlobal('sharedObj');
 
-class App extends Component {
+export default class App extends Component {
     async componentWillMount() {
         if (window.navigator.onLine) {
             // await stores.sessions.hasLogin();
@@ -114,8 +114,8 @@ class App extends Component {
         });
 
         // When the system resume reconnet to WeChat
-        ipcRenderer.on('os-resume', async() => {
-            var sessions = stores.sessions ;
+        ipcRenderer.on('os-resume', async () => {
+            var sessions = stores.sessions;
 
             console.log('os-resume' + new Date());
             setTimeout(() => {
@@ -140,7 +140,9 @@ class App extends Component {
     }
 }
 
-render(
-    <App />,
-    document.getElementById('root')
-);
+// render(
+//     <App />,
+//     document.getElementById('root')
+// );
+
+module.exports = App
