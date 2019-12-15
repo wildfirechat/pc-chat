@@ -1,4 +1,4 @@
-import { isElectron, ipcRenderer, BrowserWindow, PostMessageEventEmitter } from '../../platform'
+import { isElectron, ipcRenderer, BrowserWindow, PostMessageEventEmitter, AppPath } from '../../platform'
 import wfc from '../client/wfc';
 const path = require('path');
 
@@ -207,12 +207,7 @@ class WfcControlAdaper {
         }
       });
 
-
-      // win.loadURL(
-      //   `file://${__dirname}/src/index.html?voip`
-      // );
-
-      win.loadURL(path.join('file://', process.cwd(), 'src/index.html?voip'));
+      win.loadURL(path.join('file://', AppPath, 'src/index.html?voip'));
       win.show();
     } else {
       let win = window.open(window.location.origin + '?voip', 'target', 'width=360,height=640,left=200,top=200,toolbar=no,menubar=no,resizable=no,location=no, maximizable');
