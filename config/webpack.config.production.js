@@ -16,7 +16,7 @@ export default {
 
     entry: [
         'babel-polyfill',
-        `${config.client}/app.js`,
+        `${config.client}/index.js`,
     ],
 
     output: {

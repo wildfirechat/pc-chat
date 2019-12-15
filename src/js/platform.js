@@ -58,6 +58,7 @@ export const ipcMain = require('electron').ipcMain;
 export const fs = require('file-system').fs;
 export const currentWindow = require('electron').remote.getCurrentWindow();
 export const BrowserWindow = require('electron').remote.BrowserWindow;
+export const AppPath = require('electron').remote.app.getAppPath();
 
 // for web
 export const ContextMenuTrigger = null;
