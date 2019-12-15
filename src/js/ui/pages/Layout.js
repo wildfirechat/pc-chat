@@ -183,11 +183,9 @@ export default class Layout extends Component {
             return <Login />;
         }
 
-        // if (ipcRenderer) {
-        //     ipcRenderer.send('logined');
-        //     console.log('xxxxxxxxxxxxxxxx send voip');
-        //     ipcRenderer.send('voip');
-        // }
+        if (ipcRenderer) {
+            ipcRenderer.send('logined');
+        }
         loading = wfc.isLogin() && (this.connectionStatus === 0 || this.connectionStatus === 2/** receving */);
 
         return (
