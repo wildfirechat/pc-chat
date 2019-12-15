@@ -7,6 +7,7 @@ import UserInfo from '../../../wfc/model/userInfo';
 import GroupInfo from '../../../wfc/model/groupInfo';
 import Conversation from '../../../wfc/model/conversation';
 import ConversationType from '../../../wfc/model/conversationType';
+import wfc from '../../../wfc/client/wfc';
 
 @inject(stores => ({
     history: stores.search.history,
@@ -18,16 +19,21 @@ import ConversationType from '../../../wfc/model/conversationType';
         stores.contacts.filter('', true);
         return stores.contacts.filtered.result;
     },
-    chat: async (target) => {
-        var conversation;
-        if (target instanceof UserInfo) {
-            conversation = new Conversation(ConversationType.Single, target.uid, 0);
-        } else if (target instanceof GroupInfo) {
-            conversation = new Conversation(ConversationType.Group, target.target, 0);
-        }
-        stores.chat.chatToN(conversation);
+    // chat: async (target) => {
+    //     var conversation;
+    //     if (target instanceof UserInfo) {
+    //         conversation = new Conversation(ConversationType.Single, target.uid, 0);
+    //     } else if (target instanceof GroupInfo) {
+    //         conversation = new Conversation(ConversationType.Group, target.target, 0);
+    //     }
+    //     stores.chat.chatToN(conversation);
+    //     stores.search.reset();
+    //     // await stores.search.addHistory(target);
+    // },
+    showUserinfo: async (user) => {
+        user = wfc.getUserInfo(user.uid, true);
+        stores.contactInfo.toggle(true, user);
         stores.search.reset();
-        await stores.search.addHistory(target);
     },
     clear: (e) => {
         e.preventDefault();
@@ -60,9 +66,9 @@ export default class SearchBar extends Component {
     }
 
     chatTo(target) {
-        this.props.chat(target);
+        this.props.showUserinfo(target);
         this.refs.search.value = '';
-        document.querySelector('#messageInput').focus();
+        // document.querySelector('#messageInput').focus();
     }
 
     highlight(offset) {
