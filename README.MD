@@ -113,6 +113,29 @@ $ npm run dev
 
 > mac下能打包出windows版本和mac版本。windows下只能打包出windows版本
 
+#### linux系统
+
+##### 环境准备
+
+> 请严格安装下面的版本安装对应依赖，否则无法打包
+
+1. nodejs10.16.X
+2. python2.7X
+
+##### 开发
+
+```
+$ cp proto_addon/marswrapper.mac.node marswrapper.node
+$ npm install
+$ npm run dev
+```
+
+##### 打包
+
+1. ```npm install``` 安装依赖
+2. ```npm run package-linux``` 打包linux版本，软件生成在release目录下
+
+
 ##### 常见问题
 windows上需要严格按照环境进行安装，mac上环境比较简单一些，安装node和node-gyp就可以了
 另外如果还有问题，请试试命令```npm cache clean --force ```
