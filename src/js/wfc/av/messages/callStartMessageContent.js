@@ -30,7 +30,7 @@ export default class CallStartMessageContent extends MessageContent {
           c: this.connectTime,
           e: this.endTime,
           s: this.status,
-          a: this.audioOnly,
+          a: this.audioOnly ? 1 : 0,
           t: this.targetId,
       };
       payload.binaryContent = Base64.encode(JSON.stringify(obj));
@@ -46,7 +46,7 @@ export default class CallStartMessageContent extends MessageContent {
       this.connectTime = obj.c;
       this.endTime = obj.e;
       this.status = obj.s;
-      this.audioOnly = obj.a;
+      this.audioOnly = (obj.a === 1);
       this.targetId = obj.t;
   }
 }
