@@ -6,6 +6,7 @@ import clazz from 'classname';
 import classes from './style.css';
 import { ipcRenderer, isElectron, currentWindow, PostMessageEventEmitter } from '../../../platform'
 import { observable, action } from 'mobx';
+import Config from '../../../config';
 
 @inject(stores => ({
     avatar: stores.sessions.avatar,
@@ -181,9 +182,9 @@ export default class Voip extends Component {
         }
         var configuration = this.getSelectedSdpSemantics();
         var iceServer = {
-            urls: ['turn:turn.wildfirechat.cn:3478'],
-            username: 'wfchat',
-            credential: 'wfchat'
+            urls: [Config.ICE_ADDRESS],
+            username: Config.ICE_USERNAME,
+            credential: Config.ICE_PASSWORD
         };
         var iceServers = [];
         iceServers.push(iceServer);
