@@ -7,8 +7,8 @@ import wfc from "../client/wfc"
 export default class StickerMessageContent extends MediaMessageContent {
     width = 0;
     height = 0;
-    constructor(width, height) {
-        super(MessageContentType.Sticker, MessageContentMediaType.File);
+    constructor(filerOrLocalPath, remotePath, width, height) {
+        super(MessageContentType.Sticker, MessageContentMediaType.File, filerOrLocalPath, remotePath);
         this.width = width;
         this.height = height;
     }
@@ -23,7 +23,7 @@ export default class StickerMessageContent extends MediaMessageContent {
         let obj = {
             x: this.width,
             y: this.height,
-        }
+        };
         payload.binaryContent = wfc.utf8_to_b64(JSON.stringify(obj));
         return payload;
     };

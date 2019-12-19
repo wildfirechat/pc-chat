@@ -604,7 +604,7 @@ class Chat {
                 };
                 video.onerror = () => {
                     resolve(null);
-                }
+                };
                 if (file.path) {
                     video.src = file.path.indexOf(file.name) > -1 ? file.path : file.path + file.name; // local video url
                 } else {
@@ -651,7 +651,7 @@ class Chat {
                     return false;
                 }
                 // let img64 = self.imgDataUriToBase64(imageThumbnail);
-                messageContent = new ImageMessageContent(file, imageThumbnail.split(',')[1]);
+                messageContent = new ImageMessageContent(file, null, imageThumbnail.split(',')[1]);
                 break;
             case MessageContentMediaType.Video:
                 let videoThumbnail = await self.videoThumbnail(file);
@@ -659,7 +659,7 @@ class Chat {
                     return false;
                 }
                 // let video64 = self.imgDataUriToBase64(videoThumbnail);
-                messageContent = new VideoMessageContent(file, videoThumbnail.split(',')[1]);
+                messageContent = new VideoMessageContent(file, null, videoThumbnail.split(',')[1]);
                 break;
             case MessageContentMediaType.File:
                 messageContent = new FileMessageContent(file);
