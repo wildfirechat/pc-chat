@@ -5,8 +5,8 @@ import MessageContentType from './messageContentType';
 export default class VideoMessageContent extends MediaMessageContent {
     // base64 encoded
     thumbnail;
-    constructor(file, thumbnail) {
-        super(MessageContentType.Video, MessageContentMediaType.Video, file);
+    constructor(fileOrLocalPath, remotePath, thumbnail) {
+        super(MessageContentType.Video, MessageContentMediaType.Video, fileOrLocalPath, remotePath);
         this.thumbnail = thumbnail;
     }
 

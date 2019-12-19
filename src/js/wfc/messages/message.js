@@ -38,7 +38,7 @@ import PersistFlag from './persistFlag';
 import MessageStatus from './messageStatus';
 import ConversationType from '../model/conversationType';
 import { encode } from 'base64-arraybuffer';
-import Config from '../../config';
+import Config from '../../config.js';
 import Long from 'long'
 import { observable } from 'mobx';
 

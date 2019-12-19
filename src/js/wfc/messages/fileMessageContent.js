@@ -6,11 +6,11 @@ export default class FileMessageContent extends MediaMessageContent {
     name = '';
     size = 0;
 
-    constructor(file) {
-        super(MessageContentType.File, MessageContentMediaType.File, file);
-        if (file) {
-            this.name = file.name;
-            this.size = file.size;
+    constructor(fileOrLocalPath, remotePath) {
+        super(MessageContentType.File, MessageContentMediaType.File, fileOrLocalPath, remotePath);
+        if (fileOrLocalPath instanceof File) {
+            this.name = fileOrLocalPath.name;
+            this.size = fileOrLocalPath.size;
         }
     }
 

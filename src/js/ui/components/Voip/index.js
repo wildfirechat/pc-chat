@@ -6,7 +6,7 @@ import clazz from 'classname';
 import classes from './style.css';
 import { ipcRenderer, isElectron, currentWindow, PostMessageEventEmitter } from '../../../platform'
 import { observable, action } from 'mobx';
-import Config from '../../../config';
+import Config from '../../../config.js';
 
 @inject(stores => ({
     avatar: stores.sessions.avatar,
