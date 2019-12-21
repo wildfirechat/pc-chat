@@ -8,7 +8,6 @@
 .footer {
     position: relative;
     background: #fff;
-    box-shadow: inset 0 1px 0 0 var(--shadow-color);
     z-index: 9;
 
     & > nav {
@@ -17,7 +16,7 @@
         height: 60px;
         padding: 17px 17px 0;
         justify-content: space-between;
-        box-shadow: inset -1px 0 0 0 var(--shadow-color);
+        box-shadow: inset 0 1px 0 0 var(--shadow-color);
     }
 
     & > nav span {
@@ -65,6 +64,7 @@
 }
 
 .contacts {
+    box-shadow: inset 0 1px 0 0 var(--shadow-color);
     position: relative;
     display: flex;
     height: 60px;
@@ -97,6 +97,7 @@
 }
 
 .settings {
+    box-shadow: inset 0 1px 0 0 var(--shadow-color);
     display: flex;
     height: 60px;
     text-align: right;
@@ -169,6 +170,7 @@
     }
 
     .contacts {
+        box-shadow: inset 0 1px 0 0 var(--shadow-color);
         height: 46px;
 
         & input {
@@ -180,6 +182,7 @@
     }
 
     .settings {
+        box-shadow: inset 0 1px 0 0 var(--shadow-color);
         height: 46px;
 
         & .button {

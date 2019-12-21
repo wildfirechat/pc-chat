@@ -1,7 +1,6 @@
-
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { ipcRenderer, isElectron } from '../../../platform';
+import {ipcRenderer, isElectron} from '../../../platform';
 import clazz from 'classname';
 
 import classes from './style.css';
@@ -51,7 +50,12 @@ export default class MessageInput extends Component {
         if (!members) {
             return;
         }
-        mentionMenuItems.push({ key: "所有人", value: '@' + conversation.target, avatar: groupInfo.portrait, searchKey: '所有人' + pinyin.letter('所有人', '', null) });
+        mentionMenuItems.push({
+            key: "所有人",
+            value: '@' + conversation.target,
+            avatar: groupInfo.portrait,
+            searchKey: '所有人' + pinyin.letter('所有人', '', null)
+        });
         let userIds = [];
         members.forEach(e => {
             userIds.push(e.memberId);
@@ -59,7 +63,12 @@ export default class MessageInput extends Component {
 
         let userInfos = wfc.getUserInfos(userIds, groupInfo.target);
         userInfos.forEach((e) => {
-            mentionMenuItems.push({ key: e.displayName, value: '@' + e.uid, avatar: e.portrait, searchKey: e.displayName + pinyin.letter(e.displayName, '', null) });
+            mentionMenuItems.push({
+                key: e.displayName,
+                value: '@' + e.uid,
+                avatar: e.portrait,
+                searchKey: e.displayName + pinyin.letter(e.displayName, '', null)
+            });
         });
 
         this.tribute = new Tribute({
@@ -70,7 +79,7 @@ export default class MessageInput extends Component {
                 // if (this.range.isContentEditable(this.current.element)) {
                 //     return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
                 // }
-                this.mentions.push({ key: item.original.key, value: item.original.value });
+                this.mentions.push({key: item.original.key, value: item.original.value});
 
                 return '@' + item.original.key;
             },
@@ -135,6 +144,12 @@ export default class MessageInput extends Component {
             || e.charCode !== 13
         ) return;
 
+        if(e.ctrlKey && e.charCode === 13){
+            e.preventDefault();
+            this.refs.input.value = this.refs.input.value + "\n";
+            return;
+        }
+
         // TODO batch
         var batch = conversation.length > 1;
 
@@ -145,6 +160,7 @@ export default class MessageInput extends Component {
         let textMessageContent = this.handleMention(message);
         this.props.sendMessage(textMessageContent);
         this.refs.input.value = '';
+        e.preventDefault();
     }
 
     state = {
@@ -152,7 +168,7 @@ export default class MessageInput extends Component {
     };
 
     toggleEmoji(show = !this.state.showEmoji) {
-        this.setState({ showEmoji: show });
+        this.setState({showEmoji: show});
     }
 
     audioCall(show = !this.state.showEmoji) {
@@ -176,7 +192,7 @@ export default class MessageInput extends Component {
                 }
 
                 let parts = [
-                    new window.Blob([new window.Uint8Array(args.raw)], { type: 'image/png' })
+                    new window.Blob([new window.Uint8Array(args.raw)], {type: 'image/png'})
                 ];
                 let file = new window.File(parts, args.filename, {
                     lastModified: new Date(),
@@ -227,7 +243,7 @@ export default class MessageInput extends Component {
             }
 
             let parts = [
-                new window.Blob([new window.Uint8Array(args.raw)], { type: 'image/png' })
+                new window.Blob([new window.Uint8Array(args.raw)], {type: 'image/png'})
             ];
             let file = new window.File(parts, args.filename, {
                 lastModified: new Date(),
@@ -237,8 +253,9 @@ export default class MessageInput extends Component {
             this.batchProcess(file);
         }
     }
+
     readClipImage(event) {
-        let result = { hasImage: false, file: null };
+        let result = {hasImage: false, file: null};
         if (event.clipboardData || event.originalEvent) {
             const clipboardData = (event.clipboardData || event.originalEvent.clipboardData);
             if (clipboardData.items) {
@@ -329,7 +346,7 @@ export default class MessageInput extends Component {
         var input = this.refs.input;
         if (mentionUser) {
             input.value += ' @' + mentionUser.displayName + ' ';
-            this.mentions.push({ key: mentionUser.displayName, value: '@' + mentionUser.uid });
+            this.mentions.push({key: mentionUser.displayName, value: '@' + mentionUser.uid});
             input.focus();
         }
     }
@@ -355,16 +372,6 @@ export default class MessageInput extends Component {
                 >
                     请先选择一个会话 或 已禁言。
                 </div>
-
-                <input
-                    id="messageInput"
-                    ref="input"
-                    type="text"
-                    placeholder="输入内容发送 ..."
-                    readOnly={!canisend}
-                    onPaste={e => this.handlePaste(e)}
-                    onKeyPress={e => this.handleEnter(e)}
-                />
 
                 <div className={classes.action}>
                     <i
@@ -420,6 +427,15 @@ export default class MessageInput extends Component {
                         show={this.state.showEmoji}
                     />
                 </div>
+
+                <textarea
+                    id="messageInput"
+                    ref="input"
+                    placeholder="输入内容发送，Ctrl + Enter 换行 ..."
+                    readOnly={!canisend}
+                    onPaste={e => this.handlePaste(e)}
+                    onKeyPress={e => this.handleEnter(e)}
+                />
             </div>
         );
     }
