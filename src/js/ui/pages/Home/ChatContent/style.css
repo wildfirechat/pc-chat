@@ -163,6 +163,7 @@
 
 .message.isText {
     & .content {
+        white-space: pre-wrap;
         position: relative;
         max-width: 100%;
         background: #fff;
@@ -757,6 +758,7 @@
 
     .message.isText {
         & p {
+            white-space: pre-wrap;
             min-width: 37px;
             padding: 8.32px 11.3px 6px 26px;
             font-size: 13px;
