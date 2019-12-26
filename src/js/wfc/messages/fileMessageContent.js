@@ -20,7 +20,7 @@ export default class FileMessageContent extends MediaMessageContent {
 
     encode() {
         let payload = super.encode();
-        payload.searchableContent = this.name;
+        payload.searchableContent = '[文件] ' + this.name;
         payload.content = this.size + '';
         return payload;
     };
