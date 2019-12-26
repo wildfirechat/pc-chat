@@ -18,9 +18,10 @@ import { connect } from '../../../platform'
 @observer
 export default class Login extends Component {
     @observable qrCode;
-    token;
+    token = '';
     loginTimer;
     qrCodeTimer;
+    lastToken;
 
     componentDidMount() {
         axios.defaults.baseURL = Config.APP_SERVER;
@@ -53,8 +54,8 @@ export default class Login extends Component {
 
     async getCode() {
         var response = await axios.post('/pc_session', {
-            token: '',
-            device_name: 'my mac',
+            token: this.token,
+            device_name: 'pc',
             clientId: wfc.getClientId(),
             platform: Config.getWFCPlatform()
         });
@@ -74,12 +75,13 @@ export default class Login extends Component {
 
     async refreshQrCode() {
         this.qrCodeTimer = setInterval(() => {
+            this.token = '';
             this.getCode();
         }, 30 * 1000);
     }
     async login() {
-        if (!this.token) {
-            console.log('-------- t e');
+        if (this.token === '' || this.lastToken === this.token) {
+            console.log('-------- token is empty or invalid');
             return;
         }
         var response = await axios.post('/session_login/' + this.token);
@@ -87,11 +89,13 @@ export default class Login extends Component {
         if (response.data) {
             switch (response.data.code) {
                 case 0:
+                    this.lastToken = this.token;
                     let userId = response.data.result.userId;
                     let token = response.data.result.token;
                     connect(userId, token);
                     break;
                 default:
+                    this.lastToken = '';
                     console.log(response.data);
                     break
             }
