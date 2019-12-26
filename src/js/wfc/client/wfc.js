@@ -403,7 +403,7 @@ export class WfcManager {
         impl.uploadMedia(fileName, fileOrData, mediaType, successCB, failCB, progressCB);
     }
 
-    async connect(userId, token) {
+    connect(userId, token) {
         impl.connect(userId, token);
     }
 
