@@ -8,7 +8,6 @@
 .footer {
     position: relative;
     background: #fff;
-    z-index: 9;
 
     & > nav {
         display: flex;
