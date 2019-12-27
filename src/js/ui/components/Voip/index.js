@@ -274,7 +274,7 @@ export default class Voip extends Component {
         console.log('pc setRemoteDescription start');
         try {
             await this.pc.setRemoteDescription(desc);
-            this.onSetRemoteSuccess(pc);
+            this.onSetRemoteSuccess(this.pc);
         } catch (e) {
             this.onSetSessionDescriptionError(e);
         }
