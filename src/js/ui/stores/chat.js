@@ -520,7 +520,7 @@ class Chat {
         let flag = MessageConfig.getMessageContentPersitFlag(messageContent.type);
         wfc.sendMessage(msg,
             (messageId, timestamp) => {
-                if (PersistFlag.Persist === flag || PersistFlag.Persist_And_Count === flag) {
+                if (messageId > 0) {
                     m = wfc.getMessageById(messageId);
                     self.messageList.push(m);
                 }
@@ -677,8 +677,10 @@ class Chat {
         var m;
         wfc.sendMessage(msg,
             function (messageId, timestamp) {
-                m = wfc.getMessageById(messageId);
-                self.messageList.push(m);
+                if(messageId > 0){
+                    m = wfc.getMessageById(messageId);
+                    self.messageList.push(m);
+                }
             },
             (current, total) => {
                 // progress
