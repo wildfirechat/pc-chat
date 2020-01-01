@@ -762,6 +762,7 @@
             min-width: 37px;
             padding: 8.32px 11.3px 6px 26px;
             font-size: 13px;
+            word-break:normal;
             line-height: 16px;
         }
 
