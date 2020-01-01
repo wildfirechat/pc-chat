@@ -1,7 +1,6 @@
-
-import { inject, observer } from 'mobx-react';
+import {inject, observer} from 'mobx-react';
 import moment from 'moment';
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import EventType from '../../../../wfc/client/wfcEvent';
 import ConversationItem from './conversationItem';
 import classes from './style.css';
@@ -9,6 +8,7 @@ import ConversationType from '../../../../wfc/model/conversationType';
 
 import scrollIntoView from 'scroll-into-view-if-needed'
 import smoothScrollIntoView from 'smooth-scroll-into-view-if-needed'
+import wfc from '../../../../wfc/client/wfc'
 
 moment.updateLocale('en', {
     relativeTime: {
@@ -24,7 +24,17 @@ moment.updateLocale('en', {
 
 @inject(stores => ({
     chats: stores.sessions.conversations,
-    chatTo: stores.chat.chatToN,
+    chatTo: (conversation) => {
+        // reload conversation target
+        if (conversation.type === ConversationType.Single) {
+            wfc.getUserInfo(conversation.target, true);
+        } else if (conversation.type === ConversationType.Group) {
+            wfc.getGroupInfo(conversation.target, true);
+            wfc.getGroupMembers(conversation.target, true);
+        }
+
+        stores.chat.chatToN(conversation);
+    },
     conversation: stores.chat.conversation,
     messages: stores.chat.messages,
     markedRead: stores.chat.markedRead,
@@ -154,13 +164,13 @@ export default class Chats extends Component {
                     'scrollBehavior' in document.documentElement.style
                         ? scrollIntoView
                         : smoothScrollIntoView
-                scrollIntoViewSmoothly(active, { behavior: 'smooth' })
+                scrollIntoViewSmoothly(active, {behavior: 'smooth'})
             }
         }
     }
 
     render() {
-        var { loading, chats, conversation, chatTo, searching, markedRead, sticky, removeChat} = this.props;
+        var {loading, chats, conversation, chatTo, searching, markedRead, sticky, removeChat} = this.props;
 
 
         // if (loading) return false;
@@ -180,7 +190,10 @@ export default class Chats extends Component {
                         !searching && chats.map((e, index) => {
                             return (
                                 <div key={e.conversation.type + e.conversation.target + e.conversation.line}>
-                                    <ConversationItem key={e.conversation.target + e.conversation.type + e.conversation.line} chatTo={chatTo} markedRead={markedRead} sticky={sticky} removeChat={removeChat} currentConversation={conversation} conversationInfo={e} />
+                                    <ConversationItem
+                                        key={e.conversation.target + e.conversation.type + e.conversation.line}
+                                        chatTo={chatTo} markedRead={markedRead} sticky={sticky} removeChat={removeChat}
+                                        currentConversation={conversation} conversationInfo={e}/>
                                 </div>
                             )
                             // return <this.conversationItem key={e.conversation.target} chatTo={chatTo} currentConversation={conversation} conversationInfo={e} />
