@@ -660,6 +660,12 @@ label {
     width: 0;
 }
 
+::selection {
+    color:#FFFFFF;
+    background-color:#E84893;
+    text-shadow:none;
+}
+
 .emoji-mart,
 .emoji-mart * {
   box-sizing: border-box;
