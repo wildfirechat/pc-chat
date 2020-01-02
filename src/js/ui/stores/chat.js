@@ -239,6 +239,9 @@ class Chat {
     @observable target = false;
 
     @observable conversation;
+
+    initialized = false;
+
     loading = false;
     hasMore = true;
 
@@ -293,12 +296,38 @@ class Chat {
                     self.target = false;
                     self.conversation = null;
                 } else {
-                    self.messageList.push(message);
+                    let index = self.messageList.findIndex(m => m.messageUid.equals(message.messageUid));
+                    if(index === -1){
+                        self.messageList.push(message);
+                    }
                 }
             } else {
-                self.messageList.push(message);
+                let index = self.messageList.findIndex(m => m.messageUid.equals(message.messageUid));
+                if(index === -1){
+                    self.messageList.push(message);
+                }
             }
         }
+    }
+
+    onUserInfosUpdate(userInfos){
+        // TODO proto 过来的数据是ids, 需要改成userInfos
+        // for(const userInfo of userInfos){
+        //     if(self.conversation && self.conversation.type === ConversationType.Single && self.conversation.target === userInfo.uid){
+        //         self.target = wfc.getUserInfo(userInfo.uid, false);
+        //         break;
+        //     }
+        // }
+    }
+
+    onGroupInfosUpdate(groupInfos){
+        // TODO proto 过来的数据是ids，需要改成groupInfos, 涉及到其他地方的改动
+        // for(const groupInfo of groupInfos){
+        //     if(self.conversation && self.conversation.type === ConversationType.Group && self.conversation.target === ''){
+        //         self.target = wfc.getGroupInfo(self.conversation.target, false);
+        //         break;
+        //     }
+        // }
     }
 
     @action async chatToN(conversation) {
@@ -308,8 +337,12 @@ class Chat {
         }
 
         // 第一次进入的时候订阅
-        if (self.conversation === undefined) {
+        if (!self.initialized) {
             wfc.eventEmitter.on(EventType.ReceiveMessage, self.onReceiveMessage);
+            wfc.eventEmitter.on(EventType.RecallMessage, self.onRecallMessage);
+            wfc.eventEmitter.on(EventType.UserInfosUpdate, self.onUserInfosUpdate);
+            wfc.eventEmitter.on(EventType.GroupInfosUpdate, self.onGroupInfosUpdate);
+            self.initialized = true;
         }
 
         self.conversation = conversation;
@@ -322,7 +355,7 @@ class Chat {
         switch (conversation.type) {
             case ConversationType.Single:
                 self.target = wfc.getUserInfo(conversation.target);
-                break
+                break;
             case ConversationType.Group:
                 self.target = wfc.getGroupInfo(conversation.target);
                 break;
