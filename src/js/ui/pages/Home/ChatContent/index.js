@@ -139,10 +139,6 @@ export default class ChatContent extends Component {
         }
 
         switch (MessageConfig.getMessageContentType(message.messageContent)) {
-            case MessageContentType.Unknown:
-                let unknownMessageContent = message.messageContent;
-                console.log('unknown', unknownMessageContent.digest(), message);
-                return emojiParse(unknownMessageContent.digest());
             case MessageContentType.Text:
             case MessageContentType.P_Text:
                 if (message.location) {
@@ -368,6 +364,10 @@ export default class ChatContent extends Component {
 
                     </div>
                 `;
+            default:
+                let unknownMessageContent = message.messageContent;
+                console.log('unknown', unknownMessageContent.digest(), message);
+                return emojiParse(unknownMessageContent.digest());
         }
     }
 
@@ -388,7 +388,7 @@ export default class ChatContent extends Component {
             if (message.messageContent instanceof NotificationMessageContent) {
                 return (
                     <div
-                        key={message.timestamp}
+                        key={message.messageUid}
                         className={clazz('unread', classes.message, classes.system)}
                         dangerouslySetInnerHTML={{ __html: message.messageContent.formatNotification() }} />
                 );

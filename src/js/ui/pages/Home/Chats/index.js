@@ -124,7 +124,7 @@ export default class Chats extends Component {
         this.props.event.on(EventType.SendMessage, this.onSendMessage);
         this.props.event.on(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
         this.props.event.on(EventType.RecallMessage, this.onRecallMessage);
-        this.props.event.on(EventType.DeleteMessage, this.onRecallMessage);
+        this.props.event.on(EventType.DeleteMessage, this.onDeleteMessage);
         this.props.event.on(EventType.SettingUpdate, this.onSettingUpdate);
         this.props.event.on(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
         this.props.event.on(EventType.UserInfosUpdate, this.onUserInfoUpdate);
@@ -142,7 +142,7 @@ export default class Chats extends Component {
         this.props.event.removeListener(EventType.SendMessage, this.onSendMessage);
         this.props.event.removeListener(EventType.ConversationInfoUpdate, this.onConversationInfoUpdate);
         this.props.event.removeListener(EventType.RecallMessage, this.onRecallMessage);
-        this.props.event.removeListener(EventType.DeleteMessage, this.onRecallMessage);
+        this.props.event.removeListener(EventType.DeleteMessage, this.onDeleteMessage);
         this.props.event.removeListener(EventType.SettingUpdate, this.onSettingUpdate);
         this.props.event.removeListener(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
         this.props.event.removeListener(EventType.UserInfosUpdate, this.onUserInfoUpdate);
