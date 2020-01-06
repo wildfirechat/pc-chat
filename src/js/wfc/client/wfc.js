@@ -120,8 +120,8 @@ export class WfcManager {
         impl.createGroup(groupId, groupType, name, portrait, memberIds, lines, notifyContent, successCB, failCB);
     }
 
-    async setGroupManager(groupId, isSet, memberIds, lines, notifyMessageContent, successCB, failCB) {
-        impl.setGroupManager(groupId, isSet, memberIds, lines, notifyMessageContent, successCB, failCB);
+    async setGroupManager(groupId, isSet, memberIds, lines, notifyContent, successCB, failCB) {
+        impl.setGroupManager(groupId, isSet, memberIds, lines, notifyContent, successCB, failCB);
     }
 
     getGroupInfo(groupId, refresh = false) {
