@@ -1,5 +1,5 @@
 import Conversation from '../model/conversation';
-import { EventEmitter } from 'events';
+import {EventEmitter} from 'events';
 import MessageStatus from '../messages/messageStatus';
 import MessageContent from '../messages/messageContent';
 import atob from 'atob';
@@ -56,6 +56,7 @@ export class WfcManager {
     getUserInfo(userId, refresh = false, groupId = '') {
         return impl.getUserInfo(userId, refresh, groupId);
     }
+
     getUserInfos(userIds, groupId) {
         return impl.getUserInfos(userIds, groupId);
     }
@@ -114,6 +115,14 @@ export class WfcManager {
 
     getMyFriendList(fresh = false) {
         return impl.getMyFriendList(fresh);
+    }
+
+    getFriendAlias(userId) {
+        return impl.getFriendAlias(userId);
+    }
+
+    async setFriendAlias(userId, alias, successCB, failCB) {
+        impl.setFriendAlias(userId, alias, successCB, failCB);
     }
 
     async createGroup(groupId, groupType, name, portrait, memberIds = [], lines = [0], notifyContent, successCB, failCB) {
@@ -410,6 +419,7 @@ export class WfcManager {
     _getStore() {
         return impl._getStore();
     }
+
     init(args = []) {
         impl.init(args);
         avEngineKit.setup(self);
@@ -423,5 +433,6 @@ export class WfcManager {
         return decodeURIComponent(escape(atob(str)));
     }
 }
+
 const self = new WfcManager();
 export default self;
