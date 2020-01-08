@@ -35,12 +35,6 @@ export default class Filter extends Component {
     render() {
         return (
             <div className={classes.contacts}>
-                <input
-                    onInput={e => this.doFilter(e.target.value)}
-                    placeholder="输入内容开始搜索 ..."
-                    ref="filter"
-                    type="text" />
-
                 <div className={classes.action}>
                     <label htmlFor="showGroup">
                         <span className={classes.options}>Show Groups</span>
