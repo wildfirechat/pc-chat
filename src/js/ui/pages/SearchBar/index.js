@@ -58,11 +58,21 @@ export default class SearchBar extends Component {
     }
 
     handleBlur(value) {
-        setTimeout(() => {
+        clearTimeout(this.handleBlur.timer);
+        this.handleBlur.timer = setTimeout(() => {
             if (!value) {
                 this.props.toggle(false);
             }
         }, 500);
+    }
+
+    componentWillUnmount() {
+        if(this.filter.timer){
+            clearTimeout(this.filter.timer);
+        }
+        if(this.handleBlur.timer){
+            clearTimeout(this.handleBlur.timer);
+        }
     }
 
     chatTo(target) {
