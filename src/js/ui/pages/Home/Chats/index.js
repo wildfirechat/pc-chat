@@ -105,15 +105,18 @@ export default class Chats extends Component {
         }
     }
 
-    onUserInfoUpdate = (userId) => {
-        this.props.chats.map((c, index) => {
-            if (c.conversation.type === ConversationType.Single && c.conversation.target === userId) {
-                this.props.reloadConversation(c.conversation);
-            }
+    onUserInfoUpdate = (userInfos) => {
+        userInfos.forEach((userInfo)=>{
+            let userId = userInfo.uid;
+            this.props.chats.forEach((c) => {
+                if (c.conversation.type === ConversationType.Single && c.conversation.target === userId) {
+                    this.props.reloadConversation(c.conversation);
+                }
+            });
         });
     }
 
-    onGroupInfoUpdate = (groupId) => {
+    onGroupInfoUpdate = (groupInfos) => {
         this.props.loadConversations();
     }
 
