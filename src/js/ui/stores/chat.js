@@ -311,23 +311,21 @@ class Chat {
     }
 
     onUserInfosUpdate(userInfos){
-        // TODO proto 过来的数据是ids, 需要改成userInfos
-        // for(const userInfo of userInfos){
-        //     if(self.conversation && self.conversation.type === ConversationType.Single && self.conversation.target === userInfo.uid){
-        //         self.target = wfc.getUserInfo(userInfo.uid, false);
-        //         break;
-        //     }
-        // }
+        for(const userInfo of userInfos){
+            if(self.conversation && self.conversation.type === ConversationType.Single && self.conversation.target === userInfo.uid){
+                self.target = userInfo;
+                break;
+            }
+        }
     }
 
     onGroupInfosUpdate(groupInfos){
-        // TODO proto 过来的数据是ids，需要改成groupInfos, 涉及到其他地方的改动
-        // for(const groupInfo of groupInfos){
-        //     if(self.conversation && self.conversation.type === ConversationType.Group && self.conversation.target === ''){
-        //         self.target = wfc.getGroupInfo(self.conversation.target, false);
-        //         break;
-        //     }
-        // }
+        for(const groupInfo of groupInfos){
+            if(self.conversation && self.conversation.type === ConversationType.Group && self.conversation.target === groupInfo.target){
+                self.target = groupInfo;
+                break;
+            }
+        }
     }
 
     @action async chatToN(conversation) {

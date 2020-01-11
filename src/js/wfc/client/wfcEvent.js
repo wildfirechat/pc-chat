@@ -1,13 +1,26 @@
 export default class EventType {
+    // function (message) {}
     static SendMessage = 'sendMsg';
+    // function (message) {}
     static ReceiveMessage = 'receiveMsg';
+    // function (operator, messageUid) {}
     static RecallMessage = 'recallMsg';
+    // function (messageId) {}
     static DeleteMessage = 'deleteMsg';
+    // function (message) {}
     static MessageStatusUpdate = 'msgStatusUpdate';
+    // function (connectionStatus) {}
     static ConnectionStatusChanged = 'connectionStatusChanged';
+    // function (userInfos) {}
     static UserInfosUpdate = 'userInfosUpdate';
+    // function (groupInfos) {}
     static GroupInfosUpdate = 'groupInfosUpdate';
-    static FriendListUpdate = 'friendListUpdate'
-    static ConversationInfoUpdate = 'conversationInfoUpdate'
+    // function (updatedFriendIds) {}
+    static FriendListUpdate = 'friendListUpdate';
+    // function () {}
+    static FriendRequestUpdate = 'friendRequestUpdate';
+    // function (conversationInfo) {}
+    static ConversationInfoUpdate = 'conversationInfoUpdate';
+    // function () {}
     static SettingUpdate = 'settingUpdate'
 }
