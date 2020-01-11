@@ -26,6 +26,7 @@ export default class MessageContent {
         payload.type = this.type;
         payload.mentionedType = this.mentionedType;
         payload.mentionedTargets = this.mentionedTargets;
+        payload.extra = this.extra;
         return payload;
     }
 
@@ -37,5 +38,6 @@ export default class MessageContent {
         this.type = payload.type;
         this.mentionedType = payload.mentionedType;
         this.mentionedTargets = payload.mentionedTargets;
+        this.extra = payload.extra;
     }
 }
