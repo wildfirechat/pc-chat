@@ -56,7 +56,7 @@ export default class ConversationItem extends Component {
             {
                 label: 'Mark as Read',
                 click: () => {
-                    this.props.markedRead(conversationInfo.UserName);
+                    this.props.markedRead(conversationInfo);
                 }
             },
         ];

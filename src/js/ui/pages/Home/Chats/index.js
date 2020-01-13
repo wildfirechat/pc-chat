@@ -37,7 +37,7 @@ moment.updateLocale('en', {
     },
     conversation: stores.chat.conversation,
     messages: stores.chat.messages,
-    markedRead: stores.chat.markedRead,
+    markedRead: stores.sessions.clearConversationUnreadStatus,
     sticky: stores.sessions.sticky,
     removeChat: stores.sessions.removeConversation,
     loading: stores.sessions.loading,

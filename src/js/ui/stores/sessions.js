@@ -82,16 +82,28 @@ class sessions {
     }
 
 
-    @action removeConversation(conversation) {
+    @action removeConversation(conversationInfo) {
 
-        self.conversations = self.conversations.filter(e => !e.conversation.equal(conversation.conversation));
+        self.conversations = self.conversations.filter(e => !e.conversation.equal(conversationInfo.conversation));
 
-        wfc.removeConversation(conversation, true);
+        wfc.removeConversation(conversationInfo.conversation, true);
 
         updateMenus({
             conversations: self.conversations.slice(0, 10)
         });
     }
+
+    @action clearConversationUnreadStatus(conversationInfo){
+        wfc.clearConversationUnreadStatus(conversationInfo.conversation);
+        self.conversations.forEach(ci =>{
+            if(ci.conversation.equal(conversationInfo.conversation)){
+                ci.unreadCount.unread = 0;
+                ci.unreadMention = 0;
+                ci.unreadMentionAll = 0;
+            }
+        });
+    }
+
 
     @action async sticky(conversationInfo) {
         wfc.setConversationTop(conversationInfo.conversation, !conversationInfo.isTop, () => {
