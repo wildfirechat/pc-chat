@@ -15,7 +15,9 @@ export default class Avatar extends Component {
     };
 
     handleError(e) {
+        if(!e.target.src.endsWith(this.props.fallback)){
         e.target.src = this.props.fallback;
+        }
     }
 
     handleLoad(e) {
