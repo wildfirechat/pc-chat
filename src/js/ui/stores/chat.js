@@ -705,11 +705,10 @@ class Chat {
                 return false;
         }
         msg.messageContent = messageContent;
-        var m;
         wfc.sendMessage(msg,
             function (messageId, timestamp) {
                 if(messageId > 0){
-                    m = wfc.getMessageById(messageId);
+                    let m = wfc.getMessageById(messageId);
                     self.messageList.push(m);
                 }
             },
@@ -718,10 +717,17 @@ class Chat {
             },
             function (messageUid, timestamp) {
                 let msg = wfc.getMessageByUid(messageUid);
-                m.messageUid = messageUid;
-                m.messageContent = msg.messageContent;
-                m.status = MessageStatus.Sent;
-                m.timestamp = timestamp;
+                if(self.messageList.length > 0){
+                    for (let i = self.messageList - 1; i < self.messageList.length; i--) {
+                        if(self.messageList[i].messageId === msg.messageId){
+                            self.messageList[i].messageUid = messageUid;
+                            self.messageList[i].messageContent = msg.messageContent;
+                            self.messageList[i].status = MessageStatus.Sent;
+                            self.messageList[i].timestamp = timestamp;
+                            break;
+                        }
+                    }
+                }
             },
             function (errorCode) {
                 console.log('send message failed', errorCode);
@@ -738,6 +744,7 @@ class Chat {
     }
 
     @action async recallMessage(message) {
+        console.log('----------- recallmessage', message.messageId, message.messageUid.toString());
         wfc.recallMessage(message.messageUid, () => {
             let msg = wfc.getMessageById(message.messageId);
             let oldMsg = self.messageList.find(m => m.messageId === msg.messageId);
