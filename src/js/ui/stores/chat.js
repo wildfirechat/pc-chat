@@ -23,6 +23,7 @@ import DismissGroupNotification from '../../wfc/messages/notification/dismissGro
 import KickoffGroupMemberNotification from '../../wfc/messages/notification/kickoffGroupMemberNotification';
 import MessageConfig from "../../wfc/client/messageConfig";
 import PersistFlag from "../../wfc/messages/persistFlag";
+import MediaMessageContent from "../../wfc/messages/mediaMessageContent";
 
 async function resolveMessage(message) {
     var auth = await storage.get('auth');
@@ -563,6 +564,9 @@ class Chat {
                     m.status = 1;
                     m.timestamp = timestamp;
                 }
+                if(m instanceof MediaMessageContent){
+                    m.remotePath = wfc.getMessageByUid(messageUid).messageContent.remotePath;
+                }
             },
             (errorCode) => {
                 console.log('send message failed', errorCode);
@@ -718,7 +722,7 @@ class Chat {
             function (messageUid, timestamp) {
                 let msg = wfc.getMessageByUid(messageUid);
                 if(self.messageList.length > 0){
-                    for (let i = self.messageList - 1; i < self.messageList.length; i--) {
+                    for (let i = self.messageList.length - 1; i > 0; i--) {
                         if(self.messageList[i].messageId === msg.messageId){
                             self.messageList[i].messageUid = messageUid;
                             self.messageList[i].messageContent = msg.messageContent;
