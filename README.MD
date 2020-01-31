@@ -95,13 +95,13 @@ $ npm run dev
 
 > 请严格安装下面的版本安装对应依赖，否则无法打包
 
-1. nodejs10.16.0
+1. nodejs10.16.x （x86版本）
 2. python2.7
 3. Visual Studio Community 2015(C++ Runtime & Windows SDK version 8.1)
 4. npm install -g node-gyp
 
 
-##### 开发(目前还有问题，请打包安装验证，请跳过这一段)
+##### 开发(在某些機器上運行npm run dev失敗，我們還沒有找到規律，如果無法npm run dev请打包安装验证，请跳过这一段，如果您知道原因也請聯係我們)
 ```
 $ copy proto_addon\marswrapper.win32.node marswrapper.node
 $ npm install
