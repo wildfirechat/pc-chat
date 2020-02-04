@@ -388,7 +388,7 @@ export default class Voip extends Component {
 
     @action onIceStateChange = (pc, event) => {
         if (pc) {
-            console.log(`ICE state: ${pc.iceConnectionState}`);
+            console.log(`ICE state: ${pc.iceConnectionState}`, pc);
             console.log('ICE state change event: ', event);
             if (pc.iceConnectionState === 'connected') {
                 this.status = Voip.STATUS_CONNECTED;

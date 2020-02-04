@@ -7,6 +7,7 @@ import btoa from 'btoa';
 import avEngineKit from '../av/avenginekit';
 
 import impl from '../proto/proto.min';
+import Config from "../../config";
 
 // 其实就是imclient，后续可能需要改下名字
 export class WfcManager {
@@ -54,11 +55,21 @@ export class WfcManager {
     }
 
     getUserInfo(userId, refresh = false, groupId = '') {
-        return impl.getUserInfo(userId, refresh, groupId);
+        let userInfo = impl.getUserInfo(userId, refresh, groupId);
+        if (!userInfo.portrait) {
+            userInfo.portrait = Config.DEFAULT_PORTRAIT_URL;
+        }
+        return userInfo;
     }
 
     getUserInfos(userIds, groupId) {
-        return impl.getUserInfos(userIds, groupId);
+        let userInfos = impl.getUserInfos(userIds, groupId);
+        userInfos.forEach((u)=>{
+            if(!u.portrait){
+                u.portrait = Config.DEFAULT_PORTRAIT_URL;
+            }
+        });
+        return userInfos;
     }
 
     async searchUser(keyword, searchType, page, successCB, failCB) {
@@ -409,7 +420,7 @@ export class WfcManager {
     }
 
     async uploadMedia(fileName, fileOrData, mediaType, successCB, failCB, progressCB) {
-        if(fileOrData.indexOf("base64,") >= 0){
+        if (fileOrData.indexOf("base64,") >= 0) {
             fileOrData = fileOrData.substring(fileOrData.indexOf(',') + 1);
         }
         impl.uploadMedia(fileName, fileOrData, mediaType, successCB, failCB, progressCB);
