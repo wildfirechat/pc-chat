@@ -6,6 +6,6 @@ export default class NullUserInfo extends UserInfo {
         this.uid = userId;
         this.name = '<' + userId + '>';
         this.displayName = this.name;
-        this.protrait = '';
+        this.portrait = '';
     }
 }

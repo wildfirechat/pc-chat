@@ -1,5 +1,6 @@
 import { isElectron } from './platform'
 export default class Config {
+    static DEFAULT_PORTRAIT_URL = 'https://static.wildfirechat.cn/user-fallback.png';
     static APP_SERVER = 'http://wildfirechat.cn:8888';
     static QR_CODE_PREFIX_PC_SESSION = "wildfirechat://pcsession/";
     static ICE_ADDRESS = 'turn:turn.wildfirechat.cn:3478';

@@ -21,7 +21,7 @@ export default class UserInfo {
     name = '';
     displayName = '';
     gender = 0;
-    protrait = '';
+    portrait = '';
     mobile = '';
     email = '';
     address = '';
