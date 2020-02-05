@@ -1,6 +1,5 @@
-
-import React, { Component } from 'react';
-import { observer, inject } from 'mobx-react';
+import React, {Component} from 'react';
+import {observer, inject} from 'mobx-react';
 import clazz from 'classname';
 import randomColor from 'randomcolor';
 
@@ -43,7 +42,7 @@ export default class Contacts extends Component {
                             height: 1,
                             width: '100%',
                             background: '#eaedea',
-                        }} />
+                        }}/>
                     </div>
 
                     <div className={classes.list}>
@@ -60,15 +59,15 @@ export default class Contacts extends Component {
                                                 style={{
                                                     height: 32,
                                                     width: 32,
-                                                }} />
+                                                }}/>
                                         </div>
                                         <div className={classes.info}>
                                             <p
                                                 className={classes.username}
-                                                dangerouslySetInnerHTML={{ __html: this.props.contactItemName(e) }} />
+                                                dangerouslySetInnerHTML={{__html: this.props.contactItemName(e)}}/>
                                             <p
                                                 className={classes.signature}
-                                                dangerouslySetInnerHTML={{ __html: e.Signature || '' }} />
+                                                dangerouslySetInnerHTML={{__html: e.Signature || ''}}/>
                                         </div>
                                     </div>
                                 );
@@ -85,7 +84,7 @@ export default class Contacts extends Component {
         return e.portrait;
     }
 
-    onContactUpdate = () =>{
+    onContactUpdate = () => {
         this.props.getContacts();
     };
 
@@ -100,25 +99,47 @@ export default class Contacts extends Component {
         this.props.event.removeListener(EventType.FriendListUpdate, this.onContactUpdate);
     }
 
+    filter(text = '') {
+        text = text.trim();
+        this.props.filter(text);
+    }
+
     render() {
-        var { query, result } = this.props.filtered;
+        var {query, result} = this.props.filtered;
         var searching = this.props.searching;
 
-        if (query && result.length === 0) {
-            return (
-                <div className={clazz(classes.container, classes.notfound)}>
-                    <div className={classes.inner}>
-                        <img src="assets/images/crash.png" />
-                        <h1>Can't find any people matching '{query}'</h1>
-                    </div>
-                </div>
-            );
-        }
+        // TODO 未搜索到结果的ui
+        // if (query && result.length === 0) {
+        //     return (
+        //         <div className={classes.container}>
+        //             <div className={classes.searchBar}>
+        //                 <i className="icon-ion-ios-search-strong"/>
+        //                 <input
+        //                     id="search"
+        //                     onInput={e => this.filter(e.target.value)}
+        //                     placeholder="搜索 ..."
+        //                     ref="search"
+        //                     type="text"/>
+        //             </div>
+        //             <p>no found</p>
+        //         </div>
+        //     );
+        // }
 
         return (
             <div className={classes.container}>
+                <div className={classes.searchBar}>
+                    <i className="icon-ion-ios-search-strong"/>
+                    <input
+                        id="search"
+                        onBlur={e => this.filter('')}
+                        onInput={e => this.filter(e.target.value)}
+                        placeholder="搜索 ..."
+                        ref="search"
+                        type="text"/>
+                </div>
                 <div className={classes.contacts}
-                    ref="container">
+                     ref="container">
                     {
                         !searching && this.renderColumns(result, 0)
                     }

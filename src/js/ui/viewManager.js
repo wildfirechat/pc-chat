@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
     BrowserRouter as Router,
     Route
 } from 'react-router-dom'
+import ErrorBoundary from "./components/ErrorBoundary";
 
 class ViewManager extends Component {
 
@@ -11,23 +12,25 @@ class ViewManager extends Component {
         if ('voip' === name) {
             let TargetView = require('../../voip')
             return (
-                <TargetView />
+                <TargetView/>
             );
         } else {
             let TargetView = require('../../app')
             return (
-                <TargetView />
+                <TargetView/>
             );
         }
     }
 
     render() {
         return (
-            <Router>
-                <div>
-                    <Route path='/' component={ViewManager.View} />
-                </div>
-            </Router>
+            <ErrorBoundary>
+                <Router>
+                    <div>
+                        <Route path='/' component={ViewManager.View}/>
+                    </div>
+                </Router>
+            </ErrorBoundary>
         );
     }
 }

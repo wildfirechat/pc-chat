@@ -33,7 +33,6 @@ export default class Second extends Component {
                     [classes.hideConversation]: !this.props.showConversation
                 })}>
                     <div className={classes.left}>
-                        <SearchBar />
                         <Contacts />
                     </div>
 
