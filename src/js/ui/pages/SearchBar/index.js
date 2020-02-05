@@ -1,6 +1,5 @@
-
-import React, { Component } from 'react';
-import { inject, observer } from 'mobx-react';
+import React, {Component} from 'react';
+import {inject, observer} from 'mobx-react';
 
 import classes from './style.css';
 import UserInfo from '../../../wfc/model/userInfo';
@@ -10,7 +9,6 @@ import ConversationType from '../../../wfc/model/conversationType';
 import wfc from '../../../wfc/client/wfc';
 
 @inject(stores => ({
-    history: stores.search.history,
     searching: stores.search.searching,
     toggle: stores.search.toggle,
     filter: stores.search.filter,
@@ -46,31 +44,30 @@ import wfc from '../../../wfc/client/wfc';
 }))
 @observer
 export default class SearchBar extends Component {
-    timer;
 
     filter(text = '') {
         text = text.trim();
 
-        clearTimeout(this.filter.timer);
-        this.filter.timer = setTimeout(() => {
-            this.props.filter(text);
-        }, 300);
+        // clearTimeout(this.filter.timer);
+        // this.filter.timer = setTimeout(() => {
+        this.props.filter(text);
+        // }, 300);
     }
 
     handleBlur(value) {
-        clearTimeout(this.handleBlur.timer);
-        this.handleBlur.timer = setTimeout(() => {
-            if (!value) {
-                this.props.toggle(false);
-            }
-        }, 500);
+        // clearTimeout(this.handleBlur.timer);
+        // this.handleBlur.timer = setTimeout(() => {
+        //     if (!value) {
+        this.props.toggle(false);
+        //     }
+        // }, 500);
     }
 
     componentWillUnmount() {
-        if(this.filter.timer){
+        if (this.filter.timer) {
             clearTimeout(this.filter.timer);
         }
-        if(this.handleBlur.timer){
+        if (this.handleBlur.timer) {
             clearTimeout(this.handleBlur.timer);
         }
     }
@@ -110,7 +107,7 @@ export default class SearchBar extends Component {
     }
 
     navigation(e) {
-        var { result, history, getPlaceholder } = this.props;
+        var {result, getPlaceholder} = this.props;
 
         // User press ESC
         if (e.keyCode === 27) {
@@ -174,16 +171,16 @@ export default class SearchBar extends Component {
             <div
                 className={classes.user}
                 onClick={e => this.chatTo(item)} data-userid={uid}>
-                <img src={item.portrait} />
+                <img src={item.portrait}/>
 
                 <div className={classes.info}>
                     <p
                         className={classes.username}
-                        dangerouslySetInnerHTML={{ __html: name }} />
+                        dangerouslySetInnerHTML={{__html: name}}/>
 
                     <span
                         className={classes.signature}
-                        dangerouslySetInnerHTML={{ __html: item.Signature || '' }} />
+                        dangerouslySetInnerHTML={{__html: item.Signature || ''}}/>
                 </div>
             </div>
         );
@@ -196,31 +193,6 @@ export default class SearchBar extends Component {
             <div>
                 <header>
                     <h3>{title}</h3>
-                </header>
-                {
-                    list.map((e, index) => {
-                        return (
-                            <div key={index}>
-                                {this.renderItem(e)}
-                            </div>
-                        );
-                    })
-                }
-            </div>
-        );
-    }
-
-    renderHistory(list) {
-        return (
-            <div>
-                <header>
-                    <h3>History</h3>
-
-                    <a
-                        href=""
-                        onClick={e => this.props.clear(e)}>
-                        CLEAR
-                    </a>
                 </header>
                 {
                     list.map((e, index) => {
@@ -248,11 +220,11 @@ export default class SearchBar extends Component {
     }
 
     render() {
-        var { searching, history, result } = this.props;
+        var {searching, result} = this.props;
 
         return (
             <div className={classes.container}>
-                <i className="icon-ion-ios-search-strong" />
+                <i className="icon-ion-ios-search-strong"/>
                 <input
                     id="search"
                     onBlur={e => this.handleBlur(e.target.value)}
@@ -261,18 +233,18 @@ export default class SearchBar extends Component {
                     onKeyUp={e => this.navigation(e)}
                     placeholder="搜索 ..."
                     ref="search"
-                    type="text" />
+                    type="text"/>
                 {
-                    searching && (
+                    result.query && (
                         <div
                             className={classes.dropdown}
                             ref="dropdown">
                             {
-                                !result.query && (history.length ? this.renderHistory(history) : this.renderPlaceholder())
+                                !result.query && this.renderPlaceholder()
                             }
 
                             {this.renderList(result.friend, 'Friend')}
-                            {this.renderList(result.groups, 'Group')}
+                            {/*{this.renderList(result.groups, 'Group')}*/}
                         </div>
                     )
                 }

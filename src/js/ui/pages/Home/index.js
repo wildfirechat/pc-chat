@@ -1,11 +1,9 @@
-
-import React, { Component } from 'react';
-import { inject, observer } from 'mobx-react';
+import React, {Component} from 'react';
+import {inject, observer} from 'mobx-react';
 import clazz from 'classname';
 
 import classes from './style.css';
 import Loader from 'components/Loader';
-import SearchBar from '../SearchBar';
 import Chats from './Chats';
 import ChatContent from './ChatContent';
 import wfc from '../../../wfc/client/wfc';
@@ -13,7 +11,7 @@ import EventType from '../../../wfc/client/wfcEvent';
 import Push from 'push.js'
 import MessageConfig from '../../../wfc/client/messageConfig';
 import PersistFlag from '../../../wfc/messages/persistFlag';
-import { isElectron } from '../../../platform'
+import {isElectron} from '../../../platform'
 
 @inject(stores => ({
     loading: stores.sessions.loading,
@@ -62,27 +60,26 @@ export default class Home extends Component {
             <div className={classes.container}>
                 <Loader
                     fullscreen={true}
-                    show={false} />
+                    show={false}/>
                 <div className={clazz(classes.inner, {
                     [classes.hideConversation]: !this.props.showConversation
                 })}>
                     <div className={classes.left}>
-                        <SearchBar />
-                        <Chats />
+                        <Chats/>
 
                         {
                             this.props.showRedIcon && (
                                 <div
                                     className={classes.addChat}
                                     onClick={() => this.props.newChat()}>
-                                    <i className="icon-ion-android-add" />
+                                    <i className="icon-ion-android-add"/>
                                 </div>
                             )
                         }
                     </div>
 
                     <div className={classes.right}>
-                        <ChatContent />
+                        <ChatContent/>
                     </div>
                 </div>
             </div>

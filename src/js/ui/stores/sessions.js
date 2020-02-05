@@ -1,15 +1,13 @@
-
 /* eslint-disable no-eval */
 import axios from 'axios';
-import { observable, action } from 'mobx';
-import { ipcRenderer } from '../../platform';
+import {observable, action} from 'mobx';
+import {ipcRenderer} from '../../platform';
 
-import helper from 'utils/helper';
-import storage from 'utils/storage';
 import wfc from '../../wfc/client/wfc';
 import ConversationType from '../../wfc/model/conversationType';
+import pinyin from "../han/lib";
 
-async function updateMenus({ conversations = [], contacts = [] }) {
+async function updateMenus({conversations = [], contacts = []}) {
     if (!ipcRenderer) {
         return;
     }
@@ -26,15 +24,13 @@ async function updateMenus({ conversations = [], contacts = [] }) {
         })),
     });
 }
+
 class sessions {
-    @observable auth;
     @observable conversations = [];
-
-    syncKey;
-
-    genSyncKey(list) {
-        return (self.syncKey = list.map(e => `${e.Key}_${e.Val}`).join('|'));
-    }
+    @observable filtered = {
+        query: '',
+        result: [],
+    };
 
     @action genConversationKey(index) {
         let conversation = self.conversations[index]
@@ -45,7 +41,8 @@ class sessions {
         console.log('test', info);
     }
 
-    @action async reloadConversation(conversation) {
+    @action
+    async reloadConversation(conversation) {
         let info = wfc.getConversationInfo(conversation);
         let i = -1;
         for (let index = 0; index < self.conversations.length; index++) {
@@ -61,7 +58,8 @@ class sessions {
         console.log('refresh conversation', conversation);
     }
 
-    @action async loadConversations() {
+    @action
+    async loadConversations() {
         let cl = wfc.getConversationList([ConversationType.Single, ConversationType.Group, ConversationType.Channel], [0]);
         self.conversations = cl;
         let counter = 0;
@@ -93,10 +91,10 @@ class sessions {
         });
     }
 
-    @action clearConversationUnreadStatus(conversationInfo){
+    @action clearConversationUnreadStatus(conversationInfo) {
         wfc.clearConversationUnreadStatus(conversationInfo.conversation);
-        self.conversations.forEach(ci =>{
-            if(ci.conversation.equal(conversationInfo.conversation)){
+        self.conversations.forEach(ci => {
+            if (ci.conversation.equal(conversationInfo.conversation)) {
                 ci.unreadCount.unread = 0;
                 ci.unreadMention = 0;
                 ci.unreadMentionAll = 0;
@@ -105,7 +103,8 @@ class sessions {
     }
 
 
-    @action async sticky(conversationInfo) {
+    @action
+    async sticky(conversationInfo) {
         wfc.setConversationTop(conversationInfo.conversation, !conversationInfo.isTop, () => {
             updateMenus({
                 conversations: self.conversations.slice(0, 10)
@@ -115,22 +114,25 @@ class sessions {
         });
     }
 
-    @action async logout() {
-        var auth = self.auth;
-
-        try {
-            await axios.post(`/cgi-bin/mmwebwx-bin/webwxlogout?skey=${auth.skey}&redirect=0&type=1`, {
-                sid: auth.sid,
-                uin: auth.uid,
-            });
-        } finally {
-            self.exit();
+    @action filter(text = '') {
+        if (!text) {
+            self.filtered = {
+                query: '',
+                result: []
+            };
+            return;
         }
-    }
+        text = pinyin.letter(text.toLocaleLowerCase(), '', null);
+        var list = self.conversations.filter(c => {
+            let name = c.title();
+            var res = pinyin.letter(name, '', null).toLowerCase().indexOf(text) > -1;
 
-    async exit() {
-        await storage.remove('auth');
-        window.location.reload();
+            return res;
+        });
+        self.filtered = {
+            query: text,
+            result: list.length ? list : []
+        };
     }
 }
 
