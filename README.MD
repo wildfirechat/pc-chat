@@ -163,16 +163,16 @@ $ npm run dev
 
 1. 有些杀毒软件会对electron打包的软件报病毒，详情请参考[electron报病毒](https://www.baidu.com/s?wd=electron%20360%E6%8A%A5%E7%97%85%E6%AF%92&pn=0&oq=electron%20360%E6%8A%A5%E7%97%85%E6%AF%92&tn=84053098_3_dg&ie=utf-8&rsv_pq=ec2a876200198701&rsv_t=e981739vB2ZMksgGv8ZOV%2Fb4WIhJDXXzLTfMv24NmIN0itMzRiGjMNnh1qARt19Uzf1s%2FA)。安装时可能被杀毒软件限制安装，这时候可以让用户使用绿色免安装版（打包后release目录下的unpacked目录）。如果运行时报错，请在杀毒软件里加上例外。另外有条件的公司可以考虑去[360官方](https://open.soft.360.cn)或其他杀软的官方提交检测。
 
-2. ubuntu下，启动时，若提示，```
-                      A JavaScript error occurred in the main process
-                      Uncaught Exception:
-                      Error: Cannot open /opt/wildfirechat/resources/app.asar/marswrapper.node: Error: libdouble-conversion.so.1: cannot open shared object file: No such file or directory
-                    ```，可安装[libdouble-conversion1](https://packages.debian.org/buster/libdouble-conversion1)解决
+2. ubuntu下，启动时，若提示，```A JavaScript error occurred in the main process Uncaught Exception:Error: Cannot open /opt/wildfirechat/resources/app.asar/marswrapper.node: Error: libdouble-conversion.so.1: cannot open shared object file: No such file or directory```，可安装[libdouble-conversion1](https://packages.debian.org/buster/libdouble-conversion1)解决
 
 
-
-更多信息，请查看[wewechat readme](./README_wewechat.MD)
-
+## MAC 签名
+如果本地存在合法的mac签名，打包程序会尝试进行签名。签名会失败，提示```wfshot.app```没有签名，需要单独对截图应用签名，使用下面命令进行签名
+```
+# 把证书名称换成自己的
+codesign --force --sign "Apple Development: FengYun Sun (U2266X7K8M)" wfshot.app
+```
+对截图应用签名时会继续失败，提示截图应用下的某些库没有签名，需要先对这些库签名，全部签名过后，截图应用才可以签名过。之后就打包就能顺利签名了。
 
 
 ## License
