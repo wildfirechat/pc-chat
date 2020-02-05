@@ -36,13 +36,13 @@ export default class Filter extends Component {
         return (
             <div className={classes.contacts}>
                 <div className={classes.action}>
-                    <label htmlFor="showGroup">
-                        <span className={classes.options}>Show Groups</span>
-                        <Switch
-                            defaultChecked={this.props.showGroup}
-                            id="showGroup"
-                            onClick={e => this.handleShowGroup(e)} />
-                    </label>
+                    {/*<label htmlFor="showGroup">*/}
+                    {/*    <span className={classes.options}>Show Groups</span>*/}
+                    {/*    <Switch*/}
+                    {/*        defaultChecked={this.props.showGroup}*/}
+                    {/*        id="showGroup"*/}
+                    {/*        onClick={e => this.handleShowGroup(e)} />*/}
+                    {/*</label>*/}
                 </div>
             </div>
         );

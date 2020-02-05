@@ -89,15 +89,15 @@ class Contacts {
             });
         }
 
-        if (self.showGroup) {
-            let groupList = wfc.getMyGroupList();
-            groupList.map(e => {
-                let g = wfc.getGroupInfo(e);
-                if (!(g instanceof NullGroupInfo)) {
-                    self.memberList.push(g);
-                }
-            });
-        }
+        // if (self.showGroup) {
+        //     let groupList = wfc.getMyGroupList();
+        //     groupList.map(e => {
+        //         let g = wfc.getGroupInfo(e);
+        //         if (!(g instanceof NullGroupInfo)) {
+        //             self.memberList.push(g);
+        //         }
+        //     });
+        // }
 
         console.log('contacts lenght', self.memberList.length);
         self.loading = false;
