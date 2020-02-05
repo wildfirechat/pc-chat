@@ -85,9 +85,9 @@ export default class Contacts extends Component {
         return e.portrait;
     }
 
-    onContactUpdate() {
+    onContactUpdate = () =>{
         this.props.getContacts();
-    }
+    };
 
     componentWillMount() {
         this.props.getContacts();
