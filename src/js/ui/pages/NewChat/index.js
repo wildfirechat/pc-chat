@@ -53,8 +53,7 @@ export default class NewChat extends Component {
             // createChatroom()
             let groupName = '';
             for (let i = 0; i < 3 && i < selected.length; i++) {
-                let userInfo = wfc.getUserInfo(selected[i]);
-                groupName += userInfo.displayName + '、';
+                groupName += wfc.getUserDisplayName(selected[i]) + '、';
             }
             groupName = groupName.substr(0, groupName.lastIndexOf('、'))
 

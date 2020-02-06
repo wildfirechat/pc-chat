@@ -134,7 +134,7 @@ export default class ChatContent extends Component {
 
         if (message.messageContent instanceof UnsupportMessageContent) {
             let unsupportMessageContent = message.messageContent;
-            return emojiParse(unsupportMessageContent.digest());
+            return emojiParse(unsupportMessageContent.digest(message));
         }
 
         switch (MessageConfig.getMessageContentType(message.messageContent)) {
@@ -365,8 +365,8 @@ export default class ChatContent extends Component {
                 `;
             default:
                 let unknownMessageContent = message.messageContent;
-                console.log('unknown', unknownMessageContent.digest(), message);
-                return emojiParse(unknownMessageContent.digest());
+                console.log('unknown', unknownMessageContent.digest(message), message);
+                return emojiParse(unknownMessageContent.digest(message));
         }
     }
 
@@ -389,7 +389,7 @@ export default class ChatContent extends Component {
                     <div
                         key={message.messageUid}
                         className={clazz('unread', classes.message, classes.system)}
-                        dangerouslySetInnerHTML={{__html: message.messageContent.formatNotification()}}/>
+                        dangerouslySetInnerHTML={{__html: message.messageContent.formatNotification(message)}}/>
                 );
             }
 
@@ -434,7 +434,7 @@ export default class ChatContent extends Component {
                             <p
                                 className={classes.username}
                                 //dangerouslySetInnerHTML={{__html: user.DisplayName || user.RemarkName || user.NickName}}
-                                dangerouslySetInnerHTML={{__html: user.displayName}}
+                                dangerouslySetInnerHTML={{__html: wfc.getUserDisplayName(user.uid)}}
                             />
 
                             {
@@ -712,7 +712,7 @@ export default class ChatContent extends Component {
 
         var templates = [
             {
-                label: `@${userInfo.displayName}`,
+                label: `@${wfc.getGroupMemberDisplayName(this.props.conversation.target, userInfo.uid)}`,
                 click: () => {
                     wfc.eventEmitter.emit('mention', userInfo);
                 }
@@ -875,7 +875,7 @@ export default class ChatContent extends Component {
         var title;
         let target = this.props.target;
         if (target instanceof UserInfo) {
-            title = this.props.target.displayName;
+            title = wfc.getUserDisplayName(this.props.target.uid);
         } else if (target instanceof GroupInfo) {
             title = target.name;
         } else {

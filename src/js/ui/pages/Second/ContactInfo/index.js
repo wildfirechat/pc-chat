@@ -11,6 +11,7 @@ import Conversation from '../../../../wfc/model/conversation';
 import ConversationType from '../../../../wfc/model/conversationType';
 import UserInfo from '../../../../wfc/model/userInfo';
 import GroupInfo from '../../../../wfc/model/groupInfo';
+import wfc from '../../../../wfc/client/wfc'
 
 @inject(stores => ({
     chatTo: (conversation) => {
@@ -106,7 +107,7 @@ class ContactInfo extends Component {
 
                         <div
                             className={classes.username}
-                            dangerouslySetInnerHTML={{ __html: user.displayName ? user.displayName : user.name }} />
+                            dangerouslySetInnerHTML={{ __html: wfc.getUserDisplayName(user.uid) }} />
 
                         {
                             /* eslint-disable */

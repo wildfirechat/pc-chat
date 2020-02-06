@@ -99,7 +99,7 @@ export default class Members extends Component {
                                         }} />
                                     <span
                                         className={classes.username}
-                                        dangerouslySetInnerHTML={{ __html: e.displayName }} />
+                                        dangerouslySetInnerHTML={{ __html: wfc.getGroupMemberDisplayName(this.props.target.target, e.uid) }} />
                                 </li>
                             );
                         })

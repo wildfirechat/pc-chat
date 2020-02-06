@@ -62,7 +62,7 @@ class Contacts {
     contactItemName(item) {
         var name = '';
         if (item instanceof UserInfo) {
-            name = item.displayName;
+            name = wfc.getUserDisplayName(item.uid);
         } else if (item instanceof GroupInfo) {
             name = item.name;
         }

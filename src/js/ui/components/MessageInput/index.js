@@ -62,12 +62,15 @@ export default class MessageInput extends Component {
         });
 
         let userInfos = wfc.getUserInfos(userIds, groupInfo.target);
+        userInfos.forEach(e =>{
+           e.groupDisplayName = wfc.getGroupMemberDisplayNameEx(e);
+        });
         userInfos.forEach((e) => {
             mentionMenuItems.push({
-                key: e.displayName,
+                key: e.groupDisplayName,
                 value: '@' + e.uid,
                 avatar: e.portrait,
-                searchKey: e.displayName + pinyin.letter(e.displayName, '', null)
+                searchKey: e.groupDisplayName + pinyin.letter(e.groupDisplayName, '', null)
             });
         });
 
@@ -344,9 +347,10 @@ export default class MessageInput extends Component {
 
     updateMention = (mentionUser) => {
         var input = this.refs.input;
+        let groupDisplayName = wfc.getGroupMemberDisplayNameEx(mentionUser)
         if (mentionUser) {
-            input.value += ' @' + mentionUser.displayName + ' ';
-            this.mentions.push({key: mentionUser.displayName, value: '@' + mentionUser.uid});
+            input.value += ' @' + groupDisplayName + ' ';
+            this.mentions.push({key: groupDisplayName, value: '@' + mentionUser.uid});
             input.focus();
         }
     }
