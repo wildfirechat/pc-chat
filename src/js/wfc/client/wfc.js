@@ -54,6 +54,27 @@ export class WfcManager {
         return impl.getMyGroupList();
     }
 
+    getUserDisplayName(userId) {
+        let userInfo = this.getUserInfo(userId, false);
+        if (!userInfo) {
+            return '<' + userId + '>';
+        }
+        return userInfo.friendAlias ? userInfo.friendAlias : (userInfo.displayName ? userInfo.displayName : '<' + userId + '>');
+    }
+
+    getGroupMemberDisplayName(groupId, userId) {
+        let userInfo = this.getUserInfo(userId, false, groupId);
+        if (!userInfo) {
+            return '<' + userId + '>';
+        }
+
+        return userInfo.groupAlias ? userInfo.groupAlias : (userInfo.friendAlias ? userInfo.friendAlias : (userInfo.displayName ? userInfo.displayName : '<' + userId + '>'))
+    }
+
+    getGroupMemberDisplayNameEx(userInfo){
+        return userInfo.groupAlias ? userInfo.groupAlias : (userInfo.friendAlias ? userInfo.friendAlias : (userInfo.displayName ? userInfo.displayName : '<' + userId + '>'))
+    }
+
     getUserInfo(userId, refresh = false, groupId = '') {
         let userInfo = impl.getUserInfo(userId, refresh, groupId);
         if (!userInfo.portrait) {
@@ -64,8 +85,8 @@ export class WfcManager {
 
     getUserInfos(userIds, groupId) {
         let userInfos = impl.getUserInfos(userIds, groupId);
-        userInfos.forEach((u)=>{
-            if(!u.portrait){
+        userInfos.forEach((u) => {
+            if (!u.portrait) {
                 u.portrait = Config.DEFAULT_PORTRAIT_URL;
             }
         });

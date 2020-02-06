@@ -17,8 +17,7 @@ export default class ModifyGroupAliasNotification extends GroupNotificationConte
         if (this.fromSelf) {
             return '您修改群昵称为 ' + this.alias;
         } else {
-            let u = wfc.getUserInfo(this.operator);
-            return u.displayName + '修改群昵称为 ' + this.alias;
+            return wfc.getUserDisplayName(this.operator) + '修改群昵称为 ' + this.alias;
         }
     }
 

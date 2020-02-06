@@ -2,6 +2,7 @@ import NotificationMessageContent from './notificationMessageContent'
 import wfc from '../../client/wfc'
 import MessageContentType from '../messageContentType';
 import Long from 'long';
+import ConversationType from "../../model/conversationType";
 
 export default class RecallMessageNotification extends NotificationMessageContent {
     operatorId = '';
@@ -13,9 +14,12 @@ export default class RecallMessageNotification extends NotificationMessageConten
         this.messageUid = messageUid;
     }
 
-    formatNotification() {
-        let u = wfc.getUserInfo(this.operatorId);
-        return u.displayName + "撤回了一条消息";
+    formatNotification(message) {
+        if(message.conversation.type === ConversationType.Group){
+            return wfc.getGroupMemberDisplayName(message.conversation.target, this.operatorId);
+        }else {
+            return wfc.getUserDisplayName(this.operatorId) + "撤回了一条消息";
+        }
     }
 
     encode() {

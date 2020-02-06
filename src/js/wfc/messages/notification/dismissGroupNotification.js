@@ -15,8 +15,7 @@ export default class DismissGroupNotification extends GroupNotificationContent {
         if (this.fromSelf) {
             return '您解散了群组';
         } else {
-            let u = wfc.getUserInfo(this.operator);
-            return u.displayName + '解散了群组';
+            return wfc.getGroupMemberDisplayName(this.groupId, this.operator) + '解散了群组';
         }
     }
 

@@ -17,8 +17,7 @@ export default class CreateGroupNotification extends GroupNotificationContent {
         if (this.fromSelf) {
             return '您创建了群组 ' + this.groupName;
         } else {
-            let u = wfc.getUserInfo(this.creator);
-            return u.displayName + '创建了群组 ' + this.groupName;
+            return wfc.getUserDisplayName(this.creator) + '创建了群组 ' + this.groupName;
         }
     }
 

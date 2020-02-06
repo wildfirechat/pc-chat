@@ -18,14 +18,12 @@ export default class KickoffGroupMemberNotification extends GroupNotificationCon
         if (this.fromSelf) {
             notifyStr = '您把 ';
         } else {
-            let u = wfc.getUserInfo(this.operator);
-            return u.displayName + '把 ';
+            return wfc.getGroupMemberDisplayName(this.groupId, this.operator) + '把 ';
         }
 
         let kickedMembersStr = '';
         this.kickedMembers.forEach(m => {
-            let u = wfc.getUserInfo(m);
-            kickedMembersStr += ' ' + u.displayName;
+            kickedMembersStr += ' ' + wfc.getGroupMemberDisplayName(this.groupId, m);
         });
 
         return notifyStr + kickedMembersStr + ' 移除了群组';
