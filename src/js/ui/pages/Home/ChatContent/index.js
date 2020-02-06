@@ -1,7 +1,6 @@
-
-import React, { Component } from 'react';
-import { inject, observer } from 'mobx-react';
-import { ipcRenderer, popMenu, isElectron, fs, ContextMenuTrigger, hideMenu } from '../../../../platform';
+import React, {Component} from 'react';
+import {inject, observer} from 'mobx-react';
+import {ipcRenderer, popMenu, isElectron, fs, ContextMenuTrigger, hideMenu} from '../../../../platform';
 import clazz from 'classname';
 import moment from 'moment';
 import axios from 'axios';
@@ -10,8 +9,8 @@ import classes from './style.css';
 import Avatar from 'components/Avatar';
 import PreviewImage from './PreviewImage'
 import helper from 'utils/helper';
-import { parser as emojiParse } from 'utils/emoji';
-import { on, off } from 'utils/event';
+import {parser as emojiParse} from 'utils/emoji';
+import {on, off} from 'utils/event';
 import MessageContentType from '../../../../wfc/messages/messageContentType';
 import UnsupportMessageContent from '../../../../wfc/messages/unsupportMessageConten';
 import wfc from '../../../../wfc/client/wfc'
@@ -115,7 +114,7 @@ import InfiniteScroll from 'react-infinite-scroller';
         }
 
         // If user is null, that mean user has been removed from this chat room
-        return { message, user };
+        return {message, user};
     },
     showAddFriend: (user) => stores.addfriend.toggle(true, user),
     recallMessage: stores.chat.recallMessage,
@@ -126,7 +125,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 }))
 @observer
 export default class ChatContent extends Component {
-    latestMessage;
+    lastBottomMessage;
     isAudioPlaying = false;
     arm;
 
@@ -227,7 +226,7 @@ export default class ChatContent extends Component {
                 let contact = message.contact;
                 let isFriend = this.props.isFriend(contact.UserName);
                 let html = `
-                    <div class="${clazz(classes.contact, { 'is-friend': isFriend })}" data-userid="${contact.UserName}">
+                    <div class="${clazz(classes.contact, {'is-friend': isFriend})}" data-userid="${contact.UserName}">
                         <img src="${contact.image}" class="unload disabledDrag" />
 
                         <div>
@@ -320,7 +319,7 @@ export default class ChatContent extends Component {
                     uploading
                         ? '<i class="icon-ion-android-arrow-up"></i>'
                         : (download ? '<i class="icon-ion-android-more-horizontal is-file"></i>' : '<i class="icon-ion-android-arrow-down is-download"></i>')
-                    }
+                }
                     </div>
                 `;
             /* eslint-enable */
@@ -390,7 +389,7 @@ export default class ChatContent extends Component {
                     <div
                         key={message.messageUid}
                         className={clazz('unread', classes.message, classes.system)}
-                        dangerouslySetInnerHTML={{ __html: message.messageContent.formatNotification() }} />
+                        dangerouslySetInnerHTML={{__html: message.messageContent.formatNotification()}}/>
                 );
             }
 
@@ -404,7 +403,7 @@ export default class ChatContent extends Component {
                     <div
                         className={clazz('unread', classes.message, classes.system)}
                         data-force-rerennder={message.forceRerender}
-                        dangerouslySetInnerHTML={{ __html: helper.timeFormat(message.timestamp) }} />
+                        dangerouslySetInnerHTML={{__html: helper.timeFormat(message.timestamp)}}/>
                     <div className={clazz('unread', classes.message, {
                         // File is uploading
                         [classes.uploading]: message.status === MessageStatus.Sending,
@@ -435,7 +434,7 @@ export default class ChatContent extends Component {
                             <p
                                 className={classes.username}
                                 //dangerouslySetInnerHTML={{__html: user.DisplayName || user.RemarkName || user.NickName}}
-                                dangerouslySetInnerHTML={{ __html: user.displayName }}
+                                dangerouslySetInnerHTML={{__html: user.displayName}}
                             />
 
                             {
@@ -463,7 +462,7 @@ export default class ChatContent extends Component {
         } else {
             return (
                 <div>
-                    <ContextMenuTrigger id={`user_item_${user.uid}_${message.messageId}`} >
+                    <ContextMenuTrigger id={`user_item_${user.uid}_${message.messageId}`}>
                         <Avatar
                             //src={message.isme ? message.HeadImgUrl : user.HeadImgUrl}
                             src={user.portrait ? user.portrait : 'assets/images/user-fallback.png'}
@@ -484,21 +483,21 @@ export default class ChatContent extends Component {
         if (isElectron()) {
             return (
                 <div className={classes.content} data-message-id={message.messageId}
-                    onClick={e => this.handleClick(e)}>
+                     onClick={e => this.handleClick(e)}>
                     <p
                         onContextMenu={e => this.showMessageAction(message)}
-                        dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
+                        dangerouslySetInnerHTML={{__html: this.getMessageContent(message)}}/>
                 </div>
             );
         } else {
             return (
                 <div>
-                    <ContextMenuTrigger id={`menu_item_${message.messageId}`} >
+                    <ContextMenuTrigger id={`menu_item_${message.messageId}`}>
                         <div className={classes.content} data-message-id={message.messageId}
-                            onClick={e => this.handleClick(e)}>
+                             onClick={e => this.handleClick(e)}>
                             <p
                                 // onContextMenu={e => this.showMessageAction(message)}
-                                dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
+                                dangerouslySetInnerHTML={{__html: this.getMessageContent(message)}}/>
                         </div>
                     </ContextMenuTrigger>
                     {
@@ -547,7 +546,7 @@ export default class ChatContent extends Component {
             // file
             if (src) {
                 // Get image from cache and convert to base64
-                let response = await axios.get(src, { responseType: 'arraybuffer' });
+                let response = await axios.get(src, {responseType: 'arraybuffer'});
                 // eslint-disable-next-line
                 base64 = Buffer.from(response.data, 'binary').toString('base64');
             }
@@ -666,7 +665,7 @@ export default class ChatContent extends Component {
             && target.classList.contains('is-download')) {
             let message = this.props.getMessage(e.target.parentElement.dataset.id);
             let file = message.messageContent;
-            let response = await axios.get(file.remotePath, { responseType: 'arraybuffer' });
+            let response = await axios.get(file.remotePath, {responseType: 'arraybuffer'});
             // eslint-disable-next-line
             if (isElectron()) {
                 let base64 = Buffer.from(response.data, 'binary').toString('base64');
@@ -842,6 +841,7 @@ export default class ChatContent extends Component {
     }
 
     componentWillUnmount() {
+        this.lastBottomMessage = null;
         !this.props.rememberConversation && this.props.reset();
         this.stopAudio();
 
@@ -856,84 +856,8 @@ export default class ChatContent extends Component {
         }
     }
 
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     return true;
-    // }
-
     componentDidUpdate() {
-        var viewport = this.refs.viewport;
-        var tips = this.refs.tips;
-
-        if (this.props.conversation) {
-            wfc.clearConversationUnreadStatus(this.props.conversation);
-        }
-
-        if (viewport) {
-            let newestMessage = this.props.messages[this.props.messages.length - 1];
-            let images = viewport.querySelectorAll('img.unload');
-
-            let lastLatestMesage = this.latestMessage;
-            this.latestMessage = newestMessage;
-
-            // Scroll to bottom when you sent message
-            if (newestMessage && newestMessage.direction === 0) {
-                if (!lastLatestMesage || lastLatestMesage.messageId !== newestMessage.messageId) {
-                    viewport.scrollTop = viewport.scrollHeight;
-                    return;
-                }
-            }
-
-            // Scroll to bottom when you receive message and you alread at the bottom
-            if (viewport.clientHeight + viewport.scrollTop === viewport.scrollHeight) {
-                viewport.scrollTop = viewport.scrollHeight;
-                return;
-            }
-
-            /*
-            // Show the unread messages count
-            // TODO unread logic
-            if (viewport.scrollTop < this.scrollTop) {
-                let counter = viewport.querySelectorAll(`.${classes.message}.unread`).length;
-
-                if (counter) {
-                    tips.innerHTML = `You has ${counter} unread messages.`;
-                    tips.classList.add(classes.show);
-                }
-                return;
-            }
-
-            // Auto scroll to bottom when message has been loaded
-            Array.from(images).map(e => {
-                on(e, 'load', ev => {
-                    off(e, 'load');
-                    e.classList.remove('unload');
-                    // viewport.scrollTop = viewport.scrollHeight;
-                    // this.scrollTop = viewport.scrollTop;
-                });
-
-                on(e, 'error', ev => {
-                    var fallback = ev.target.dataset.fallback;
-
-                    if (fallback === 'undefined') {
-                        fallback = 'assets/images/broken.png';
-                    }
-
-                    ev.target.src = fallback;
-                    ev.target.removeAttribute('data-fallback');
-
-                    off(e, 'error');
-                });
-            });
-
-            // Hide the unread message count
-            tips.classList.remove(classes.show);
-            viewport.scrollTop = viewport.scrollHeight;
-            this.scrollTop = viewport.scrollTop;
-
-            // Mark message has been loaded
-            Array.from(viewport.querySelectorAll(`.${classes.message}.unread`)).map(e => e.classList.remove('unread'));
-            */
-        }
+        this.scrollToBottom();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -962,7 +886,7 @@ export default class ChatContent extends Component {
     }
 
     render() {
-        var { loading, showConversation, messages, conversation, target } = this.props;
+        var {loading, showConversation, messages, conversation, target} = this.props;
 
         var signature = '点击查看群成员';
         if (target instanceof UserInfo) {
@@ -976,28 +900,28 @@ export default class ChatContent extends Component {
             <div
                 className={clazz(classes.container, {
                     [classes.hideConversation]: !showConversation,
-                })} >
+                })}>
                 {
                     conversation ? (
                         <div>
                             <header>
                                 <div className={classes.info}>
                                     <p
-                                        dangerouslySetInnerHTML={{ __html: title }}
-                                        title={title} />
+                                        dangerouslySetInnerHTML={{__html: title}}
+                                        title={title}/>
 
                                     <span
                                         className={classes.signature}
-                                        dangerouslySetInnerHTML={{ __html: signature || '' }}
+                                        dangerouslySetInnerHTML={{__html: signature || ''}}
                                         onClick={e => this.props.showMembers(target)}
-                                        title={signature} />
+                                        title={signature}/>
                                 </div>
 
                                 {
                                     isElectron() ? (
                                         <i
                                             className="icon-ion-android-more-vertical"
-                                            onClick={() => this.showMenu()} />
+                                            onClick={() => this.showMenu()}/>
                                     ) : ''
                                 }
 
@@ -1006,11 +930,13 @@ export default class ChatContent extends Component {
                             <div
                                 className={classes.messages}
                                 // onScroll={e => this.handleScroll(e)}
-                                ref="viewport">
+                                ref={(div) => {
+                                    this.messageList = div;
+                                }}>
                                 <InfiniteScroll
                                     pageStart={0}
                                     loadMore={this.loadFunc}
-                                    initialLoad={false}
+                                    initialLoad={true}
                                     isReverse={true}
                                     hasMore={true}
                                     loader={<div className="loader" key={0}>Loading ...</div>}
@@ -1024,15 +950,15 @@ export default class ChatContent extends Component {
                             </div>
                         </div>
                     ) : (
-                            <div className={clazz({
-                                [classes.noselected]: !target,
-                            })}>
-                                <img
-                                    className="disabledDrag"
-                                    src="assets/images/noselected.png" />
-                                <h1>请选择会话 :(</h1>
-                            </div>
-                        )
+                        <div className={clazz({
+                            [classes.noselected]: !target,
+                        })}>
+                            <img
+                                className="disabledDrag"
+                                src="assets/images/noselected.png"/>
+                            <h1>请选择会话 :(</h1>
+                        </div>
+                    )
                 }
 
                 <div
@@ -1040,9 +966,28 @@ export default class ChatContent extends Component {
                     ref="tips">
                     Unread message.
                 </div>
-                <PreviewImage onRef={ref => (this.previewImage = ref)} />
+                <PreviewImage onRef={ref => (this.previewImage = ref)}/>
             </div>
         );
+    }
+
+    scrollToBottom = () => {
+        if (this.props.messages && this.props.messages.length > 0) {
+            let currentBottomMessage = this.props.messages[this.props.messages.length - 1];
+            if (this.lastBottomMessage && this.lastBottomMessage.messageId === currentBottomMessage.messageId) {
+                console.log('not scroll to bottom', this.lastBottomMessage.messageId, currentBottomMessage.messageId);
+                return;
+            }
+            console.log('scroll to bottom');
+            this.lastBottomMessage = currentBottomMessage;
+        }
+
+        if (this.messageList) {
+            const scrollHeight = this.messageList.scrollHeight;
+            const height = this.messageList.clientHeight;
+            const maxScrollTop = scrollHeight - height;
+            this.messageList.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
+        }
     }
 
     loadFunc = () => {
