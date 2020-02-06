@@ -15,8 +15,7 @@ export default class QuitGroupNotification extends GroupNotificationContent {
         if (this.fromSelf) {
             return '您退出了群组';
         } else {
-            let u = wfc.getUserInfo(this.operator);
-            return u.displayName + '退出了群组';
+            return wfc.getGroupMemberDisplayName(this.groupId, this.operator) + '退出了群组';
         }
     }
 

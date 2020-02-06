@@ -17,8 +17,7 @@ export default class ChangeGroupNameNotification extends GroupNotificationConten
         if (this.fromSelf) {
             return '您修改群名称为：' + this.name;
         } else {
-            let u = wfc.getUserInfo(this.operator);
-            return u.displayName + '修改群名称为：' + this.name;
+            return wfc.getGroupMemberDisplayName(this.groupId, this.operator) + '修改群名称为：' + this.name;
         }
     }
 

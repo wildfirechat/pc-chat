@@ -19,22 +19,19 @@ export default class AddGroupMemberNotification extends GroupNotificationContent
           if (this.fromSelf) {
               return '您加入了群组';
           } else {
-              let u = wfc.getUserInfo(this.invitor);
-              return u.displayName + ' 加入了群组';
+              return wfc.getGroupMemberDisplayName(this.groupId, this.invitor) + ' 加入了群组';
           }
         }
 
         if (this.fromSelf) {
             notifyStr = '您邀请:';
         } else {
-            let u = wfc.getUserInfo(this.invitor);
-            notifyStr = u.displayName + '邀请:';
+            notifyStr = wfc.getGroupMemberDisplayName(this.groupId, this.invitor) + '邀请:';
         }
 
         let membersStr = '';
         this.invitees.forEach(m => {
-            let u = wfc.getUserInfo(m, false);
-            membersStr += ' ' + u.displayName;
+            membersStr += ' ' + wfc.getUserDisplayName(m);
         });
 
         return notifyStr + membersStr + '加入了群组';

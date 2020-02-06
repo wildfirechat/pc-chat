@@ -13,12 +13,10 @@ export default class TransferGroupOwnerNotification extends GroupNotificationCon
     }
 
     formatNotification() {
-        let nu = wfc.getUserInfo(this.newOwner);
         if (this.fromSelf) {
-            return '您把群转让给了 ' + nu.displayName;
+            return '您把群转让给了 ' + wfc.getGroupMemberDisplayName(this.groupId, this.newOwner);
         } else {
-            let u = wfc.getUserInfo(this.operator);
-            return u.displayName + '把群转让给了 ' + nu.displayName;
+            return wfc.getGroupMemberDisplayName(this.groupId, this.operator) + '把群转让给了 ' + wfc.getGroupMemberDisplayName(this.groupId, this.newOwner)
         }
     }
 

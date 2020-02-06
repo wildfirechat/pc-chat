@@ -15,8 +15,7 @@ export default class ChangeGroupPortraitNotification extends GroupNotificationCo
         if (this.fromSelf) {
             return '您修改群头像';
         } else {
-            let u = wfc.getUserInfo(this.operator);
-            return u.displayName + '修改了群头像';
+            return wfc.getGroupMemberDisplayName(this.groupId, this.operator) + '修改了群头像';
         }
     }
 
