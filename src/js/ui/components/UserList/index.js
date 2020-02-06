@@ -5,6 +5,7 @@ import clazz from 'classname';
 
 import classes from './style.css';
 import UserInfo from '../../../wfc/model/userInfo';
+import wfc from  '../../../wfc/client/wfc'
 
 export default class UserList extends Component {
     static propTypes = {
@@ -167,7 +168,7 @@ export default class UserList extends Component {
                         src={e.portrait} />
                     <span
                         className={classes.username}
-                        dangerouslySetInnerHTML={{ __html: e.displayName }} />
+                        dangerouslySetInnerHTML={{ __html: wfc.getUserDisplayName(e.uid) }} />
 
                     <i className="icon-ion-android-done-all" />
                 </li>

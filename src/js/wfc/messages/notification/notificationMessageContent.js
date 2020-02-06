@@ -7,17 +7,17 @@ export default class NotificationMessageContent extends MessageContent {
         super(type);
     }
 
-    digest() {
+    digest(message) {
         var desc = '';
         try {
-            desc = this.formatNotification();
+            desc = this.formatNotification(message);
         } catch (error) {
             console.log('disgest', error);
         }
         return desc;
     };
 
-    formatNotification() {
+    formatNotification(message) {
         return '..nofication..';
     }
 }

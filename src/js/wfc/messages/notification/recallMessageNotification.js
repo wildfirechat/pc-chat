@@ -16,7 +16,7 @@ export default class RecallMessageNotification extends NotificationMessageConten
 
     formatNotification(message) {
         if(message.conversation.type === ConversationType.Group){
-            return wfc.getGroupMemberDisplayName(message.conversation.target, this.operatorId);
+            return wfc.getGroupMemberDisplayName(message.conversation.target, this.operatorId) + "撤回了一条消息";
         }else {
             return wfc.getUserDisplayName(this.operatorId) + "撤回了一条消息";
         }

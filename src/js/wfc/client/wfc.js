@@ -71,8 +71,8 @@ export class WfcManager {
         return userInfo.groupAlias ? userInfo.groupAlias : (userInfo.friendAlias ? userInfo.friendAlias : (userInfo.displayName ? userInfo.displayName : '<' + userId + '>'))
     }
 
-    getGroupMemberDisplayNameEx(userInfo){
-        return userInfo.groupAlias ? userInfo.groupAlias : (userInfo.friendAlias ? userInfo.friendAlias : (userInfo.displayName ? userInfo.displayName : '<' + userId + '>'))
+    getGroupMemberDisplayNameEx(userInfo) {
+        return userInfo.groupAlias ? userInfo.groupAlias : (userInfo.friendAlias ? userInfo.friendAlias : (userInfo.displayName ? userInfo.displayName : '<' + userInfo.uid + '>'))
     }
 
     getUserInfo(userId, refresh = false, groupId = '') {

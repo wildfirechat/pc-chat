@@ -7,6 +7,7 @@ import classes from './style.css';
 import { ipcRenderer, isElectron, currentWindow, PostMessageEventEmitter } from '../../../platform'
 import { observable, action } from 'mobx';
 import Config from '../../../config.js';
+import wfc from '../../../wfc/client/wfc'
 
 @inject(stores => ({
     avatar: stores.sessions.avatar,
@@ -27,6 +28,7 @@ export default class Voip extends Component {
     @observable muted = false;
 
     targetUserInfo;
+    targetUserDisplayName;
 
     moCall; // true, outgoing; false, incoming
     isInitiator;
@@ -88,6 +90,8 @@ export default class Voip extends Component {
             this.moCall = message.moCall;
             this.audioOnly = message.audioOnly;
             this.targetUserInfo = message.targetUserInfo;
+            this.targetUserDisplayName = wfc.getUserDisplayName(message.targetUserInfo.uid);
+            
             if (message.moCall) {
                 this.status = Voip.STATUS_OUTGOING;
                 this.startPreview(false, message.voiceOnly);
@@ -491,7 +495,7 @@ export default class Voip extends Component {
             <div className={classes.videoOutgoing}>
                 <img src={this.targetUserInfo.portrait} ></img>
                 <div className={classes.desc}>
-                    <p>{this.targetUserInfo.displayName}</p>
+                    <p>{this.targetUserDisplayName}</p>
                     <p>正在等待对方接受邀请</p>
                 </div>
             </div>
@@ -533,7 +537,7 @@ export default class Voip extends Component {
         return (
             <div className={clazz(classes.videoInviter)}>
                 <img src={this.targetUserInfo.portrait} ></img>
-                <p>{this.targetUserInfo.displayName}</p>
+                <p>{this.targetUserDisplayName}</p>
                 <p>邀请你视频通话</p>
             </div>
         )
@@ -569,7 +573,7 @@ export default class Voip extends Component {
         return (
             <div className={clazz(classes.videoInviter)}>
                 <img src={this.targetUserInfo.portrait}></img>
-                <p>{this.targetUserInfo.displayName}</p>
+                <p>{this.targetUserDisplayName}</p>
                 <p>邀请你语音聊天</p>
             </div>
         )
@@ -588,7 +592,7 @@ export default class Voip extends Component {
         return (
             <div className={clazz(classes.videoInviter)}>
                 <img src={this.targetUserInfo.portrait}></img>
-                <p>{this.targetUserInfo.displayName}</p>
+                <p>{this.targetUserDisplayName}</p>
                 <p>正在等待对方接受邀请</p>
             </div>
         )
@@ -606,7 +610,7 @@ export default class Voip extends Component {
         return (
             <div className={clazz(classes.videoInviter)}>
                 <img src={this.targetUserInfo.portrait}></img>
-                <p>{this.targetUserInfo.displayName}</p>
+                <p>{this.targetUserDisplayName}</p>
                 <p>{this.duration}</p>
             </div>
         )
