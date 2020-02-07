@@ -441,9 +441,6 @@ export class WfcManager {
     }
 
     async uploadMedia(fileName, fileOrData, mediaType, successCB, failCB, progressCB) {
-        if (fileOrData.indexOf("base64,") >= 0) {
-            fileOrData = fileOrData.substring(fileOrData.indexOf(',') + 1);
-        }
         impl.uploadMedia(fileName, fileOrData, mediaType, successCB, failCB, progressCB);
     }
 
