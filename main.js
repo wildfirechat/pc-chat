@@ -641,9 +641,9 @@ const createMainWindow = () => {
         mainWindow.hide();
     });
 
-    // ipcMain.on('min-window', event => {
-    //     mainWindow.minimize();
-    // });
+    ipcMain.on('min-window', event => {
+        mainWindow.minimize();
+    });
 
     // ipcMain.on('max-window', event => {
     //     mainWindow.maximize();
