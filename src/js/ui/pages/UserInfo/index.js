@@ -1,13 +1,12 @@
-
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { inject, observer } from 'mobx-react';
+import React, {Component} from 'react';
+import {withRouter} from 'react-router-dom';
+import {inject, observer} from 'mobx-react';
 import pinyin from '../../han';
 import clazz from 'classname';
 
 import classes from './style.css';
 import Avatar from 'components/Avatar';
-import { Modal, ModalBody } from 'components/Modal';
+import {Modal, ModalBody} from 'components/Modal';
 import wfc from '../../../wfc/client/wfc'
 import Conversation from '../../../wfc/model/conversation';
 import ConversationType from '../../../wfc/model/conversationType';
@@ -43,7 +42,7 @@ import KickoffGroupMemberNotification from '../../../wfc/messages/notification/k
         stores.userinfo.toggle(false);
     },
     refreshContacts: async (user) => {
-        var { updateUser, filter, filtered } = stores.contacts;
+        var {updateUser, filter, filtered} = stores.contacts;
 
         stores.userinfo.updateUser(user);
         updateUser(user);
@@ -63,7 +62,8 @@ class UserInfo extends Component {
     };
 
     toggleEdit(showEdit = !this.state.showEdit) {
-        this.setState({ showEdit });
+        // TODO
+        // this.setState({ showEdit });
     }
 
     handleClose() {
@@ -114,7 +114,7 @@ class UserInfo extends Component {
     }
 
     render() {
-        var { uid, UserName, portrait, displayName, RemarkName = 'remarkName', Signature = 'signature', City = 'city', Province = 'province' } = this.props.user;
+        var {uid, UserName, portrait, displayName, RemarkName = 'remarkName', Signature = 'signature', City = 'city', Province = 'province'} = this.props.user;
         var isFriend = uid ? wfc.isMyFriend(uid) : false;
         var pallet = this.props.pallet;
         var isme = this.props.isme();
@@ -166,16 +166,16 @@ class UserInfo extends Component {
                                 this.toggleEdit();
                             }
                         }} style={{
-                            background,
-                            color: fontColor,
-                        }}>
+                        background,
+                        color: fontColor,
+                    }}>
 
                         {
                             (!isme && isFriend) && (
                                 <div
                                     className={classes.edit}
                                     onClick={() => this.toggleEdit()}>
-                                    <i className="icon-ion-edit" />
+                                    <i className="icon-ion-edit"/>
                                 </div>
                             )
                         }
@@ -185,40 +185,40 @@ class UserInfo extends Component {
                                 className={classes.mask}
                                 style={{
                                     background: gradient
-                                }} />
-                            <Avatar src={portrait} />
+                                }}/>
+                            <Avatar src={portrait}/>
                         </div>
 
                         <div
                             className={classes.username}
-                            dangerouslySetInnerHTML={{ __html: displayName }} />
+                            dangerouslySetInnerHTML={{__html: displayName}}/>
 
                         {
                             !this.props.remove ? (
                                 <div className={classes.wrap}>
-                                    <p dangerouslySetInnerHTML={{ __html: Signature || '' }} />
+                                    <p dangerouslySetInnerHTML={{__html: Signature || ''}}/>
 
                                     <div className={classes.address}>
                                         <i
                                             className="icon-ion-android-map"
-                                            style={{ color: fontColor }} />
+                                            style={{color: fontColor}}/>
 
                                         {City || 'UNKNOW'}, {Province || 'UNKNOW'}
                                     </div>
                                 </div>
                             ) : (
-                                    <div
-                                        className={classes.action}
-                                        onClick={() => this.props.removeMember(this.props.user)}
-                                        style={{
-                                            color: buttonColor,
-                                            opacity: .6,
-                                            marginTop: 20,
-                                            marginBottom: -30,
-                                        }}>
-                                        Delete
+                                <div
+                                    className={classes.action}
+                                    onClick={() => this.props.removeMember(this.props.user)}
+                                    style={{
+                                        color: buttonColor,
+                                        opacity: .6,
+                                        marginTop: 20,
+                                        marginBottom: -30,
+                                    }}>
+                                    Delete
                                 </div>
-                                )
+                            )
                         }
 
                         <div
@@ -241,7 +241,7 @@ class UserInfo extends Component {
                                 onKeyPress={e => this.handleEnter(e)}
                                 placeholder="Type the remark name"
                                 ref="input"
-                                type="text" />
+                                type="text"/>
                         )
                         /* eslint-enable */
                     }
