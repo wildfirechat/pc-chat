@@ -16,8 +16,6 @@ import helper from 'utils/helper';
     setShowNotification: stores.settings.setShowNotification,
     startup: stores.settings.startup,
     setStartup: stores.settings.setStartup,
-    downloads: stores.settings.downloads,
-    setDownloads: stores.settings.setDownloads,
     confirmImagePaste: stores.settings.confirmImagePaste,
     setConfirmImagePaste: stores.settings.setConfirmImagePaste,
     blockRecall: stores.settings.blockRecall,
@@ -33,11 +31,9 @@ import helper from 'utils/helper';
 @observer
 export default class Settings extends Component {
     choiceDownloadDir() {
-        this.refs.downloads.click();
     }
 
     componentDidMount() {
-        this.refs.downloads.webkitdirectory = true;
     }
 
     render() {
@@ -46,20 +42,14 @@ export default class Settings extends Component {
             setAlwaysOnTop,
             showOnTray,
             setShowOnTray,
-            showNotification,
-            setShowNotification,
             startup,
             setStartup,
-            downloads,
-            setDownloads,
             confirmImagePaste,
             setConfirmImagePaste,
             blockRecall,
             setBlockRecall,
             rememberConversation,
             setRememberConversation,
-            showRedIcon,
-            setShowRedIcon,
             user,
         } = this.props;
 
@@ -77,18 +67,6 @@ export default class Settings extends Component {
                                 </li>
                             )
                         }
-                        <li className={classes.downloads}>
-                            <div>
-                                <input
-                                    onChange={e => setDownloads(e.target.files[0])}
-                                    ref="downloads"
-                                    type="file" />
-                                <p>下载路径</p>
-                                <p onClick={e => this.choiceDownloadDir()}>{downloads}</p>
-                            </div>
-
-                            <button onClick={e => this.choiceDownloadDir()}>修改</button>
-                        </li>
                         <li>
                             <label htmlFor="alwaysOnTop">
                                 <span>Always on Top</span>
@@ -107,26 +85,6 @@ export default class Settings extends Component {
                                     disabled={!helper.isOsx}
                                     id="showOnTray"
                                     onChange={e => setShowOnTray(e.target.checked)} />
-                            </label>
-                        </li>
-
-                        <li>
-                            <label htmlFor="showNotification">
-                                <span>发送桌面通知</span>
-                                <Switch
-                                    checked={showNotification}
-                                    id="showNotification"
-                                    onChange={e => setShowNotification(e.target.checked)} />
-                            </label>
-                        </li>
-
-                        <li>
-                            <label htmlFor="showRedIcon">
-                                <span>Show the red button</span>
-                                <Switch
-                                    checked={showRedIcon}
-                                    id="showRedIcon"
-                                    onChange={e => setShowRedIcon(e.target.checked)} />
                             </label>
                         </li>
 
