@@ -14,7 +14,6 @@ class Settings {
     @observable blockRecall = false;
     @observable rememberConversation = false;
     @observable showRedIcon = true;
-    @observable downloads = '/tmp';
 
     @action setAlwaysOnTop(alwaysOnTop) {
         self.alwaysOnTop = alwaysOnTop;
@@ -56,14 +55,9 @@ class Settings {
         self.save();
     }
 
-    @action setDownloads(downloads) {
-        self.downloads = downloads.path;
-        self.save();
-    }
-
     @action async init() {
         var settings = await storage.get('settings');
-        var { alwaysOnTop, showOnTray, showNotification, blockRecall, rememberConversation, showRedIcon, startup, downloads } = self;
+        var { alwaysOnTop, showOnTray, showNotification, blockRecall, rememberConversation, showRedIcon, startup } = self;
 
         if (settings && Object.keys(settings).length) {
             // Use !! force convert to a bool value
@@ -75,14 +69,12 @@ class Settings {
             self.blockRecall = !!settings.blockRecall;
             self.rememberConversation = !!settings.rememberConversation;
             self.showRedIcon = !!settings.showRedIcon;
-            self.downloads = settings.downloads;
         } else {
             await storage.set('settings', {
                 alwaysOnTop,
                 showOnTray,
                 showNotification,
                 startup,
-                downloads,
                 blockRecall,
                 rememberConversation,
                 showRedIcon,
@@ -94,17 +86,12 @@ class Settings {
             self.showOnTray = true;
         }
 
-        if (!self.downloads
-            || typeof self.downloads !== 'string') {
-            self.downloads = remote.app.getPath('downloads');
-        }
-
         self.save();
         return settings;
     }
 
     save() {
-        var { alwaysOnTop, showOnTray, showNotification, confirmImagePaste, blockRecall, rememberConversation, showRedIcon, startup, downloads } = self;
+        var { alwaysOnTop, showOnTray, showNotification, confirmImagePaste, blockRecall, rememberConversation, showRedIcon, startup} = self;
 
         storage.set('settings', {
             alwaysOnTop,
@@ -112,7 +99,6 @@ class Settings {
             showNotification,
             confirmImagePaste,
             startup,
-            downloads,
             blockRecall,
             rememberConversation,
             showRedIcon,
@@ -125,7 +111,6 @@ class Settings {
                 showNotification,
                 confirmImagePaste,
                 startup,
-                downloads,
                 blockRecall,
                 rememberConversation,
                 showRedIcon,
