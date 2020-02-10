@@ -26,7 +26,8 @@
 .container p {    
     color: #777;
     cursor: pointer;
-    padding-left: 15px;
+    padding-left: 10px;
+    padding-right: 15px;
     display: inline-block;
 }
 
