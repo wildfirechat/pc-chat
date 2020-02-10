@@ -319,22 +319,21 @@ export default class MessageInput extends Component {
 
     componentWillReceiveProps(nextProps) {
         var input = this.refs.input;
+        if(!input){
+            return;
+        }
 
         if (
-            true
-            && input
-            && input.value
-            && this.props.conversation
+            this.props.conversation
             && !this.props.conversation.equal(nextProps.conversation)
         ) {
-            // When user has changed clear the input
-            // TODO save draft
-            let text = input.value;
-            if(text && text.trim() && this.props.conversation){
-                wfc.setConversationDraft(this.props.conversation, text.trim())
+            let text = input.value.trim();
+            let conversationInfo = wfc.getConversationInfo(this.props.conversation);
+            if(text !== conversationInfo.draft){
+                wfc.setConversationDraft(this.props.conversation, text)
             }
 
-            let conversationInfo = wfc.getConversationInfo(nextProps.conversation);
+            conversationInfo = wfc.getConversationInfo(nextProps.conversation);
             input.value = conversationInfo.draft ? conversationInfo.draft : '';
 
             if (this.tribute) {
