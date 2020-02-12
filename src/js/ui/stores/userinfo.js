@@ -46,38 +46,15 @@ class UserInfo {
     }
 
     @action updateUser(user) {
-        self.user = user;
+        // TODO
     }
 
     @action async setRemarkName(name, id) {
-        var auth = await storage.get('auth');
-        var response = await axios.post('/cgi-bin/mmwebwx-bin/webwxoplog', {
-            BaseRequest: {
-                Sid: auth.wxsid,
-                Uin: auth.wxuin,
-                Skey: auth.skey,
-            },
-            CmdId: 2,
-            RemarkName: name.trim(),
-            UserName: id,
-        });
-
-        return +response.data.BaseResponse.Ret === 0;
+        // TODO
     }
 
     @action async removeMember(roomId, userid) {
-        var auth = await storage.get('auth');
-        var response = await axios.post('/cgi-bin/mmwebwx-bin/webwxupdatechatroom?fun=delmember', {
-            BaseRequest: {
-                Sid: auth.wxsid,
-                Uin: auth.wxuin,
-                Skey: auth.skey,
-            },
-            ChatRoomName: roomId,
-            DelMemberList: userid,
-        });
-
-        return +response.data.BaseResponse.Ret === 0;
+        // TODO
     }
 }
 

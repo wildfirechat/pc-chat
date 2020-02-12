@@ -9,8 +9,6 @@ import forward from './forward';
 import userinfo from './userinfo';
 import contactInfo from './contactInfo'
 import contacts from './contacts';
-import search from './search';
-import batchsend from './batchsend';
 import settings from './settings';
 import snackbar from './snackbar';
 import wfc from '../../wfc/client/wfc'
@@ -25,8 +23,6 @@ const stores = {
     userinfo,
     contactInfo,
     contacts,
-    search,
-    batchsend,
     settings,
     members,
     forward,

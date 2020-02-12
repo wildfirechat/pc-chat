@@ -1,8 +1,6 @@
-
 import axios from 'axios';
 import MD5 from 'browser-md5-file';
 
-import sessions from '../stores/sessions';
 
 const CHATROOM_NOTIFY_CLOSE = 0;
 const CONTACTFLAG_NOTIFYCLOSECONTACT = 512;
@@ -11,12 +9,6 @@ const CONTACTFLAG_TOPCONTACT = 2048;
 const CONTACTFLAG_CONTACT = 1;
 
 const helper = {
-    isContact: (user) => {
-        if (helper.isFileHelper(user)) return true;
-
-        return user.ContactFlag & CONTACTFLAG_CONTACT
-            || (session.user && user.UserName === session.user.User.UserName);
-    },
 
     isChatRoom: (userid) => {
         return userid && userid.startsWith('@@');
@@ -77,7 +69,7 @@ const helper = {
             value[e] = xml.getElementsByTagName(e)[0].childNodes[0].nodeValue;
         });
 
-        return { xml, value };
+        return {xml, value};
     },
 
     unique: (arr) => {
@@ -144,7 +136,7 @@ const helper = {
         }
     },
 
-    getCookie: async(name) => {
+    getCookie: async (name) => {
         var value = {
             name,
         };
@@ -152,7 +144,7 @@ const helper = {
 
         if (!name) {
             return new Promise((resolve, reject) => {
-                cookies.get({ url: axios.defaults.baseURL }, (error, cookies) => {
+                cookies.get({url: axios.defaults.baseURL}, (error, cookies) => {
                     let string = '';
 
                     if (error) {
@@ -329,8 +321,8 @@ const helper = {
     },
 
     /**
-    * 消息会话时间显示
-    */
+     * 消息会话时间显示
+     */
     timeFormat: (date) => {
         if (!date) return ''
         let newtime
@@ -366,8 +358,7 @@ const helper = {
                     // 一周内
                     newtime = helper.weekFormat(W) + ' ' + H + ':' + Min
                 }
-            }
-            else {
+            } else {
                 // 一年内
                 newtime = M + '-' + D + ' ' + H + ':' + Min
             }

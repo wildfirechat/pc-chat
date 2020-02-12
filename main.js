@@ -103,14 +103,6 @@ let mainMenu = [
                 }
             },
             {
-                label: Locales.__('File').BatchSend,
-                accelerator: 'Cmd+B',
-                click() {
-                    mainWindow.show();
-                    mainWindow.webContents.send('show-batchsend');
-                }
-            },
-            {
                 type: 'separator',
             },
             {

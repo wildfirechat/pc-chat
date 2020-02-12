@@ -1,6 +1,5 @@
-
-import { observable, action } from 'mobx';
-import { remote, ipcRenderer } from '../../platform';
+import {observable, action} from 'mobx';
+import {remote, ipcRenderer} from '../../platform';
 
 import storage from 'utils/storage';
 import helper from 'utils/helper';
@@ -11,8 +10,6 @@ class Settings {
     @observable showNotification = true;
     @observable confirmImagePaste = true;
     @observable startup = false;
-    @observable blockRecall = false;
-    @observable rememberConversation = false;
     @observable showRedIcon = true;
 
     @action setAlwaysOnTop(alwaysOnTop) {
@@ -22,16 +19,6 @@ class Settings {
 
     @action setShowRedIcon(showRedIcon) {
         self.showRedIcon = showRedIcon;
-        self.save();
-    }
-
-    @action setRememberConversation(rememberConversation) {
-        self.rememberConversation = rememberConversation;
-        self.save();
-    }
-
-    @action setBlockRecall(blockRecall) {
-        self.blockRecall = blockRecall;
         self.save();
     }
 
@@ -55,9 +42,10 @@ class Settings {
         self.save();
     }
 
-    @action async init() {
+    @action
+    async init() {
         var settings = await storage.get('settings');
-        var { alwaysOnTop, showOnTray, showNotification, blockRecall, rememberConversation, showRedIcon, startup } = self;
+        var { alwaysOnTop, showOnTray, showNotification, showRedIcon, startup } = self;
 
         if (settings && Object.keys(settings).length) {
             // Use !! force convert to a bool value
@@ -66,8 +54,6 @@ class Settings {
             self.showNotification = !!settings.showNotification;
             self.confirmImagePaste = !!settings.confirmImagePaste;
             self.startup = !!settings.startup;
-            self.blockRecall = !!settings.blockRecall;
-            self.rememberConversation = !!settings.rememberConversation;
             self.showRedIcon = !!settings.showRedIcon;
         } else {
             await storage.set('settings', {
@@ -75,8 +61,6 @@ class Settings {
                 showOnTray,
                 showNotification,
                 startup,
-                blockRecall,
-                rememberConversation,
                 showRedIcon,
             });
         }
@@ -91,7 +75,7 @@ class Settings {
     }
 
     save() {
-        var { alwaysOnTop, showOnTray, showNotification, confirmImagePaste, blockRecall, rememberConversation, showRedIcon, startup} = self;
+        var { alwaysOnTop, showOnTray, showNotification, confirmImagePaste, showRedIcon, startup} = self;
 
         storage.set('settings', {
             alwaysOnTop,
@@ -99,8 +83,6 @@ class Settings {
             showNotification,
             confirmImagePaste,
             startup,
-            blockRecall,
-            rememberConversation,
             showRedIcon,
         });
 
@@ -111,8 +93,6 @@ class Settings {
                 showNotification,
                 confirmImagePaste,
                 startup,
-                blockRecall,
-                rememberConversation,
                 showRedIcon,
             }
         });

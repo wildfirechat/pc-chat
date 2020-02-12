@@ -82,11 +82,6 @@ export default class App extends Component {
             stores.chat.toggleConversation(true);
         });
 
-        // Batch send message
-        ipcRenderer.on('show-batchsend', () => {
-            stores.batchsend.toggle(true);
-        });
-
         // Insert the qq emoji
         ipcRenderer.on('show-emoji', () => {
             if (this.canisend()) {

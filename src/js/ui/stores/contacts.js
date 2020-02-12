@@ -106,51 +106,6 @@ class Contacts {
         return (window.list = self.memberList);
     }
 
-    // TODO remove
-    resolveUser(auth, user) {
-        if (helper.isOfficial(user)
-            && !helper.isFileHelper(user)) {
-            // Skip the official account
-            return;
-        }
-
-        if (helper.isBrand(user)
-            && !helper.isFileHelper(user)) {
-            // Skip the brand account, eg: JD.COM
-            return;
-        }
-
-        if (helper.isChatRoomRemoved(user)
-            && !helper.isFileHelper(user)) {
-            // Chat room has removed
-            return;
-        }
-
-        if (helper.isChatRoom(user.UserName)) {
-            let placeholder = user.MemberList.map(e => e.NickName).join(',');
-
-            if (user.NickName) {
-                user.Signature = placeholder;
-            } else {
-                user.NickName = placeholder;
-                user.Signature = placeholder;
-            }
-        }
-
-        user.NickName = normalize(user.NickName);
-        user.RemarkName = normalize(user.RemarkName);
-        user.Signature = normalize(user.Signature);
-
-        user.HeadImgUrl = `${axios.defaults.baseURL}${user.HeadImgUrl.substr(1)}`;
-        user.MemberList.map(e => {
-            e.NickName = normalize(e.NickName);
-            e.RemarkName = normalize(e.RemarkName);
-            e.HeadImgUrl = `${axios.defaults.baseURL}cgi-bin/mmwebwx-bin/webwxgeticon?username=${e.UserName}&chatroomid=${user.EncryChatRoomId}&skey=${auth.skey}&seq=0`;
-        });
-
-        return user;
-    }
-
     @action filter(text = '', showall = false) {
         text = pinyin.letter(text.toLocaleLowerCase(), '', null);
         var list = self.memberList.filter(e => {
@@ -181,40 +136,11 @@ class Contacts {
     }
 
     @action async deleteUser(id) {
-        self.memberList = self.memberList.filter(e => e.UserName !== id);
-
-        // Update contact in menu
-        if (ipcRenderer) {
-            ipcRenderer.send('menu-update', {
-                contacts: JSON.stringify(self.memberList.filter(e => helper.isContact(e))),
-                cookies: await helper.getCookie(),
-            });
-        }
+        // TODO
     }
 
     @action async updateUser(user) {
-        var auth = await storage.get('auth');
-        var list = self.memberList;
-        var index = list.findIndex(e => e.UserName === user.UserName);
-        var chating = chat.user;
-
-        // Fix chat room miss user avatar
-        user.EncryChatRoomId = list[index]['EncryChatRoomId'];
-
-        user = self.resolveUser(auth, user);
-
-        // Prevent avatar cache
-        user.HeadImgUrl = user.HeadImgUrl.replace(/\?\d{13}$/, '') + `?${+new Date()}`;
-
-        if (index !== -1) {
-            if (chating
-                && user.UserName === chating.UserName) {
-                Object.assign(chating, user);
-            }
-
-            list[index] = user;
-            self.memberList.replace(list);
-        }
+        // TODO
     }
 }
 

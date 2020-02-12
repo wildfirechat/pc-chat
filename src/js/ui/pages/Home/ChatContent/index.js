@@ -98,24 +98,6 @@ import InfiniteScroll from 'react-infinite-scroller';
         stores.userinfo.toggle(true, user);
     },
     showForward: (message) => stores.forward.toggle(true, message),
-    parseMessage: (message, from) => {
-        var isChatRoom = message.isme ? false : helper.isChatRoom(message.FromUserName);
-        var user = from;
-
-        message = Object.assign({}, message);
-
-        if (isChatRoom) {
-            let matchs = message.Content.split(':<br/>');
-
-            // Get the newest chat room infomation
-            from = stores.contacts.memberList.find(e => from.UserName === e.UserName);
-            user = from.MemberList.find(e => e.UserName === matchs[0]);
-            message.Content = matchs[1];
-        }
-
-        // If user is null, that mean user has been removed from this chat room
-        return {message, user};
-    },
     showAddFriend: (user) => stores.addfriend.toggle(true, user),
     recallMessage: stores.chat.recallMessage,
     downloads: stores.settings.downloads,
@@ -374,7 +356,6 @@ export default class ChatContent extends Component {
         //return list.data.map((e, index) => {
         console.log('to render message count', list.length);
         return list.map((e) => {
-            // var { message, user } = this.props.parseMessage(e, from);
             var message = e;
             let user;
             if (message.conversation.type === ConversationType.Group) {
