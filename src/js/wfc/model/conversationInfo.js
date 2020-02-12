@@ -47,26 +47,23 @@ export default class ConversationInfo {
 
     title() {
         let targetName = this.conversation.target;
-        let title = targetName;
         switch (this.conversation.type) {
             case ConversationType.Single:
-                let u = wfc.getUserInfo(this.conversation.target, false);
-                targetName = u.displayName;
-                break
+                targetName = wfc.getUserDisplayName(this.conversation.target);
+                break;
             case ConversationType.Group:
                 let g = wfc.getGroupInfo(this.conversation.target, false);
                 targetName = g.name;
-                break
+                break;
             case ConversationType.ChatRoom:
-                break
+                break;
             case ConversationType.Channel:
-                break
+                break;
             default:
                 break;
         }
 
-        title = targetName;
-        return title;
+        return targetName;
     }
 
     static equals(info1, info2) {
