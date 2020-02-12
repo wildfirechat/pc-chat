@@ -37,10 +37,6 @@ class sessions {
         return conversation.type + conversation.target + conversation.line;
     }
 
-    async test(info) {
-        console.log('test', info);
-    }
-
     @action
     async reloadConversation(conversation) {
         let info = wfc.getConversationInfo(conversation);

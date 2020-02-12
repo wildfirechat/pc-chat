@@ -18,8 +18,6 @@ import wfc from '../../../../wfc/client/wfc'
         stores.members.show = false;
         stores.chat.chatToN(conversation);
     },
-    toggle: stores.contactInfo.toggle,
-    show: stores.contactInfo.show,
     user: stores.contactInfo.user,
     setRemarkName: stores.userinfo.setRemarkName,
 }))
@@ -29,30 +27,6 @@ class ContactInfo extends Component {
     state = {
         showEdit: true,
     };
-
-    handleError(e) {
-        e.target.src = 'http://i.pravatar.cc/200';
-    }
-
-    async handleEnter(e) {
-        // 设置好友昵称
-        // TODO
-        if (e.charCode !== 13) return;
-
-        var value = e.target.value.trim();
-        var res = await this.props.setRemarkName(value, this.props.user.UserName);
-
-        if (res) {
-            this.props.refreshContacts({
-                ...this.props.user,
-                RemarkName: value,
-                RemarkPYInitial: value ? (pinyin.letter(value, '', null)[0]).toUpperCase() : value,
-            });
-            this.toggleEdit(false);
-        } else {
-            this.props.showMessage('Failed to set remark name.');
-        }
-    }
 
     handleAction(user) {
 
@@ -68,7 +42,6 @@ class ContactInfo extends Component {
                 return;
             }
             this.props.chatTo(conversation);
-            this.props.toggle(false, null);
             if (this.props.history.location.pathname !== '/') {
                 this.props.history.push('/');
             }
