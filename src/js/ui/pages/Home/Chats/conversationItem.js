@@ -1,11 +1,10 @@
-
 import clazz from 'classname';
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import helper from 'utils/helper';
 import ConversationType from '../../../../wfc/model/conversationType';
 import classes from './style.css';
 import ConversationInfo from '../../../../wfc/model/conversationInfo';
-import { isElectron, popMenu, ContextMenuTrigger, hideMenu } from '../../../../platform'
+import {isElectron, popMenu, ContextMenuTrigger, hideMenu} from '../../../../platform'
 
 
 export default class ConversationItem extends Component {
@@ -65,10 +64,11 @@ export default class ConversationItem extends Component {
     }
 
     handleError(e) {
-        if(!e.target.src.endsWith('assets/images/user-fallback.png')){
+        if (!e.target.src.endsWith('assets/images/user-fallback.png')) {
             e.target.src = 'assets/images/user-fallback.png';
         }
     }
+
     render() {
         let e = this.props.conversationInfo;
         let conversation = this.props.currentConversation;
@@ -104,7 +104,7 @@ export default class ConversationItem extends Component {
                     // TODO key should be conversation
                     onContextMenu={ev => this.showContextMenu(e)}
                     onClick={ev => {
-                        chatTo(e.conversation)
+                        chatTo(e.conversation);
                         this.props.markedRead(e);
                     }}>
                     <div className={classes.inner}>
@@ -123,11 +123,11 @@ export default class ConversationItem extends Component {
                         <div className={classes.info}>
                             <p
                                 className={classes.username}
-                                dangerouslySetInnerHTML={{ __html: e.title() }} />
+                                dangerouslySetInnerHTML={{__html: e.title()}}/>
 
                             <span
                                 className={classes.message}
-                                dangerouslySetInnerHTML={{ __html: e.draft ? '[草稿]' + e.draft : (e.lastMessage && e.lastMessage.messageContent ? e.lastMessage.messageContent.digest(e.lastMessage) : '') }} />
+                                dangerouslySetInnerHTML={{__html: e.draft ? '[草稿]' + e.draft : (e.lastMessage && e.lastMessage.messageContent ? e.lastMessage.messageContent.digest(e.lastMessage) : '')}}/>
                         </div>
                     </div>
 
@@ -143,7 +143,7 @@ export default class ConversationItem extends Component {
             let menuId = `conversation_item_${conversationKey}`
             return (
                 <div>
-                    <ContextMenuTrigger id={menuId} >
+                    <ContextMenuTrigger id={menuId}>
                         <div
                             className={clazz(classes.chat, {
                                 [classes.sticky]: isTop,
@@ -169,11 +169,11 @@ export default class ConversationItem extends Component {
                                 <div className={classes.info}>
                                     <p
                                         className={classes.username}
-                                        dangerouslySetInnerHTML={{ __html: e.title() }} />
+                                        dangerouslySetInnerHTML={{__html: e.title()}}/>
 
                                     <span
                                         className={classes.message}
-                                        dangerouslySetInnerHTML={{ __html: e.draft ? '[草稿]' + e.draft : (e.lastMessage && e.lastMessage.messageContent ? e.lastMessage.messageContent.digest(e.la) : '' )}} />
+                                        dangerouslySetInnerHTML={{__html: e.draft ? '[草稿]' + e.draft : (e.lastMessage && e.lastMessage.messageContent ? e.lastMessage.messageContent.digest(e.la) : '')}}/>
                                 </div>
                             </div>
 

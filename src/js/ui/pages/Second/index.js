@@ -5,7 +5,6 @@ import clazz from 'classname';
 
 import classes from './style.css';
 import Loader from 'components/Loader';
-import SearchBar from '../SearchBar';
 // import ChatContent from './ChatContent';
 import Contacts from './Contacts';
 import ContactInfo from './ContactInfo';

@@ -10,7 +10,6 @@ import wfc from '../../../../wfc/client/wfc';
 
 @inject(stores => ({
     filter: stores.contacts.filter,
-    searching: stores.search.searching,
     filtered: stores.contacts.filtered,
     getContacts: stores.contacts.getContacts,
     showUserinfo: async (show, user) => {
@@ -22,7 +21,7 @@ import wfc from '../../../../wfc/client/wfc';
 }))
 @observer
 export default class Contacts extends Component {
-    renderColumns(data, index) {
+    renderColumns(data, index, query) {
         console.log('render c', data);
         var list = data.filter((e, i) => i % 1 === index);
 
@@ -52,7 +51,12 @@ export default class Contacts extends Component {
                                     <div
                                         className={classes.item}
                                         key={index}
-                                        onClick={() => this.props.showUserinfo(true, e)}>
+                                        onClick={() => {
+                                            if (query) {
+                                                this.filter('')
+                                            }
+                                            this.props.showUserinfo(true, e)
+                                        }}>
                                         <div className={classes.avatar}>
                                             <img
                                                 src={this.itemPortrait(e)}
@@ -95,7 +99,6 @@ export default class Contacts extends Component {
     }
 
     componentWillUnmount() {
-        stores.search.reset();
         this.props.event.removeListener(EventType.FriendListUpdate, this.onContactUpdate);
     }
 
@@ -106,7 +109,6 @@ export default class Contacts extends Component {
 
     render() {
         var {query, result} = this.props.filtered;
-        var searching = this.props.searching;
 
         // TODO 未搜索到结果的ui
         // if (query && result.length === 0) {
@@ -132,16 +134,16 @@ export default class Contacts extends Component {
                     <i className="icon-ion-ios-search-strong"/>
                     <input
                         id="search"
-                        onBlur={e => this.filter('')}
                         onInput={e => this.filter(e.target.value)}
-                        placeholder="搜索 ..."
+                        placeholder={query ? '' : '搜索 ...'}
+                        value={query ? query : ''}
                         ref="search"
                         type="text"/>
                 </div>
                 <div className={classes.contacts}
                      ref="container">
                     {
-                        !searching && this.renderColumns(result, 0)
+                        this.renderColumns(result, 0, query)
                     }
                 </div>
             </div>

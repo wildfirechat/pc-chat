@@ -1,5 +1,4 @@
-
-import { observable, action } from 'mobx';
+import {observable, action} from 'mobx';
 import pinyin from '../han';
 
 import contacts from './contacts';
@@ -12,7 +11,6 @@ class Search {
         friend: [],
         groups: [],
     };
-    @observable searching = false;
 
     @action filter(text = '') {
         var list;
@@ -54,7 +52,6 @@ class Search {
             };
         }
 
-        self.searching = true;
         return self.result;
     }
 
@@ -64,11 +61,6 @@ class Search {
             friend: [],
             groups: [],
         };
-        self.toggle(false);
-    }
-
-    @action toggle(searching = !self.searching) {
-        self.searching = searching;
     }
 }
 
