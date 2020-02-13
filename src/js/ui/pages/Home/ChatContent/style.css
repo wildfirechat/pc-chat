@@ -129,8 +129,7 @@
         height: 32px;
         line-height: 32px;
         padding: 0 12px;
-        color: #fff;
-        background: #323232;
+        margin-top: -10px;
         border-radius: 1px;
         white-space: nowrap;
         transition: .15s cubic-bezier(0, 0, .2, 1);
@@ -139,9 +138,8 @@
         opacity: 0;
     }
 
-    &:not(.isme) img:hover + p.username {
+    &:not(.isme) img + p.username {
         opacity: 1;
-        transform: translateX(44px) scale(1);
     }
 }
 
