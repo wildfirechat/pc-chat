@@ -18,6 +18,7 @@ import UserInfo from '../../../wfc/model/userInfo';
             return forward.list;
         }
 
+        contacts.getContacts();
         return contacts.memberList.filter(e => {
             if (e instanceof UserInfo) {
                 return e.uid !== wfc.getUserId()
