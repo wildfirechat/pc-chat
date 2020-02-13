@@ -386,25 +386,16 @@ export default class ChatContent extends Component {
                         data-force-rerennder={message.forceRerender}
                         dangerouslySetInnerHTML={{__html: helper.timeFormat(message.timestamp)}}/>
                     <div className={clazz('unread', classes.message, {
-                        // File is uploading
                         [classes.uploading]: message.status === MessageStatus.Sending,
 
                         [classes.isme]: message.direction === 0,
-                        //[classes.isText]: type === 1 && !message.location,
                         [classes.isText]: type === MessageContentType.Text || type === MessageContentType.P_Text || (message.messageContent instanceof UnknownMessageContent) || (message.messageContent instanceof UnsupportMessageContent),
                         [classes.isLocation]: type === MessageContentType.Location,
                         [classes.isImage]: type === MessageContentType.Image,
-                        //[classes.isEmoji]: type === 47 || type === 49 + 8,
                         [classes.isEmoji]: type === MessageContentType.Sticker,
                         [classes.isVoice]: type === MessageContentType.Voice,
                         [classes.isVideo]: type === MessageContentType.Video,
                         [classes.isFile]: type === MessageContentType.File,
-
-                        [classes.isContact]: type === 42,
-                        // App messages，只在手机上显示的消息
-                        [classes.appMessage]: [49 + 2000, 49 + 17, 49 + 6].includes(type),
-                        [classes.isTransfer]: type === 49 + 2000,
-                        [classes.isLocationSharing]: type === 49 + 17,
                     })}>
 
                         <div>
