@@ -1,13 +1,11 @@
-
-import React, { Component } from 'react';
-import { observer, inject } from 'mobx-react';
+import React, {Component} from 'react';
+import {observer, inject} from 'mobx-react';
 
 import clazz from 'classname';
 import classes from './style.css';
-import { ipcRenderer, isElectron, currentWindow, PostMessageEventEmitter } from '../../../platform'
-import { observable, action } from 'mobx';
+import {ipcRenderer, isElectron, currentWindow, PostMessageEventEmitter} from '../../../platform'
+import {observable, action} from 'mobx';
 import Config from '../../../config.js';
-import wfc from '../../../wfc/client/wfc'
 
 @inject(stores => ({
     avatar: stores.sessions.avatar,
@@ -55,6 +53,7 @@ export default class Voip extends Component {
     stopIncomingRing() {
         //再接听/语音接听/结束媒体时停止播放来电铃声，可能有多次，需要避免出问题
     }
+
     voipEventEmit(event, args) {
         if (isElectron()) {
             // renderer to main
@@ -72,6 +71,7 @@ export default class Voip extends Component {
             this.events.on(event, listener);
         }
     }
+
     voipEventRemoveAllListeners(events = []) {
         if (isElectron()) {
             // renderer
@@ -90,8 +90,8 @@ export default class Voip extends Component {
             this.moCall = message.moCall;
             this.audioOnly = message.audioOnly;
             this.targetUserInfo = message.targetUserInfo;
-            this.targetUserDisplayName = wfc.getUserDisplayName(message.targetUserInfo.uid);
-            
+            this.targetUserDisplayName = message.targetUserDisplayName;
+
             if (message.moCall) {
                 this.status = Voip.STATUS_OUTGOING;
                 this.startPreview(false, message.voiceOnly);
@@ -143,7 +143,7 @@ export default class Voip extends Component {
     async startPreview(continueStartMedia, audioOnly) {
         console.log('start preview');
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: !audioOnly });
+            const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: !audioOnly});
             console.log('Received local stream', stream);
             this.localVideo.srcObject = stream;
             this.localStream = stream;
@@ -493,7 +493,7 @@ export default class Voip extends Component {
     videoOutgoingDesc() {
         return (
             <div className={classes.videoOutgoing}>
-                <img src={this.targetUserInfo.portrait} ></img>
+                <img src={this.targetUserInfo.portrait}></img>
                 <div className={classes.desc}>
                     <p>{this.targetUserDisplayName}</p>
                     <p>正在等待对方接受邀请</p>
@@ -506,10 +506,10 @@ export default class Voip extends Component {
         return (
             <div className={classes.videoOutgoingOrConnectedAction}>
                 <div>
-                    <p style={{ visibility: 'hidden' }}>holder</p>
+                    <p style={{visibility: 'hidden'}}>holder</p>
                     <img ref="switchMicorphone"
-                        src={this.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'}
-                        onClick={() => this.triggerMicrophone()}
+                         src={this.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'}
+                         onClick={() => this.triggerMicrophone()}
                     >
                     </img>
                     <p>关闭麦克风</p>
@@ -517,15 +517,15 @@ export default class Voip extends Component {
                 <div>
                     <p>{this.duration}</p>
                     <img ref="hangupButton"
-                        onClick={() => this.hangup()}
-                        src='assets/images/av_hang_up.png'></img>
-                    <p style={{ visibility: 'hidden' }}>holder</p>
+                         onClick={() => this.hangup()}
+                         src='assets/images/av_hang_up.png'></img>
+                    <p style={{visibility: 'hidden'}}>holder</p>
                 </div>
                 <div>
-                    <p style={{ visibility: 'hidden' }}>holder</p>
+                    <p style={{visibility: 'hidden'}}>holder</p>
                     <img ref="toVoiceButton"
-                        src='assets/images/av_phone.png'
-                        onClick={() => this.downgrade2Voice()}
+                         src='assets/images/av_phone.png'
+                         onClick={() => this.downgrade2Voice()}
                     />
                     <p>切换到语音聊天</p>
                 </div>
@@ -536,7 +536,7 @@ export default class Voip extends Component {
     videoIncomingDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src={this.targetUserInfo.portrait} ></img>
+                <img src={this.targetUserInfo.portrait}></img>
                 <p>{this.targetUserDisplayName}</p>
                 <p>邀请你视频通话</p>
             </div>
@@ -548,24 +548,24 @@ export default class Voip extends Component {
             <div>
                 <div className={classes.audioAccept}>
                     <img ref="toVoiceButton"
-                        onClick={() => this.downToVoice()}
-                        src='assets/images/av_float_audio.png'>
+                         onClick={() => this.downToVoice()}
+                         src='assets/images/av_float_audio.png'>
                     </img>
                     <p>切换到语音聊天</p>
                 </div>
                 <div className={classes.videoIncomingAction}>
                     <img ref="hangupButton"
-                        onClick={() => this.hangup()}
-                        className={classes.incomingHangup}
-                        src='assets/images/av_hang_up.png'>
+                         onClick={() => this.hangup()}
+                         className={classes.incomingHangup}
+                         src='assets/images/av_hang_up.png'>
 
                     </img>
                     <img ref="callButton"
-                        onClick={() => this.call()}
-                        className={classes.incomingAccept}
-                        src='assets/images/av_video_answer.png'></img>
+                         onClick={() => this.call()}
+                         className={classes.incomingAccept}
+                         src='assets/images/av_video_answer.png'></img>
                 </div>
-            </div >
+            </div>
         )
     }
 
@@ -621,13 +621,13 @@ export default class Voip extends Component {
             <div className={classes.audioConnectedAction}>
                 <div>
                     <img className={classes.audioIncomingHangup}
-                        onClick={e => this.triggerMicrophone()}
-                        src={this.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'} />
+                         onClick={e => this.triggerMicrophone()}
+                         src={this.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'}/>
                     <p>关闭麦克风</p>
                 </div>
                 <img className={classes.audioIncomingHangup}
-                    onClick={e => this.hangup()}
-                    src='assets/images/av_hang_up.png'></img>
+                     onClick={e => this.hangup()}
+                     src='assets/images/av_hang_up.png'></img>
             </div>
         )
     }
@@ -636,12 +636,12 @@ export default class Voip extends Component {
         return (
             <div className={classes.videoIncomingAction}>
                 <img className={classes.incomingHangup}
-                    onClick={e => this.hangup()}
-                    src='assets/images/av_hang_up.png'
+                     onClick={e => this.hangup()}
+                     src='assets/images/av_hang_up.png'
                 ></img>
                 <img className={classes.incomingAccept}
-                    onClick={e => this.call()}
-                    src='assets/images/av_video_answer.png'
+                     onClick={e => this.call()}
+                     src='assets/images/av_video_answer.png'
                 ></img>
             </div>
         )
@@ -749,11 +749,11 @@ export default class Voip extends Component {
         }
         return (
             <div className={classes.container}>
-                <video ref="localVideo" className={classes.localVideo} playsInline autoPlay muted >
+                <video ref="localVideo" className={classes.localVideo} playsInline autoPlay muted>
 
                 </video>
 
-                <video ref="remoteVideo" className={classes.remoteVideo} playsInline autoPlay hidden={false} >
+                <video ref="remoteVideo" className={classes.remoteVideo} playsInline autoPlay hidden={false}>
                 </video>
                 {
                     renderFn.bind(this)()

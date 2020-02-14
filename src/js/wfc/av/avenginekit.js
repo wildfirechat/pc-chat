@@ -167,7 +167,7 @@ export class WfcAVEngineKit {
                                 self.rejectOtherCall(content.callId, msg.fromUser);
                             } else {
                                 if (self.currentSession.state === AVEngineState.kWFAVEngineStateIncomming) {
-                                    self.currentSession.endCall(AVCallEndReason.AVCallEndReason.kWFAVCallEndReasonAcceptByOtherClient);
+                                    self.currentSession.endCall(AVCallEndReason.kWFAVCallEndReasonAcceptByOtherClient);
                                 }
                             }
                         } else if (self.currentSession.state === AVEngineState.kWFAVEngineStateConnecting || self.currentSession.state === AVEngineState.kWFAVEngineStateConnected) {
