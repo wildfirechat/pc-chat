@@ -557,6 +557,11 @@ const createMainWindow = () => {
         shell.openExternal(url);
     });
 
+    mainWindow.webContents.on('will-navigate', (event, url) => {
+        event.preventDefault();
+        shell.openExternal(url);
+    });
+
     mainWindow.on('close', e => {
         if (forceQuit || !tray) {
             mainWindow = null;
