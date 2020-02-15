@@ -6,6 +6,7 @@ import CallAnswerMessageContent from './messages/callAnswerMessageContent';
 import CallAnswerTMessageContent from './messages/callAnswerTMessageContent';
 import CallStartMessageContent from './messages/callStartMessageContent';
 import CallModifyMessageContent from './messages/callModifyMessageContent';
+import ConversationType from '../model/conversationType';
 import AVEngineState from './avEngineState';
 import AVEngineEvent from './avEngineEvent';
 import AVCallEndReason from './avCallEndReason';
