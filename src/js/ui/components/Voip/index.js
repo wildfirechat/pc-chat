@@ -31,6 +31,7 @@ export default class Voip extends Component {
     moCall; // true, outgoing; false, incoming
     isInitiator;
     pcSetuped;
+    queuedOffer;
     pooledSignalingMsg = [];
     startTime;
     localStream;
@@ -45,6 +46,20 @@ export default class Voip extends Component {
     remoteVideo;
 
     events;
+
+
+    drainOfferMessage() {
+        if(queuedOffer==null || queuedOffer=='undefined'){
+            return false;
+        }
+
+        onReceiveRemoteCreateOffer(queuedOffer);
+        queuedOffer = null;
+    }
+
+    queueOfferMessage(desc) {
+        queuedOffer = desc;
+    }
 
     playIncomingRing() {
         //在界面初始化时播放来电铃声
@@ -158,6 +173,7 @@ export default class Voip extends Component {
         }
     }
 
+
     async startMedia(initiator, audioOnly) {
         console.log('start media', initiator);
         this.isInitiator = initiator;
@@ -225,6 +241,8 @@ export default class Voip extends Component {
                 this.onCreateSessionDescriptionError(e);
             }
         }
+
+        drainOfferMessage();
     }
 
     downgrade2Voice() {
@@ -278,6 +296,10 @@ export default class Voip extends Component {
 
     async onReceiveRemoteCreateOffer(desc) {
         console.log('pc setRemoteDescription start');
+        if(this.status != Voip.STATUS_CONNECTING && this.status != Voip.STATUS_CONNECTED) {
+          queueOfferMessage(desc);
+          return;
+        }
         try {
             await this.pc.setRemoteDescription(desc);
             this.onSetRemoteSuccess(this.pc);
