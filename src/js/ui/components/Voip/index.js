@@ -370,7 +370,7 @@ export default class Voip extends Component {
             return;
         }
         try {
-            let candidate = {type: 'candidate', label: event.sdpMLineIndex, id: event.sdpMid, candidate: event.sdp};
+            let candidate = {type: 'candidate', label: event.candidate.sdpMLineIndex, id: event.candidate.sdpMid, candidate: event.candidate.candidate};
             this.voipEventEmit('onIceCandidate', JSON.stringify(candidate));
             this.onAddIceCandidateSuccess(pc);
         } catch (e) {
