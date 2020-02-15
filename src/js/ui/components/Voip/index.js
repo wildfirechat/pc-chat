@@ -218,6 +218,8 @@ export default class Voip extends Component {
                     offerToReceiveVideo: !audioOnly
                 }
                 const offer = await this.pc.createOffer(offerOptions);
+                var mutableOffer = JSON.parse(JSON.stringify(offer));
+                mutableOffer.type = 'offer';
                 await this.onCreateOfferSuccess(offer);
             } catch (e) {
                 this.onCreateSessionDescriptionError(e);
@@ -289,6 +291,8 @@ export default class Voip extends Component {
         // accept the incoming offer of audio and video.
         try {
             const answer = await this.pc.createAnswer();
+            var mutableAnswer = JSON.parse(JSON.stringify(answer));
+            mutableAnswer.type = 'answer';
             await this.onCreateAnswerSuccess(answer);
         } catch (e) {
             this.onCreateSessionDescriptionError(e);
