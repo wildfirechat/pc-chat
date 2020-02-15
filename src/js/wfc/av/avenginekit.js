@@ -239,7 +239,7 @@ export class WfcAVEngineKit {
     }
 
     onIceCandidate(candidate) {
-        console.log("send engine candidate");
+        console.log("send engine candidate", candidate);
         self.sendSignalingMessage(candidate, true);
     }
 
@@ -301,12 +301,13 @@ export class WfcAVEngineKit {
         let startMessage = new CallStartMessageContent();
         startMessage.audioOnly = audioOnly;
         startMessage.callId = callId;
-        startMessage.targetId = conversation.target;
+        startMessage.targetIds = [conversation.target];
 
         this.sendSignalMessage(startMessage, conversation.target, true);
     }
 
     sendSignalMessage(msg, targetId, keyMsg) {
+        console.log('send signal message', msg);
         wfc.sendConversationMessage(self.currentSession.conversation, msg, [], function (messageId, timestamp) {
 
         }, function (uploaded, total) {
