@@ -366,7 +366,8 @@ export default class Voip extends Component {
             return;
         }
         try {
-            this.voipEventEmit('onIceCandidate', JSON.stringify(event.candidate));
+            let candidate = {type: 'candidate', label: event.sdpMLineIndex, id: event.sdpMid, candidate: event.sdp};
+            this.voipEventEmit('onIceCandidate', JSON.stringify(candidate));
             this.onAddIceCandidateSuccess(pc);
         } catch (e) {
             this.onAddIceCandidateError(pc, e);
