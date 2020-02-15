@@ -3,7 +3,7 @@ import wfc from '../client/wfc';
 const path = require('path');
 
 
-class WfcControlAdaper {
+class WfcControlAdapter {
 
   onCallWindowClose;
   onReceiveOffer;
@@ -16,13 +16,22 @@ class WfcControlAdaper {
   destroyed;
   callWin;
   events;
+  queueEvents = [];
 
   voipEventEmit(event, args) {
     if (isElectron()) {
       // renderer/main to renderer
-      this.callWin.webContents.send(event, args);
+      if(this.callWin){
+        this.callWin.webContents.send(event, args);
+      }else {
+        this.queueEvents.push({event, args});
+      }
     } else {
-      this.events.emit(event, args);
+        if(this.events){
+          this.events.emit(event, args);
+        }else {
+          this.queueEvents.push({event, args});
+        }
     }
   }
 
@@ -109,6 +118,12 @@ class WfcControlAdaper {
       }, 1000);
     });
 
+    if(this.queueEvents.length > 0){
+        this.queueEvents.forEach((eventArgs)=>{
+          console.log('process queued event');
+          this.voipEventEmit(eventArgs.event, eventArgs.args);
+        })
+    }
   }
 
   destory() {
@@ -178,6 +193,7 @@ class WfcControlAdaper {
   }
 
   showCallUI(isMoCall, audioOnly, targetUserInfo) {
+    this.queueEvents = [];
     if (isElectron()) {
       let win = new BrowserWindow(
         {
@@ -253,5 +269,5 @@ class WfcControlAdaper {
   }
 }
 
-const self = new WfcControlAdaper();
+const self = new WfcControlAdapter();
 export default self;
