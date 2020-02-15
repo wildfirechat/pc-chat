@@ -49,16 +49,16 @@ export default class Voip extends Component {
 
 
     drainOfferMessage() {
-        if(queuedOffer==null || queuedOffer=='undefined'){
+        if (!this.queuedOffer) {
             return false;
         }
 
         onReceiveRemoteCreateOffer(queuedOffer);
-        queuedOffer = null;
+        this.queuedOffer = null;
     }
 
     queueOfferMessage(desc) {
-        queuedOffer = desc;
+        this.queuedOffer = desc;
     }
 
     playIncomingRing() {
@@ -242,7 +242,7 @@ export default class Voip extends Component {
             }
         }
 
-        drainOfferMessage();
+        this.drainOfferMessage();
     }
 
     downgrade2Voice() {
@@ -296,9 +296,9 @@ export default class Voip extends Component {
 
     async onReceiveRemoteCreateOffer(desc) {
         console.log('pc setRemoteDescription start');
-        if(this.status != Voip.STATUS_CONNECTING && this.status != Voip.STATUS_CONNECTED) {
-          queueOfferMessage(desc);
-          return;
+        if (this.status !== Voip.STATUS_CONNECTING && this.status !== Voip.STATUS_CONNECTED) {
+            this.queueOfferMessage(desc);
+            return;
         }
         try {
             await this.pc.setRemoteDescription(desc);
@@ -392,7 +392,12 @@ export default class Voip extends Component {
             return;
         }
         try {
-            let candidate = {type: 'candidate', label: event.candidate.sdpMLineIndex, id: event.candidate.sdpMid, candidate: event.candidate.candidate};
+            let candidate = {
+                type: 'candidate',
+                label: event.candidate.sdpMLineIndex,
+                id: event.candidate.sdpMid,
+                candidate: event.candidate.candidate
+            };
             this.voipEventEmit('onIceCandidate', JSON.stringify(candidate));
             this.onAddIceCandidateSuccess(pc);
         } catch (e) {
