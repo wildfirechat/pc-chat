@@ -69,7 +69,7 @@ export default class NewChat extends Component {
                 (remoteUrl) => {
                     wfc.createGroup(null, GroupType.Restricted, groupName, remoteUrl, selected, [0], null,
                         (groupId) => {
-                            let conversation = new Conversation(ConversationType.Group, groupId);
+                            let conversation = new Conversation(ConversationType.Group, groupId, 0);
                             this.props.chatTo(conversation);
                         },
                         (errorCode) => {
