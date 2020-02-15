@@ -132,10 +132,8 @@ export class WfcAVEngineKit {
                     if (msg.from !== self.currentSession.clientId || signal.callId !== self.currentSession.callId) {
                         self.rejectOtherCall(content.callId, msg.fromUser);
                     } else {
-                        if (self.currentSession && (self.currentSession.state === AVEngineState.kWFAVEngineStateConnecting || self.currentSession.state === AVEngineState.kWFAVEngineStateConnected)) {
+                        if (self.currentSession && (self.currentSession.state === AVEngineState.kWFAVEngineStateConnecting || self.currentSession.state === AVEngineState.kWFAVEngineStateConnected || self.currentSession.state === AVEngineState.kWFAVEngineStateOutgoing)) {
                             self.onReceiveData(signal.payload);
-                        } else if (self.currentSession && self.currentSession.state === AVEngineState.kWFAVEngineStateOutgoing) {
-                            console.log('signal message come too early!');
                         }
                     }
                 } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
