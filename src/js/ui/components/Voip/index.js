@@ -633,7 +633,10 @@ export default class Voip extends Component {
     audioOutgoingAction() {
         return (
             <div className={classes.videoIncomingAction}>
-                <img className={classes.audioIncomingHangup} src='assets/images/av_hang_up.png'></img>
+                <img
+                    className={classes.audioIncomingHangup}
+                    onClick={() => this.hangup()}
+                    src='assets/images/av_hang_up.png'></img>
             </div>
         )
     }

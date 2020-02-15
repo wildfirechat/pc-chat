@@ -283,6 +283,9 @@ export class WfcAVEngineKit {
 
     // TODO conversation -> targetId
     startCall(conversation, audioOnly) {
+        if(this.currentSession){
+            return;
+        }
         let callId = conversation.target + Math.random();
         this.currentSession = new WfcAVSession(this);
         this.currentSession.avEngineKit = this;
