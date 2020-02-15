@@ -4,7 +4,7 @@ import MessageContentType from '../../messages/messageContentType';
 
 export default class CallStartMessageContent extends MessageContent {
   callId;
-  targetId;
+  targetIds = [];
   connectTime;
   endTime;
   status;
@@ -31,7 +31,8 @@ export default class CallStartMessageContent extends MessageContent {
           e: this.endTime,
           s: this.status,
           a: this.audioOnly ? 1 : 0,
-          t: this.targetId,
+          ts: this.targetIds,
+          t:this.targetIds[0]
       };
       payload.binaryContent = Base64.encode(JSON.stringify(obj));
       return payload;
@@ -47,6 +48,9 @@ export default class CallStartMessageContent extends MessageContent {
       this.endTime = obj.e;
       this.status = obj.s;
       this.audioOnly = (obj.a === 1);
-      this.targetId = obj.t;
+      this.targetIds = obj.ts;
+      if(!this.targetIds){
+          this.targetIds = [obj.t];
+      }
   }
 }

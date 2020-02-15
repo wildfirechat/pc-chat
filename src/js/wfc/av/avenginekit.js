@@ -139,7 +139,7 @@ export class WfcAVEngineKit {
                         }
                     }
                 } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
-                    if (content.targetId !== wfc.getUserId()) {
+                    if (content.targetIds[0] !== wfc.getUserId()) {
                         return;
                     }
                     if (self.currentSession && self.currentSession.state !== AVEngineState.kWFAVEngineStateIdle) {
@@ -267,7 +267,7 @@ export class WfcAVEngineKit {
         }
     }
     showCallUI(isMoCall, audioOnly) {
-        //   controlAdapter.setOnCallWindowsClose(self.onCallWindowClose);
+          controlAdapter.setOnCallWindowsClose(self.onCallWindowClose);
         controlAdapter.setOnReceiveOffer(self.onReceiveOffer);
         controlAdapter.setOnCreateAnswerOffer(self.onCreateAnswerOffer);
         controlAdapter.setOnIceCandidate(self.onIceCandidate);
