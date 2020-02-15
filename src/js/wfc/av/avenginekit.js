@@ -358,11 +358,11 @@ export class WfcAVEngineKit {
     }
 
     answerCurrentCall() {
-        let answerTMsg = new CallAnswerTMessageContent();
-        answerTMsg.audioOnly = self.currentSession.audioOnly;
-        answerTMsg.callId = self.currentSession.callId;
-
-        this.sendSignalMessage(answerTMsg, this.currentSession.conversation.target, true);
+        // let answerTMsg = new CallAnswerTMessageContent();
+        // answerTMsg.audioOnly = self.currentSession.audioOnly;
+        // answerTMsg.callId = self.currentSession.callId;
+        //
+        // this.sendSignalMessage(answerTMsg, this.currentSession.conversation.target, true);
 
         let answerMsg = new CallAnswerMessageContent();
         answerMsg.audioOnly = self.currentSession.audioOnly;
