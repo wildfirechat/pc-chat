@@ -53,7 +53,7 @@ export default class Voip extends Component {
             return false;
         }
 
-        this.onReceiveRemoteCreateOffer(queuedOffer);
+        this.onReceiveRemoteCreateOffer(this.queuedOffer);
         this.queuedOffer = null;
     }
 
