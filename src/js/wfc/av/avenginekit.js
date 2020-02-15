@@ -120,7 +120,7 @@ export class WfcAVEngineKit {
     onReceiveMessage = (msg) => {
         console.log('reveive message ', msg);
         var now = (new Date()).valueOf();
-        if (msg.timestamp - now < 90 * 1000) { // 需要处理deltatime
+        if (msg.conversation.type  === ConversationType.Single && msg.timestamp - now < 90 * 1000) { // 需要处理deltatime
             var content = msg.messageContent;
             if (msg.direction === 1 || msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT) {
                 if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_SIGNAL) {
