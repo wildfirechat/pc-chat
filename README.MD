@@ -57,8 +57,9 @@
 更多截图，请查看[wewechat readme](./README_wewechat.MD)
 
 
-
 ## 开发
+
+***由于可能存在网络不通畅等问题，后续步骤中强烈建议使用[cnpm](https://npm.taobao.org/)替换```npm```***
 
 #### mac系统
 
@@ -96,7 +97,7 @@ $ npm run dev
 > 请严格安装下面的版本安装对应依赖，否则无法打包
 
 1. nodejs10.16.x
-2. npm install --global windows-build-tools
+2. npm install --global --vs2015 windows-build-tools
 3. npm install -g node-gyp
 
 
