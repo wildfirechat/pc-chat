@@ -12,9 +12,11 @@
     "build-renderer": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config ./config/webpack.config.production.js --progress --profile --colors",
     "build": "node scripts/del.js dist && npm run build-main && npm run build-renderer",
     "copy-mac": "node scripts/del.js ./marswrapper.node && node scripts/copy-proto.js ./proto_addon/marswrapper.mac.node ./",
-    "copy-win": "node scripts/del.js ./marswrapper.node && node scripts/copy-proto.js ./proto_addon/marswrapper.win32.node ./",
+    "copy-win32": "node scripts/del.js ./marswrapper.node && node scripts/copy-proto.js ./proto_addon/marswrapper.win32.node ./ && xcopy /Y .\\win32-qt-denpendency\\Qt5Core.dll && xcopy /s /y win32-qt-denpendency win-qt-denpendency\\",
+    "copy-win": "node scripts/del.js ./marswrapper.node && node scripts/copy-proto.js ./proto_addon/marswrapper.win64.node ./ && xcopy /Y .\\win64-qt-denpendency\\Qt5Core.dll && xcopy /s /y win64-qt-denpendency win-qt-denpendency\\",
     "copy-linux": "node scripts/del.js ./marswrapper.node && node scripts/copy-proto.js ./proto_addon/marswrapper.linux.node ./",
-    "package-win32": "npm run copy-win && npm run build && node scripts/del.js release && electron-builder --win --ia32 --projectDir ./dist -p never",
+    "package-win": "npm run copy-win && npm run build && node scripts/del.js release && electron-builder --win --x64 --projectDir ./dist -p never",
+    "package-win32": "npm run copy-win32 && npm run build && node scripts/del.js release && electron-builder --win --ia32 --projectDir ./dist -p never",
     "package-mac": "npm run copy-mac && npm run build && node scripts/del.js release && electron-builder --mac --projectDir ./dist -p never",
     "package-linux": "npm run copy-linux && npm run build && node scripts/del.js release && electron-builder --linux --projectDir ./dist -p never",
     "hot-server": "cross-env NODE_ENV=development node -r babel-register scripts/dev.js",
@@ -84,7 +86,7 @@
       "requestedExecutionLevel": "asInvoker",
       "extraResources": [
         {
-          "from": "../win32-qt-denpendency",
+          "from": "../win-qt-denpendency",
           "to": "../"
         }
       ]
