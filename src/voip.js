@@ -6,7 +6,7 @@ import './global.css';
 import './assets/fonts/icomoon/style.css';
 import 'utils/albumcolors';
 import stores from './js/ui/stores';
-import Voip from './js/ui/components/Voip';
+import Voip from './js/ui/pages/Voip/single';
 
 export default class VoipApp extends Component {
     async componentWillMount() {
