@@ -7,10 +7,6 @@ import {ipcRenderer, isElectron, currentWindow, PostMessageEventEmitter} from '.
 import {observable, action} from 'mobx';
 import Config from '../../../../config.js';
 
-@inject(stores => ({
-    avatar: stores.sessions.avatar,
-    code: stores.sessions.code,
-}))
 @observer
 export default class Voip extends Component {
 
