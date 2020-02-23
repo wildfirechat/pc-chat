@@ -150,7 +150,7 @@ export class WfcAVEngineKit {
                         self.currentSession.callId = content.callId;
                         self.currentSession.audioOnly = content.audioOnly;
                         self.currentSession.conversation = msg.conversation;
-                        self.currentSession.starter = msg.fromUser;
+                        self.currentSession.starter = msg.from;
                         self.currentSession.inviteMsgUid = msg.messageUid;
                         self.currentSession.setState(AVEngineState.kWFAVEngineStateIncomming);
                         self.avEngineKit = self;
