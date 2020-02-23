@@ -13,8 +13,7 @@ export default class Footer extends Component {
         var pathname = this.props.location.pathname;
         var component = {
             '/': Home,
-            '/contacts': Contacts,
-            '/settings': Settings,
+            '/contacts': Contacts
         }[pathname];
 
         return (
@@ -56,10 +55,13 @@ export default class Footer extends Component {
 
                 <div className={classes.right}>
                     {
-                        React.createElement(component)
+                        component ? React.createElement(component):""
                     }
                 </div>
             </footer>
         );
     }
 }
+
+
+{/* */ }

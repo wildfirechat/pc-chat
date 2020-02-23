@@ -154,7 +154,7 @@ label {
 }
 
 .isWin {
-    border: thin solid #ddd;
+    border: 0;
 }
 
 .clearfix::after {
