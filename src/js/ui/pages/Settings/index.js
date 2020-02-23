@@ -6,6 +6,7 @@ import classes from './style.css';
 import Switch from 'components/Switch';
 import Avatar from 'components/Avatar';
 import helper from 'utils/helper';
+import Header from '../Header';
 
 @inject(stores => ({
     alwaysOnTop: stores.settings.alwaysOnTop,
@@ -58,7 +59,10 @@ export default class Settings extends Component {
                 <div className={classes.column}>
                     <h2>设置</h2>
 
-                    <ul>
+                    <ul 
+                    style={{
+                       webkitAppRegion:'no-drag'
+                    }}>
                         {
                             user && (
                                 <li className={classes.user}>
@@ -110,7 +114,29 @@ export default class Settings extends Component {
                     </ul>
                 </div>
                 <div className={classes.column}>
+                    <Header />
                     <h2></h2>
+                </div>
+
+                <div className={classes.settings} 
+                    style={{
+                       webkitAppRegion:'no-drag'
+                    }}>
+                    <a
+                        className={classes.button}
+                        href="mailto:imndxx@gmail.com?Subject=WildfireChat%20Feedback"
+                        target="_blank">
+                        发送反馈给我们
+                    <i className="icon-ion-ios-email-outline" />
+                    </a>
+
+                    <a
+                        className={classes.button}
+                        href="https://github.com/wildfirechat/pc-chat"
+                        target="_blank">
+                        Fork on Github
+                    <i className="icon-ion-social-github" />
+                    </a>
                 </div>
             </div>
         );

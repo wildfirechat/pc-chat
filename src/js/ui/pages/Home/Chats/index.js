@@ -6,8 +6,8 @@ import ConversationItem from './conversationItem';
 import classes from './style.css';
 import ConversationType from '../../../../wfc/model/conversationType';
 
-import scrollIntoView from 'scroll-into-view-if-needed'
-import smoothScrollIntoView from 'smooth-scroll-into-view-if-needed'
+// import scrollIntoView from 'scroll-into-view-if-needed'
+// import smoothScrollIntoView from 'smooth-scroll-into-view-if-needed'
 import wfc from '../../../../wfc/client/wfc'
 
 moment.updateLocale('en', {
@@ -159,6 +159,7 @@ export default class Chats extends Component {
     }
 
     componentDidUpdate() {
+        // 以下代码为自动滚动当前chat为主显示，存在bug 暂时注释掉使用代码
         var container = this.refs.container;
         var active = container.querySelector(`.${classes.chat}.${classes.active}`);
 
@@ -173,7 +174,7 @@ export default class Chats extends Component {
                     'scrollBehavior' in document.documentElement.style
                         ? scrollIntoView
                         : smoothScrollIntoView
-                scrollIntoViewSmoothly(active, {behavior: 'smooth'})
+                scrollIntoViewSmoothly(active, {behavior: 'auto'})
             }
         }
     }
@@ -193,16 +194,18 @@ export default class Chats extends Component {
         return (
             <div className={classes.container}>
                 <div className={classes.searchBar}>
-                    <i className="icon-ion-ios-search-strong"/>
-                    <input
-                        id="search"
-                        // onFocus={e => this.filter(e.target.value)}
-                        onInput={e => this.filter(e.target.value)}
-                        // onKeyUp={e => this.navigation(e)}
-                        placeholder={filtered.query ? '' : '搜索 ...'}
-                        value={filtered.query ? filtered.query : ''}
-                        ref="search"
-                        type="text"/>
+                    <div className= "searchBar-bg">
+                        <i className="icon-ion-ios-search-strong"/>
+                        <input
+                            id="search"
+                            // onFocus={e => this.filter(e.target.value)}
+                            onInput={e => this.filter(e.target.value)}
+                            // onKeyUp={e => this.navigation(e)}
+                            placeholder={filtered.query ? '' : '搜索 ...'}
+                            value={filtered.query ? filtered.query : ''}
+                            ref="search"
+                            type="text"/>
+                    </div>
                 </div>
                 <div
                     className={classes.chats}

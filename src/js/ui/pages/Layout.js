@@ -195,15 +195,13 @@ export default class Layout extends Component {
                     text={message} />
 
                 <Loader show={loading} />
-                {
-                    isElectron() && window.process.platform !== 'linux' ? <Header location={location} /> : ''
-                }
                 <div
                     className={classes.container}
                     ref="viewport">
                     {this.props.children}
                 </div>
-                <Footer
+                <Footer 
+                    className={classes.footer}
                     location={location}
                     ref="footer" />
                 <UserInfo />

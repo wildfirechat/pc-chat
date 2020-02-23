@@ -2,7 +2,7 @@
 .Suggestion {
     position: fixed;
     bottom: 60px;
-    left: 311px;
+    left: 300px;
     height: calc(100vh - 200px);
     background: #fff;
     box-shadow: 0 0 24px 0 rgba(0, 0, 0, .2);

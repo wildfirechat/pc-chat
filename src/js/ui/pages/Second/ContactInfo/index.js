@@ -53,9 +53,12 @@ class ContactInfo extends Component {
         var user = this.props.user;
         var gradient = 'none';
         var fontColor = '#777';
-        var buttonColor = '#777';
-
-        var background = '#fff';
+        var buttonColor = '#fff';
+        var buttonBackground = '#1aad19';
+        
+        var background = '#f5f5f5';
+         
+ 
 
 
         return (
@@ -101,6 +104,9 @@ class ContactInfo extends Component {
                             style={{
                                 color: buttonColor,
                                 opacity: .6,
+                                background:buttonBackground,
+                                borderRadius: '5px',
+                                fontSize:'19px'
                             }}>
                             发送消息
                         </div>

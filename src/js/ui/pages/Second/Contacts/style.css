@@ -1,33 +1,46 @@
 
 .container {
     width: 100%;
+    height: 100vh;
+    background: #edeae8;
 }
 
 .searchBar {
     position: relative;
-    height: 60px;
-    width: 311px;
+    height: 30px;
+    width: 300px;
     box-shadow: inset 0 -1px 0 0 #eaedea;
-
+    padding: 20px 0 15px 0 ;
+    -webkit-user-select: auto;
+    -webkit-app-region: drag; 
+    & div {
+        background: #dbd9d8;
+        width:240px;
+        border-radius:20px;
+        margin-left:10px;
+        }
 & input {
-      height: 60px;
+    
+    -webkit-app-region: no-drag;
+      height: 30px;
       width: 100%;
-      line-height: 60px;
+      line-height: 30px;
       background: none;
       outline: 0;
       border: 0;
       font-family: 'Helvetica';
-      font-size: 24px;
+      font-size: 18px;
       font-weight: 100;
-      text-indent: 62px;
+      text-indent: 11px;
+      margin-left:18px ;
   }
 
 & i {
       position: absolute;
-      left: 14px;
-      top: 50%;
-      font-size: 28px;
-      color: #d9d9d9;
+      left: 16px;
+      top: 55%;
+      font-size: 24px;
+      color: #6b6a6a;
       transform: translateY(-50%);
   }
 }
@@ -71,22 +84,24 @@
 
 .group {
     width: 100%;
-    padding: 8px 5px 8px 20px;
+    /* padding: 8px 5px 8px 20px; */
+    border-bottom: 1px solid #dcdbdb;
 }
 
 .header {
-    position: relative;
+    /* position: relative;
     width: 100%;
-    height: 36px;
+    height: 36px; */
 
     & label {
-        position: absolute;
+        /* position: absolute;
         left: 12px;
-        bottom: 8px;
+        bottom: 8px; */
         font-family: 'Helvetica Neue';
-        font-size: 24px;
+        font-size: 20px;
         font-weight: 300;
         color: #000;
+        padding-left: 12px;
     }
 
     & span {
@@ -154,6 +169,16 @@
 }
 
 @media (width <= 800px) {
+    .searchBar{
+        & div { 
+        width:230px; 
+        }
+        
+        & i { 
+            left: 16px;
+            top: 55%; 
+          }
+    }
     .columns {
         padding: 20px 17px 0;
     }

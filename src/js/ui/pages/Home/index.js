@@ -5,6 +5,7 @@ import clazz from 'classname';
 import classes from './style.css';
 import Loader from 'components/Loader';
 import Chats from './Chats';
+import Header from '../Header';
 import ChatContent from './ChatContent';
 import wfc from '../../../wfc/client/wfc';
 import EventType from '../../../wfc/client/wfcEvent';
@@ -58,9 +59,9 @@ export default class Home extends Component {
     render() {
         return (
             <div className={classes.container}>
-                <Loader
-                    fullscreen={true}
-                    show={false}/>
+
+                <Loader fullscreen={true} show={false}/>
+
                 <div className={clazz(classes.inner, {
                     [classes.hideConversation]: !this.props.showConversation
                 })}>
@@ -79,6 +80,7 @@ export default class Home extends Component {
                     </div>
 
                     <div className={classes.right}>
+                        <Header location={''} />
                         <ChatContent/>
                     </div>
                 </div>

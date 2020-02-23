@@ -9,6 +9,8 @@ import Loader from 'components/Loader';
 import Contacts from './Contacts';
 import ContactInfo from './ContactInfo';
 
+import Header from '../Header'
+
 @inject(stores => ({
     loading: stores.sessions.loading,
     showConversation: stores.chat.showConversation,
@@ -36,6 +38,7 @@ export default class Second extends Component {
                     </div>
 
                     <div className={classes.right}>
+                        <Header location={""} />
                         <ContactInfo />
                     </div>
                 </div>
