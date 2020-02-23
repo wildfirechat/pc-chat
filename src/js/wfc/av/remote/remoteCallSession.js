@@ -1,6 +1,7 @@
 import {ipcRenderer, isElectron, currentWindow, PostMessageEventEmitter} from '../../../platform'
 import Config from '../../../config.js';
 import CallState from "./callState";
+import avenginekit from '../avenginekit'
 
 // 运行在新的voip window
 export class RemoteCallSession {
@@ -29,14 +30,15 @@ export class RemoteCallSession {
 
     setState(status) {
         this.status = status;
+        console.log('set status', status);
         if (this.sessionCallback) {
             this.sessionCallback.didChangeState(status);
         }
     }
 
     setAudioOnly(audioOnly) {
-        this.audioOnly= audioOnly;
-        if(this.audioOnly){
+        this.audioOnly = audioOnly;
+        if (this.audioOnly) {
             this.sessionCallback.didChangeMode(audioOnly);
         }
     }
@@ -86,6 +88,21 @@ export class RemoteCallSession {
             events.forEach(e => ipcRenderer.removeAllListeners(e));
         } else {
             this.events.stop();
+        }
+    }
+
+    initCallUI(moCall, audioOnly, targetUserInfo) {
+        this.moCall = moCall;
+        this.setAudioOnly(audioOnly);
+        this.targetUserInfo = targetUserInfo;
+        this.targetUserDisplayName = 'TODO';
+
+        if (moCall) {
+            this.setState(CallState.STATUS_OUTGOING);
+            this.startPreview(false, audioOnly);
+        } else {
+            this.setState(CallState.STATUS_INCOMING);
+            this.playIncomingRing();
         }
     }
 
@@ -255,7 +272,8 @@ export class RemoteCallSession {
         // this.localVideo.srcObject = null;
         // this.remoteVideo.srcObject = null;
 
-        this.voipEventEmit('downToVoice');
+        // this.voipEventEmit('downToVoice');
+        avenginekit.downToVoice();
     }
 
     getSelectedSdpSemantics() {
@@ -271,7 +289,7 @@ export class RemoteCallSession {
 
         this.setState(CallState.STATUS_CONNECTING);
         console.log('on call button call');
-        this.voipEventEmit('onCallButton');
+        avenginekit.answerCall();
     }
 
     onCreateSessionDescriptionError(error) {
@@ -330,7 +348,8 @@ export class RemoteCallSession {
         }
 
         console.log(desc);
-        this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
+        // this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
+        avenginekit.onCreateAnswerOffer(desc);
     }
 
     onSetLocalSuccess(pc) {
@@ -366,6 +385,17 @@ export class RemoteCallSession {
         }
     }
 
+    async setRemoteIceCandidate(message) {
+        console.log("xxxxxxxxxx", message);
+        if (!this.pcSetuped) {
+            console.log('pc not setup yet pool it');
+            this.pooledSignalingMsg.push(message);
+        } else {
+            console.log('handle the candidiated');
+            this.onReceiveRemoteIceCandidate(message);
+        }
+    }
+
     async onCreateAnswerSuccess(desc) {
         console.log(`Answer from pc:\n${desc.sdp}`);
         console.log('pc setLocalDescription start');
@@ -378,7 +408,8 @@ export class RemoteCallSession {
             this.onSetSessionDescriptionError(e);
         }
         console.log(desc);
-        this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
+        // this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
+        avenginekit.onCreateAnswerOffer(desc);
     }
 
     async onReceiveRemoteIceCandidate(message) {
@@ -397,13 +428,14 @@ export class RemoteCallSession {
                 id: event.candidate.sdpMid,
                 candidate: event.candidate.candidate
             };
-            this.voipEventEmit('onIceCandidate', JSON.stringify(candidate));
+            //this.voipEventEmit('onIceCandidate', JSON.stringify(candidate));
+            avenginekit.onIceCandidate(candidate);
             this.onAddIceCandidateSuccess(pc);
         } catch (e) {
             this.onAddIceCandidateError(pc, e);
         }
         console.log(`ICE candidate:\n${event.candidate ? event.candidate.candidate : '(null)'}`);
-    }
+    };
 
     onAddIceCandidateSuccess(pc) {
         console.log(`send Ice Candidate success`);
@@ -422,15 +454,15 @@ export class RemoteCallSession {
             if (pc.iceConnectionState === 'connected') {
                 this.setState(CallState.STATUS_CONNECTED);
                 this.startTime = window.performance.now();
-                this.callTimer = window.setInterval(this.onUpdateTime, 1000);
             }
-            this.voipEventEmit('onIceStateChange', pc.iceConnectionState);
+            // this.voipEventEmit('onIceStateChange', pc.iceConnectionState);
+            avenginekit.onIceStateChange(pc.iceConnectionState);
         }
-    }
+    };
 
     hangup() {
         console.log('Ending call');
-        this.voipEventEmit('onHangupButton');
+        avenginekit.hangup();
         this.endCall();
     }
 
@@ -448,16 +480,14 @@ export class RemoteCallSession {
     downToVoice() {
         console.log('down to voice');
         this.stopIncomingRing();
-        this.voipEventEmit('downToVoice');
+        // this.voipEventEmit('downToVoice');
+        avenginekit.downToVoice();
     }
 
     endCall() {
         console.log('Ending media');
         this.setState(CallState.STATUS_IDLE);
         this.stopIncomingRing();//可能没有接听就挂断了
-        if (this.callTimer) {
-            clearInterval(this.callTimer);
-        }
 
         if (this.localStream) {
             if (typeof this.localStream.getTracks === 'undefined') {

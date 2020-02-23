@@ -4,10 +4,10 @@ import MessageStatus from '../messages/messageStatus';
 import MessageContent from '../messages/messageContent';
 import atob from 'atob';
 import btoa from 'btoa';
-import avEngineKit from '../av/avenginekit';
 
 import impl from '../proto/proto.min';
 import Config from "../../config";
+import avenginekit from "../av/avenginekitproxy";
 
 // 其实就是imclient，后续可能需要改下名字
 export class WfcManager {
@@ -454,7 +454,7 @@ export class WfcManager {
 
     init(args = []) {
         impl.init(args);
-        avEngineKit.setup(self);
+        avenginekit.setup(self);
     }
 
     utf8_to_b64(str) {

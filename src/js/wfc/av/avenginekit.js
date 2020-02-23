@@ -12,6 +12,9 @@ import AVEngineEvent from './avEngineEvent';
 import AVCallEndReason from './avCallEndReason';
 import wfc from '../client/wfc';
 import controlAdapter from './controlAdapter';
+import remoteCallSession from './remote/remoteCallSession'
+import avenginekitProxy from './avenginekitproxy'
+import NullUserInfo from "../model/nullUserInfo";
 
 class WfcAVSession {
     callId;
@@ -20,7 +23,6 @@ class WfcAVSession {
     startTime;
     connectedTime;
     endTime;
-    conversation;
     audioOnly;
     endReason;
     speaker;
@@ -86,7 +88,7 @@ class WfcAVSession {
         }
 
         this.endReason = reason;
-        this.setState(AVEngineState.kWFAVEngineStateIdle)
+        this.setState(AVEngineState.kWFAVEngineStateIdle);
 
         if (reason !== AVCallEndReason.kWFAVCallEndReasonAcceptByOtherClient) {
             let byeMessage = new CallByeMessageContent();
@@ -110,18 +112,17 @@ class WfcAVSession {
 }
 
 export class WfcAVEngineKit {
-    event;
     currentSession;
 
-    setup(wfc) {
-        this.event = wfc.eventEmitter;
-        this.event.on(EventType.ReceiveMessage, this.onReceiveMessage);
+    setup() {
+        avenginekitProxy.listenVoipEvent('message', this.onReceiveMessage)
+        avenginekitProxy.listenVoipEvent('startCall', this.startCall)
     }
 
-    onReceiveMessage = (msg) => {
+    onReceiveMessage = (event, msg) => {
         console.log('reveive message ', msg);
         var now = (new Date()).valueOf();
-        if (msg.conversation.type  === ConversationType.Single && msg.timestamp - now < 90 * 1000) { // 需要处理deltatime
+        if (msg.conversation.type === ConversationType.Single && msg.timestamp - now < 90 * 1000) { // 需要处理deltatime
             var content = msg.messageContent;
             if (msg.direction === 1 || msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT) {
                 if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_SIGNAL) {
@@ -138,11 +139,12 @@ export class WfcAVEngineKit {
                         }
                     }
                 } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
-                    if (content.targetIds[0] !== wfc.getUserId()) {
-                        return;
-                    }
+                    console.log('xxxxxxxxoo', wfc.getUserId());
+                    // if (content.targetIds[0] !== wfc.getUserId()) {
+                    //     return;
+                    // }
                     if (self.currentSession && self.currentSession.state !== AVEngineState.kWFAVEngineStateIdle) {
-                        self.rejectOtherCall(content.callId, msg.fromUser);
+                        self.rejectOtherCall(content.callId, msg.from);
                     } else {
                         self.currentSession = new WfcAVSession(self);
                         self.currentSession.avEngineKit = self;
@@ -154,8 +156,10 @@ export class WfcAVEngineKit {
                         self.currentSession.inviteMsgUid = msg.messageUid;
                         self.currentSession.setState(AVEngineState.kWFAVEngineStateIncomming);
                         self.avEngineKit = self;
-                        self.event.emit(AVEngineEvent.kDidReceiveCall, self.currentSession);
-                        self.showCallUI(false, content.audioOnly);
+                        // let userInfo = wfc.getUserInfo(msg.from);
+                        // TODO
+                        let userInfo = new NullUserInfo(msg.from);
+                        remoteCallSession.initCallUI(false, content.audioOnly, userInfo);
                     }
                 } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT
                     || msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT_T) {
@@ -202,24 +206,26 @@ export class WfcAVEngineKit {
                 }
             }
         }
-    }
+    };
 
     startMedia(isInitiator) {
         console.log('start media');
         self.currentSession.setState(AVEngineState.kWFAVEngineStateConnecting);
-        controlAdapter.startMedia(isInitiator, self.currentSession.audioOnly);
+        remoteCallSession.startMedia(isInitiator, self.currentSession.audioOnly);
         // this.callWin.webContents.send('startMedia', { 'isInitiator': isInitiator, 'audioOnly': self.currentSession.audioOnly });
     }
 
     nodifyDowngradeCall() {
-        controlAdapter.downgrade2Voice();
+        remoteCallSession.downgrade2Voice();
         // this.callWin.webContents.send('downgrade2Voice');
     }
+
     endMedia() {
-        controlAdapter.endMedia();
+        remoteCallSession.endCall();
         // this.callWin.webContents.send('endMedia');
         self.currentSession = null;
-        controlAdapter.destory();
+        // controlAdapter.destory();
+
     }
 
     onCallWindowClose() {
@@ -265,25 +271,12 @@ export class WfcAVEngineKit {
             self.currentSession.downToVoice();
         }
     }
-    showCallUI(isMoCall, audioOnly) {
-          controlAdapter.setOnCallWindowsClose(self.onCallWindowClose);
-        controlAdapter.setOnReceiveOffer(self.onReceiveOffer);
-        controlAdapter.setOnCreateAnswerOffer(self.onCreateAnswerOffer);
-        controlAdapter.setOnIceCandidate(self.onIceCandidate);
-        controlAdapter.setOnIceStateChange(self.onIceStateChange);
-
-        controlAdapter.setOnCallButton(self.answerCall);
-        controlAdapter.setOnHangupButton(self.hangup);
-        controlAdapter.setDownToVoice(self.downToVoice);
-
-
-        let user = wfc.getUserInfo(self.currentSession.conversation.target);
-        controlAdapter.showCallUI(isMoCall, audioOnly, user);
-    }
 
     // TODO conversation -> targetId
-    startCall(conversation, audioOnly) {
-        if(this.currentSession){
+    startCall = (event, msg) => {
+        let conversation = msg.conversation;
+        let audioOnly = msg.audioOnly;
+        if (this.currentSession) {
             return;
         }
         let callId = conversation.target + Math.random();
@@ -298,7 +291,9 @@ export class WfcAVEngineKit {
         this.currentSession.setState(AVEngineState.kWFAVEngineStateOutgoing);
         this.avEngineKit = this;
 
-        this.showCallUI(true, audioOnly);
+        // let userInfo = wfc.getUserInfo(conversation.target);
+        let userInfo = new NullUserInfo(conversation.target);
+        remoteCallSession.initCallUI(true, audioOnly, userInfo);
 
         let startMessage = new CallStartMessageContent();
         startMessage.audioOnly = audioOnly;
@@ -310,15 +305,12 @@ export class WfcAVEngineKit {
 
     sendSignalMessage(msg, targetId, keyMsg) {
         console.log('send signal message', msg);
-        wfc.sendConversationMessage(self.currentSession.conversation, msg, [], function (messageId, timestamp) {
-
-        }, function (uploaded, total) {
-
-        }, function (messageUid, timestamp) {
-
-        }, function (errorCode) {
-
-        });
+        let message = {
+            "conversation": self.currentSession.conversation,
+            "content": msg.encode(),
+            "toUsers": []
+        };
+        avenginekitProxy.emitToMain("voip-message", message);
     }
 
     sendSignalingMessage(message, isKeyMsg) {
@@ -343,15 +335,17 @@ export class WfcAVEngineKit {
         console.log("process remote signal:" + signal);
         if (signal.type === 'offer') {
             console.log("set remote offer0");
-            controlAdapter.setRemoteOffer(signal);
+            // controlAdapter.setRemoteOffer(signal);
+            remoteCallSession.onReceiveRemoteCreateOffer(signal);
             // this.callWin.webContents.send('setRemoteOffer', JSON.stringify(signal));
         } else if (signal.type === 'answer') {
-            controlAdapter.setRemoteAnswer(signal);
+            // controlAdapter.setRemoteAnswer(signal);
+            remoteCallSession.onReceiveRemoteAnswerOffer(signal);
             // this.callWin.webContents.send('setRemoteAnswer', JSON.stringify(signal));
         } else if (signal.type === 'candidate') {
             signal.sdpMLineIndex = signal.label;
             signal.sdpMid = signal.id;
-            controlAdapter.setRemoteIceCandidate(signal);
+            remoteCallSession.setRemoteIceCandidate(signal);
             // this.callWin.webContents.send('setRemoteIceCandidate', JSON.stringify(signal));
         } else if (signal.type === 'remove-candidates') {
 

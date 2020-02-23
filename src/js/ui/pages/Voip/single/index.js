@@ -7,6 +7,7 @@ import {observable, action} from 'mobx';
 import session from '../../../../wfc/av/remote/remoteCallSession'
 import CallState from "../../../../wfc/av/remote/callState";
 import RemoteCallSessionCallback from "../../../../wfc/av/remote/remoteCallSessionCallback";
+import avenginekit from "../../../../wfc/av/avenginekit";
 
 @observer
 export default class Voip extends Component {
@@ -15,6 +16,8 @@ export default class Voip extends Component {
     @observable audioOnly = false;
     @observable duration = '0:0';
     @observable muted = false;
+
+    timer;
 
     targetUserInfo;
     targetUserDisplayName;
@@ -37,6 +40,11 @@ export default class Voip extends Component {
             this.status = state;
             if (state === CallState.STATUS_CONNECTED) {
                 this.onUpdateTime();
+            } else if (state === CallState.STATUS_IDLE) {
+                console.log('xxx clear time');
+                if (this.timer) {
+                    clearInterval(this.timer);
+                }
             }
         };
 
@@ -62,10 +70,14 @@ export default class Voip extends Component {
         let elapsedTime = window.performance.now() - session.startTime;
         elapsedTime /= 1000;
         this.duration = parseInt(elapsedTime / 60) + ':' + parseInt(elapsedTime % 60);
+        if (!this.timer) {
+            this.timer = setInterval(this.onUpdateTime, 1000);
+        }
         console.log(this.duration);
     };
 
     componentWillMount() {
+        avenginekit.setup();
         session.setup();
         this.setupSessionCallback();
     }
