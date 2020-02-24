@@ -49,9 +49,9 @@ export class AvEngineKitProxy {
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_MODIFY
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT_T
             ) {
+                console.log("receive voip message", msg);
                 if (!this.callWin && content.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
-                    let userInfo = wfc.getUserInfo(msg.from);
-                    this.showCallUI(false, content.audioOnly, userInfo);
+                    this.showCallUI();
                 }
 
                 let participantUserInfos = [];
@@ -94,6 +94,7 @@ export class AvEngineKitProxy {
     }
 
     emitToMain(event, args) {
+        console.log('emit to main', event, args);
         if (isElectron()) {
             // renderer to main
             console.log('emit to main', event, args);
@@ -113,12 +114,18 @@ export class AvEngineKitProxy {
     };
 
     startCall(conversation, audioOnly) {
-        let userInfo = wfc.getUserInfo(conversation.target);
-        this.showCallUI(true, audioOnly, userInfo);
-        this.emitToVoip('startCall', {conversation: conversation, audioOnly: audioOnly});
+        let selfUserInfo = wfc.getUserInfo(wfc.getUserId());
+        let participantUserInfos = wfc.getUserInfos([conversation.target]);
+        this.showCallUI();
+        this.emitToVoip('startCall', {
+            conversation: conversation,
+            audioOnly: audioOnly,
+            selfUserInfo: selfUserInfo,
+            participantUserInfos: participantUserInfos
+        });
     }
 
-    showCallUI(isMoCall, audioOnly, targetUserInfo) {
+    showCallUI() {
         this.queueEvents = [];
         if (isElectron()) {
             let win = new BrowserWindow(
