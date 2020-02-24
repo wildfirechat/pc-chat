@@ -53,6 +53,15 @@ export class AvEngineKitProxy {
                     let userInfo = wfc.getUserInfo(msg.from);
                     this.showCallUI(false, content.audioOnly, userInfo);
                 }
+
+                let participantUserInfos = [];
+                let selfUserInfo = wfc.getUserInfo(wfc.getUserId());
+                if (content.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
+                    participantUserInfos = wfc.getUserInfos(content.targetIds);
+                }
+
+                msg.participantUserInfos = participantUserInfos;
+                msg.selfUserInfo = selfUserInfo;
                 this.emitToVoip("message", msg);
             }
         }

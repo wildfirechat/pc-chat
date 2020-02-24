@@ -1,17 +1,13 @@
-import EventType from '../client/wfcEvent';
 import MessageContentType from '../messages/messageContentType';
 import CallSignalMessageContent from './messages/callSignalMessageContent';
 import CallByeMessageContent from './messages/callByeMessageContent';
 import CallAnswerMessageContent from './messages/callAnswerMessageContent';
-import CallAnswerTMessageContent from './messages/callAnswerTMessageContent';
 import CallStartMessageContent from './messages/callStartMessageContent';
 import CallModifyMessageContent from './messages/callModifyMessageContent';
 import ConversationType from '../model/conversationType';
 import AVEngineState from './avEngineState';
-import AVEngineEvent from './avEngineEvent';
 import AVCallEndReason from './avCallEndReason';
 import wfc from '../client/wfc';
-import controlAdapter from './controlAdapter';
 import remoteCallSession from './remote/remoteCallSession'
 import avenginekitProxy from './avenginekitproxy'
 import NullUserInfo from "../model/nullUserInfo";
@@ -113,6 +109,8 @@ class WfcAVSession {
 
 export class WfcAVEngineKit {
     currentSession;
+    participantUserInfos;
+    selfUserInfo;
 
     setup() {
         avenginekitProxy.listenVoipEvent('message', this.onReceiveMessage)
@@ -139,10 +137,8 @@ export class WfcAVEngineKit {
                         }
                     }
                 } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
-                    console.log('xxxxxxxxoo', wfc.getUserId());
-                    // if (content.targetIds[0] !== wfc.getUserId()) {
-                    //     return;
-                    // }
+                    self.participantUserInfos = msg.participantUserInfos;
+                    self.selfUserInfo = msg.selfUserInfo;
                     if (self.currentSession && self.currentSession.state !== AVEngineState.kWFAVEngineStateIdle) {
                         self.rejectOtherCall(content.callId, msg.from);
                     } else {
@@ -156,10 +152,7 @@ export class WfcAVEngineKit {
                         self.currentSession.inviteMsgUid = msg.messageUid;
                         self.currentSession.setState(AVEngineState.kWFAVEngineStateIncomming);
                         self.avEngineKit = self;
-                        // let userInfo = wfc.getUserInfo(msg.from);
-                        // TODO
-                        let userInfo = new NullUserInfo(msg.from);
-                        remoteCallSession.initCallUI(false, content.audioOnly, userInfo);
+                        remoteCallSession.initCallUI(false, content.audioOnly, this.participantUserInfos[0]);
                     }
                 } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT
                     || msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT_T) {
@@ -176,7 +169,7 @@ export class WfcAVEngineKit {
                         } else if (self.currentSession.state === AVEngineState.kWFAVEngineStateConnecting || self.currentSession.state === AVEngineState.kWFAVEngineStateConnected) {
 
                         } else if (self.currentSession.state !== AVEngineState.kWFAVEngineStateOutgoing) {
-                            self.rejectOtherCall(content.callId, msg.fromUser);
+                            self.rejectOtherCall(content.callId, msg.from);
                         } else if (self.currentSession.state === AVEngineState.kWFAVEngineStateOutgoing) {
                             self.currentSession.inviteMsgUid = msg.messageUid;
                             self.currentSession.audioOnly = content.audioOnly;
