@@ -1,4 +1,9 @@
-export default class RemoteCallSessionCallback {
+export default class CallSessionCallback {
+
+    onInitial(session) {
+
+    }
+
     didCallEndWithReason(reason) {
 
     }
