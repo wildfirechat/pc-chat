@@ -50,6 +50,16 @@ export default class Members extends Component {
         return (
             <div className={classes.container}>
                 <header>
+                <div className={classes.footer}>
+                    <input
+                        autoFocus={true}
+                        id="messageInput"
+                        maxLength={30}
+                        onInput={e => this.props.search(e.target.value)}
+                        placeholder="输入内容开始搜索 ..."
+                        ref="input"
+                        type="text" />
+                </div>
                     <span dangerouslySetInnerHTML={{ __html: `群组 '${targetName}' 拥有 ${list.length} 位成员` }} />
 
                     <span>
@@ -106,16 +116,7 @@ export default class Members extends Component {
                     }
                 </ul>
 
-                <div className={classes.footer}>
-                    <input
-                        autoFocus={true}
-                        id="messageInput"
-                        maxLength={30}
-                        onInput={e => this.props.search(e.target.value)}
-                        placeholder="输入内容开始搜索 ..."
-                        ref="input"
-                        type="text" />
-                </div>
+                
             </div>
         );
     }

@@ -6,6 +6,7 @@
     height: 180px;
     align-items: center;
     justify-content: space-between;
+    background: #fff;
 
     & > textarea {
         height: 100px;

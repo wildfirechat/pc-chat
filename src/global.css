@@ -1082,4 +1082,15 @@ label {
 }
 
 
-
+/* 
+    图片全屏展示时，拖动事件影响到图片切换，需要对比例进行调整
+    以下样式是针对react-images插件进行样式调整
+    ***start***
+*/
+.fullscreen .react-images__positioner,.react-images__blanket{
+    width: 80vw;
+    height: 80vh;
+    margin-top: 10vh;
+    margin-left: 10vw;
+}
+/* react-images 插件样式修改 *** END****  */

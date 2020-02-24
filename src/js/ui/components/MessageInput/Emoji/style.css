@@ -1,7 +1,7 @@
 
 .container {
     position: absolute;
-    bottom: 60px;
+    bottom: 40px;
     right: 0;
     padding: 8px 12px;
     background: #fff;
@@ -30,8 +30,8 @@
 
 @media (width <= 800px) {
     .container {
-        bottom: 46px;
-        padding: 6px 10px;
+        /* bottom: 46px; */
+        /* padding: 6px 10px; */
 
         & a {
             margin: 3px;
