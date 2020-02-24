@@ -1,14 +1,14 @@
 
 .container {
     background: #fff;
-    height: 100vh;
-    width: 100vw;
+    /* height: 100vh;
+    width: 100vw; */
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     font-family: 'Roboto';
-    font-size: 36px;
+    font-size: 24px;
     color: #000;
     font-weight: 100;
     letter-spacing: 2px;
@@ -22,7 +22,7 @@
         border: none;
         background: none;
         outline: 0;
-        font-size: 32px;
+        font-size: 22px;
         font-weight: 100;
     }
 
