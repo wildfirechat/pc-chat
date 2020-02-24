@@ -78,7 +78,6 @@ export default class Voip extends Component {
 
     componentWillMount() {
         avenginekit.setup();
-        session.setup();
         this.setupSessionCallback();
     }
 
