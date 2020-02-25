@@ -2,8 +2,8 @@ export default class PeerConnectionClient {
     isInitiator;
     userId;
     status;
-    joinTime;
-    acceptTime;
+    joinTime = 0;
+    acceptTime = 0;
     videoMuted;
 
     peerConnection;

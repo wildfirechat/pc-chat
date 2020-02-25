@@ -6,6 +6,8 @@ import AVCallEndReason from "./avCallEndReason";
 import CallByeMessageContent from "./messages/callByeMessageContent";
 import PeerConnectionClient from "./PeerConnectionClient";
 
+// 发起方的acceptTime 置为100
+//  接听放的acceptTime置为 startMessage.timestamp + 1
 // 运行在新的voip window
 export default class CallSession {
     static iceServers = [{
@@ -15,6 +17,8 @@ export default class CallSession {
     }];
     callId;
     clientId;
+    joinTime = 0;
+    acceptTime = 0;
     connectedTime;
     endTime;
     endReason;
@@ -42,6 +46,27 @@ export default class CallSession {
 
     getClient(userId) {
         return this.peerConnectionClientMap.get(userId);
+    }
+
+    setUserAcceptTime(userId, timestamp) {
+        let client = this.getClient(userId);
+        client.acceptTime = timestamp;
+        this.tryStartMedia()
+    }
+
+    tryStartMedia() {
+        if (this.acceptTimestamp > 0) {
+            this.peerConnectionClientMap.forEach((userId, client) => {
+                if (client.acceptTime > 0 && (client.status === CallState.STATUS_INCOMING || client.status === CallState.STATUS_OUTGOING)) {
+                    if (client.acceptTime < this.acceptTime) {
+                        this.startMedia(userId, true);
+                    } else {
+                        this.startMedia(userId, false);
+                    }
+
+                }
+            }, this);
+        }
     }
 
     getPeerConnection(userId) {
@@ -124,8 +149,14 @@ export default class CallSession {
         }
         participantUserInfos.forEach(u => {
             let client = new PeerConnectionClient(u.uid, this);
+            if (u.uid === this.selfUserInfo.uid) {
+                client.status = CallState.STATUS_OUTGOING;
+            } else {
+                client.status = CallState.STATUS_INCOMING;
+            }
             this.peerConnectionClientMap.set(u.uid, client);
         }, this);
+
     }
 
 
@@ -167,6 +198,8 @@ export default class CallSession {
         console.log('start media', isInitiator);
         this.setState(CallState.STATUS_CONNECTING);
         this.startTime = window.performance.now();
+        let client = this.getClient(userId);
+        client.status = CallState.STATUS_CONNECTING;
         if (!this.localStream) {
             this.startPreview(this.audioOnly).then(() => {
                 console.log('start pc 0');
@@ -411,10 +444,7 @@ export default class CallSession {
             if (pc.iceConnectionState === 'connected') {
                 this.setState(CallState.STATUS_CONNECTED);
                 client.status = CallState.STATUS_CONNECTED;
-                // TODO participant status change
             }
-            // this.voipEventEmit('onIceStateChange', pc.iceConnectionState);
-            // avenginekit.onIceStateChange(pc.iceConnectionState);
             if (pc.iceConnectionState === 'disconnected') {
                 this.endCall(AVCallEndReason.kWFAVCallEndReasonMediaError);
             } else if (pc.iceConnectionState === 'connected') {

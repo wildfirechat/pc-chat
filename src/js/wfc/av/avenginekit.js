@@ -15,10 +15,24 @@ export class WfcAVEngineKit {
     currentSession;
     sessionCallback;
 
+    sendMessageCallbackMap;
+    sendMessageId = 0;
+
     setup() {
-        avenginekitProxy.listenVoipEvent('message', this.onReceiveMessage)
-        avenginekitProxy.listenVoipEvent('startCall', this.startCall)
+        avenginekitProxy.listenVoipEvent('message', this.onReceiveMessage);
+        avenginekitProxy.listenVoipEvent('sendMessageResult', this.onSendMessage);
+        avenginekitProxy.listenVoipEvent('startCall', this.startCall);
+
+        this.sendMessageCallbackMap = new Map();
     }
+
+    onSendMessage = (event, msg) => {
+        let cb = this.sendMessageCallbackMap.get(msg.sendMessageId);
+        if (cb) {
+            cb(msg.error, msg.messageUid, msg.timestamp);
+        }
+        this.sendMessageCallbackMap.delete(msg.sendMessageId);
+    };
 
     onReceiveMessage = (event, msg) => {
         console.log('receive message ', msg);
@@ -104,19 +118,19 @@ export class WfcAVEngineKit {
         }
     };
 
-    // todo only send to userId
+// todo only send to userId
     onCreateAnswerOffer(userId, offer) {
         console.log("send engine offer");
         self.sendSignalingMessage(offer, true);
     }
 
-    // todo only send to userId
+// todo only send to userId
     onIceCandidate(userId, candidate) {
         console.log("send engine candidate", candidate);
         self.sendSignalingMessage(candidate, true);
     }
 
-    // TODO conversation -> targetId
+// TODO conversation -> targetId
     startCall = (event, msg) => {
         let conversation = msg.conversation;
         let audioOnly = msg.audioOnly;
@@ -146,15 +160,19 @@ export class WfcAVEngineKit {
         this.sendSignalMessage(startMessage, conversation.target, true);
     };
 
-    sendSignalMessage(msg, targetId, keyMsg) {
+    sendSignalMessage(msg, targetId, keyMsg, callback) {
         console.log('send signal message', msg);
         let message = {
             "conversation": self.currentSession.conversation,
             "content": msg.encode(),
             "toUsers": []
         };
+        this.sendMessageId++;
+        message.sendMessageId = this.sendMessageId;
         avenginekitProxy.emitToMain("voip-message", message);
+        this.sendMessageCallbackMap.set(this.sendMessageId, callback);
     }
+
 
     sendSignalingMessage(message, isKeyMsg) {
         let signalingMessage = new CallSignalMessageContent();
@@ -207,7 +225,9 @@ export class WfcAVEngineKit {
         let answerMsg = new CallAnswerMessageContent();
         answerMsg.audioOnly = self.currentSession.audioOnly;
         answerMsg.callId = self.currentSession.callId;
-        this.sendSignalMessage(answerMsg, this.currentSession.conversation.target, true);
+        this.sendSignalMessage(answerMsg, this.currentSession.conversation.target, true, (error, messageUid, timestamp) => {
+            console.log('send message result', error, messageUid, timestamp);
+        });
 
     }
 

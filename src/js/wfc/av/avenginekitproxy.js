@@ -24,14 +24,14 @@ export class AvEngineKitProxy {
             let content = new contentClazz();
             content.decode(msg.content);
             console.log('to send voip message', content);
-            wfc.sendConversationMessage(msg.conversation, content, msg.toUsers, function (messageId, timestamp) {
+            wfc.sendConversationMessage(msg.conversation, content, msg.toUsers, (messageId, timestamp) => {
 
-            }, function (uploaded, total) {
+            }, (uploaded, total) => {
 
-            }, function (messageUid, timestamp) {
-
-            }, function (errorCode) {
-
+            }, (messageUid, timestamp) => {
+                this.emitToVoip('sendMessageResult', {error: 0, sendMessageId: msg.sendMessageId, timestamp: timestamp})
+            }, (errorCode) => {
+                this.emitToVoip('sendMessageResult', {error: errorCode, sendMessageId: msg.sendMessageId})
             });
         });
 
