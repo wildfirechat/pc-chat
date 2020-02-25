@@ -1,9 +1,18 @@
-import {ipcRenderer, isElectron, currentWindow, PostMessageEventEmitter} from '../../../platform'
-import Config from '../../../config.js';
+import {ipcRenderer, isElectron, currentWindow, PostMessageEventEmitter} from '../../platform'
+import Config from '../../config.js';
 import CallState from "./callState";
+import avenginekit from './avenginekit'
+import AVCallEndReason from "./avCallEndReason";
+import CallByeMessageContent from "./messages/callByeMessageContent";
 
 // 运行在新的voip window
-export class RemoteCallSession {
+export default class CallSession {
+    callId;
+    clientId;
+    connectedTime;
+    endTime;
+    endReason;
+    conversation;
 
     status = 0;
     audioOnly = false;
@@ -23,20 +32,33 @@ export class RemoteCallSession {
     pc;
     callTimer;
 
-    events;
-
     sessionCallback;
+
+    answerCall(audioOnly) {
+        if (this.status !== CallState.STATUS_INCOMING) {
+            return;
+        }
+        // 不能语音电话来了，视频接听
+        if (this.audioOnly && !audioOnly) {
+            audioOnly = true;
+        }
+
+        this.audioOnly = audioOnly;
+        this.startMedia(true, audioOnly);
+        avenginekit.answerCurrentCall();
+    }
 
     setState(status) {
         this.status = status;
+        console.log('set status', status);
         if (this.sessionCallback) {
             this.sessionCallback.didChangeState(status);
         }
     }
 
     setAudioOnly(audioOnly) {
-        this.audioOnly= audioOnly;
-        if(this.audioOnly){
+        this.audioOnly = audioOnly;
+        if (this.audioOnly) {
             this.sessionCallback.didChangeMode(audioOnly);
         }
     }
@@ -62,90 +84,21 @@ export class RemoteCallSession {
         //再接听/语音接听/结束媒体时停止播放来电铃声，可能有多次，需要避免出问题
     }
 
-    voipEventEmit(event, args) {
-        if (isElectron()) {
-            // renderer to main
-            ipcRenderer.send(event, args);
+    initCallUI(moCall, audioOnly, targetUserInfo) {
+        this.moCall = moCall;
+        this.setAudioOnly(audioOnly);
+        this.targetUserInfo = targetUserInfo;
+        this.targetUserDisplayName = targetUserInfo.displayName;
+
+        this.sessionCallback.onInitial(this);
+
+        if (moCall) {
+            this.setState(CallState.STATUS_OUTGOING);
+            this.startPreview(false, audioOnly);
         } else {
-            this.events.emit(event, args);
+            this.setState(CallState.STATUS_INCOMING);
+            this.playIncomingRing();
         }
-    }
-
-    voipEventOn = (event, listener) => {
-        if (isElectron()) {
-            // listen for event from renderer
-            ipcRenderer.on(event, listener);
-        } else {
-            this.events.on(event, listener);
-        }
-    }
-
-    voipEventRemoveAllListeners(events = []) {
-        if (isElectron()) {
-            // renderer
-            events.forEach(e => ipcRenderer.removeAllListeners(e));
-        } else {
-            this.events.stop();
-        }
-    }
-
-    setup() {
-        if (!isElectron()) {
-            this.events = new PostMessageEventEmitter(window.opener, window.location.origin);
-        }
-
-        this.voipEventOn('initCallUI', (event, message) => { // 监听父页面定义的端口
-            this.moCall = message.moCall;
-            this.setAudioOnly(message.audioOnly);
-            this.targetUserInfo = message.targetUserInfo;
-            this.targetUserDisplayName = message.targetUserDisplayName;
-
-            if (message.moCall) {
-                this.setState(CallState.STATUS_OUTGOING);
-                this.startPreview(false, message.voiceOnly);
-            } else {
-                this.setState(CallState.STATUS_INCOMING);
-                this.playIncomingRing();
-            }
-        });
-
-        this.voipEventOn('startMedia', (event, message) => { // 监听父页面定义的端口
-            this.startMedia(message.isInitiator, message.audioOnly);
-        });
-
-        this.voipEventOn('setRemoteOffer', (event, message) => {
-            this.onReceiveRemoteCreateOffer(JSON.parse(message));
-        });
-
-        this.voipEventOn('setRemoteAnswer', (event, message) => {
-            this.onReceiveRemoteAnswerOffer(JSON.parse(message));
-        });
-
-        this.voipEventOn('setRemoteIceCandidate', (event, message) => {
-            console.log('setRemoteIceCandidate');
-            console.log(message);
-            if (!this.pcSetuped) {
-                console.log('pc not setup yet pool it');
-                this.pooledSignalingMsg.push(message);
-            } else {
-                console.log('handle the candidiated');
-                this.onReceiveRemoteIceCandidate(JSON.parse(message));
-            }
-        });
-
-        this.voipEventOn('endCall', () => { // 监听父页面定义的端口
-            this.endCall();
-        });
-
-        this.voipEventOn('downgrade2Voice', () => {
-            this.downgrade2Voice();
-        });
-
-        this.voipEventOn('ping', () => {
-            console.log('receive ping');
-            this.voipEventEmit('pong');
-        });
-
     }
 
     async startPreview(continueStartMedia, audioOnly) {
@@ -241,22 +194,6 @@ export class RemoteCallSession {
         this.drainOfferMessage();
     }
 
-    downgrade2Voice() {
-        if (this.status !== CallState.STATUS_CONNECTED) {
-            return
-        }
-        this.setAudioOnly(true);
-
-        const localVideoTracks = this.localStream.getVideoTracks();
-        if (localVideoTracks && localVideoTracks.length > 0) {
-            localVideoTracks.forEach(track => track.stop());
-        }
-
-        // this.localVideo.srcObject = null;
-        // this.remoteVideo.srcObject = null;
-
-        this.voipEventEmit('downToVoice');
-    }
 
     getSelectedSdpSemantics() {
         // const sdpSemanticsSelect = document.querySelector('#sdpSemantics');
@@ -269,9 +206,8 @@ export class RemoteCallSession {
         console.log('voip on call button click');
         this.stopIncomingRing();
 
-        this.setState(CallState.STATUS_CONNECTING);
         console.log('on call button call');
-        this.voipEventEmit('onCallButton');
+        this.answerCall(this.audioOnly);
     }
 
     onCreateSessionDescriptionError(error) {
@@ -286,7 +222,7 @@ export class RemoteCallSession {
         this.pooledSignalingMsg.forEach((message) => {
             console.log('popup pooled message');
             console.log(message);
-            this.onReceiveRemoteIceCandidate(JSON.parse(message));
+            this.onReceiveRemoteIceCandidate(message);
         });
     }
 
@@ -330,7 +266,8 @@ export class RemoteCallSession {
         }
 
         console.log(desc);
-        this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
+        // this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
+        avenginekit.onCreateAnswerOffer(desc);
     }
 
     onSetLocalSuccess(pc) {
@@ -343,7 +280,7 @@ export class RemoteCallSession {
 
     onSetSessionDescriptionError(error) {
         console.log(`Failed to set session description: ${error.toString()}`);
-        this.endCall();
+        this.endCall(AVCallEndReason.kWFAVCallEndReasonMediaError);
     }
 
     gotRemoteStream = (e) => {
@@ -366,6 +303,17 @@ export class RemoteCallSession {
         }
     }
 
+    async setRemoteIceCandidate(message) {
+        console.log("xxxxxxxxxx", message);
+        if (!this.pcSetuped) {
+            console.log('pc not setup yet pool it');
+            this.pooledSignalingMsg.push(message);
+        } else {
+            console.log('handle the candidiated');
+            this.onReceiveRemoteIceCandidate(message);
+        }
+    }
+
     async onCreateAnswerSuccess(desc) {
         console.log(`Answer from pc:\n${desc.sdp}`);
         console.log('pc setLocalDescription start');
@@ -378,7 +326,8 @@ export class RemoteCallSession {
             this.onSetSessionDescriptionError(e);
         }
         console.log(desc);
-        this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
+        // this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
+        avenginekit.onCreateAnswerOffer(desc);
     }
 
     async onReceiveRemoteIceCandidate(message) {
@@ -397,13 +346,14 @@ export class RemoteCallSession {
                 id: event.candidate.sdpMid,
                 candidate: event.candidate.candidate
             };
-            this.voipEventEmit('onIceCandidate', JSON.stringify(candidate));
+            //this.voipEventEmit('onIceCandidate', JSON.stringify(candidate));
+            avenginekit.onIceCandidate(candidate);
             this.onAddIceCandidateSuccess(pc);
         } catch (e) {
             this.onAddIceCandidateError(pc, e);
         }
         console.log(`ICE candidate:\n${event.candidate ? event.candidate.candidate : '(null)'}`);
-    }
+    };
 
     onAddIceCandidateSuccess(pc) {
         console.log(`send Ice Candidate success`);
@@ -421,17 +371,22 @@ export class RemoteCallSession {
             console.log('ICE state change event: ', event);
             if (pc.iceConnectionState === 'connected') {
                 this.setState(CallState.STATUS_CONNECTED);
-                this.startTime = window.performance.now();
-                this.callTimer = window.setInterval(this.onUpdateTime, 1000);
             }
-            this.voipEventEmit('onIceStateChange', pc.iceConnectionState);
+            // this.voipEventEmit('onIceStateChange', pc.iceConnectionState);
+            // avenginekit.onIceStateChange(pc.iceConnectionState);
+            if (pc.iceConnectionState === 'disconnected') {
+                this.endCall(AVCallEndReason.kWFAVCallEndReasonMediaError);
+            } else if (pc.iceConnectionState === 'connected') {
+                this.setState(CallState.STATUS_CONNECTED);
+            } else if (pc.iceConnectionState === 'failed') {
+                this.endCall(AVCallEndReason.kWFAVCallEndReasonMediaError);
+            }
         }
-    }
+    };
 
     hangup() {
         console.log('Ending call');
-        this.voipEventEmit('onHangupButton');
-        this.endCall();
+        this.endCall(AVCallEndReason.kWFAVCallEndReasonHangup);
     }
 
     triggerMicrophone() {
@@ -445,19 +400,48 @@ export class RemoteCallSession {
         }
     }
 
+    // 回落到语音
+    downgrade2Voice() {
+        if (this.status !== CallState.STATUS_CONNECTED) {
+            return
+        }
+
+        const localVideoTracks = this.localStream.getVideoTracks();
+        if (localVideoTracks && localVideoTracks.length > 0) {
+            localVideoTracks.forEach(track => track.stop());
+        }
+
+        // this.localVideo.srcObject = null;
+        // this.remoteVideo.srcObject = null;
+
+        // this.voipEventEmit('downToVoice');
+        this.downToVoice();
+    }
+
+    // 语音接听
     downToVoice() {
         console.log('down to voice');
         this.stopIncomingRing();
-        this.voipEventEmit('downToVoice');
+        if (this.status === CallState.STATUS_INCOMING) {
+            this.answerCall(true);
+            return;
+        }
+
+        if (this.status !== CallState.STATUS_CONNECTED) {
+            return;
+        }
+
+        if (this.audioOnly) {
+            return;
+        }
+        this.setAudioOnly(true);
+        avenginekit.downgrade2VoiceCall();
     }
 
-    endCall() {
+    endMedia() {
         console.log('Ending media');
         this.setState(CallState.STATUS_IDLE);
         this.stopIncomingRing();//可能没有接听就挂断了
-        if (this.callTimer) {
-            clearInterval(this.callTimer);
-        }
 
         if (this.localStream) {
             if (typeof this.localStream.getTracks === 'undefined') {
@@ -476,14 +460,6 @@ export class RemoteCallSession {
             this.pc = null;
         }
 
-        // ipcRenderer.removeListener('startPreview');
-        // ipcRenderer.removeListener('startMedia');
-        // ipcRenderer.removeListener('setRemoteOffer');
-        // ipcRenderer.removeListener('setRemoteAnswer');
-        // ipcRenderer.removeListener('setRemoteIceCandidate');
-        // ipcRenderer.removeListener('endMedia');
-        this.voipEventRemoveAllListeners(['initCallUI', 'startPreview', 'startMedia', 'setRemoteOffer', 'setRemoteAnswer', 'setRemoteIceCandidate', 'endMedia']);
-
         // 停几秒，显示通话时间，再结束
         // 页面释放有问题没有真正释放掉
         // eslint-disable-next-line no-const-assign
@@ -496,7 +472,24 @@ export class RemoteCallSession {
             }
         }, 2000);
     }
-}
 
-const self = new RemoteCallSession();
-export default self;
+    endCall(reason) {
+        if (this.status === CallState.STATUS_IDLE) {
+            return;
+        }
+
+        this.setState(CallState.STATUS_IDLE);
+
+        if (reason !== AVCallEndReason.kWFAVCallEndReasonAcceptByOtherClient) {
+            let byeMessage = new CallByeMessageContent();
+            byeMessage.callId = this.callId;
+            avenginekit.sendSignalMessage(byeMessage, this.clientId, false);
+        }
+
+        this.clientId = '';
+        this.endTime = (new Date()).valueOf();
+        this.endMedia();
+
+        avenginekit.currentSession = null;
+    }
+}

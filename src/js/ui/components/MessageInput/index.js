@@ -15,7 +15,7 @@ import EventType from '../../../wfc/client/wfcEvent';
 import GroupInfo from '../../../wfc/model/groupInfo';
 import GroupType from '../../../wfc/model/groupType';
 import GroupMemberType from '../../../wfc/model/groupMemberType';
-import avenginekit from '../../../wfc/av/avenginekit';
+import avenginekitProxy from '../../../wfc/av/avenginekitproxy';
 
 export default class MessageInput extends Component {
     static propTypes = {
@@ -176,11 +176,11 @@ export default class MessageInput extends Component {
     }
 
     audioCall(show = !this.state.showEmoji) {
-        avenginekit.startCall(this.props.conversation, true);
+        avenginekitProxy.startCall(this.props.conversation, true);
     }
 
     videoCall(show = !this.state.showEmoji) {
-        avenginekit.startCall(this.props.conversation, false);
+        avenginekitProxy.startCall(this.props.conversation, false);
     }
 
     async screenShot() {
