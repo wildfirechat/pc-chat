@@ -57,7 +57,7 @@ export class AvEngineKitProxy {
                 let participantUserInfos = [];
                 let selfUserInfo = wfc.getUserInfo(wfc.getUserId());
                 if (content.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
-                    participantUserInfos = wfc.getUserInfos(content.targetIds);
+                    participantUserInfos = wfc.getUserInfos([msg.from]);
                 }
 
                 msg.participantUserInfos = participantUserInfos;

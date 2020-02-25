@@ -18,10 +18,6 @@ export default class Voip extends Component {
 
     timer;
 
-    targetUserInfo;
-    targetUserDisplayName;
-
-
     callButton;
     hangupButton;
     toVoiceButton;
@@ -102,9 +98,9 @@ export default class Voip extends Component {
     videoOutgoingDesc() {
         return (
             <div className={classes.videoOutgoing}>
-                <img src={this.session.targetUserInfo.portrait}></img>
+                <img src={this.session.participantUserInfos[0].portrait}></img>
                 <div className={classes.desc}>
-                    <p>{this.session.targetUserDisplayName}</p>
+                    <p>{this.session.participantUserInfos[0].displayName}</p>
                     <p>正在等待对方接受邀请</p>
                 </div>
             </div>
@@ -145,8 +141,8 @@ export default class Voip extends Component {
     videoIncomingDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src={this.session.targetUserInfo.portrait}></img>
-                <p>{this.session.targetUserDisplayName}</p>
+                <img src={this.session.participantUserInfos[0].portrait}></img>
+                <p>{this.session.participantUserInfos[0].displayName}</p>
                 <p>邀请你视频通话</p>
             </div>
         )
@@ -181,8 +177,8 @@ export default class Voip extends Component {
     audioIncomingDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src={this.session.targetUserInfo.portrait}></img>
-                <p>{this.session.targetUserDisplayName}</p>
+                <img src={this.session.participantUserInfos[0].portrait}></img>
+                <p>{this.session.participantUserInfos[0].displayName}</p>
                 <p>邀请你语音聊天</p>
             </div>
         )
@@ -200,8 +196,8 @@ export default class Voip extends Component {
     audioOutgoingDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src={this.session.targetUserInfo.portrait}></img>
-                <p>{this.session.targetUserDisplayName}</p>
+                <img src={this.session.participantUserInfos[0].portrait}></img>
+                <p>{this.session.participantUserInfos[0].displayName}</p>
                 <p>正在等待对方接受邀请</p>
             </div>
         )
@@ -221,8 +217,8 @@ export default class Voip extends Component {
     audioConnectedDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src={this.session.targetUserInfo.portrait}></img>
-                <p>{this.session.targetUserDisplayName}</p>
+                <img src={this.session.participantUserInfos[0].portrait}></img>
+                <p>{this.session.participantUserInfos[0].displayName}</p>
                 <p>{this.duration}</p>
             </div>
         )

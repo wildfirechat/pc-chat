@@ -4,9 +4,15 @@ import CallState from "./callState";
 import avenginekit from './avenginekit'
 import AVCallEndReason from "./avCallEndReason";
 import CallByeMessageContent from "./messages/callByeMessageContent";
+import PeerConnectionClient from "./PeerConnectionClient";
 
 // 运行在新的voip window
 export default class CallSession {
+    static iceServers = [{
+        urls: [Config.ICE_ADDRESS],
+        username: Config.ICE_USERNAME,
+        credential: Config.ICE_PASSWORD
+    }];
     callId;
     clientId;
     connectedTime;
@@ -18,21 +24,30 @@ export default class CallSession {
     audioOnly = false;
     muted = false;
 
-    targetUserInfo;
-    targetUserDisplayName;
+    participantUserInfos;
+    selfUserInfo;
 
     moCall; // true, outgoing; false, incoming
-    isInitiator;
     pcSetuped;
     queuedOffer;
     pooledSignalingMsg = [];
     startTime;
     localStream;
     remoteStream;
-    pc;
     callTimer;
 
     sessionCallback;
+
+    peerConnectionClientMap;
+
+    getClient(userId) {
+        return this.peerConnectionClientMap.get(userId);
+    }
+
+    getPeerConnection(userId) {
+        let client = this.peerConnectionClientMap.get(userId);
+        return client.peerConnection;
+    }
 
     answerCall(audioOnly) {
         if (this.status !== CallState.STATUS_INCOMING) {
@@ -44,7 +59,7 @@ export default class CallSession {
         }
 
         this.audioOnly = audioOnly;
-        this.startMedia(true, audioOnly);
+        this.startMedia(this.participantUserInfos[0].uid, true);
         avenginekit.answerCurrentCall();
     }
 
@@ -68,7 +83,7 @@ export default class CallSession {
             return false;
         }
 
-        this.onReceiveRemoteCreateOffer(this.queuedOffer);
+        this.onReceiveRemoteCreateOffer(this.queuedOffer.userId, this.queuedOffer.desc);
         this.queuedOffer = null;
     }
 
@@ -84,24 +99,37 @@ export default class CallSession {
         //再接听/语音接听/结束媒体时停止播放来电铃声，可能有多次，需要避免出问题
     }
 
-    initCallUI(moCall, audioOnly, targetUserInfo) {
+    initCallUI(moCall, audioOnly, selfUserInfo, participantUserInfos) {
         this.moCall = moCall;
         this.setAudioOnly(audioOnly);
-        this.targetUserInfo = targetUserInfo;
-        this.targetUserDisplayName = targetUserInfo.displayName;
+        this.selfUserInfo = selfUserInfo;
+        this.participantUserInfos = participantUserInfos;
 
         this.sessionCallback.onInitial(this);
 
+        this.initParticipantClientMap(participantUserInfos);
+
         if (moCall) {
             this.setState(CallState.STATUS_OUTGOING);
-            this.startPreview(false, audioOnly);
+            this.startPreview(audioOnly);
         } else {
             this.setState(CallState.STATUS_INCOMING);
             this.playIncomingRing();
         }
     }
 
-    async startPreview(continueStartMedia, audioOnly) {
+    initParticipantClientMap(participantUserInfos) {
+        if (!this.peerConnectionClientMap) {
+            this.peerConnectionClientMap = new Map();
+        }
+        participantUserInfos.forEach(u => {
+            let client = new PeerConnectionClient(u.uid, this);
+            this.peerConnectionClientMap.set(u.uid, client);
+        }, this);
+    }
+
+
+    async startPreview(audioOnly) {
         console.log('start preview');
         try {
             const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: !audioOnly});
@@ -112,8 +140,20 @@ export default class CallSession {
             // this.localVideo.srcObject = stream;
             this.localStream = stream;
 
-            if (continueStartMedia) {
-                this.startMedia(this.isInitiator, audioOnly);
+            const videoTracks = this.localStream.getVideoTracks();
+            if (!audioOnly) {
+                if (videoTracks && videoTracks.length > 0) {
+                    console.log(`Using video device: ${videoTracks[0].label}`);
+                }
+            } else {
+                if (videoTracks && videoTracks.length > 0) {
+                    videoTracks.forEach(track => track.stop());
+                }
+            }
+
+            const audioTracks = this.localStream.getAudioTracks();
+            if (audioTracks.length > 0) {
+                console.log(`Using audio device: ${audioTracks[0].label}`);
             }
         } catch (e) {
             console.log('getUserMedia error', e);
@@ -123,75 +163,62 @@ export default class CallSession {
     }
 
 
-    async startMedia(initiator, audioOnly) {
-        console.log('start media', initiator);
-        this.isInitiator = initiator;
+    async startMedia(userId, isInitiator) {
+        console.log('start media', isInitiator);
         this.setState(CallState.STATUS_CONNECTING);
         this.startTime = window.performance.now();
         if (!this.localStream) {
-            this.startPreview(true, audioOnly);
-            return;
+            this.startPreview(this.audioOnly).then(() => {
+                console.log('start pc 0');
+                this.createPeerConnection(userId, isInitiator);
+            });
         } else {
-            console.log('start pc');
+            console.log('start pc 1');
+            this.createPeerConnection(userId, isInitiator);
         }
+    }
 
-        const videoTracks = this.localStream.getVideoTracks();
-        if (!audioOnly) {
-            if (videoTracks && videoTracks.length > 0) {
-                console.log(`Using video device: ${videoTracks[0].label}`);
-            }
-        } else {
-            if (videoTracks && videoTracks.length > 0) {
-                videoTracks.forEach(track => track.stop());
-            }
-        }
-
-        const audioTracks = this.localStream.getAudioTracks();
-        if (audioTracks.length > 0) {
-            console.log(`Using audio device: ${audioTracks[0].label}`);
-        }
-        var configuration = this.getSelectedSdpSemantics();
-        var iceServer = {
-            urls: [Config.ICE_ADDRESS],
-            username: Config.ICE_USERNAME,
-            credential: Config.ICE_PASSWORD
-        };
-        var iceServers = [];
-        iceServers.push(iceServer);
-        configuration.iceServers = iceServers;
+    async createPeerConnection(userId, isInitiator) {
+        let client = this.getClient(userId);
+        let configuration = this.getSelectedSdpSemantics();
+        configuration.iceServers = CallSession.iceServers;
         console.log('RTCPeerConnection configuration:', configuration);
 
-        this.pc = new RTCPeerConnection(configuration);
+        let pc = new RTCPeerConnection(configuration);
+        client.peerConnection = pc;
+        client.isInitiator = isInitiator;
+
         console.log('Created local peer connection object pc');
-        this.pc.addEventListener('icecandidate', e => this.onIceCandidate(this.pc, e));
+        pc.addEventListener('icecandidate', e => this.onIceCandidate(userId, pc, e));
 
-        this.pc.addEventListener('iceconnectionstatechange', e => this.onIceStateChange(this.pc, e));
-        this.pc.addEventListener('track', this.gotRemoteStream);
+        pc.addEventListener('iceconnectionstatechange', e => this.onIceStateChange(userId, pc, e));
+        pc.addEventListener('track', e => this.gotRemoteStream(userId, e));
 
-        if (!audioOnly) {
-            this.localStream.getTracks().forEach(track => this.pc.addTrack(track, this.localStream));
+        if (!this.audioOnly) {
+            this.localStream.getTracks().forEach(track => pc.addTrack(track, this.localStream), this);
         } else {
-            this.localStream.getAudioTracks().forEach(track => this.pc.addTrack(track, this.localStream));
+            this.localStream.getAudioTracks().forEach(track => pc.addTrack(track, this.localStream), this);
         }
         console.log('Added local stream to pc');
 
-        if (this.isInitiator) {
+        if (isInitiator) {
             try {
                 console.log('pc createOffer start');
-                var offerOptions = {
+                let offerOptions = {
                     offerToReceiveAudio: 1,
-                    offerToReceiveVideo: !audioOnly
+                    offerToReceiveVideo: !this.audioOnly
                 };
-                const offer = await this.pc.createOffer(offerOptions);
-                var mutableOffer = JSON.parse(JSON.stringify(offer));
+                const offer = await pc.createOffer(offerOptions);
+                let mutableOffer = JSON.parse(JSON.stringify(offer));
                 mutableOffer.type = 'offer';
-                await this.onCreateOfferSuccess(offer);
+                await this.onCreateOfferSuccess(userId, offer);
             } catch (e) {
-                this.onCreateSessionDescriptionError(e);
+                this.onCreateSessionDescriptionError(userId, e);
             }
         }
 
         this.drainOfferMessage();
+
     }
 
 
@@ -210,7 +237,7 @@ export default class CallSession {
         this.answerCall(this.audioOnly);
     }
 
-    onCreateSessionDescriptionError(error) {
+    onCreateSessionDescriptionError(userId, error) {
         console.log('Failed to create session description');
         // console.log(`Failed to create session description: ${error.toString()}`);
         this.endCall();
@@ -222,20 +249,25 @@ export default class CallSession {
         this.pooledSignalingMsg.forEach((message) => {
             console.log('popup pooled message');
             console.log(message);
-            this.onReceiveRemoteIceCandidate(message);
+            this.onReceiveRemoteIceCandidate(message.userId, message.message);
         });
     }
 
-    async onReceiveRemoteCreateOffer(desc) {
+    async onReceiveRemoteCreateOffer(userId, desc) {
         console.log('pc setRemoteDescription start');
         if (this.status !== CallState.STATUS_CONNECTING && this.status !== CallState.STATUS_CONNECTED) {
-            this.queueOfferMessage(desc);
+            this.queueOfferMessage({
+                userId,
+                desc
+            });
             return;
         }
+        let pc = this.getPeerConnection(userId);
         try {
-            await this.pc.setRemoteDescription(desc);
-            this.onSetRemoteSuccess(this.pc);
+            await pc.setRemoteDescription(desc);
+            this.onSetRemoteSuccess(pc);
         } catch (e) {
+            console.log('yyyyyy', e);
             this.onSetSessionDescriptionError(e);
         }
 
@@ -244,30 +276,33 @@ export default class CallSession {
         // to pass in the right constraints in order for it to
         // accept the incoming offer of audio and video.
         try {
-            const answer = await this.pc.createAnswer();
-            var mutableAnswer = JSON.parse(JSON.stringify(answer));
+            const answer = await pc.createAnswer();
+            let mutableAnswer = JSON.parse(JSON.stringify(answer));
             mutableAnswer.type = 'answer';
-            await this.onCreateAnswerSuccess(answer);
+            await this.onCreateAnswerSuccess(userId, answer);
         } catch (e) {
+            console.log('xxxxxxyyyy', e);
             this.onCreateSessionDescriptionError(e);
         }
     }
 
-    async onCreateOfferSuccess(desc) {
+    async onCreateOfferSuccess(userId, desc) {
         console.log(`Offer from pc\n${desc.sdp}`);
         console.log('pc setLocalDescription start');
+        let pc = this.getPeerConnection(userId);
         try {
-            await this.pc.setLocalDescription(desc);
-            this.onSetLocalSuccess(this.pc);
+            await pc.setLocalDescription(desc);
+            this.onSetLocalSuccess(pc);
             this.pcSetuped = true;
             this.drainOutSignalingMessage();
         } catch (e) {
+            console.log(e);
             this.onSetSessionDescriptionError();
         }
 
         console.log(desc);
         // this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
-        avenginekit.onCreateAnswerOffer(desc);
+        avenginekit.onCreateAnswerOffer(userId, desc);
     }
 
     onSetLocalSuccess(pc) {
@@ -283,59 +318,62 @@ export default class CallSession {
         this.endCall(AVCallEndReason.kWFAVCallEndReasonMediaError);
     }
 
-    gotRemoteStream = (e) => {
+    gotRemoteStream = (userId, e) => {
         if (this.remoteStream !== e.streams[0]) {
             if (this.sessionCallback) {
-                this.sessionCallback.didReceiveRemoteVideoTrack(this.targetUserInfo.uid, e.streams[0]);
+                this.sessionCallback.didReceiveRemoteVideoTrack(userId, e.streams[0]);
             }
             // this.remoteVideo.srcObject = e.streams[0];
             console.log('pc received remote stream', e.streams[0]);
         }
     };
 
-    async onReceiveRemoteAnswerOffer(desc) {
+    async onReceiveRemoteAnswerOffer(userId, desc) {
         console.log('pc setRemoteDescription start');
         try {
-            await this.pc.setRemoteDescription(desc);
-            this.onSetRemoteSuccess(this.pc);
+            let pc = this.getPeerConnection(userId);
+            await pc.setRemoteDescription(desc);
+            this.onSetRemoteSuccess(pc);
         } catch (e) {
             this.onSetSessionDescriptionError(e);
         }
     }
 
-    async setRemoteIceCandidate(message) {
+    async setRemoteIceCandidate(userId, message) {
         console.log("xxxxxxxxxx", message);
         if (!this.pcSetuped) {
             console.log('pc not setup yet pool it');
-            this.pooledSignalingMsg.push(message);
+            this.pooledSignalingMsg.push({userId, message});
         } else {
             console.log('handle the candidiated');
-            this.onReceiveRemoteIceCandidate(message);
+            this.onReceiveRemoteIceCandidate(userId, message);
         }
     }
 
-    async onCreateAnswerSuccess(desc) {
+    async onCreateAnswerSuccess(userId, desc) {
         console.log(`Answer from pc:\n${desc.sdp}`);
         console.log('pc setLocalDescription start');
         try {
-            await this.pc.setLocalDescription(desc);
-            this.onSetLocalSuccess(this.pc);
+            let pc = this.getPeerConnection(userId);
+            await pc.setLocalDescription(desc);
+            this.onSetLocalSuccess(pc);
             this.pcSetuped = true;
             this.drainOutSignalingMessage();
         } catch (e) {
-            this.onSetSessionDescriptionError(e);
+            this.onSetSessionDescriptionError(userId, e);
         }
         console.log(desc);
         // this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
-        avenginekit.onCreateAnswerOffer(desc);
+        avenginekit.onCreateAnswerOffer(userId, desc);
     }
 
-    async onReceiveRemoteIceCandidate(message) {
+    async onReceiveRemoteIceCandidate(userId, message) {
         console.log('on receive remote ice candidate');
-        await this.pc.addIceCandidate(message);
+        let pc = this.getPeerConnection(userId);
+        await pc.addIceCandidate(message);
     }
 
-    onIceCandidate = (pc, event) => {
+    onIceCandidate = (userId, pc, event) => {
         if (!event.candidate) {
             return;
         }
@@ -347,30 +385,33 @@ export default class CallSession {
                 candidate: event.candidate.candidate
             };
             //this.voipEventEmit('onIceCandidate', JSON.stringify(candidate));
-            avenginekit.onIceCandidate(candidate);
-            this.onAddIceCandidateSuccess(pc);
+            avenginekit.onIceCandidate(userId, candidate);
+            this.onAddIceCandidateSuccess(userId, pc);
         } catch (e) {
-            this.onAddIceCandidateError(pc, e);
+            this.onAddIceCandidateError(userId, pc, e);
         }
         console.log(`ICE candidate:\n${event.candidate ? event.candidate.candidate : '(null)'}`);
     };
 
-    onAddIceCandidateSuccess(pc) {
+    onAddIceCandidateSuccess(userId, pc) {
         console.log(`send Ice Candidate success`);
     }
 
-    onAddIceCandidateError(pc, error) {
+    onAddIceCandidateError(userId, pc, error) {
         console.log(`failed to add ICE Candidate: ${error.toString()}`);
         this.endCall();
     }
 
 
-    onIceStateChange = (pc, event) => {
+    onIceStateChange = (userId, pc, event) => {
         if (pc) {
+            let client = this.getClient(userId);
             console.log(`ICE state: ${pc.iceConnectionState}`, pc);
             console.log('ICE state change event: ', event);
             if (pc.iceConnectionState === 'connected') {
                 this.setState(CallState.STATUS_CONNECTED);
+                client.status = CallState.STATUS_CONNECTED;
+                // TODO participant status change
             }
             // this.voipEventEmit('onIceStateChange', pc.iceConnectionState);
             // avenginekit.onIceStateChange(pc.iceConnectionState);
@@ -455,22 +496,23 @@ export default class CallSession {
             this.localStream = null;
         }
 
-        if (this.pc) {
-            this.pc.close();
-            this.pc = null;
-        }
+        // TODO close all
+        // if (this.pc) {
+        //     this.pc.close();
+        //     this.pc = null;
+        // }
 
         // 停几秒，显示通话时间，再结束
         // 页面释放有问题没有真正释放掉
         // eslint-disable-next-line no-const-assign
         // TODO 放到也没去
-        setTimeout(() => {
-            if (currentWindow) {
-                currentWindow.close();
-            } else {
-                window.close();
-            }
-        }, 2000);
+        // setTimeout(() => {
+        //     if (currentWindow) {
+        //         currentWindow.close();
+        //     } else {
+        //         window.close();
+        //     }
+        // }, 2000);
     }
 
     endCall(reason) {
