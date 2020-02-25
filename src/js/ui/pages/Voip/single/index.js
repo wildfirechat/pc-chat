@@ -4,9 +4,9 @@ import {observer, inject} from 'mobx-react';
 import clazz from 'classname';
 import classes from './style.css';
 import {observable, action} from 'mobx';
-import session from '../../../../wfc/av/remote/remoteCallSession'
-import CallState from "../../../../wfc/av/remote/callState";
-import RemoteCallSessionCallback from "../../../../wfc/av/remote/remoteCallSessionCallback";
+import CallState from "../../../../wfc/av/callState";
+import CallSessionCallback from "../../../../wfc/av/CallSessionCallback";
+import avenginekit from "../../../../wfc/av/avenginekit";
 
 @observer
 export default class Voip extends Component {
@@ -15,6 +15,8 @@ export default class Voip extends Component {
     @observable audioOnly = false;
     @observable duration = '0:0';
     @observable muted = false;
+
+    timer;
 
     targetUserInfo;
     targetUserDisplayName;
@@ -29,15 +31,26 @@ export default class Voip extends Component {
 
     events;
 
+    session;
+
 
     setupSessionCallback() {
-        let sessionCallback = new RemoteCallSessionCallback();
+        let sessionCallback = new CallSessionCallback();
 
         sessionCallback.didChangeState = (state) => {
             this.status = state;
             if (state === CallState.STATUS_CONNECTED) {
                 this.onUpdateTime();
+            } else if (state === CallState.STATUS_IDLE) {
+                console.log('xxx clear time');
+                if (this.timer) {
+                    clearInterval(this.timer);
+                }
             }
+        };
+
+        sessionCallback.onInitial = (session) => {
+            this.session = session;
         };
 
         sessionCallback.didChangeMode = (audioOnly) => {
@@ -55,18 +68,21 @@ export default class Voip extends Component {
         sessionCallback.didVideoMuted = (userId, muted) => {
             this.muted = muted;
         };
-        session.sessionCallback = sessionCallback;
+        avenginekit.sessionCallback = sessionCallback;
     }
 
     @action onUpdateTime = () => {
-        let elapsedTime = window.performance.now() - session.startTime;
+        let elapsedTime = window.performance.now() - this.session.startTime;
         elapsedTime /= 1000;
         this.duration = parseInt(elapsedTime / 60) + ':' + parseInt(elapsedTime % 60);
+        if (!this.timer) {
+            this.timer = setInterval(this.onUpdateTime, 1000);
+        }
         console.log(this.duration);
     };
 
     componentWillMount() {
-        session.setup();
+        avenginekit.setup();
         this.setupSessionCallback();
     }
 
@@ -86,9 +102,9 @@ export default class Voip extends Component {
     videoOutgoingDesc() {
         return (
             <div className={classes.videoOutgoing}>
-                <img src={session.targetUserInfo.portrait}></img>
+                <img src={this.session.targetUserInfo.portrait}></img>
                 <div className={classes.desc}>
-                    <p>{session.targetUserDisplayName}</p>
+                    <p>{this.session.targetUserDisplayName}</p>
                     <p>正在等待对方接受邀请</p>
                 </div>
             </div>
@@ -101,8 +117,8 @@ export default class Voip extends Component {
                 <div>
                     <p style={{visibility: 'hidden'}}>holder</p>
                     <img ref="switchMicorphone"
-                         src={session.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'}
-                         onClick={() => session.triggerMicrophone()}
+                         src={this.session.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'}
+                         onClick={() => this.session.triggerMicrophone()}
                     >
                     </img>
                     <p>关闭麦克风</p>
@@ -110,7 +126,7 @@ export default class Voip extends Component {
                 <div>
                     <p>{this.duration}</p>
                     <img ref="hangupButton"
-                         onClick={() => session.hangup()}
+                         onClick={() => this.session.hangup()}
                          src='assets/images/av_hang_up.png'></img>
                     <p style={{visibility: 'hidden'}}>holder</p>
                 </div>
@@ -118,7 +134,7 @@ export default class Voip extends Component {
                     <p style={{visibility: 'hidden'}}>holder</p>
                     <img ref="toVoiceButton"
                          src='assets/images/av_phone.png'
-                         onClick={() => session.downgrade2Voice()}
+                         onClick={() => this.session.downgrade2Voice()}
                     />
                     <p>切换到语音聊天</p>
                 </div>
@@ -129,8 +145,8 @@ export default class Voip extends Component {
     videoIncomingDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src={session.targetUserInfo.portrait}></img>
-                <p>{session.targetUserDisplayName}</p>
+                <img src={this.session.targetUserInfo.portrait}></img>
+                <p>{this.session.targetUserDisplayName}</p>
                 <p>邀请你视频通话</p>
             </div>
         )
@@ -141,20 +157,20 @@ export default class Voip extends Component {
             <div>
                 <div className={classes.audioAccept}>
                     <img ref="toVoiceButton"
-                         onClick={() => session.downToVoice()}
+                         onClick={() => this.session.downToVoice()}
                          src='assets/images/av_float_audio.png'>
                     </img>
                     <p>切换到语音聊天</p>
                 </div>
                 <div className={classes.videoIncomingAction}>
                     <img ref="hangupButton"
-                         onClick={() => session.hangup()}
+                         onClick={() => this.session.hangup()}
                          className={classes.incomingHangup}
                          src='assets/images/av_hang_up.png'>
 
                     </img>
                     <img ref="callButton"
-                         onClick={() => session.call()}
+                         onClick={() => this.session.call()}
                          className={classes.incomingAccept}
                          src='assets/images/av_video_answer.png'></img>
                 </div>
@@ -165,8 +181,8 @@ export default class Voip extends Component {
     audioIncomingDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src={session.targetUserInfo.portrait}></img>
-                <p>{session.targetUserDisplayName}</p>
+                <img src={this.session.targetUserInfo.portrait}></img>
+                <p>{this.session.targetUserDisplayName}</p>
                 <p>邀请你语音聊天</p>
             </div>
         )
@@ -184,8 +200,8 @@ export default class Voip extends Component {
     audioOutgoingDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src={session.targetUserInfo.portrait}></img>
-                <p>{session.targetUserDisplayName}</p>
+                <img src={this.session.targetUserInfo.portrait}></img>
+                <p>{this.session.targetUserDisplayName}</p>
                 <p>正在等待对方接受邀请</p>
             </div>
         )
@@ -196,7 +212,7 @@ export default class Voip extends Component {
             <div className={classes.videoIncomingAction}>
                 <img
                     className={classes.audioIncomingHangup}
-                    onClick={() => session.hangup()}
+                    onClick={() => this.session.hangup()}
                     src='assets/images/av_hang_up.png'></img>
             </div>
         )
@@ -205,8 +221,8 @@ export default class Voip extends Component {
     audioConnectedDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src={session.targetUserInfo.portrait}></img>
-                <p>{session.targetUserDisplayName}</p>
+                <img src={this.session.targetUserInfo.portrait}></img>
+                <p>{this.session.targetUserDisplayName}</p>
                 <p>{this.duration}</p>
             </div>
         )
@@ -217,12 +233,12 @@ export default class Voip extends Component {
             <div className={classes.audioConnectedAction}>
                 <div>
                     <img className={classes.audioIncomingHangup}
-                         onClick={e => session.triggerMicrophone()}
-                         src={session.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'}/>
+                         onClick={e => this.session.triggerMicrophone()}
+                         src={this.session.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'}/>
                     <p>关闭麦克风</p>
                 </div>
                 <img className={classes.audioIncomingHangup}
-                     onClick={e => session.hangup()}
+                     onClick={e => this.session.hangup()}
                      src='assets/images/av_hang_up.png'></img>
             </div>
         )
@@ -232,11 +248,11 @@ export default class Voip extends Component {
         return (
             <div className={classes.videoIncomingAction}>
                 <img className={classes.incomingHangup}
-                     onClick={e => session.hangup()}
+                     onClick={e => this.session.hangup()}
                      src='assets/images/av_hang_up.png'
                 ></img>
                 <img className={classes.incomingAccept}
-                     onClick={e => session.call()}
+                     onClick={e => this.session.call()}
                      src='assets/images/av_video_answer.png'
                 ></img>
             </div>
