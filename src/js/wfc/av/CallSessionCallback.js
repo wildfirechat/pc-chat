@@ -1,6 +1,6 @@
 export default class CallSessionCallback {
 
-    onInitial(session) {
+    onInitial(session, selfUserInfo, participantUserInfos) {
 
     }
 
