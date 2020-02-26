@@ -36,83 +36,81 @@ export class WfcAVEngineKit {
 
     onReceiveMessage = (event, msg) => {
         console.log('receive message ', msg);
-        var now = (new Date()).valueOf();
-        if (msg.conversation.type === ConversationType.Single && msg.timestamp - now < 90 * 1000) { // 需要处理deltatime
-            var content = msg.messageContent;
-            if (msg.direction === 1 || msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT) {
-                if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_SIGNAL) {
-                    if (!self.currentSession || self.currentSession.status === CallState.STATUS_IDLE) {
-                        return;
-                    }
+        let now = (new Date()).valueOf();
+        if ((msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && msg.timestamp - now < 90 * 1000) { // 需要处理deltatime
+            let content = msg.messageContent;
+            if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_SIGNAL) {
+                if (!self.currentSession || self.currentSession.status === CallState.STATUS_IDLE) {
+                    return;
+                }
 
-                    var signal = msg.messageContent;
-                    if (msg.from !== self.currentSession.clientId || signal.callId !== self.currentSession.callId) {
-                        self.rejectOtherCall(content.callId, msg.from);
-                    } else {
-                        if (self.currentSession && (self.currentSession.status === CallState.STATUS_CONNECTING
-                            || self.currentSession.status === CallState.STATUS_CONNECTED
-                            || self.currentSession.status === CallState.STATUS_OUTGOING)) {
-                            self.onReceiveData(msg.from, signal.payload);
-                        }
+                let signal = msg.messageContent;
+                if (signal.callId !== self.currentSession.callId) {
+                    self.rejectOtherCall(content.callId, msg.from);
+                } else {
+                    if (self.currentSession && (self.currentSession.status === CallState.STATUS_CONNECTING
+                        || self.currentSession.status === CallState.STATUS_CONNECTED
+                        || self.currentSession.status === CallState.STATUS_OUTGOING)) {
+                        self.onReceiveData(msg.from, signal.payload);
                     }
-                } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
-                    if (self.currentSession && self.currentSession.status !== CallState.STATUS_IDLE) {
-                        self.rejectOtherCall(content.callId, msg.from);
-                    } else {
-                        self.currentSession = new CallSession();
-                        self.currentSession.clientId = msg.from;
-                        self.currentSession.callId = content.callId;
-                        self.currentSession.audioOnly = content.audioOnly;
-                        self.currentSession.conversation = msg.conversation;
-                        self.currentSession.starter = msg.from;
-                        self.currentSession.inviteMsgUid = msg.messageUid;
-                        self.currentSession.setState(CallState.STATUS_INCOMING);
-                        self.currentSession.sessionCallback = self.sessionCallback;
-                        self.currentSession.initCallUI(false, content.audioOnly, msg.selfUserInfo, msg.participantUserInfos);
-                    }
-                } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT
-                    || msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT_T) {
-                    if (self.currentSession && self.currentSession.status !== CallState.STATUS_IDLE) {
-                        if (msg.from !== self.currentSession.clientId
-                            || content.callId !== self.currentSession.callId) {
-                            if (msg.direction === 1 && content.callId !== self.currentSession.callId) {
-                                self.rejectOtherCall(content.callId, msg.fromUser);
-                            } else {
-                                if (self.currentSession.status === CallState.STATUS_INCOMING) {
-                                    self.currentSession.endCall(AVCallEndReason.kWFAVCallEndReasonAcceptByOtherClient);
-                                }
-                            }
-                        } else if (self.currentSession.status === CallState.STATUS_CONNECTING
-                            || self.currentSession.status === CallState.STATUS_CONNECTED) {
-
-                        } else if (self.currentSession.status !== CallState.STATUS_OUTGOING) {
+                }
+            } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
+                if (self.currentSession && self.currentSession.status !== CallState.STATUS_IDLE) {
+                    self.rejectOtherCall(content.callId, msg.targetIds);
+                } else {
+                    self.currentSession = new CallSession();
+                    self.currentSession.clientId = msg.from;
+                    self.currentSession.callId = content.callId;
+                    self.currentSession.audioOnly = content.audioOnly;
+                    self.currentSession.conversation = msg.conversation;
+                    self.currentSession.starter = msg.from;
+                    self.currentSession.inviteMsgUid = msg.messageUid;
+                    self.currentSession.setState(CallState.STATUS_INCOMING);
+                    self.currentSession.sessionCallback = self.sessionCallback;
+                    self.currentSession.initCallUI(false, content.audioOnly, msg.selfUserInfo, msg.participantUserInfos);
+                    self.currentSession.setUserJoinTime(msg.from, msg.timestamp);
+                    self.currentSession.setUserAcceptTime(msg.from, msg.timestamp);
+                }
+            } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT
+                || msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT_T) {
+                if (self.currentSession && self.currentSession.status !== CallState.STATUS_IDLE) {
+                    if (content.callId !== self.currentSession.callId) {
+                        if (msg.direction === 1) {
                             self.rejectOtherCall(content.callId, msg.from);
-                        } else if (self.currentSession.status === CallState.STATUS_OUTGOING) {
-                            self.currentSession.inviteMsgUid = msg.messageUid;
-                            self.currentSession.audioOnly = content.audioOnly;
-                            self.currentSession.startMedia(msg.from, false);
                         }
-                    }
-                } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_END) {
-                    if (!self.currentSession || self.currentSession.status === CallState.STATUS_IDLE
-                        || self.currentSession.callId !== content.callId
-                        || self.currentSession.clientId !== msg.from) {
-                        console.log('invalid bye message, ignore it');
+                        return;
                     } else {
-                        self.currentSession.endCall(AVCallEndReason.kWFAVCallEndReasonRemoteHangup);
-                    }
-                } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_MODIFY) {
-                    if (self.currentSession && self.currentSession.status === CallState.STATUS_CONNECTED
-                        && self.currentSession.callId === content.callId
-                        && self.currentSession.clientId === msg.from) {
-                        if (content.audioOnly) {
-                            self.currentSession.audioOnly = true;
-                            self.nodifyDowngradeCall();
-                        } else {
-                            console.log('cannot modify voice call to video call');
+                        if (msg.direction === 0 && self.currentSession.status === CallState.STATUS_INCOMING) {
+                            self.currentSession.endCall(AVCallEndReason.kWFAVCallEndReasonAcceptByOtherClient);
                         }
-
                     }
+
+                    if (self.currentSession.status === CallState.STATUS_OUTGOING) {
+                        self.currentSession.setState(CallState.STATUS_CONNECTING);
+                    }
+                    self.currentSession.audioOnly = content.audioOnly;
+                    self.currentSession.setUserAcceptTime(msg.from, msg.timestamp);
+                    // self.currentSession.startMedia(msg.from, false);
+                }
+            } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_END) {
+                if (!self.currentSession || self.currentSession.status === CallState.STATUS_IDLE
+                    || self.currentSession.callId !== content.callId
+                    || self.currentSession.clientId !== msg.from) {
+                    console.log('invalid bye message, ignore it');
+                } else {
+                    self.currentSession.endUserCall(msg.from, AVCallEndReason.kWFAVCallEndReasonRemoteHangup);
+                }
+            } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_MODIFY) {
+                if (self.currentSession && self.currentSession.status === CallState.STATUS_CONNECTED
+                    && self.currentSession.callId === content.callId
+                    && self.currentSession.clientId === msg.from) {
+                    if (content.audioOnly) {
+                        self.currentSession.audioOnly = true;
+                        self.nodifyDowngradeCall();
+                    } else {
+                        console.log('cannot modify voice call to video call');
+                    }
+
                 }
             }
         }
@@ -121,13 +119,13 @@ export class WfcAVEngineKit {
 // todo only send to userId
     onCreateAnswerOffer(userId, offer) {
         console.log("send engine offer");
-        self.sendSignalingMessage(offer, true);
+        self.sendSignalingMessage(offer, [userId], true);
     }
 
 // todo only send to userId
     onIceCandidate(userId, candidate) {
         console.log("send engine candidate", candidate);
-        self.sendSignalingMessage(candidate, true);
+        self.sendSignalingMessage(candidate, [userId], true);
     }
 
 // TODO conversation -> targetId
@@ -157,34 +155,44 @@ export class WfcAVEngineKit {
         startMessage.callId = callId;
         startMessage.targetIds = [conversation.target];
 
-        this.sendSignalMessage(startMessage, conversation.target, true);
+        this.sendSignalMessage(startMessage, this.currentSession.getParticipantIds(), true, (error, messageUid, timestamp) => {
+            if (error !== 0) {
+                this.currentSession.endCall(AVCallEndReason.kWFAVCallEndReasonSignalError);
+            } else {
+                this.currentSession.joinTime = timestamp;
+                this.currentSession.setAcceptTime(timestamp);
+            }
+        });
     };
 
-    sendSignalMessage(msg, targetId, keyMsg, callback) {
+    sendSignalMessage(msg, targetIds, keyMsg, callback) {
         console.log('send signal message', msg);
         let message = {
             "conversation": self.currentSession.conversation,
             "content": msg.encode(),
-            "toUsers": []
+            "toUsers": targetIds
         };
-        this.sendMessageId++;
-        message.sendMessageId = this.sendMessageId;
+
+        if (callback) {
+            this.sendMessageId++;
+            message.sendMessageId = this.sendMessageId;
+            this.sendMessageCallbackMap.set(this.sendMessageId, callback);
+        }
         avenginekitProxy.emitToMain("voip-message", message);
-        this.sendMessageCallbackMap.set(this.sendMessageId, callback);
     }
 
 
-    sendSignalingMessage(message, isKeyMsg) {
+    sendSignalingMessage(message, target, isKeyMsg) {
         let signalingMessage = new CallSignalMessageContent();
         signalingMessage.callId = this.currentSession.callId;
         signalingMessage.payload = JSON.stringify(message);
-        this.sendSignalMessage(signalingMessage, this.currentSession.clientId, false);
+        this.sendSignalMessage(signalingMessage, [target], isKeyMsg);
     }
 
-    rejectOtherCall(callId, targetId) {
+    rejectOtherCall(callId, targetIds) {
         let byeMessage = new CallByeMessageContent();
         byeMessage.callId = callId;
-        this.sendSignalMessage(byeMessage, targetId, false);
+        this.sendSignalMessage(byeMessage, targetIds, false);
     }
 
     onReceiveData(userId, data) {
@@ -225,8 +233,12 @@ export class WfcAVEngineKit {
         let answerMsg = new CallAnswerMessageContent();
         answerMsg.audioOnly = self.currentSession.audioOnly;
         answerMsg.callId = self.currentSession.callId;
-        this.sendSignalMessage(answerMsg, this.currentSession.conversation.target, true, (error, messageUid, timestamp) => {
-            console.log('send message result', error, messageUid, timestamp);
+        this.sendSignalMessage(answerMsg, this.currentSession.getParticipantIds(), true, (error, messageUid, timestamp) => {
+            if (error === 0) {
+                this.currentSession.setAcceptTime(timestamp)
+            } else {
+                this.currentSession.endCall(AVCallEndReason.kWFAVCallEndReasonSignalError);
+            }
         });
 
     }
@@ -237,7 +249,7 @@ export class WfcAVEngineKit {
         modifyMsg.audioOnly = self.currentSession.audioOnly;
         modifyMsg.callId = self.currentSession.callId;
 
-        this.sendSignalMessage(modifyMsg, this.currentSession.conversation.target, true);
+        this.sendSignalMessage(modifyMsg, this.currentSession.getParticipantIds(), true);
     }
 }
 
