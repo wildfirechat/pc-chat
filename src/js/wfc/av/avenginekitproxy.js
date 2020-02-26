@@ -48,6 +48,7 @@ export class AvEngineKitProxy {
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_SIGNAL
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_MODIFY
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT_T
+                || content.type === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT
             ) {
                 console.log("receive voip message", msg);
                 if (!this.callWin && content.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
@@ -63,6 +64,19 @@ export class AvEngineKitProxy {
                         let targetIds = content.targetIds.filter(id => id !== selfUserInfo.uid);
                         targetIds.push(msg.from);
                         participantUserInfos = wfc.getUserInfos(targetIds, msg.conversation.target);
+                    }
+                } else if (content.type === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT) {
+                    let participantIds = [...content.participants];
+                    if (content.existParticipants) {
+                        content.existParticipants.forEach(p => {
+                            participantIds.push(p.userId);
+                        });
+                    }
+                    participantIds = participantIds.filter(u => u.uid !== selfUserInfo.uid);
+                    participantUserInfos = wfc.getUserInfos(participantIds, msg.conversation.target);
+
+                    if (!this.callWin && content.participants.indexOf(selfUserInfo.uid) > -1) {
+                        this.showCallUI();
                     }
                 }
 

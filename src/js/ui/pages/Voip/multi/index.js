@@ -63,21 +63,23 @@ export default class Voip extends Component {
         };
 
         sessionCallback.didReceiveRemoteVideoTrack = (userId, stream) => {
-            console.log('xxx receive remote video track', userId);
-            let video = this.remoteVideoMap.get(userId);
-            video.current.srcObject = stream;
+            if (!this.audioOnly) {
+                let video = this.remoteVideoMap.get(userId);
+                video.current.srcObject = stream;
+            }
         };
 
         sessionCallback.didVideoMuted = (userId, muted) => {
+            // TODO
             this.muted = muted;
         };
 
-        sessionCallback.didParticipantJoined = (userId) => {
-
+        sessionCallback.didParticipantJoined = (userId, userInfo) => {
+            this.participantUserInfos.push(userInfo);
         };
 
         sessionCallback.didParticipantLeft = (userId, callEndReason) => {
-
+            this.participantUserInfos = this.participantUserInfos.filter(u => u.uid !== userId);
         };
         avenginekit.sessionCallback = sessionCallback;
     }
@@ -375,7 +377,7 @@ export default class Voip extends Component {
                             let ref = React.createRef();
                             this.remoteVideoMap.set(u.uid, ref);
                             return (
-                                <video ref={ref} playsinline autoPlay muted/>
+                                <video key={u.uid} ref={ref} playsInline autoPlay muted/>
                             );
                         })
                     }
@@ -416,7 +418,7 @@ export default class Voip extends Component {
                     {
                         this.participantUserInfos && this.participantUserInfos.map(u => {
                             return (
-                                <img src={u.portrait}/>
+                                <img key={u.uid} src={u.portrait}/>
                             )
                         })
                     }

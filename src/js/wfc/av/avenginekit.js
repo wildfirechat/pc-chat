@@ -58,16 +58,9 @@ export class WfcAVEngineKit {
                 if (self.currentSession && self.currentSession.status !== CallState.STATUS_IDLE) {
                     self.rejectOtherCall(content.callId, msg.targetIds);
                 } else {
-                    self.currentSession = new CallSession();
-                    self.currentSession.clientId = msg.from;
-                    self.currentSession.callId = content.callId;
-                    self.currentSession.audioOnly = content.audioOnly;
-                    self.currentSession.conversation = msg.conversation;
-                    self.currentSession.starter = msg.from;
-                    self.currentSession.inviteMsgUid = msg.messageUid;
-                    self.currentSession.setState(CallState.STATUS_INCOMING);
-                    self.currentSession.sessionCallback = self.sessionCallback;
+                    self.currentSession = CallSession.newSession(msg.conversation, content.callId, content.audioOnly, self.sessionCallback);
                     self.currentSession.initCallUI(false, content.audioOnly, msg.selfUserInfo, msg.participantUserInfos);
+                    self.currentSession.setState(CallState.STATUS_INCOMING);
                     self.currentSession.setUserJoinTime(msg.from, msg.timestamp);
                     self.currentSession.setUserAcceptTime(msg.from, msg.timestamp);
                 }
@@ -106,11 +99,43 @@ export class WfcAVEngineKit {
                     && self.currentSession.clientId === msg.from) {
                     if (content.audioOnly) {
                         self.currentSession.audioOnly = true;
-                        self.nodifyDowngradeCall();
+                        self.currentSession.downgrade2VoiceCall();
                     } else {
                         console.log('cannot modify voice call to video call');
                     }
 
+                }
+            } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT) {
+                // TODO
+                if (content.participants.indexOf(msg.selfUserInfo.uid) > -1) {
+
+                    if (self.currentSession && self.currentSession.status !== CallState.STATUS_IDLE) {
+                        // TODO reject other call
+                        //     rejectOtherCall(message.conversation, add.getCallId(), null);
+                        return;
+                    }
+
+                    self.currentSession = CallSession.newSession(msg.conversation, content.callId, content.audioOnly, self.sessionCallback);
+                    let participantUserInfos = msg.participantUserInfos.filter(u => u.uid !== msg.selfUserInfo.uid);
+                    self.currentSession.initCallUI(false, content.audioOnly, msg.selfUserInfo, participantUserInfos);
+                    self.currentSession.joinTime = msg.timestamp;
+
+                    participantUserInfos.forEach(u => {
+                        self.currentSession.setUserJoinTime(u.uid, msg.timestamp);
+                    });
+                    self.currentSession.updateExistParticipant(content.existParticipants);
+                } else {
+                    if (!self.currentSession || self.currentSession.status === CallState.STATUS_IDLE || self.currentSession.callId !== content.callId) {
+                        //     rejectOtherCall(message.conversation, add.getCallId(), null);
+                        //     return;
+                        // TODO
+                    } else {
+                        let newParticipantUserInfos = msg.participantUserInfos.filter(p => {
+                            return content.participants.indexOf(p.uid) > -1;
+                        });
+                        self.currentSession.addNewParticipant(content.participants, newParticipantUserInfos);
+
+                    }
                 }
             }
         }
@@ -136,20 +161,10 @@ export class WfcAVEngineKit {
             return;
         }
         let callId = conversation.target + Math.random();
-        this.currentSession = new CallSession();
-        this.currentSession.clientId = conversation.target;
-        this.currentSession.callId = callId;
-        this.currentSession.audioOnly = audioOnly;
-        this.currentSession.conversation = conversation;
-        //TODO selfUserInfo
-        this.currentSession.starter = wfc.getUserId();
-        // this.currentSession.inviteMsgUid = msg.messageUid;
-        self.currentSession.sessionCallback = self.sessionCallback;
-
-        // let userInfo = wfc.getUserInfo(conversation.target);
+        this.currentSession = CallSession.newSession(conversation, callId, audioOnly, self.sessionCallback);
         this.currentSession.initCallUI(true, audioOnly, msg.selfUserInfo, msg.participantUserInfos);
-
         this.currentSession.setState(CallState.STATUS_OUTGOING);
+
         let startMessage = new CallStartMessageContent();
         startMessage.audioOnly = audioOnly;
         startMessage.callId = callId;
