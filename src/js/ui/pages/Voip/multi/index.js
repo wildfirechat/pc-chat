@@ -11,11 +11,12 @@ import avenginekit from "../../../../wfc/av/avenginekit";
 @observer
 export default class Voip extends Component {
 
-
     @observable status = 0;
     @observable audioOnly = false;
     @observable duration = '0:0';
     @observable muted = false;
+    @observable selfUserInfo;
+    @observable participantUserInfos;
 
     timer;
 
@@ -24,14 +25,13 @@ export default class Voip extends Component {
     toVoiceButton;
     switchMicrophone;
     localVideo;
-    remoteVideos = [];
+    remoteVideoMap = new Map();
 
     events;
 
     session;
 
     current = 0;
-    xxx = new Set();
 
     setupSessionCallback() {
         let sessionCallback = new CallSessionCallback();
@@ -48,8 +48,10 @@ export default class Voip extends Component {
             }
         };
 
-        sessionCallback.onInitial = (session) => {
+        sessionCallback.onInitial = (session, selfUserInfo, participantUserInfos) => {
             this.session = session;
+            this.selfUserInfo = selfUserInfo;
+            this.participantUserInfos = participantUserInfos;
         };
 
         sessionCallback.didChangeMode = (audioOnly) => {
@@ -61,9 +63,9 @@ export default class Voip extends Component {
         };
 
         sessionCallback.didReceiveRemoteVideoTrack = (userId, stream) => {
-            this.xxx.add(userId);
-            console.log('xxx receive remote video track', userId, this.xxx.size - 1, this.remoteVideos);
-            this.remoteVideos[this.xxx.size - 1].srcObject = stream;
+            console.log('xxx receive remote video track', userId);
+            let video = this.remoteVideoMap.get(userId);
+            video.current.srcObject = stream;
         };
 
         sessionCallback.didVideoMuted = (userId, muted) => {
@@ -102,12 +104,6 @@ export default class Voip extends Component {
         this.toVoiceButton = this.refs.toVoiceButton;
         this.switchMicrophone = this.refs.switchMicorphone;
         this.localVideo = this.refs.localVideo;
-
-        let remoteVideo_0 = this.refs.remoteVideo_0;
-        let remoteVideo_1 = this.refs.remoteVideo_1;
-        let remoteVideo_2 = this.refs.remoteVideo_2;
-        let remoteVideo_3 = this.refs.remoteVideo_3;
-        this.remoteVideos = [remoteVideo_0, remoteVideo_1, remoteVideo_2, remoteVideo_3];
     }
 
     componentWillUnmount() {
@@ -167,10 +163,13 @@ export default class Voip extends Component {
                 </div>
                 <div className={classes.videoParticipants}>
                     <p>其他参与者</p>
-                    <img src='assets/images/user-fallback.png'/>
-                    <img src='assets/images/user-fallback.png'/>
-                    <img src='assets/images/user-fallback.png'/>
-                    <img src='assets/images/user-fallback.png'/>
+                    {
+                        this.participantUserInfos && this.participantUserInfos.forEach(u => {
+                            let ref = React.createRef();
+                            <img src={u.portriat} ref={ref}/>
+                            // TODO
+                        })
+                    }
                 </div>
             </div>
         )
@@ -371,11 +370,15 @@ export default class Voip extends Component {
         return (
             <div className={classes.container}>
                 <div className={classes.videoParticipantVideos}>
-                    {/*TODO 动态*/}
-                    <video ref="remoteVideo_0" playsInline autoPlay muted/>
-                    <video ref="remoteVideo_1" playsInline autoPlay muted/>
-                    <video ref="remoteVideo_2" playsInline autoPlay muted/>
-                    <video ref="remoteVideo_3" playsInline autoPlay muted/>
+                    {
+                        this.participantUserInfos && this.participantUserInfos.map(u => {
+                            let ref = React.createRef();
+                            this.remoteVideoMap.set(u.uid, ref);
+                            return (
+                                <video ref={ref} playsinline autoPlay muted/>
+                            );
+                        })
+                    }
                 </div>
 
                 <video ref="localVideo" className={classes.localVideo} playsInline autoPlay muted>
@@ -383,7 +386,6 @@ export default class Voip extends Component {
                 {
                     renderFn.bind(this)()
                 }
-
             </div>
         );
     }
@@ -411,11 +413,13 @@ export default class Voip extends Component {
         return (
             <div className={classes.container}>
                 <div className={classes.videoParticipantVideos}>
-                    {/*TODO 动态*/}
-                    <img src='assets/images/user-fallback.png'/>
-                    <img src='assets/images/user-fallback.png'/>
-                    <img src='assets/images/user-fallback.png'/>
-                    <img src='assets/images/user-fallback.png'/>
+                    {
+                        this.participantUserInfos && this.participantUserInfos.map(u => {
+                            return (
+                                <img src={u.portrait}/>
+                            )
+                        })
+                    }
                 </div>
                 {
                     renderFn.bind(this)()

@@ -147,7 +147,7 @@ export default class CallSession {
         this.selfUserInfo = selfUserInfo;
         this.participantUserInfos = participantUserInfos;
 
-        this.sessionCallback.onInitial(this);
+        this.sessionCallback.onInitial(this, selfUserInfo, participantUserInfos);
 
         this.initParticipantClientMap(participantUserInfos);
 
