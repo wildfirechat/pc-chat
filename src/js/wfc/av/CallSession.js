@@ -16,7 +16,6 @@ export default class CallSession {
         credential: Config.ICE_PASSWORD
     }];
     callId;
-    clientId;
     joinTime = 0;
     acceptTime = 0;
     connectedTime;
@@ -43,6 +42,15 @@ export default class CallSession {
     sessionCallback;
 
     peerConnectionClientMap;
+
+    static newSession(conversation, callId, audioOnly, sessionCallback) {
+        let session = new CallSession();
+        session.conversation = conversation;
+        session.callId = callId;
+        session.audioOnly = audioOnly;
+        session.sessionCallback = sessionCallback;
+        return session;
+    }
 
     getClient(userId) {
         return this.peerConnectionClientMap.get(userId);
@@ -173,9 +181,31 @@ export default class CallSession {
             }
             this.peerConnectionClientMap.set(u.uid, client);
         }, this);
-
     }
 
+    addNewParticipant(newParticipants, newParticipantUserInfos) {
+        newParticipants.forEach(p => {
+            let client = new PeerConnectionClient(p, this);
+            client.status = CallState.STATUS_INCOMING;
+            this.peerConnectionClientMap.set(p, client);
+        }, this);
+
+        newParticipantUserInfos.forEach(u => {
+            this.participantUserInfos.push(u);
+            this.sessionCallback && this.sessionCallback.didParticipantJoined(u.uid, u)
+            ;
+        }, this);
+    }
+
+    updateExistParticipant(existParticipants) {
+        existParticipants.forEach(p => {
+            let client = this.getClient(p.userId);
+            client.status = CallState.STATUS_INCOMING;
+            client.joinTime = p.joinTime;
+            client.videoMuted = p.videoMuted;
+            client.acceptTime = p.acceptTime;
+        });
+    }
 
     async startPreview(audioOnly) {
         console.log('start preview');
@@ -596,7 +626,6 @@ export default class CallSession {
             avenginekit.sendSignalMessage(byeMessage, this.getParticipantIds(), false);
         }
 
-        this.clientId = '';
         this.endTime = (new Date()).valueOf();
         this.endMedia();
 

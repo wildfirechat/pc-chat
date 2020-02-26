@@ -12,7 +12,7 @@ export default class CallSessionCallback {
 
     }
 
-    didParticipantJoined(userId) {
+    didParticipantJoined(userId, userInfo) {
 
     }
 
