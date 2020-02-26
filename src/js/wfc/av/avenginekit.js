@@ -6,7 +6,6 @@ import CallStartMessageContent from './messages/callStartMessageContent';
 import CallModifyMessageContent from './messages/callModifyMessageContent';
 import ConversationType from '../model/conversationType';
 import AVCallEndReason from './avCallEndReason';
-import wfc from '../client/wfc';
 import avenginekitProxy from './avenginekitproxy'
 import CallState from "./callState";
 import CallSession from "./CallSession";
@@ -58,8 +57,8 @@ export class WfcAVEngineKit {
                 if (self.currentSession && self.currentSession.status !== CallState.STATUS_IDLE) {
                     self.rejectOtherCall(content.callId, msg.targetIds);
                 } else {
-                    self.currentSession = CallSession.newSession(msg.conversation, content.callId, content.audioOnly, self.sessionCallback);
-                    self.currentSession.initCallUI(false, content.audioOnly, msg.selfUserInfo, msg.participantUserInfos);
+                    self.currentSession = CallSession.newSession(msg.conversation, msg.from, content.callId, content.audioOnly, self.sessionCallback);
+                    self.currentSession.initSession(false, msg.selfUserInfo, msg.participantUserInfos);
                     self.currentSession.setState(CallState.STATUS_INCOMING);
                     self.currentSession.setUserJoinTime(msg.from, msg.timestamp);
                     self.currentSession.setUserAcceptTime(msg.from, msg.timestamp);
@@ -83,7 +82,6 @@ export class WfcAVEngineKit {
                     }
                     self.currentSession.audioOnly = content.audioOnly;
                     self.currentSession.setUserAcceptTime(msg.from, msg.timestamp);
-                    // self.currentSession.startMedia(msg.from, false);
                 }
             } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_END) {
                 if (!self.currentSession || self.currentSession.status === CallState.STATUS_IDLE
@@ -115,9 +113,9 @@ export class WfcAVEngineKit {
                         return;
                     }
 
-                    self.currentSession = CallSession.newSession(msg.conversation, content.callId, content.audioOnly, self.sessionCallback);
+                    self.currentSession = CallSession.newSession(msg.conversation, msg.from, content.callId, content.audioOnly, self.sessionCallback);
                     let participantUserInfos = msg.participantUserInfos.filter(u => u.uid !== msg.selfUserInfo.uid);
-                    self.currentSession.initCallUI(false, content.audioOnly, msg.selfUserInfo, participantUserInfos);
+                    self.currentSession.initSession(false, msg.selfUserInfo, participantUserInfos);
                     self.currentSession.joinTime = msg.timestamp;
 
                     participantUserInfos.forEach(u => {
@@ -147,13 +145,11 @@ export class WfcAVEngineKit {
         self.sendSignalingMessage(offer, [userId], true);
     }
 
-// todo only send to userId
     onIceCandidate(userId, candidate) {
         console.log("send engine candidate", candidate);
         self.sendSignalingMessage(candidate, [userId], true);
     }
 
-// TODO conversation -> targetId
     startCall = (event, msg) => {
         let conversation = msg.conversation;
         let audioOnly = msg.audioOnly;
@@ -161,8 +157,8 @@ export class WfcAVEngineKit {
             return;
         }
         let callId = conversation.target + Math.random();
-        this.currentSession = CallSession.newSession(conversation, callId, audioOnly, self.sessionCallback);
-        this.currentSession.initCallUI(true, audioOnly, msg.selfUserInfo, msg.participantUserInfos);
+        this.currentSession = CallSession.newSession(conversation, msg.selfUserInfo.uid, callId, audioOnly, self.sessionCallback);
+        this.currentSession.initSession(true, msg.selfUserInfo, msg.participantUserInfos);
         this.currentSession.setState(CallState.STATUS_OUTGOING);
 
         let startMessage = new CallStartMessageContent();
@@ -219,18 +215,13 @@ export class WfcAVEngineKit {
         console.log("process remote signal:" + signal);
         if (signal.type === 'offer') {
             console.log("set remote offer0");
-            // controlAdapter.setRemoteOffer(signal);
             self.currentSession.onReceiveRemoteCreateOffer(userId, signal);
-            // this.callWin.webContents.send('setRemoteOffer', JSON.stringify(signal));
         } else if (signal.type === 'answer') {
-            // controlAdapter.setRemoteAnswer(signal);
             self.currentSession.onReceiveRemoteAnswerOffer(userId, signal);
-            // this.callWin.webContents.send('setRemoteAnswer', JSON.stringify(signal));
         } else if (signal.type === 'candidate') {
             signal.sdpMLineIndex = signal.label;
             signal.sdpMid = signal.id;
             self.currentSession.setRemoteIceCandidate(userId, signal);
-            // this.callWin.webContents.send('setRemoteIceCandidate', JSON.stringify(signal));
         } else if (signal.type === 'remove-candidates') {
 
         } else {
