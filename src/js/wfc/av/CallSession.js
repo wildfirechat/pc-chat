@@ -1,4 +1,3 @@
-import {ipcRenderer, isElectron, currentWindow, PostMessageEventEmitter} from '../../platform'
 import Config from '../../config.js';
 import CallState from "./callState";
 import avenginekit from './avenginekit'
@@ -6,8 +5,6 @@ import AVCallEndReason from "./avCallEndReason";
 import CallByeMessageContent from "./messages/callByeMessageContent";
 import PeerConnectionClient from "./PeerConnectionClient";
 
-// 发起方的acceptTime 置为100
-//  接听放的acceptTime置为 startMessage.timestamp + 1
 // 运行在新的voip window
 export default class CallSession {
     static iceServers = [{
@@ -27,6 +24,7 @@ export default class CallSession {
     audioOnly = false;
     muted = false;
 
+    initiatorId;
     participantUserInfos;
     selfUserInfo;
 
@@ -43,9 +41,10 @@ export default class CallSession {
 
     peerConnectionClientMap;
 
-    static newSession(conversation, callId, audioOnly, sessionCallback) {
+    static newSession(conversation, initiatorId, callId, audioOnly, sessionCallback) {
         let session = new CallSession();
         session.conversation = conversation;
+        session.initiatorId = initiatorId;
         session.callId = callId;
         session.audioOnly = audioOnly;
         session.sessionCallback = sessionCallback;
@@ -109,7 +108,6 @@ export default class CallSession {
         }
 
         this.audioOnly = audioOnly;
-        // this.startMedia(this.participantUserInfos[0].uid, true);
         avenginekit.answerCurrentCall();
     }
 
@@ -137,21 +135,23 @@ export default class CallSession {
         this.queuedOffer = null;
     }
 
+    // TODO 可能没啥用了
     queueOfferMessage(desc) {
         this.queuedOffer = desc;
     }
 
     playIncomingRing() {
+        // TODO
         //在界面初始化时播放来电铃声
     }
 
     stopIncomingRing() {
+        // TODO
         //再接听/语音接听/结束媒体时停止播放来电铃声，可能有多次，需要避免出问题
     }
 
-    initCallUI(moCall, audioOnly, selfUserInfo, participantUserInfos) {
+    initSession(moCall, selfUserInfo, participantUserInfos) {
         this.moCall = moCall;
-        this.setAudioOnly(audioOnly);
         this.selfUserInfo = selfUserInfo;
         this.participantUserInfos = participantUserInfos;
 
@@ -360,7 +360,6 @@ export default class CallSession {
             mutableAnswer.type = 'answer';
             await this.onCreateAnswerSuccess(userId, answer);
         } catch (e) {
-            console.log('xxxxxxyyyy', e);
             this.onCreateSessionDescriptionError(e);
         }
     }
@@ -379,7 +378,6 @@ export default class CallSession {
         }
 
         console.log(desc);
-        // this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
         avenginekit.onCreateAnswerOffer(userId, desc);
     }
 
@@ -419,7 +417,6 @@ export default class CallSession {
     }
 
     async setRemoteIceCandidate(userId, message) {
-        console.log("xxxxxxxxxx", message);
         if (!this.pcSetuped) {
             console.log('pc not setup yet pool it');
             this.pooledSignalingMsg.push({userId, message});
@@ -442,7 +439,6 @@ export default class CallSession {
             this.onSetSessionDescriptionError(userId, e);
         }
         console.log(desc);
-        // this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
         avenginekit.onCreateAnswerOffer(userId, desc);
     }
 
@@ -463,7 +459,6 @@ export default class CallSession {
                 id: event.candidate.sdpMid,
                 candidate: event.candidate.candidate
             };
-            //this.voipEventEmit('onIceCandidate', JSON.stringify(candidate));
             avenginekit.onIceCandidate(userId, candidate);
             this.onAddIceCandidateSuccess(userId, pc);
         } catch (e) {
@@ -528,10 +523,6 @@ export default class CallSession {
             localVideoTracks.forEach(track => track.stop());
         }
 
-        // this.localVideo.srcObject = null;
-        // this.remoteVideo.srcObject = null;
-
-        // this.voipEventEmit('downToVoice');
         this.downToVoice();
     }
 
