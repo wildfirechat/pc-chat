@@ -40,7 +40,7 @@ export class AvEngineKitProxy {
     onReceiveMessage = (msg) => {
         let now = (new Date()).valueOf();
         // 需要处理deltatime
-        if (msg.conversation.type === ConversationType.Single && msg.timestamp - now < 90 * 1000) {
+        if ((msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && msg.timestamp - now < 90 * 1000) {
             let content = msg.messageContent;
             if (content.type === MessageContentType.VOIP_CONTENT_TYPE_START
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_END
@@ -57,7 +57,13 @@ export class AvEngineKitProxy {
                 let participantUserInfos = [];
                 let selfUserInfo = wfc.getUserInfo(wfc.getUserId());
                 if (content.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
-                    participantUserInfos = wfc.getUserInfos([msg.from]);
+                    if (msg.conversation.type === ConversationType.Single) {
+                        participantUserInfos = [wfc.getUserInfo(msg.from)];
+                    } else {
+                        let targetIds = content.targetIds.filter(id => id !== selfUserInfo.uid);
+                        targetIds.push(msg.from);
+                        participantUserInfos = wfc.getUserInfos(targetIds, msg.conversation.target);
+                    }
                 }
 
                 msg.participantUserInfos = participantUserInfos;
@@ -97,7 +103,6 @@ export class AvEngineKitProxy {
         console.log('emit to main', event, args);
         if (isElectron()) {
             // renderer to main
-            console.log('emit to main', event, args);
             ipcRenderer.send(event, args);
         } else {
             this.events.emit(event, args);

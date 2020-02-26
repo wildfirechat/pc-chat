@@ -48,22 +48,39 @@ export default class CallSession {
         return this.peerConnectionClientMap.get(userId);
     }
 
+    getParticipantIds() {
+        let ids = [];
+        this.participantUserInfos.forEach(u => {
+            ids.push(u.uid);
+        });
+        return ids;
+    }
+
+    setAcceptTime(timestamp) {
+        this.acceptTime = timestamp;
+        this.tryStartMedia();
+    }
+
     setUserAcceptTime(userId, timestamp) {
         let client = this.getClient(userId);
         client.acceptTime = timestamp;
         this.tryStartMedia()
     }
 
+    setUserJoinTime(userId, timestamp) {
+        let client = this.getClient(userId);
+        client.joinTime = timestamp;
+    }
+
     tryStartMedia() {
-        if (this.acceptTimestamp > 0) {
-            this.peerConnectionClientMap.forEach((userId, client) => {
+        if (this.acceptTime > 0) {
+            this.peerConnectionClientMap.forEach((client, userId) => {
                 if (client.acceptTime > 0 && (client.status === CallState.STATUS_INCOMING || client.status === CallState.STATUS_OUTGOING)) {
                     if (client.acceptTime < this.acceptTime) {
                         this.startMedia(userId, true);
                     } else {
                         this.startMedia(userId, false);
                     }
-
                 }
             }, this);
         }
@@ -84,7 +101,7 @@ export default class CallSession {
         }
 
         this.audioOnly = audioOnly;
-        this.startMedia(this.participantUserInfos[0].uid, true);
+        // this.startMedia(this.participantUserInfos[0].uid, true);
         avenginekit.answerCurrentCall();
     }
 
@@ -187,9 +204,9 @@ export default class CallSession {
                 console.log(`Using audio device: ${audioTracks[0].label}`);
             }
         } catch (e) {
-            console.log('getUserMedia error', e);
+            console.error('getUserMedia error', e);
             alert(`getUserMedia() error: ${e.name}`);
-            this.endCall();
+            this.endCall(AVCallEndReason.kWFAVCallEndReasonMediaError);
         }
     }
 
@@ -273,7 +290,7 @@ export default class CallSession {
     onCreateSessionDescriptionError(userId, error) {
         console.log('Failed to create session description');
         // console.log(`Failed to create session description: ${error.toString()}`);
-        this.endCall();
+        this.endUserCall(userId, AVCallEndReason.kWFAVCallEndReasonMediaError);
     }
 
     drainOutSignalingMessage() {
@@ -300,8 +317,7 @@ export default class CallSession {
             await pc.setRemoteDescription(desc);
             this.onSetRemoteSuccess(pc);
         } catch (e) {
-            console.log('yyyyyy', e);
-            this.onSetSessionDescriptionError(e);
+            this.onSetSessionDescriptionError(userId, e);
         }
 
         console.log('pc createAnswer start');
@@ -329,8 +345,7 @@ export default class CallSession {
             this.pcSetuped = true;
             this.drainOutSignalingMessage();
         } catch (e) {
-            console.log(e);
-            this.onSetSessionDescriptionError();
+            this.onSetSessionDescriptionError(userId, e);
         }
 
         console.log(desc);
@@ -346,9 +361,10 @@ export default class CallSession {
         console.log(`setRemoteDescription complete`);
     }
 
-    onSetSessionDescriptionError(error) {
-        console.log(`Failed to set session description: ${error.toString()}`);
-        this.endCall(AVCallEndReason.kWFAVCallEndReasonMediaError);
+    onSetSessionDescriptionError(userId, error) {
+        console.log(`Failed to set session description: ${userId}`);
+        console.error(error);
+        this.endUserCall(userId, AVCallEndReason.kWFAVCallEndReasonMediaError)
     }
 
     gotRemoteStream = (userId, e) => {
@@ -368,7 +384,7 @@ export default class CallSession {
             await pc.setRemoteDescription(desc);
             this.onSetRemoteSuccess(pc);
         } catch (e) {
-            this.onSetSessionDescriptionError(e);
+            this.onSetSessionDescriptionError(userId, e);
         }
     }
 
@@ -431,8 +447,8 @@ export default class CallSession {
     }
 
     onAddIceCandidateError(userId, pc, error) {
-        console.log(`failed to add ICE Candidate: ${error.toString()}`);
-        this.endCall();
+        console.log(`failed to add ICE Candidate: ${userId} ${error.toString()}`);
+        this.endUserCall(userId, AVCallEndReason.kWFAVCallEndReasonMediaError);
     }
 
 
@@ -446,11 +462,11 @@ export default class CallSession {
                 client.status = CallState.STATUS_CONNECTED;
             }
             if (pc.iceConnectionState === 'disconnected') {
-                this.endCall(AVCallEndReason.kWFAVCallEndReasonMediaError);
+                this.endUserCall(userId, AVCallEndReason.kWFAVCallEndReasonMediaError);
             } else if (pc.iceConnectionState === 'connected') {
                 this.setState(CallState.STATUS_CONNECTED);
             } else if (pc.iceConnectionState === 'failed') {
-                this.endCall(AVCallEndReason.kWFAVCallEndReasonMediaError);
+                this.endUserCall(userId, AVCallEndReason.kWFAVCallEndReasonMediaError);
             }
         }
     };
@@ -545,6 +561,28 @@ export default class CallSession {
         // }, 2000);
     }
 
+    endUserCall(userId, reason) {
+        if (userId === this.selfUserInfo.uid) {
+            this.endCall(reason);
+            return;
+        }
+
+        let client = this.getClient(userId);
+        if (client) {
+            if (client.peerConnection) {
+                client.peerConnection.close();
+            }
+            this.peerConnectionClientMap.delete(userId);
+            if (this.sessionCallback) {
+                this.sessionCallback.didParticipantLeft(userId, reason);
+            }
+        }
+
+        if (this.peerConnectionClientMap.size === 0) {
+            this.endCall(AVCallEndReason.kWFAVCallEndReasonAllLeft);
+        }
+    }
+
     endCall(reason) {
         if (this.status === CallState.STATUS_IDLE) {
             return;
@@ -555,7 +593,7 @@ export default class CallSession {
         if (reason !== AVCallEndReason.kWFAVCallEndReasonAcceptByOtherClient) {
             let byeMessage = new CallByeMessageContent();
             byeMessage.callId = this.callId;
-            avenginekit.sendSignalMessage(byeMessage, this.clientId, false);
+            avenginekit.sendSignalMessage(byeMessage, this.getParticipantIds(), false);
         }
 
         this.clientId = '';
