@@ -28,6 +28,7 @@ import GroupType from '../../../../wfc/model/groupType';
 import GroupMemberType from '../../../../wfc/model/groupMemberType';
 import FileSaver from 'file-saver';
 import InfiniteScroll from 'react-infinite-scroller';
+import nodePath from 'path';
 
 @inject(stores => ({
     sticky: stores.sessions.sticky,
@@ -669,7 +670,7 @@ export default class ChatContent extends Component {
             {
                 label: 'Open the folder',
                 click: () => {
-                    let dir = path.split('/').slice(0, -1).join('/');
+                    let dir = path.split(nodePath.sep).slice(0, -1).join(nodePath.sep);
                     ipcRenderer.send('open-folder', dir);
                 }
             },

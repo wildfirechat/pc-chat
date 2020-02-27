@@ -141,15 +141,7 @@ $ npm run dev
 ##### 常见问题
 0. 执行```npm install```，需要确保网络通畅，如果遇到无法下载依赖等，可进行一下设置。
 
-    1. 切换至[cnpm](http://npm.taobao.org/)，并设置环境变量
-        ```
-       // windows
-       set ELECTRON_MIRROR=http://npm.taobao.org/mirrors/electron/
-       set npm_config_dist-url=https://mirrors.cloud.tencent.com/nodejs-release/
-       // mac/linux
-       export ELECTRON_MIRROR=http://npm.taobao.org/mirrors/electron/
-       export npm_config_dist-url=https://mirrors.cloud.tencent.com/nodejs-release/
-       ```
+    1. 切换至[cnpm](http://npm.taobao.org/)
     2. 执行```cnpm install```
 1. 打包时，如果一直显示```installing production dependencies  platform=win32 arch=ia32 appDir=C:\<your path>\pc-chat\dist```，
    或者提示下载什么之类的，可将```dep```目录下对应平台的electron依赖，解压到对应的目录。

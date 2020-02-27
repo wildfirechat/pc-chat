@@ -51,3 +51,4 @@ release_win32
 release_linux
 release_mac
 win-qt-denpendency
+Qt5Core.dll
