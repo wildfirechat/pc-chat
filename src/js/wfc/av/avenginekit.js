@@ -5,7 +5,7 @@ import CallAnswerMessageContent from './messages/callAnswerMessageContent';
 import CallStartMessageContent from './messages/callStartMessageContent';
 import CallModifyMessageContent from './messages/callModifyMessageContent';
 import ConversationType from '../model/conversationType';
-import AVCallEndReason from './avCallEndReason';
+import CallEndReason from './callEndReason';
 import avenginekitProxy from './avenginekitproxy'
 import CallState from "./callState";
 import CallSession from "./CallSession";
@@ -36,7 +36,8 @@ export class WfcAVEngineKit {
     onReceiveMessage = (event, msg) => {
         console.log('receive message ', msg);
         let now = (new Date()).valueOf();
-        if ((msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && msg.timestamp - now < 90 * 1000) { // 需要处理deltatime
+        if ((msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group)
+            && msg.timestamp - now < 90 * 1000) { // 需要处理deltatime
             let content = msg.messageContent;
             if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_SIGNAL) {
                 if (!self.currentSession || self.currentSession.status === CallState.STATUS_IDLE) {
@@ -73,7 +74,7 @@ export class WfcAVEngineKit {
                         return;
                     } else {
                         if (msg.direction === 0 && self.currentSession.status === CallState.STATUS_INCOMING) {
-                            self.currentSession.endCall(AVCallEndReason.kWFAVCallEndReasonAcceptByOtherClient);
+                            self.currentSession.endCall(CallEndReason.REASON_AcceptByOtherClient);
                         }
                     }
 
@@ -85,11 +86,10 @@ export class WfcAVEngineKit {
                 }
             } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_END) {
                 if (!self.currentSession || self.currentSession.status === CallState.STATUS_IDLE
-                    || self.currentSession.callId !== content.callId
-                    || self.currentSession.clientId !== msg.from) {
+                    || self.currentSession.callId !== content.callId) {
                     console.log('invalid bye message, ignore it');
                 } else {
-                    self.currentSession.endUserCall(msg.from, AVCallEndReason.kWFAVCallEndReasonRemoteHangup);
+                    self.currentSession.endUserCall(msg.from, CallEndReason.REASON_RemoteHangup);
                 }
             } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_MODIFY) {
                 if (self.currentSession && self.currentSession.status === CallState.STATUS_CONNECTED
@@ -168,7 +168,7 @@ export class WfcAVEngineKit {
 
         this.sendSignalMessage(startMessage, this.currentSession.getParticipantIds(), true, (error, messageUid, timestamp) => {
             if (error !== 0) {
-                this.currentSession.endCall(AVCallEndReason.kWFAVCallEndReasonSignalError);
+                this.currentSession.endCall(CallEndReason.REASON_SignalError);
             } else {
                 this.currentSession.joinTime = timestamp;
                 this.currentSession.setAcceptTime(timestamp);
@@ -243,7 +243,7 @@ export class WfcAVEngineKit {
             if (error === 0) {
                 this.currentSession.setAcceptTime(timestamp)
             } else {
-                this.currentSession.endCall(AVCallEndReason.kWFAVCallEndReasonSignalError);
+                this.currentSession.endCall(CallEndReason.REASON_SignalError);
             }
         });
 

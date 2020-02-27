@@ -47,6 +47,7 @@ export default class Voip extends Component {
 
         sessionCallback.onInitial = (session, selfUserInfo, participantUserInfos) => {
             this.session = session;
+            this.audioOnly = session.audioOnly;
         };
 
         sessionCallback.didChangeMode = (audioOnly) => {
