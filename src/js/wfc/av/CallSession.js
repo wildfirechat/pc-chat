@@ -1,9 +1,10 @@
 import Config from '../../config.js';
 import CallState from "./callState";
 import avenginekit from './avenginekit'
-import AVCallEndReason from "./avCallEndReason";
+import CallEndReason from "./callEndReason";
 import CallByeMessageContent from "./messages/callByeMessageContent";
 import PeerConnectionClient from "./PeerConnectionClient";
+import {currentWindow} from '../../platform'
 
 // 运行在新的voip window
 export default class CallSession {
@@ -82,7 +83,8 @@ export default class CallSession {
     tryStartMedia() {
         if (this.acceptTime > 0) {
             this.peerConnectionClientMap.forEach((client, userId) => {
-                if (client.acceptTime > 0 && (client.status === CallState.STATUS_INCOMING || client.status === CallState.STATUS_OUTGOING)) {
+                if (client.acceptTime > 0
+                    && (client.status === CallState.STATUS_INCOMING || client.status === CallState.STATUS_OUTGOING)) {
                     if (client.acceptTime < this.acceptTime) {
                         this.startMedia(userId, true);
                     } else {
@@ -121,7 +123,7 @@ export default class CallSession {
 
     setAudioOnly(audioOnly) {
         this.audioOnly = audioOnly;
-        if (this.audioOnly) {
+        if (this.sessionCallback) {
             this.sessionCallback.didChangeMode(audioOnly);
         }
     }
@@ -236,7 +238,7 @@ export default class CallSession {
         } catch (e) {
             console.error('getUserMedia error', e);
             alert(`getUserMedia() error: ${e.name}`);
-            this.endCall(AVCallEndReason.kWFAVCallEndReasonMediaError);
+            this.endCall(CallEndReason.REASON_MediaError);
         }
     }
 
@@ -320,7 +322,7 @@ export default class CallSession {
     onCreateSessionDescriptionError(userId, error) {
         console.log('Failed to create session description');
         // console.log(`Failed to create session description: ${error.toString()}`);
-        this.endUserCall(userId, AVCallEndReason.kWFAVCallEndReasonMediaError);
+        this.endUserCall(userId, CallEndReason.REASON_MediaError);
     }
 
     drainOutSignalingMessage() {
@@ -392,7 +394,7 @@ export default class CallSession {
     onSetSessionDescriptionError(userId, error) {
         console.log(`Failed to set session description: ${userId}`);
         console.error(error);
-        this.endUserCall(userId, AVCallEndReason.kWFAVCallEndReasonMediaError)
+        this.endUserCall(userId, CallEndReason.REASON_MediaError)
     }
 
     gotRemoteStream = (userId, e) => {
@@ -473,7 +475,7 @@ export default class CallSession {
 
     onAddIceCandidateError(userId, pc, error) {
         console.log(`failed to add ICE Candidate: ${userId} ${error.toString()}`);
-        this.endUserCall(userId, AVCallEndReason.kWFAVCallEndReasonMediaError);
+        this.endUserCall(userId, CallEndReason.REASON_MediaError);
     }
 
 
@@ -487,18 +489,18 @@ export default class CallSession {
                 client.status = CallState.STATUS_CONNECTED;
             }
             if (pc.iceConnectionState === 'disconnected') {
-                this.endUserCall(userId, AVCallEndReason.kWFAVCallEndReasonMediaError);
+                this.endUserCall(userId, CallEndReason.REASON_MediaError);
             } else if (pc.iceConnectionState === 'connected') {
                 this.setState(CallState.STATUS_CONNECTED);
             } else if (pc.iceConnectionState === 'failed') {
-                this.endUserCall(userId, AVCallEndReason.kWFAVCallEndReasonMediaError);
+                this.endUserCall(userId, CallEndReason.REASON_MediaError);
             }
         }
     };
 
     hangup() {
         console.log('Ending call');
-        this.endCall(AVCallEndReason.kWFAVCallEndReasonHangup);
+        this.endCall(CallEndReason.REASON_Hangup);
     }
 
     triggerMicrophone() {
@@ -573,13 +575,13 @@ export default class CallSession {
         // 页面释放有问题没有真正释放掉
         // eslint-disable-next-line no-const-assign
         // TODO 放到也没去
-        // setTimeout(() => {
-        //     if (currentWindow) {
-        //         currentWindow.close();
-        //     } else {
-        //         window.close();
-        //     }
-        // }, 2000);
+        setTimeout(() => {
+            if (currentWindow) {
+                currentWindow.close();
+            } else {
+                window.close();
+            }
+        }, 2000);
     }
 
     endUserCall(userId, reason) {
@@ -600,7 +602,7 @@ export default class CallSession {
         }
 
         if (this.peerConnectionClientMap.size === 0) {
-            this.endCall(AVCallEndReason.kWFAVCallEndReasonAllLeft);
+            this.endCall(CallEndReason.REASON_AllLeft);
         }
     }
 
@@ -611,7 +613,7 @@ export default class CallSession {
 
         this.setState(CallState.STATUS_IDLE);
 
-        if (reason !== AVCallEndReason.kWFAVCallEndReasonAcceptByOtherClient) {
+        if (reason !== CallEndReason.REASON_AcceptByOtherClient) {
             let byeMessage = new CallByeMessageContent();
             byeMessage.callId = this.callId;
             avenginekit.sendSignalMessage(byeMessage, this.getParticipantIds(), false);

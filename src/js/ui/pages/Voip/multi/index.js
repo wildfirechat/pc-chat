@@ -50,6 +50,7 @@ export default class Voip extends Component {
 
         sessionCallback.onInitial = (session, selfUserInfo, participantUserInfos) => {
             this.session = session;
+            this.audioOnly = session.audioOnly;
             this.selfUserInfo = selfUserInfo;
             this.participantUserInfos = participantUserInfos;
         };
@@ -350,7 +351,7 @@ export default class Voip extends Component {
 
     renderVideo() {
         let renderFn;
-        console.log('xxx render video ', this.status);
+        console.log('render video ', this.status);
         switch (this.status) {
             case CallState.STATUS_IDLE:
                 renderFn = this.renderIdle;
