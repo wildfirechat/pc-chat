@@ -1,10 +1,21 @@
-
 import fs from 'fs';
 import tmp from 'tmp';
-import { app, powerMonitor, BrowserWindow, Tray, Menu, ipcMain, clipboard, shell, nativeImage, dialog, globalShortcut } from 'electron';
+import {
+    app,
+    powerMonitor,
+    BrowserWindow,
+    Tray,
+    Menu,
+    ipcMain,
+    clipboard,
+    shell,
+    nativeImage,
+    dialog,
+    globalShortcut
+} from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import AutoLaunch from 'auto-launch';
-import { autoUpdater } from 'electron-updater';
+import {autoUpdater} from 'electron-updater';
 import axios from 'axios';
 import i18n from 'i18n';
 import proto from './marswrapper.node';
@@ -19,7 +30,7 @@ i18n.configure({
 });
 Locales.setLocale('ch');
 
-global.sharedObj = { proto: proto };
+global.sharedObj = {proto: proto};
 
 let forceQuit = false;
 let downloading = false;
@@ -394,7 +405,7 @@ async function getIcon(cookies, userid, src) {
 
     var image = nativeImage.createFromPath(icon);
 
-    image = image.resize({ width: 24, height: 24 });
+    image = image.resize({width: 24, height: 24});
 
     avatarCache[userid] = image;
 
@@ -549,7 +560,8 @@ const createMainWindow = () => {
         try {
             mainWindow.show();
             mainWindow.focus();
-        } catch (ex) { }
+        } catch (ex) {
+        }
     });
 
     mainWindow.webContents.on('new-window', (event, url) => {
@@ -572,47 +584,9 @@ const createMainWindow = () => {
         }
     });
 
-    var offerCount = 0;
-
-    ipcMain.on('onReceiveOffer', (event, msg) => {
-        console.log('hello world' + msg);
-        mainWindow.webContents.send('onReceiveOffer', msg);
-    });
-
-    ipcMain.on('onCreateAnswerOffer', (event, msg) => {
-        mainWindow.webContents.send('onCreateAnswerOffer', msg);
-        offerCount = offerCount + 1;
-        mainWindow.webContents.send('offerCount', 'hello offer count: ' + offerCount);
-    });
-
-    ipcMain.on('onIceCandidate', (event, msg) => {
-        console.log('onIceCandidate' + msg);
-        mainWindow.webContents.send('onIceCandidate', msg);
-    });
-
-    ipcMain.on('onCallButton', (event) => {
-        console.log('onCallButton');
-        mainWindow.webContents.send('onCallButton');
-    });
-
-    ipcMain.on('onHangupButton', (event) => {
-        console.log('onHangupButton');
-        mainWindow.webContents.send('onHangupButton');
-    });
-
-    ipcMain.on('downToVoice', (event) => {
-        console.log('downToVoice');
-        mainWindow.webContents.send('downToVoice');
-    });
-
-    ipcMain.on('onIceStateChange', (event, msg) => {
-        console.log('onIceStateChange');
-        mainWindow.webContents.send('onIceStateChange', msg);
-    });
-
-    ipcMain.on('pong', (event) => {
-        console.log('pong');
-        mainWindow.webContents.send('pong');
+    ipcMain.on('voip-message', (event, args) => {
+        console.log('main voip-message event', args);
+        mainWindow.webContents.send('voip-message', args);
     });
 
     ipcMain.on('settings-apply', (event, args) => {
@@ -666,7 +640,7 @@ const createMainWindow = () => {
 
     // TODO 不明白这儿是做什么？
     ipcMain.on('menu-update', async (event, args) => {
-        var { cookies, contacts = [], conversations = [] } = args;
+        var {cookies, contacts = [], conversations = []} = args;
         var conversationsMenu = mainMenu.find(e => e.label === 'Conversations');
         var contactsMenu = mainMenu.find(e => e.label === 'Contacts');
         var shouldUpdate = false;
@@ -735,7 +709,7 @@ const createMainWindow = () => {
 
     ipcMain.on('file-paste', (event) => {
         var image = clipboard.readImage();
-        var args = { hasImage: false };
+        var args = {hasImage: false};
 
         if (!image.isEmpty()) {
             let filename = tmp.tmpNameSync() + '.png';
@@ -767,7 +741,7 @@ const createMainWindow = () => {
         //     event.returnValue = filename;
         // });
 
-        dialog.showSaveDialog({ defaultPath: filename, }, (fileName) => {
+        dialog.showSaveDialog({defaultPath: filename,}, (fileName) => {
             if (fileName === undefined) {
                 console.log("You didn't save the file");
                 event.returnValue = '';
@@ -888,10 +862,10 @@ function execBlink(flag, _interval) {
     let icons;
     if (!isOsx) {
         icons = [`${__dirname}/src/assets/images/icon.png`,
-        `${__dirname}/src/assets/images/Remind_icon.png`];
+            `${__dirname}/src/assets/images/Remind_icon.png`];
     } else {
         icons = [`${__dirname}/src/assets/images/tray.png`,
-        `${__dirname}/src/assets/images/Remind_icon.png`];
+            `${__dirname}/src/assets/images/Remind_icon.png`];
     }
 
     let count = 0;
@@ -945,7 +919,7 @@ autoUpdater.on('error', err => {
 });
 
 autoUpdater.on('update-downloaded', info => {
-    var { releaseNotes, releaseName } = info;
+    var {releaseNotes, releaseName} = info;
     var index = dialog.showMessageBox({
         type: 'info',
         buttons: ['Restart', 'Later'],
