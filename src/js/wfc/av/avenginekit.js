@@ -167,6 +167,9 @@ export class WfcAVEngineKit {
         startMessage.targetIds = [conversation.target];
 
         this.sendSignalMessage(startMessage, this.currentSession.getParticipantIds(), true, (error, messageUid, timestamp) => {
+            if (!self.currentSession) {
+                return;
+            }
             if (error !== 0) {
                 this.currentSession.endCall(CallEndReason.REASON_SignalError);
             } else {

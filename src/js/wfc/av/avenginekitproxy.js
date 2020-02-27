@@ -52,7 +52,7 @@ export class AvEngineKitProxy {
             ) {
                 console.log("receive voip message", msg);
                 if (!this.callWin && content.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
-                    this.showCallUI();
+                    this.showCallUI(msg.conversation);
                 }
 
                 let participantUserInfos = [];
@@ -76,7 +76,7 @@ export class AvEngineKitProxy {
                     participantUserInfos = wfc.getUserInfos(participantIds, msg.conversation.target);
 
                     if (!this.callWin && content.participants.indexOf(selfUserInfo.uid) > -1) {
-                        this.showCallUI();
+                        this.showCallUI(msg.conversation);
                     }
                 }
 
@@ -135,7 +135,7 @@ export class AvEngineKitProxy {
     startCall(conversation, audioOnly) {
         let selfUserInfo = wfc.getUserInfo(wfc.getUserId());
         let participantUserInfos = wfc.getUserInfos([conversation.target]);
-        this.showCallUI();
+        this.showCallUI(conversation);
         this.emitToVoip('startCall', {
             conversation: conversation,
             audioOnly: audioOnly,
@@ -144,8 +144,9 @@ export class AvEngineKitProxy {
         });
     }
 
-    showCallUI() {
+    showCallUI(conversation) {
         this.queueEvents = [];
+        let type = conversation.type === ConversationType.Single ? 'voip-single' : 'voip-multi';
         if (isElectron()) {
             let win = new BrowserWindow(
                 {
@@ -169,10 +170,10 @@ export class AvEngineKitProxy {
                 this.voipEventRemoveAllListeners(['message']);
             });
 
-            win.loadURL(path.join('file://', AppPath, 'src/index.html?voip'));
+            win.loadURL(path.join('file://', AppPath, 'src/index.html?' + type));
             win.show();
         } else {
-            let win = window.open(window.location.origin + '?voip', 'target', 'width=360,height=640,left=200,top=200,toolbar=no,menubar=no,resizable=no,location=no, maximizable');
+            let win = window.open(window.location.origin + '?' + type, 'target', 'width=360,height=640,left=200,top=200,toolbar=no,menubar=no,resizable=no,location=no, maximizable');
             win.addEventListener('load', () => {
                 this.onVoipWindowReady(win);
             }, true);
