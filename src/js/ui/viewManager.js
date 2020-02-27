@@ -9,10 +9,15 @@ class ViewManager extends Component {
 
     static View(props) {
         let name = props.location.search.substr(1);
-        if ('voip' === name) {
+        if ('voip-single' === name) {
             let TargetView = require('../../voip')
             return (
-                <TargetView/>
+                <TargetView type='single'/>
+            );
+        } else if ('voip-multi' === name) {
+            let TargetView = require('../../voip')
+            return (
+                <TargetView type='multi'/>
             );
         } else {
             let TargetView = require('../../app')

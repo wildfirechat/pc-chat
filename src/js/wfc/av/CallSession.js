@@ -163,7 +163,7 @@ export default class CallSession {
 
         if (moCall) {
             this.setState(CallState.STATUS_OUTGOING);
-            this.startPreview(audioOnly);
+            this.startPreview(this.audioOnly);
         } else {
             this.setState(CallState.STATUS_INCOMING);
             this.playIncomingRing();
@@ -574,7 +574,6 @@ export default class CallSession {
         // 停几秒，显示通话时间，再结束
         // 页面释放有问题没有真正释放掉
         // eslint-disable-next-line no-const-assign
-        // TODO 放到也没去
         setTimeout(() => {
             if (currentWindow) {
                 currentWindow.close();
