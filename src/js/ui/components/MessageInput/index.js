@@ -369,7 +369,7 @@ export default class MessageInput extends Component {
     }
 
 
-    pickGroupMemberToVoip(audioOnly) {
+    pickGroupMemberToVoip(audioOnly, close) {
         let groupMemberIds = wfc.getGroupMemberIds(this.props.conversation.target);
         let userInfos = wfc.getUserInfos(groupMemberIds, this.props.conversation.target);
 
@@ -465,8 +465,9 @@ export default class MessageInput extends Component {
                                    closeOnDocumentClick
                                    position={"top center"}
                             >
-                                {
-                                    this.pickGroupMemberToVoip(false)
+                                {close => (
+                                    this.pickGroupMemberToVoip(false, close)
+                                )
                                 }
                             </Popup>
 
@@ -491,8 +492,9 @@ export default class MessageInput extends Component {
                                    modal
                                    closeOnDocumentClick={true}
                             >
-                                {
-                                    this.pickGroupMemberToVoip(true)
+                                {close => (
+                                    this.pickGroupMemberToVoip(true, close)
+                                )
                                 }
                             </Popup>
 
