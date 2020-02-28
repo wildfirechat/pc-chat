@@ -51,9 +51,6 @@ export class AvEngineKitProxy {
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT
             ) {
                 console.log("receive voip message", msg);
-                if (!this.callWin && content.type === MessageContentType.VOIP_CONTENT_TYPE_START) {
-                    this.showCallUI(msg.conversation);
-                }
 
                 let participantUserInfos = [];
                 let selfUserInfo = wfc.getUserInfo(wfc.getUserId());
@@ -64,6 +61,9 @@ export class AvEngineKitProxy {
                         let targetIds = content.targetIds.filter(id => id !== selfUserInfo.uid);
                         targetIds.push(msg.from);
                         participantUserInfos = wfc.getUserInfos(targetIds, msg.conversation.target);
+                    }
+                    if (!this.callWin) {
+                        this.showCallUI(msg.conversation);
                     }
                 } else if (content.type === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT) {
                     let participantIds = [...content.participants];
@@ -78,6 +78,14 @@ export class AvEngineKitProxy {
                     if (!this.callWin && content.participants.indexOf(selfUserInfo.uid) > -1) {
                         this.showCallUI(msg.conversation);
                     }
+                }
+
+                if (msg.conversation.type === ConversationType.Group
+                    && (content.type === MessageContentType.VOIP_CONTENT_TYPE_START
+                        || content === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT
+                    )) {
+                    let memberIds = wfc.getGroupMemberIds(msg.conversation.target);
+                    msg.groupMemberUserInfos = wfc.getUserInfos(memberIds, msg.conversation.target);
                 }
 
                 msg.participantUserInfos = participantUserInfos;
@@ -135,11 +143,17 @@ export class AvEngineKitProxy {
     startCall(conversation, audioOnly, participants) {
         let selfUserInfo = wfc.getUserInfo(wfc.getUserId());
         let participantUserInfos = wfc.getUserInfos(participants);
+        let groupMemberUserInfos;
+        if (conversation.type === ConversationType.Group) {
+            let memberIds = wfc.getGroupMemberIds(conversation.target);
+            groupMemberUserInfos = wfc.getUserInfos(memberIds, conversation.target);
+        }
         this.showCallUI(conversation);
         this.emitToVoip('startCall', {
             conversation: conversation,
             audioOnly: audioOnly,
             selfUserInfo: selfUserInfo,
+            groupMemberUserInfos: groupMemberUserInfos,
             participantUserInfos: participantUserInfos
         });
     }

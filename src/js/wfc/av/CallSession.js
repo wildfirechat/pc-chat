@@ -44,6 +44,8 @@ export default class CallSession {
 
     peerConnectionClientMap;
 
+    groupMemberUserInfos;
+
     static newSession(conversation, initiatorId, callId, audioOnly, sessionCallback) {
         let session = new CallSession();
         session.conversation = conversation;
@@ -194,18 +196,18 @@ export default class CallSession {
 
 
     // PC/Web端邀请成的会话对象时调用
-    inviteNewParticipants(newParticipants) {
-        if (!newParticipants.length) {
+    inviteNewParticipants(newParticipantIds) {
+        if (!newParticipantIds.length) {
             return;
         }
-        newParticipants = newParticipants.filter(uid => {
+        newParticipantIds = newParticipantIds.filter(uid => {
             return uid !== this.selfUserInfo.uid && this.participantUserInfos.findIndex((u) => u.uid === uid) < 0;
         });
-        if (!newParticipants.length) {
+        if (!newParticipantIds.length) {
             return;
         }
 
-        avenginekit.inviteNewParticipants(newParticipants);
+        avenginekit.inviteNewParticipants(newParticipantIds);
     }
 
     getExistParticipantsStatus() {
