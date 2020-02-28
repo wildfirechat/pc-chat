@@ -45,7 +45,7 @@ export default class Voip extends Component {
             }
         };
 
-        sessionCallback.onInitial = (session, selfUserInfo, participantUserInfos) => {
+        sessionCallback.onInitial = (session, selfUserInfo, initiatorUserInfo, participantUserInfos) => {
             this.session = session;
             this.audioOnly = session.audioOnly;
         };

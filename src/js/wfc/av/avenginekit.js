@@ -9,6 +9,7 @@ import CallEndReason from './callEndReason';
 import avenginekitProxy from './avenginekitproxy'
 import CallState from "./callState";
 import CallSession from "./CallSession";
+import AddParticipantsMessageContent from "./messages/addParticipantsMessageContent";
 
 export class WfcAVEngineKit {
     currentSession;
@@ -131,7 +132,7 @@ export class WfcAVEngineKit {
                         let newParticipantUserInfos = msg.participantUserInfos.filter(p => {
                             return content.participants.indexOf(p.uid) > -1;
                         });
-                        self.currentSession.addNewParticipant(content.participants, newParticipantUserInfos);
+                        self.currentSession.didAddNewParticipants(content.participants, newParticipantUserInfos);
 
                     }
                 }
@@ -178,6 +179,29 @@ export class WfcAVEngineKit {
             }
         });
     };
+
+    inviteNewParticipants(newParticipants) {
+        let session = self.currentSession;
+        if (!session) {
+            return;
+        }
+
+        let add = new AddParticipantsMessageContent();
+        add.callId = session.callId;
+        add.initiator = session.initiatorId;
+        add.audioOnly = session.audioOnly;
+        add.participants = newParticipants;
+        add.existParticipants = session.getExistParticipantsStatus();
+
+        let toUsers = [...session.getParticipantIds()];
+        toUsers.push(...newParticipants)
+        this.sendSignalMessage(add, toUsers, true, (error, messageUid, timestamp) => {
+            session.initParticipantClientMap(newParticipants);
+            newParticipants.forEach(uid => {
+                session.setUserJoinTime(uid, timestamp);
+            });
+        })
+    }
 
     sendSignalMessage(msg, targetIds, keyMsg, callback) {
         console.log('send signal message', msg);

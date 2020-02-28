@@ -16,6 +16,8 @@ export default class CallSession {
     callId;
     joinTime = 0;
     acceptTime = 0;
+    videoMuted = false;
+
     connectedTime;
     endTime;
     endReason;
@@ -156,10 +158,15 @@ export default class CallSession {
         this.moCall = moCall;
         this.selfUserInfo = selfUserInfo;
         this.participantUserInfos = participantUserInfos;
+        let initiatorUserInfo = participantUserInfos.filter(u => u.uid === this.initiatorId)[0];
 
-        this.sessionCallback.onInitial(this, selfUserInfo, participantUserInfos);
+        this.sessionCallback.onInitial(this, selfUserInfo, initiatorUserInfo, participantUserInfos);
 
-        this.initParticipantClientMap(participantUserInfos);
+        let participants = [];
+        participantUserInfos.forEach(u => {
+            participants.push(u.uid);
+        });
+        this.initParticipantClientMap(participants);
 
         if (moCall) {
             this.setState(CallState.STATUS_OUTGOING);
@@ -170,22 +177,60 @@ export default class CallSession {
         }
     }
 
-    initParticipantClientMap(participantUserInfos) {
+    initParticipantClientMap(participants) {
         if (!this.peerConnectionClientMap) {
             this.peerConnectionClientMap = new Map();
         }
-        participantUserInfos.forEach(u => {
-            let client = new PeerConnectionClient(u.uid, this);
-            if (u.uid === this.selfUserInfo.uid) {
+        participants.forEach(uid => {
+            let client = new PeerConnectionClient(uid, this);
+            if (uid === this.selfUserInfo.uid) {
                 client.status = CallState.STATUS_OUTGOING;
             } else {
                 client.status = CallState.STATUS_INCOMING;
             }
-            this.peerConnectionClientMap.set(u.uid, client);
+            this.peerConnectionClientMap.set(uid, client);
         }, this);
     }
 
-    addNewParticipant(newParticipants, newParticipantUserInfos) {
+
+    // PC/Web端邀请成的会话对象时调用
+    inviteNewParticipants(newParticipants) {
+        if (!newParticipants.length) {
+            return;
+        }
+        newParticipants = newParticipants.filter(uid => {
+            return uid !== this.selfUserInfo.uid && this.participantUserInfos.findIndex((u) => u.uid === uid) < 0;
+        });
+        if (!newParticipants.length) {
+            return;
+        }
+
+        avenginekit.inviteNewParticipants(newParticipants);
+    }
+
+    getExistParticipantsStatus() {
+        let statuses = [];
+        statuses.push({
+            userId: this.selfUserInfo.uid,
+            acceptTime: this.acceptTime,
+            joinTime: this.joinTime,
+            videoMuted: this.videoMuted
+        })
+
+        this.participantUserInfos.forEach(u => {
+            let client = this.getClient(u.uid);
+            statuses.push({
+                userId: client.userId,
+                acceptTime: client.acceptTime,
+                joinTime: client.joinTime,
+                videoMuted: client.videoMuted
+            });
+        }, this);
+        return statuses;
+    }
+
+
+    didAddNewParticipants(newParticipants, newParticipantUserInfos) {
         newParticipants.forEach(p => {
             let client = new PeerConnectionClient(p, this);
             client.status = CallState.STATUS_INCOMING;

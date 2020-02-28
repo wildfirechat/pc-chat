@@ -6,7 +6,6 @@ class ParticipantStatus {
     acceptTime;
     joinTime;
     videoMuted;
-
 }
 
 export default class AddParticipantsMessageContent extends NotificationMessageContent {
