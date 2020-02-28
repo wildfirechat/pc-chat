@@ -394,7 +394,7 @@ export default class MessageInput extends Component {
 
         return (
             <div style={{margin: 20}}>
-                <div>
+                <div className={classes.voipTargetList}>
                     {
                         userInfos.map(u => {
                             return (
