@@ -132,9 +132,9 @@ export class AvEngineKitProxy {
         }
     };
 
-    startCall(conversation, audioOnly) {
+    startCall(conversation, audioOnly, participants) {
         let selfUserInfo = wfc.getUserInfo(wfc.getUserId());
-        let participantUserInfos = wfc.getUserInfos([conversation.target]);
+        let participantUserInfos = wfc.getUserInfos(participants);
         this.showCallUI(conversation);
         this.emitToVoip('startCall', {
             conversation: conversation,

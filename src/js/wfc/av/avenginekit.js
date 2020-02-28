@@ -164,7 +164,7 @@ export class WfcAVEngineKit {
         let startMessage = new CallStartMessageContent();
         startMessage.audioOnly = audioOnly;
         startMessage.callId = callId;
-        startMessage.targetIds = [conversation.target];
+        startMessage.targetIds = this.currentSession.getParticipantIds();
 
         this.sendSignalMessage(startMessage, this.currentSession.getParticipantIds(), true, (error, messageUid, timestamp) => {
             if (!self.currentSession) {
