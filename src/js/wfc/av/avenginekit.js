@@ -157,14 +157,13 @@ export class WfcAVEngineKit {
         if (this.currentSession) {
             return;
         }
-        let callId = conversation.target + Math.random();
-        this.currentSession = CallSession.newSession(conversation, msg.selfUserInfo.uid, callId, audioOnly, self.sessionCallback);
+        this.currentSession = CallSession.newSession(conversation, msg.selfUserInfo.uid, msg.callId, audioOnly, self.sessionCallback);
         this.currentSession.initSession(true, msg.selfUserInfo, msg.participantUserInfos, msg.groupMemberUserInfos);
         this.currentSession.setState(CallState.STATUS_OUTGOING);
 
         let startMessage = new CallStartMessageContent();
         startMessage.audioOnly = audioOnly;
-        startMessage.callId = callId;
+        startMessage.callId = msg.callId;
         startMessage.targetIds = this.currentSession.getParticipantIds();
 
         this.sendSignalMessage(startMessage, this.currentSession.getParticipantIds(), true, (error, messageUid, timestamp) => {

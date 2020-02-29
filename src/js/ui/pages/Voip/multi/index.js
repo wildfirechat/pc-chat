@@ -13,6 +13,7 @@ import Popup from "reactjs-popup";
 import wfc from "../../../../wfc/client/wfc";
 import avenginekitProxy from "../../../../wfc/av/avenginekitproxy";
 import Checkbox from "rc-checkbox";
+import CallEndReason from "../../../../wfc/av/callEndReason";
 
 @observer
 export default class Voip extends Component {
@@ -50,7 +51,6 @@ export default class Voip extends Component {
             if (state === CallState.STATUS_CONNECTED) {
                 this.onUpdateTime();
             } else if (state === CallState.STATUS_IDLE) {
-                console.log('xxx clear time');
                 if (this.timer) {
                     clearInterval(this.timer);
                 }
