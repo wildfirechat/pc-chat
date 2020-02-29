@@ -402,6 +402,7 @@ export default class MessageInput extends Component {
                                     <label>
                                         <Checkbox
                                             type="checkbox"
+                                            defaultChecked={u.uid === selfUid}
                                             disabled={u.uid === selfUid}
                                             onChange={onChange}
                                             name={u.uid}
@@ -419,8 +420,6 @@ export default class MessageInput extends Component {
             </div>
         )
     }
-
-    isVoipPopupInitialized = false;
 
     render() {
         var canisend = this.canisend();
@@ -505,9 +504,6 @@ export default class MessageInput extends Component {
                                 onClick={e => canisend && canStartVoip && this.audioCall()}
                             />
                         )
-                    }
-                    {
-                        this.isVoipPopupInitialized = true
                     }
 
                     <i

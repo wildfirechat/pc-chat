@@ -156,13 +156,24 @@ export default class CallSession {
         //再接听/语音接听/结束媒体时停止播放来电铃声，可能有多次，需要避免出问题
     }
 
-    initSession(moCall, selfUserInfo, participantUserInfos) {
+    /**
+     *
+     * @param moCall
+     * @param selfUserInfo
+     * @param participantUserInfos
+     * @param groupMemberUserInfos 群成员信息，群里发起多人音视频时，才有效
+     */
+    initSession(moCall, selfUserInfo, participantUserInfos, groupMemberUserInfos) {
         this.moCall = moCall;
         this.selfUserInfo = selfUserInfo;
         this.participantUserInfos = participantUserInfos;
-        let initiatorUserInfo = participantUserInfos.filter(u => u.uid === this.initiatorId)[0];
+        this.groupMemberUserInfos = groupMemberUserInfos;
+        let initiatorUserInfo = selfUserInfo;
+        if (!moCall) {
+            initiatorUserInfo = participantUserInfos.filter(u => u.uid === this.initiatorId)[0];
+        }
 
-        this.sessionCallback.onInitial(this, selfUserInfo, initiatorUserInfo, participantUserInfos);
+        this.sessionCallback.onInitial(this, selfUserInfo, initiatorUserInfo, participantUserInfos, groupMemberUserInfos);
 
         let participants = [];
         participantUserInfos.forEach(u => {
@@ -241,8 +252,7 @@ export default class CallSession {
 
         newParticipantUserInfos.forEach(u => {
             this.participantUserInfos.push(u);
-            this.sessionCallback && this.sessionCallback.didParticipantJoined(u.uid, u)
-            ;
+            this.sessionCallback && this.sessionCallback.didParticipantJoined(u.uid, u);
         }, this);
     }
 

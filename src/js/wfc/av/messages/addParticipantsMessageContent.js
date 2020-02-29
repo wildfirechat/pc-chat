@@ -1,5 +1,6 @@
 import NotificationMessageContent from "../../messages/notification/notificationMessageContent";
 import {Base64} from "js-base64";
+import MessageContentType from "../../messages/messageContentType";
 
 class ParticipantStatus {
     userId;
@@ -15,6 +16,9 @@ export default class AddParticipantsMessageContent extends NotificationMessageCo
     existParticipants;
     audioOnly;
 
+    constructor(mentionedType = 0, mentionedTargets = []) {
+        super(MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT, mentionedType, mentionedTargets);
+    }
 
     formatNotification(message) {
         // TODO

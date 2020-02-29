@@ -7,6 +7,12 @@ import {observable, action} from 'mobx';
 import CallState from "../../../../wfc/av/callState";
 import CallSessionCallback from "../../../../wfc/av/CallSessionCallback";
 import avenginekit from "../../../../wfc/av/avenginekit";
+import CallStartMessageContent from "../../../../wfc/av/messages/callStartMessageContent";
+import NullUserInfo from "../../../../wfc/model/nullUserInfo";
+import Popup from "reactjs-popup";
+import wfc from "../../../../wfc/client/wfc";
+import avenginekitProxy from "../../../../wfc/av/avenginekitproxy";
+import Checkbox from "rc-checkbox";
 
 @observer
 export default class Voip extends Component {
@@ -18,6 +24,8 @@ export default class Voip extends Component {
     @observable selfUserInfo;
     @observable initiatorUserInfo;
     @observable participantUserInfos;
+
+    groupMemberUserInfos;
 
     timer;
 
@@ -49,12 +57,13 @@ export default class Voip extends Component {
             }
         };
 
-        sessionCallback.onInitial = (session, selfUserInfo, initiatorUserInfo, participantUserInfos) => {
+        sessionCallback.onInitial = (session, selfUserInfo, initiatorUserInfo, participantUserInfos, groupMemberUserInfos) => {
             this.session = session;
             this.audioOnly = session.audioOnly;
             this.selfUserInfo = selfUserInfo;
             this.initiatorUserInfo = initiatorUserInfo;
             this.participantUserInfos = participantUserInfos;
+            this.groupMemberUserInfos = groupMemberUserInfos;
         };
 
         sessionCallback.didChangeMode = (audioOnly) => {
@@ -97,6 +106,55 @@ export default class Voip extends Component {
 
         console.log(this.duration);
     };
+
+    checkedIds = new Set();
+
+    inviteNewParticipants(close) {
+
+        let onChange = (e) => {
+            if (e.target.checked) {
+                this.checkedIds.add(e.target.name);
+            } else {
+                this.checkedIds.delete(e.target.name);
+            }
+        };
+
+        let invite = () => {
+            if (this.checkedIds.size > 0) {
+                this.session.inviteNewParticipants([...this.checkedIds]);
+                this.checkedIds.clear();
+            }
+
+            close();
+        }
+
+        return (
+            <div style={{margin: 20}}>
+                <div className={classes.voipTargetList}>
+                    {
+                        this.groupMemberUserInfos.map(u => {
+                            return (
+                                <p key={u.uid}>
+                                    <label>
+                                        <Checkbox
+                                            type="checkbox"
+                                            defaultChecked={u.uid === this.selfUserInfo.uid || this.participantUserInfos.findIndex(p => p.uid === u.uid) > -1}
+                                            disabled={u.uid === this.selfUserInfo.uid || this.participantUserInfos.findIndex(p => p.uid === u.uid) > -1}
+                                            onChange={onChange}
+                                            name={u.uid}
+                                        />
+                                        {u.displayName}
+                                    </label>
+                                </p>
+                            )
+                        })
+                    }
+                </div>
+
+                <button onClick={invite}>Invite</button>
+            </div>
+        )
+    }
 
     componentWillMount() {
         avenginekit.setup();
@@ -153,6 +211,24 @@ export default class Voip extends Component {
                     />
                     <p>关闭/打开摄像头</p>
                 </div>
+                <Popup key={'voip-invite'}
+                       trigger={
+                           <div>
+                               <p style={{visibility: 'hidden'}}>holder</p>
+                               <img ref="toVoiceButton"
+                                    src='assets/images/add.png'
+                               />
+                               <p>邀请</p>
+                           </div>
+                       }
+                       modal
+                       closeOnDocumentClick={true}
+                >
+                    {close => (
+                        this.inviteNewParticipants(close)
+                    )
+                    }
+                </Popup>
             </div>
         )
     }
@@ -251,7 +327,23 @@ export default class Voip extends Component {
                 </div>
                 <img className={classes.audioIncomingHangup}
                      onClick={e => this.session.hangup()}
-                     src='assets/images/av_hang_up.png'></img>
+                     src='assets/images/av_hang_up.png'>
+                </img>
+
+                <Popup key={'voip-invite'}
+                       trigger={
+                           <img className={classes.audioIncomingHangup}
+                                src='assets/images/add.png'>
+                           </img>
+                       }
+                       modal
+                       closeOnDocumentClick={true}
+                >
+                    {close => (
+                        this.inviteNewParticipants(close)
+                    )
+                    }
+                </Popup>
             </div>
         )
     }
