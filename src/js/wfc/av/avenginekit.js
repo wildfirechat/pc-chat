@@ -60,13 +60,10 @@ export class WfcAVEngineKit {
                     self.rejectOtherCall(content.callId, msg.targetIds);
                 } else {
                     self.currentSession = CallSession.newSession(msg.conversation, msg.from, content.callId, content.audioOnly, self.sessionCallback);
-                    self.currentSession.initSession(false, msg.selfUserInfo, msg.participantUserInfos);
+                    self.currentSession.initSession(false, msg.selfUserInfo, msg.participantUserInfos, msg.groupMemberUserInfos);
                     self.currentSession.setState(CallState.STATUS_INCOMING);
                     self.currentSession.setUserJoinTime(msg.from, msg.timestamp);
                     self.currentSession.setUserAcceptTime(msg.from, msg.timestamp);
-                    if (msg.conversation.type === ConversationType.Group) {
-                        self.currentSession.groupMemberUserInfos = msg.groupMemberUserInfos;
-                    }
                 }
             } else if (msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT
                 || msg.messageContent.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT_T) {
@@ -119,16 +116,13 @@ export class WfcAVEngineKit {
 
                     self.currentSession = CallSession.newSession(msg.conversation, msg.from, content.callId, content.audioOnly, self.sessionCallback);
                     let participantUserInfos = msg.participantUserInfos.filter(u => u.uid !== msg.selfUserInfo.uid);
-                    self.currentSession.initSession(false, msg.selfUserInfo, participantUserInfos);
+                    self.currentSession.initSession(false, msg.selfUserInfo, participantUserInfos, msg.groupMemberUserInfos);
                     self.currentSession.joinTime = msg.timestamp;
 
                     participantUserInfos.forEach(u => {
                         self.currentSession.setUserJoinTime(u.uid, msg.timestamp);
                     });
                     self.currentSession.updateExistParticipant(content.existParticipants);
-                    if (msg.conversation.type === ConversationType.Group) {
-                        self.currentSession.groupMemberUserInfos = msg.groupMemberUserInfos;
-                    }
                 } else {
                     if (!self.currentSession || self.currentSession.status === CallState.STATUS_IDLE || self.currentSession.callId !== content.callId) {
                         //     rejectOtherCall(message.conversation, add.getCallId(), null);
@@ -165,11 +159,8 @@ export class WfcAVEngineKit {
         }
         let callId = conversation.target + Math.random();
         this.currentSession = CallSession.newSession(conversation, msg.selfUserInfo.uid, callId, audioOnly, self.sessionCallback);
-        this.currentSession.initSession(true, msg.selfUserInfo, msg.participantUserInfos);
+        this.currentSession.initSession(true, msg.selfUserInfo, msg.participantUserInfos, msg.groupMemberUserInfos);
         this.currentSession.setState(CallState.STATUS_OUTGOING);
-        if (conversation.type === ConversationType.Group) {
-            this.currentSession.groupMemberUserInfos = msg.groupMemberUserInfos;
-        }
 
         let startMessage = new CallStartMessageContent();
         startMessage.audioOnly = audioOnly;
@@ -205,7 +196,8 @@ export class WfcAVEngineKit {
         let toUsers = [...session.getParticipantIds()];
         toUsers.push(...newParticipants)
         this.sendSignalMessage(add, toUsers, true, (error, messageUid, timestamp) => {
-            session.initParticipantClientMap(newParticipants);
+            let newParticipantUserInfos = session.groupMemberUserInfos.filter(u => newParticipants.findIndex(newParticipantId => newParticipantId === u.uid) > -1);
+            session.didAddNewParticipants(newParticipants, newParticipantUserInfos);
             newParticipants.forEach(uid => {
                 session.setUserJoinTime(uid, timestamp);
             });
