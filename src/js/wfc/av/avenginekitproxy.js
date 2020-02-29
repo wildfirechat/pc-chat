@@ -40,7 +40,7 @@ export class AvEngineKitProxy {
     onReceiveMessage = (msg) => {
         let now = (new Date()).valueOf();
         // 需要处理deltatime
-        if ((msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && msg.timestamp - now < 90 * 1000) {
+        if (msg.direction === 1 && (msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && msg.timestamp - now < 90 * 1000) {
             let content = msg.messageContent;
             if (content.type === MessageContentType.VOIP_CONTENT_TYPE_START
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_END
@@ -100,13 +100,13 @@ export class AvEngineKitProxy {
             // renderer/main to renderer
             if (this.callWin) {
                 this.callWin.webContents.send(event, args);
-            } else {
+            } else if (this.queueEvents) {
                 this.queueEvents.push({event, args});
             }
         } else {
             if (this.events) {
                 this.events.emit(event, args);
-            } else {
+            } else if (this.queueEvents) {
                 this.queueEvents.push({event, args});
             }
         }
