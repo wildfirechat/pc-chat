@@ -71,6 +71,11 @@
     bottom: 0;
     right: 0;
     width: calc(100% - 300px - 60px);
+    
+}
+.hideConversation {
+    
+    width: calc(100vw - 60px );
 }
 
 .contacts {

@@ -4,14 +4,18 @@
     margin: 0;
     list-style: none;
     height: 50vh;
-    width: 35vw;
+    /* width: 35vw; */
     overflow-x: hidden;
     overflow-y: auto;
+    padding-left: 20px;
+    margin-top: 7px;
 
     & li {
+        margin: 0;
         position: relative;
         display: flex;
-        margin: 24px;
+        /* margin: 24px; */
+        height: 50px;
         justify-content: flex-start;
         align-items: center;
         font-size: 16px;
@@ -39,7 +43,37 @@
         transform: translateY(-50%);
     }
 }
+.searchBarbg {
+    background: #dbd9d8;
+    width:240px;
+    border-radius:8px;
+    margin-left: 17px;
+    margin-top: 18px;
+    width: 227px;
 
+    & input {
+        -webkit-app-region: no-drag;
+        height: 30px;
+        line-height: 30px;
+        background: none;
+        outline: 0;
+        border: 0;
+        font-family: 'Helvetica';
+        font-size: 18px;
+        font-weight: 100;
+        text-indent: -110px;
+        margin-left:28px ;
+      }
+    
+    & i {
+        position: absolute;
+        left: 22px;
+        top: 34px;
+        font-size: 24px;
+        color: #6b6a6a;
+        transform: translateY(-50%);
+      }
+}
 .avatar {
     height: 32px;
     width: 32px;
@@ -53,7 +87,8 @@
     flex-direction: column;
 
     & img {
-        width: 240px;
+        width: 89px;
+        margin-top: 175px;
     }
 
     & h3 {
@@ -70,10 +105,12 @@
     display: inline-block;
 }
 
+
+
 @media (width <= 800px) {
     .list {
         & li {
-            margin: 20px;
+            /* margin: 20px; */
             font-size: 13px;
         }
 
@@ -91,7 +128,8 @@
 
     .notfound {
         & img {
-            width: 200px;
+            width: 89px;
+            margin-top: 175px;
         }
     }
 }

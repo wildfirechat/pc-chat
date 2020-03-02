@@ -1093,4 +1093,8 @@ label {
     margin-top: 10vh;
     margin-left: 10vw;
 }
+.react-images__view .css-zjq1i3{
+    max-height: 75vh;
+    width: 90%;
+}
 /* react-images 插件样式修改 *** END****  */
