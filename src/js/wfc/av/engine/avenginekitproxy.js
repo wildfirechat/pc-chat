@@ -1,10 +1,10 @@
-import EventType from "../client/wfcEvent";
-import {AppPath, BrowserWindow, ipcRenderer, isElectron, PostMessageEventEmitter} from "../../platform";
-import ConversationType from "../model/conversationType";
-import MessageContentType from "../messages/messageContentType";
-import wfc from "../client/wfc";
-import MessageConfig from "../client/messageConfig";
-import CallByeMessageContent from "./messages/callByeMessageContent";
+import EventType from "../../client/wfcEvent";
+import {AppPath, BrowserWindow, ipcRenderer, isElectron, PostMessageEventEmitter} from "../../../platform";
+import ConversationType from "../../model/conversationType";
+import MessageContentType from "../../messages/messageContentType";
+import wfc from "../../client/wfc";
+import MessageConfig from "../../client/messageConfig";
+import CallByeMessageContent from "../messages/callByeMessageContent";
 
 const path = require('path');
 

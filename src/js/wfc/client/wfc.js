@@ -7,7 +7,7 @@ import btoa from 'btoa';
 
 import impl from '../proto/proto.min';
 import Config from "../../config";
-import avenginekit from "../av/avenginekitproxy";
+import avenginekit from "../av/engine/avenginekitproxy";
 
 // 其实就是imclient，后续可能需要改下名字
 export class WfcManager {
