@@ -38,7 +38,6 @@ export default class Voip extends Component {
             if (state === CallState.STATUS_CONNECTED) {
                 this.onUpdateTime();
             } else if (state === CallState.STATUS_IDLE) {
-                console.log('xxx clear time');
                 if (this.timer) {
                     clearInterval(this.timer);
                 }
