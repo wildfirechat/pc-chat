@@ -7,9 +7,14 @@ import classes from './style.css';
 import Home from './Home';
 import Contacts from './Contacts';
 import Settings from './Settings';
+import { inject } from 'mobx-react';
 
+@inject(stores => ({
+    showConversation: stores.chat.showConversation
+}))
 export default class Footer extends Component {
     render() {
+        var { showConversation } = this.props;
         var pathname = this.props.location.pathname;
         var component = {
             '/': Home,
@@ -53,9 +58,11 @@ export default class Footer extends Component {
                     </Link>
                 </nav>
 
-                <div className={classes.right}>
+                <div className={clazz(classes.right, {
+                    [classes.hideConversation]: !showConversation,
+                })}>
                     {
-                        component ? React.createElement(component):""
+                        component ? React.createElement(component) : ""
                     }
                 </div>
             </footer>
