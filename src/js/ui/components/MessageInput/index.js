@@ -17,7 +17,7 @@ import EventType from '../../../wfc/client/wfcEvent';
 import GroupInfo from '../../../wfc/model/groupInfo';
 import GroupType from '../../../wfc/model/groupType';
 import GroupMemberType from '../../../wfc/model/groupMemberType';
-import avenginekitProxy from '../../../wfc/av/avenginekitproxy';
+import avenginekitProxy from '../../../wfc/av/engine/avenginekitproxy';
 import CheckBox from "rc-checkbox";
 
 export default class MessageInput extends Component {

@@ -1,19 +1,14 @@
 import React, {Component} from 'react';
-import {observer, inject} from 'mobx-react';
+import {observer} from 'mobx-react';
 
 import clazz from 'classname';
 import classes from './style.css';
-import {observable, action} from 'mobx';
-import CallState from "../../../../wfc/av/callState";
-import CallSessionCallback from "../../../../wfc/av/CallSessionCallback";
-import avenginekit from "../../../../wfc/av/avenginekit";
-import CallStartMessageContent from "../../../../wfc/av/messages/callStartMessageContent";
-import NullUserInfo from "../../../../wfc/model/nullUserInfo";
+import {action, observable} from 'mobx';
+import CallState from "../../../../wfc/av/engine/callState";
+import CallSessionCallback from "../../../../wfc/av/engine/CallSessionCallback";
+import avenginekit from "../../../../wfc/av/internal/engine.min";
 import Popup from "reactjs-popup";
-import wfc from "../../../../wfc/client/wfc";
-import avenginekitProxy from "../../../../wfc/av/avenginekitproxy";
 import Checkbox from "rc-checkbox";
-import CallEndReason from "../../../../wfc/av/callEndReason";
 
 @observer
 export default class Voip extends Component {
