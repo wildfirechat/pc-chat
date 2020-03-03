@@ -30,6 +30,7 @@ import CallAnswerTMessageContent from '../av/messages/callAnswerTMessageContent'
 import CallByeMessageContent from '../av/messages/callByeMessageContent';
 import CallSignalMessageContent from '../av/messages/callSignalMessageContent';
 import CallModifyMessageContent from '../av/messages/callModifyMessageContent';
+import AddParticipantsMessageContent from "../av/messages/addParticipantsMessageContent";
 export default class MessageConfig {
     static getMessageContentClazz(type) {
         for (const content of MessageConfig.MessageContents) {
@@ -253,6 +254,12 @@ export default class MessageConfig {
             flag: PersistFlag.No_Persist,
             type: MessageContentType.VOIP_CONTENT_TYPE_MODIFY,
             contentClazz: CallModifyMessageContent,
+        },
+        {
+            name: 'callAddParticipant',
+            flag: PersistFlag.Persist,
+            type: MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT,
+            contentClazz: AddParticipantsMessageContent,
         },
     ];
 }
