@@ -5,6 +5,7 @@ import MessageContentType from "../../messages/messageContentType";
 import wfc from "../../client/wfc";
 import MessageConfig from "../../client/messageConfig";
 import CallByeMessageContent from "../messages/callByeMessageContent";
+import CallEndReason from './callEndReason'
 
 const path = require('path');
 
@@ -35,6 +36,10 @@ export class AvEngineKitProxy {
                 this.conversation = null;
                 this.callId = null;
                 this.participants = [];
+                // 仅仅为了通知proxy，其他端已经接听电话了，关闭窗口时，不应当发送挂断信令
+                if(!content.callId){
+                    return;
+                }
             }
             wfc.sendConversationMessage(msg.conversation, content, msg.toUsers, (messageId, timestamp) => {
 
@@ -51,8 +56,8 @@ export class AvEngineKitProxy {
 
     onReceiveMessage = (msg) => {
         let now = (new Date()).valueOf();
-        // 需要处理deltatime
-        if (msg.direction === 1 && (msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && msg.timestamp - now < 90 * 1000) {
+        let delta = wfc.getServerDeltaTime();
+        if ((msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && now - (msg.timestamp- delta) < 90 * 1000) {
             let content = msg.messageContent;
             if (content.type === MessageContentType.VOIP_CONTENT_TYPE_START
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_END
