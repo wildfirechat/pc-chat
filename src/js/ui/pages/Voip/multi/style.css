@@ -24,7 +24,7 @@
 
     & img {
         width: 120px;
-        height: 120px;
+        height: 120pxfor;
     }
 
     & p {
@@ -62,7 +62,6 @@
     width: 100%;
     height: 200px;
     top: 240px;
-    background: #00d995;
 }
 
 .remoteVideo{
@@ -123,7 +122,6 @@
     top: 400px;
     width: 100%;
     height: 140px;
-    background: #3d85c6;
     white-space:nowrap;
     text-align: center;
 
@@ -146,13 +144,11 @@
     top: 100px;
     width: 100%;
     height: 140px;
-    background: #3d85c6;
     white-space:nowrap;
     text-align: center;
 
 & video {
       margin: 10px;
-      background: #3f51b5;
       width: 60px;
       height: 60px;
   }

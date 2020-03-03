@@ -1,508 +1,159 @@
 import React, {Component} from 'react';
-import {observer, inject} from 'mobx-react';
+import {observer} from 'mobx-react';
 
 import clazz from 'classname';
 import classes from './style.css';
-import {ipcRenderer, isElectron, currentWindow, PostMessageEventEmitter} from '../../../../platform'
-import {observable, action} from 'mobx';
-import Config from '../../../../config.js';
-import UserInfo from "../../../../wfc/model/userInfo";
+import {action, observable} from 'mobx';
+import CallState from "../../../../wfc/av/engine/callState";
+import CallSessionCallback from "../../../../wfc/av/engine/CallSessionCallback";
+import avenginekit from "../../../../wfc/av/internal/engine.min";
+import Popup from "reactjs-popup";
+import Checkbox from "rc-checkbox";
 
 @observer
 export default class Voip extends Component {
-
-    static STATUS_IDLE = 0;
-    static STATUS_OUTGOING = 1;
-    static STATUS_INCOMING = 2;
-    static STATUS_CONNECTING = 3;
-    static STATUS_CONNECTED = 4;
 
     @observable status = 0;
     @observable audioOnly = false;
     @observable duration = '0:0';
     @observable muted = false;
+    @observable selfUserInfo;
+    @observable initiatorUserInfo;
+    @observable participantUserInfos;
 
-    targetUserInfo;
-    targetUserDisplayName;
+    groupMemberUserInfos;
 
-    moCall; // true, outgoing; false, incoming
-    isInitiator;
-    pcSetuped;
-    queuedOffer;
-    pooledSignalingMsg = [];
-    startTime;
-    localStream;
-    pc;
-    callTimer;
+    timer;
 
     callButton;
     hangupButton;
     toVoiceButton;
     switchMicrophone;
     localVideo;
-    remoteVideo;
+    remoteVideoMap = new Map();
 
     events;
 
+    session;
 
-    drainOfferMessage() {
-        if (!this.queuedOffer) {
-            return false;
-        }
+    current = 0;
 
-        this.onReceiveRemoteCreateOffer(this.queuedOffer);
-        this.queuedOffer = null;
-    }
+    setupSessionCallback() {
+        let sessionCallback = new CallSessionCallback();
 
-    queueOfferMessage(desc) {
-        this.queuedOffer = desc;
-    }
-
-    playIncomingRing() {
-        //在界面初始化时播放来电铃声
-    }
-
-    stopIncomingRing() {
-        //再接听/语音接听/结束媒体时停止播放来电铃声，可能有多次，需要避免出问题
-    }
-
-    voipEventEmit(event, args) {
-        if (isElectron()) {
-            // renderer to main
-            ipcRenderer.send(event, args);
-        } else {
-            this.events.emit(event, args);
-        }
-    }
-
-    voipEventOn = (event, listener) => {
-        if (isElectron()) {
-            // listen for event from renderer
-            ipcRenderer.on(event, listener);
-        } else {
-            this.events.on(event, listener);
-        }
-    }
-
-    voipEventRemoveAllListeners(events = []) {
-        if (isElectron()) {
-            // renderer
-            events.forEach(e => ipcRenderer.removeAllListeners(e));
-        } else {
-            this.events.stop();
-        }
-    }
-
-    setup() {
-        if (!isElectron()) {
-            this.events = new PostMessageEventEmitter(window.opener, window.location.origin);
-        }
-
-        this.voipEventOn('initCallUI', (event, message) => { // 监听父页面定义的端口
-            this.moCall = message.moCall;
-            this.audioOnly = message.audioOnly;
-            this.targetUserInfo = message.targetUserInfo;
-            this.targetUserDisplayName = message.targetUserDisplayName;
-
-            if (message.moCall) {
-                this.status = Voip.STATUS_OUTGOING;
-                this.startPreview(false, message.voiceOnly);
-            } else {
-                this.status = Voip.STATUS_INCOMING;
-                this.playIncomingRing();
-            }
-        });
-
-        this.voipEventOn('startMedia', (event, message) => { // 监听父页面定义的端口
-            this.startMedia(message.isInitiator, message.audioOnly);
-        });
-
-        this.voipEventOn('setRemoteOffer', (event, message) => {
-            this.onReceiveRemoteCreateOffer(JSON.parse(message));
-        });
-
-        this.voipEventOn('setRemoteAnswer', (event, message) => {
-            this.onReceiveRemoteAnswerOffer(JSON.parse(message));
-        });
-
-        this.voipEventOn('setRemoteIceCandidate', (event, message) => {
-            console.log('setRemoteIceCandidate');
-            console.log(message);
-            if (!this.pcSetuped) {
-                console.log('pc not setup yet pool it');
-                this.pooledSignalingMsg.push(message);
-            } else {
-                console.log('handle the candidiated');
-                this.onReceiveRemoteIceCandidate(JSON.parse(message));
-            }
-        });
-
-        this.voipEventOn('endCall', () => { // 监听父页面定义的端口
-            this.endCall();
-        });
-
-        this.voipEventOn('downgrade2Voice', () => {
-            this.downgrade2Voice();
-        });
-
-        this.voipEventOn('ping', () => {
-            console.log('receive ping');
-            this.voipEventEmit('pong');
-        });
-
-    }
-
-    async startPreview(continueStartMedia, audioOnly) {
-        console.log('start preview');
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: !audioOnly});
-            console.log('Received local stream', stream);
-            this.localVideo.srcObject = stream;
-            this.localStream = stream;
-
-            if (continueStartMedia) {
-                this.startMedia(this.isInitiator, audioOnly);
-            }
-        } catch (e) {
-            console.log('getUserMedia error', e);
-            alert(`getUserMedia() error: ${e.name}`);
-            this.endCall();
-        }
-    }
-
-
-    async startMedia(initiator, audioOnly) {
-        console.log('start media', initiator);
-        this.isInitiator = initiator;
-        this.status = Voip.STATUS_CONNECTING;
-        this.startTime = window.performance.now();
-        if (!this.localStream) {
-            this.startPreview(true, audioOnly);
-            return;
-        } else {
-            console.log('start pc');
-        }
-
-        const videoTracks = this.localStream.getVideoTracks();
-        if (!audioOnly) {
-            if (videoTracks && videoTracks.length > 0) {
-                console.log(`Using video device: ${videoTracks[0].label}`);
-            }
-        } else {
-            if (videoTracks && videoTracks.length > 0) {
-                videoTracks.forEach(track => track.stop());
-            }
-        }
-
-        const audioTracks = this.localStream.getAudioTracks();
-        if (audioTracks.length > 0) {
-            console.log(`Using audio device: ${audioTracks[0].label}`);
-        }
-        var configuration = this.getSelectedSdpSemantics();
-        var iceServer = {
-            urls: [Config.ICE_ADDRESS],
-            username: Config.ICE_USERNAME,
-            credential: Config.ICE_PASSWORD
-        };
-        var iceServers = [];
-        iceServers.push(iceServer);
-        configuration.iceServers = iceServers;
-        console.log('RTCPeerConnection configuration:', configuration);
-
-        this.pc = new RTCPeerConnection(configuration);
-        console.log('Created local peer connection object pc');
-        this.pc.addEventListener('icecandidate', e => this.onIceCandidate(this.pc, e));
-
-        this.pc.addEventListener('iceconnectionstatechange', e => this.onIceStateChange(this.pc, e));
-        this.pc.addEventListener('track', this.gotRemoteStream);
-
-        if (!audioOnly) {
-            this.localStream.getTracks().forEach(track => this.pc.addTrack(track, this.localStream));
-        } else {
-            this.localStream.getAudioTracks().forEach(track => this.pc.addTrack(track, this.localStream));
-        }
-        console.log('Added local stream to pc');
-
-        if (this.isInitiator) {
-            try {
-                console.log('pc createOffer start');
-                var offerOptions = {
-                    offerToReceiveAudio: 1,
-                    offerToReceiveVideo: !audioOnly
+        sessionCallback.didChangeState = (state) => {
+            this.status = state;
+            if (state === CallState.STATUS_CONNECTED) {
+                this.onUpdateTime();
+            } else if (state === CallState.STATUS_IDLE) {
+                if (this.timer) {
+                    clearInterval(this.timer);
                 }
-                const offer = await this.pc.createOffer(offerOptions);
-                var mutableOffer = JSON.parse(JSON.stringify(offer));
-                mutableOffer.type = 'offer';
-                await this.onCreateOfferSuccess(offer);
-            } catch (e) {
-                this.onCreateSessionDescriptionError(e);
             }
-        }
+        };
 
-        this.drainOfferMessage();
-    }
+        sessionCallback.onInitial = (session, selfUserInfo, initiatorUserInfo, participantUserInfos, groupMemberUserInfos) => {
+            this.session = session;
+            this.audioOnly = session.audioOnly;
+            this.selfUserInfo = selfUserInfo;
+            this.initiatorUserInfo = initiatorUserInfo;
+            this.participantUserInfos = participantUserInfos;
+            this.groupMemberUserInfos = groupMemberUserInfos;
+        };
 
-    downgrade2Voice() {
-        if (this.status !== Voip.STATUS_CONNECTED) {
-            return
-        }
-        this.audioOnly = true;
+        sessionCallback.didChangeMode = (audioOnly) => {
+            this.audioOnly = audioOnly;
+        };
 
-        const localVideoTracks = this.localStream.getVideoTracks();
-        if (localVideoTracks && localVideoTracks.length > 0) {
-            localVideoTracks.forEach(track => track.stop());
-        }
+        sessionCallback.didCreateLocalVideoTrack = (stream) => {
+            this.localVideo.srcObject = stream;
+        };
 
-        this.localVideo.srcObject = null;
-        this.remoteVideo.srcObject = null;
+        sessionCallback.didReceiveRemoteVideoTrack = (userId, stream) => {
+            if (!this.audioOnly) {
+                let video = this.remoteVideoMap.get(userId);
+                video.current.srcObject = stream;
+            }
+        };
 
-        this.voipEventEmit('downToVoice');
-    }
+        sessionCallback.didVideoMuted = (userId, muted) => {
+            // TODO
+            this.muted = muted;
+        };
 
-    getSelectedSdpSemantics() {
-        // const sdpSemanticsSelect = document.querySelector('#sdpSemantics');
-        // const option = sdpSemanticsSelect.options[sdpSemanticsSelect.selectedIndex];
-        // return option.value === '' ? {} : { sdpSemantics: option.value };
-        return {};
-    }
+        sessionCallback.didParticipantJoined = (userId, userInfo) => {
+            this.participantUserInfos.push(userInfo);
+        };
 
-    call() {
-        console.log('voip on call button click');
-        this.stopIncomingRing();
-
-        this.status = Voip.STATUS_CONNECTING;
-        console.log('on call button call');
-        this.voipEventEmit('onCallButton');
-    }
-
-    onCreateSessionDescriptionError(error) {
-        console.log('Failed to create session description');
-        // console.log(`Failed to create session description: ${error.toString()}`);
-        this.endCall();
-    }
-
-    drainOutSignalingMessage() {
-        console.log('drain pooled msg');
-        console.log(this.pooledSignalingMsg.length);
-        this.pooledSignalingMsg.forEach((message) => {
-            console.log('popup pooled message');
-            console.log(message);
-            this.onReceiveRemoteIceCandidate(JSON.parse(message));
-        });
-    }
-
-    async onReceiveRemoteCreateOffer(desc) {
-        console.log('pc setRemoteDescription start');
-        if (this.status !== Voip.STATUS_CONNECTING && this.status !== Voip.STATUS_CONNECTED) {
-            this.queueOfferMessage(desc);
-            return;
-        }
-        try {
-            await this.pc.setRemoteDescription(desc);
-            this.onSetRemoteSuccess(this.pc);
-        } catch (e) {
-            this.onSetSessionDescriptionError(e);
-        }
-
-        console.log('pc createAnswer start');
-        // Since the 'remote' side has no media stream we need
-        // to pass in the right constraints in order for it to
-        // accept the incoming offer of audio and video.
-        try {
-            const answer = await this.pc.createAnswer();
-            var mutableAnswer = JSON.parse(JSON.stringify(answer));
-            mutableAnswer.type = 'answer';
-            await this.onCreateAnswerSuccess(answer);
-        } catch (e) {
-            this.onCreateSessionDescriptionError(e);
-        }
-    }
-
-    async onCreateOfferSuccess(desc) {
-        console.log(`Offer from pc\n${desc.sdp}`);
-        console.log('pc setLocalDescription start');
-        try {
-            await this.pc.setLocalDescription(desc);
-            this.onSetLocalSuccess(this.pc);
-            this.pcSetuped = true;
-            this.drainOutSignalingMessage();
-        } catch (e) {
-            this.onSetSessionDescriptionError();
-        }
-
-        console.log(desc);
-        this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
-    }
-
-    onSetLocalSuccess(pc) {
-        console.log(`setLocalDescription complete`);
-    }
-
-    onSetRemoteSuccess(pc) {
-        console.log(`setRemoteDescription complete`);
-    }
-
-    onSetSessionDescriptionError(error) {
-        console.log(`Failed to set session description: ${error.toString()}`);
-        this.endCall();
-    }
-
-    gotRemoteStream = (e) => {
-        if (this.remoteVideo.srcObject !== e.streams[0]) {
-            this.remoteVideo.srcObject = e.streams[0];
-            console.log('pc received remote stream', e.streams[0]);
-        }
-    }
-
-    async onReceiveRemoteAnswerOffer(desc) {
-        console.log('pc setRemoteDescription start');
-        try {
-            await this.pc.setRemoteDescription(desc);
-            this.onSetRemoteSuccess(this.pc);
-        } catch (e) {
-            this.onSetSessionDescriptionError(e);
-        }
-    }
-
-    async onCreateAnswerSuccess(desc) {
-        console.log(`Answer from pc:\n${desc.sdp}`);
-        console.log('pc setLocalDescription start');
-        try {
-            await this.pc.setLocalDescription(desc);
-            this.onSetLocalSuccess(this.pc);
-            this.pcSetuped = true;
-            this.drainOutSignalingMessage();
-        } catch (e) {
-            this.onSetSessionDescriptionError(e);
-        }
-        console.log(desc);
-        this.voipEventEmit('onCreateAnswerOffer', JSON.stringify(desc));
-    }
-
-    async onReceiveRemoteIceCandidate(message) {
-        console.log('on receive remote ice candidate');
-        await this.pc.addIceCandidate(message);
-    }
-
-    onIceCandidate = (pc, event) => {
-        if (!event.candidate) {
-            return;
-        }
-        try {
-            let candidate = {
-                type: 'candidate',
-                label: event.candidate.sdpMLineIndex,
-                id: event.candidate.sdpMid,
-                candidate: event.candidate.candidate
-            };
-            this.voipEventEmit('onIceCandidate', JSON.stringify(candidate));
-            this.onAddIceCandidateSuccess(pc);
-        } catch (e) {
-            this.onAddIceCandidateError(pc, e);
-        }
-        console.log(`ICE candidate:\n${event.candidate ? event.candidate.candidate : '(null)'}`);
-    }
-
-    onAddIceCandidateSuccess(pc) {
-        console.log(`send Ice Candidate success`);
-    }
-
-    onAddIceCandidateError(pc, error) {
-        console.log(`failed to add ICE Candidate: ${error.toString()}`);
-        this.endCall();
+        sessionCallback.didParticipantLeft = (userId, callEndReason) => {
+            this.participantUserInfos = this.participantUserInfos.filter(u => u.uid !== userId);
+        };
+        avenginekit.sessionCallback = sessionCallback;
     }
 
     @action onUpdateTime = () => {
-        let elapsedTime = window.performance.now() - this.startTime;
+        let elapsedTime = window.performance.now() - this.session.startTime;
         elapsedTime /= 1000;
         this.duration = parseInt(elapsedTime / 60) + ':' + parseInt(elapsedTime % 60);
+        if (!this.timer) {
+            this.timer = setInterval(this.onUpdateTime, 1000);
+        }
+
         console.log(this.duration);
-    }
+    };
 
-    @action onIceStateChange = (pc, event) => {
-        if (pc) {
-            console.log(`ICE state: ${pc.iceConnectionState}`, pc);
-            console.log('ICE state change event: ', event);
-            if (pc.iceConnectionState === 'connected') {
-                this.status = Voip.STATUS_CONNECTED;
-                this.startTime = window.performance.now();
-                this.callTimer = window.setInterval(this.onUpdateTime, 1000);
-            }
-            this.voipEventEmit('onIceStateChange', pc.iceConnectionState);
-        }
-    }
+    checkedIds = new Set();
 
-    hangup() {
-        console.log('Ending call');
-        this.voipEventEmit('onHangupButton');
-        this.endCall();
-    }
+    inviteNewParticipants(close) {
 
-    triggerMicrophone() {
-        console.log('trigger microphone');
-        if (this.localStream) {
-            const audioTracks = this.localStream.getAudioTracks();
-            if (audioTracks && audioTracks.length > 0) {
-                audioTracks[0].enabled = !audioTracks[0].enabled;
-                this.muted = !this.muted;
-            }
-        }
-    }
-
-    downToVoice() {
-        console.log('down to voice');
-        this.stopIncomingRing();
-        this.voipEventEmit('downToVoice');
-    }
-
-    endCall() {
-        console.log('Ending media');
-        this.status = Voip.STATUS_IDLE;
-        this.stopIncomingRing();//可能没有接听就挂断了
-        if (this.callTimer) {
-            clearInterval(this.callTimer);
-        }
-
-        if (this.localStream) {
-            if (typeof this.localStream.getTracks === 'undefined') {
-                // Support legacy browsers, like phantomJs we use to run tests.
-                this.localStream.stop();
+        let onChange = (e) => {
+            if (e.target.checked) {
+                this.checkedIds.add(e.target.name);
             } else {
-                this.localStream.getTracks().forEach(function (track) {
-                    track.stop();
-                });
+                this.checkedIds.delete(e.target.name);
             }
-            this.localStream = null;
+        };
+
+        let invite = () => {
+            if (this.checkedIds.size > 0) {
+                this.session.inviteNewParticipants([...this.checkedIds]);
+                this.checkedIds.clear();
+            }
+
+            close();
         }
 
-        if (this.pc) {
-            this.pc.close();
-            this.pc = null;
-        }
+        return (
+            <div style={{margin: 20}}>
+                <div className={classes.voipTargetList}>
+                    {
+                        this.groupMemberUserInfos.map(u => {
+                            return (
+                                <p key={u.uid}>
+                                    <label>
+                                        <Checkbox
+                                            type="checkbox"
+                                            defaultChecked={u.uid === this.selfUserInfo.uid || this.participantUserInfos.findIndex(p => p.uid === u.uid) > -1}
+                                            disabled={u.uid === this.selfUserInfo.uid || this.participantUserInfos.findIndex(p => p.uid === u.uid) > -1}
+                                            onChange={onChange}
+                                            name={u.uid}
+                                        />
+                                        {u.displayName}
+                                    </label>
+                                </p>
+                            )
+                        })
+                    }
+                </div>
 
-        // ipcRenderer.removeListener('startPreview');
-        // ipcRenderer.removeListener('startMedia');
-        // ipcRenderer.removeListener('setRemoteOffer');
-        // ipcRenderer.removeListener('setRemoteAnswer');
-        // ipcRenderer.removeListener('setRemoteIceCandidate');
-        // ipcRenderer.removeListener('endMedia');
-        this.voipEventRemoveAllListeners(['initCallUI', 'startPreview', 'startMedia', 'setRemoteOffer', 'setRemoteAnswer', 'setRemoteIceCandidate', 'endMedia']);
-
-        // 停几秒，显示通话时间，再结束
-        // 页面释放有问题没有真正释放掉
-        // eslint-disable-next-line no-const-assign
-        // TODO web
-        setTimeout(() => {
-            if (currentWindow) {
-                currentWindow.close();
-            } else {
-                window.close();
-            }
-        }, 2000);
+                <button onClick={invite}>Invite</button>
+            </div>
+        )
     }
 
     componentWillMount() {
-        this.setup();
+        avenginekit.setup();
+        this.setupSessionCallback();
     }
 
     componentDidMount() {
@@ -511,9 +162,6 @@ export default class Voip extends Component {
         this.toVoiceButton = this.refs.toVoiceButton;
         this.switchMicrophone = this.refs.switchMicorphone;
         this.localVideo = this.refs.localVideo;
-        this.remoteVideo = this.refs.remoteVideo;
-
-        // TODO more
     }
 
     componentWillUnmount() {
@@ -522,9 +170,9 @@ export default class Voip extends Component {
     videoOutgoingDesc() {
         return (
             <div className={classes.videoOutgoing}>
-                <img src={this.targetUserInfo.portrait}></img>
+                <img src={this.selfUserInfo.portrait}></img>
                 <div className={classes.desc}>
-                    <p>{this.targetUserDisplayName}</p>
+                    <p>{this.selfUserInfo.displayName}</p>
                     <p>正在等待对方接受邀请</p>
                 </div>
             </div>
@@ -537,8 +185,8 @@ export default class Voip extends Component {
                 <div>
                     <p style={{visibility: 'hidden'}}>holder</p>
                     <img ref="switchMicorphone"
-                         src={this.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'}
-                         onClick={() => this.triggerMicrophone()}
+                         src={this.session.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'}
+                         onClick={() => this.session.triggerMicrophone()}
                     >
                     </img>
                     <p>关闭麦克风</p>
@@ -546,7 +194,7 @@ export default class Voip extends Component {
                 <div>
                     <p>{this.duration}</p>
                     <img ref="hangupButton"
-                         onClick={() => this.hangup()}
+                         onClick={() => this.session.hangup()}
                          src='assets/images/av_hang_up.png'></img>
                     <p style={{visibility: 'hidden'}}>holder</p>
                 </div>
@@ -554,10 +202,28 @@ export default class Voip extends Component {
                     <p style={{visibility: 'hidden'}}>holder</p>
                     <img ref="toVoiceButton"
                          src='assets/images/av_phone.png'
-                         onClick={() => this.downgrade2Voice()}
+                         onClick={() => this.session.downgrade2Voice()}
                     />
                     <p>关闭/打开摄像头</p>
                 </div>
+                <Popup key={'voip-invite'}
+                       trigger={
+                           <div>
+                               <p style={{visibility: 'hidden'}}>holder</p>
+                               <img ref="toVoiceButton"
+                                    src='assets/images/add.png'
+                               />
+                               <p>邀请</p>
+                           </div>
+                       }
+                       modal
+                       closeOnDocumentClick={true}
+                >
+                    {close => (
+                        this.inviteNewParticipants(close)
+                    )
+                    }
+                </Popup>
             </div>
         )
     }
@@ -567,16 +233,19 @@ export default class Voip extends Component {
             <div>
 
                 <div className={clazz(classes.videoInviter)}>
-                    <img src={this.targetUserInfo.portrait}></img>
-                    <p>{this.targetUserDisplayName}</p>
+                    <img src={this.initiatorUserInfo.portrait}></img>
+                    <p>{this.initiatorUserInfo.displayName}</p>
                     <p>邀请你视频通话</p>
                 </div>
                 <div className={classes.videoParticipants}>
                     <p>其他参与者</p>
-                    <img src='assets/images/user-fallback.png'/>
-                    <img src='assets/images/user-fallback.png'/>
-                    <img src='assets/images/user-fallback.png'/>
-                    <img src='assets/images/user-fallback.png'/>
+                    {
+                        this.participantUserInfos && this.participantUserInfos.forEach(u => {
+                            let ref = React.createRef();
+                            <img src={u.portriat} ref={ref}/>
+                            // TODO
+                        })
+                    }
                 </div>
             </div>
         )
@@ -587,13 +256,13 @@ export default class Voip extends Component {
             <div>
                 <div className={classes.videoIncomingAction}>
                     <img ref="hangupButton"
-                         onClick={() => this.hangup()}
+                         onClick={() => this.session.hangup()}
                          className={classes.incomingHangup}
                          src='assets/images/av_hang_up.png'>
 
                     </img>
                     <img ref="callButton"
-                         onClick={() => this.call()}
+                         onClick={() => this.session.call()}
                          className={classes.incomingAccept}
                          src='assets/images/av_video_answer.png'></img>
                 </div>
@@ -604,18 +273,9 @@ export default class Voip extends Component {
     audioIncomingDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src={this.targetUserInfo.portrait}></img>
-                <p>{this.targetUserDisplayName}</p>
+                <img src={this.initiatorUserInfo.portrait}></img>
+                <p>{this.initiatorUserInfo.displayName}</p>
                 <p>邀请你语音聊天</p>
-            </div>
-        )
-    }
-
-    audioIncomingAction() {
-        return (
-            <div className={classes.videoIncomingAction}>
-                <img className={classes.incomingHangup} src='assets/images/av_hang_up.png'></img>
-                <img className={classes.incomingAccept} src='assets/images/av_video_answer.png'></img>
             </div>
         )
     }
@@ -623,8 +283,8 @@ export default class Voip extends Component {
     audioOutgoingDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src={this.targetUserInfo.portrait}></img>
-                <p>{this.targetUserDisplayName}</p>
+                <img src={this.selfUserInfo.portrait}></img>
+                <p>{this.selfUserInfo.displayName}</p>
                 <p>正在等待对方接受邀请</p>
             </div>
         )
@@ -635,7 +295,7 @@ export default class Voip extends Component {
             <div className={classes.videoIncomingAction}>
                 <img
                     className={classes.audioIncomingHangup}
-                    onClick={() => this.hangup()}
+                    onClick={() => this.session.hangup()}
                     src='assets/images/av_hang_up.png'></img>
             </div>
         )
@@ -644,8 +304,8 @@ export default class Voip extends Component {
     audioConnectedDesc() {
         return (
             <div className={clazz(classes.videoInviter)}>
-                <img src={this.targetUserInfo.portrait}></img>
-                <p>{this.targetUserDisplayName}</p>
+                <img src={this.initiatorUserInfo.portrait}></img>
+                <p>{this.initiatorUserInfo.displayName}</p>
                 <p>{this.duration}</p>
             </div>
         )
@@ -656,13 +316,29 @@ export default class Voip extends Component {
             <div className={classes.audioConnectedAction}>
                 <div>
                     <img className={classes.audioIncomingHangup}
-                         onClick={e => this.triggerMicrophone()}
-                         src={this.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'}/>
+                         onClick={e => this.session.triggerMicrophone()}
+                         src={this.session.muted ? 'assets/images/av_mute_hover.png' : 'assets/images/av_mute.png'}/>
                     <p>关闭麦克风</p>
                 </div>
                 <img className={classes.audioIncomingHangup}
-                     onClick={e => this.hangup()}
-                     src='assets/images/av_hang_up.png'></img>
+                     onClick={e => this.session.hangup()}
+                     src='assets/images/av_hang_up.png'>
+                </img>
+
+                <Popup key={'voip-invite'}
+                       trigger={
+                           <img className={classes.audioIncomingHangup}
+                                src='assets/images/add.png'>
+                           </img>
+                       }
+                       modal
+                       closeOnDocumentClick={true}
+                >
+                    {close => (
+                        this.inviteNewParticipants(close)
+                    )
+                    }
+                </Popup>
             </div>
         )
     }
@@ -671,11 +347,11 @@ export default class Voip extends Component {
         return (
             <div className={classes.videoIncomingAction}>
                 <img className={classes.incomingHangup}
-                     onClick={e => this.hangup()}
+                     onClick={e => this.session.hangup()}
                      src='assets/images/av_hang_up.png'
                 ></img>
                 <img className={classes.incomingAccept}
-                     onClick={e => this.call()}
+                     onClick={e => this.session.call()}
                      src='assets/images/av_video_answer.png'
                 ></img>
             </div>
@@ -764,18 +440,19 @@ export default class Voip extends Component {
 
     renderVideo() {
         let renderFn;
+        console.log('render video ', this.status);
         switch (this.status) {
-            case Voip.STATUS_IDLE:
+            case CallState.STATUS_IDLE:
                 renderFn = this.renderIdle;
                 break;
-            case Voip.STATUS_INCOMING:
+            case CallState.STATUS_INCOMING:
                 renderFn = this.renderIncomingVideo;
                 break;
-            case Voip.STATUS_OUTGOING:
+            case CallState.STATUS_OUTGOING:
                 renderFn = this.renderOutgoingVideo;
                 break;
-            case Voip.STATUS_CONNECTING:
-            case Voip.STATUS_CONNECTED:
+            case CallState.STATUS_CONNECTING:
+            case CallState.STATUS_CONNECTED:
                 renderFn = this.renderConnectedVideo;
                 break;
             default:
@@ -785,11 +462,15 @@ export default class Voip extends Component {
         return (
             <div className={classes.container}>
                 <div className={classes.videoParticipantVideos}>
-                    {/*TODO 动态*/}
-                    <video ref="remoteVideo_0" playsinline autoPlay muted/>
-                    <video ref="remoteVideo_1" playsinline autoPlay muted/>
-                    <video ref="remoteVideo_2" playsinline autoPlay muted/>
-                    <video ref="remoteVideo_3" playsinline autoPlay muted/>
+                    {
+                        this.participantUserInfos && this.participantUserInfos.map(u => {
+                            let ref = React.createRef();
+                            this.remoteVideoMap.set(u.uid, ref);
+                            return (
+                                <video key={u.uid} ref={ref} playsInline autoPlay muted/>
+                            );
+                        })
+                    }
                 </div>
 
                 <video ref="localVideo" className={classes.localVideo} playsInline autoPlay muted>
@@ -797,7 +478,6 @@ export default class Voip extends Component {
                 {
                     renderFn.bind(this)()
                 }
-
             </div>
         );
     }
@@ -805,17 +485,17 @@ export default class Voip extends Component {
     renderAudio() {
         let renderFn;
         switch (this.status) {
-            case Voip.STATUS_IDLE:
+            case CallState.STATUS_IDLE:
                 renderFn = this.renderIdle;
                 break;
-            case Voip.STATUS_INCOMING:
+            case CallState.STATUS_INCOMING:
                 renderFn = this.renderIncomingAudio;
                 break;
-            case Voip.STATUS_OUTGOING:
+            case CallState.STATUS_OUTGOING:
                 renderFn = this.renderOutgoingAudio;
                 break;
-            case Voip.STATUS_CONNECTING:
-            case Voip.STATUS_CONNECTED:
+            case CallState.STATUS_CONNECTING:
+            case CallState.STATUS_CONNECTED:
                 renderFn = this.renderConnectedAudio;
                 break;
             default:
@@ -825,11 +505,13 @@ export default class Voip extends Component {
         return (
             <div className={classes.container}>
                 <div className={classes.videoParticipantVideos}>
-                    {/*TODO 动态*/}
-                    <img src='assets/images/user-fallback.png'/>
-                    <img src='assets/images/user-fallback.png'/>
-                    <img src='assets/images/user-fallback.png'/>
-                    <img src='assets/images/user-fallback.png'/>
+                    {
+                        this.participantUserInfos && this.participantUserInfos.map(u => {
+                            return (
+                                <img key={u.uid} src={u.portrait}/>
+                            )
+                        })
+                    }
                 </div>
                 {
                     renderFn.bind(this)()
@@ -841,10 +523,6 @@ export default class Voip extends Component {
     }
 
     render() {
-        this.targetUserInfo = new UserInfo();
-        this.targetUserInfo.portrait = Config.DEFAULT_PORTRAIT_URL;
-        this.targetUserDisplayName = 'XxxxX';
-        this.status = 4;
         return this.audioOnly ? this.renderAudio() : this.renderVideo();
     }
 }

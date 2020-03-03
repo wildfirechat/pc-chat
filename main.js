@@ -585,7 +585,7 @@ const createMainWindow = () => {
     });
 
     ipcMain.on('voip-message', (event, args) => {
-        console.log('main voip-message event', args);
+        // console.log('main voip-message event', args);
         mainWindow.webContents.send('voip-message', args);
     });
 
