@@ -37,7 +37,7 @@ export class AvEngineKitProxy {
                 this.callId = null;
                 this.participants = [];
                 // 仅仅为了通知proxy，其他端已经接听电话了，关闭窗口时，不应当发送挂断信令
-                if(!content.callId){
+                if (!content.callId) {
                     return;
                 }
             }
@@ -57,7 +57,7 @@ export class AvEngineKitProxy {
     onReceiveMessage = (msg) => {
         let now = (new Date()).valueOf();
         let delta = wfc.getServerDeltaTime();
-        if ((msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && now - (msg.timestamp- delta) < 90 * 1000) {
+        if ((msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && now - (msg.timestamp - delta) < 90 * 1000) {
             let content = msg.messageContent;
             if (content.type === MessageContentType.VOIP_CONTENT_TYPE_START
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_END
