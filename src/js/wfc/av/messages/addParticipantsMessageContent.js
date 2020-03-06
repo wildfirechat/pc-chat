@@ -1,6 +1,6 @@
 import NotificationMessageContent from "../../messages/notification/notificationMessageContent";
-import {Base64} from "js-base64";
 import MessageContentType from "../../messages/messageContentType";
+import wfc from "../../client/wfc"
 
 class ParticipantStatus {
     userId;
@@ -35,7 +35,7 @@ export default class AddParticipantsMessageContent extends NotificationMessageCo
             participants: this.participants,
             existParticipants: this.existParticipants,
         };
-        payload.binaryContent = Base64.encode(JSON.stringify(obj));
+        payload.binaryContent = wfc.utf8_to_b64(JSON.stringify(obj));
 
         return payload;
     }
@@ -43,7 +43,7 @@ export default class AddParticipantsMessageContent extends NotificationMessageCo
     decode(payload) {
         super.decode(payload);
         this.callId = payload.content;
-        let json = Base64.decode(payload.binaryContent);
+        let json = wfc.b64_to_utf8(payload.binaryContent);
         let obj = JSON.parse(json);
         this.initiator = obj.initiator;
         this.audioOnly = obj.audioOnly;

@@ -23,36 +23,40 @@ export class AvEngineKitProxy {
         this.event = wfc.eventEmitter;
         this.event.on(EventType.ReceiveMessage, this.onReceiveMessage);
 
-        this.listenMainEvent('voip-message', (event, msg) => {
-            // TODO construct message object
-            let contentClazz = MessageConfig.getMessageContentClazz(msg.content.type);
-
-            let content = new contentClazz();
-            content.decode(msg.content);
-            console.log('to send voip message', content);
-            if (content.type === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT) {
-                this.participants.push(content.participants);
-            } else if (content.type === MessageContentType.VOIP_CONTENT_TYPE_END) {
-                this.conversation = null;
-                this.callId = null;
-                this.participants = [];
-                // 仅仅为了通知proxy，其他端已经接听电话了，关闭窗口时，不应当发送挂断信令
-                if (!content.callId) {
-                    return;
-                }
-            }
-            wfc.sendConversationMessage(msg.conversation, content, msg.toUsers, (messageId, timestamp) => {
-
-            }, (uploaded, total) => {
-
-            }, (messageUid, timestamp) => {
-                this.emitToVoip('sendMessageResult', {error: 0, sendMessageId: msg.sendMessageId, timestamp: timestamp})
-            }, (errorCode) => {
-                this.emitToVoip('sendMessageResult', {error: errorCode, sendMessageId: msg.sendMessageId})
-            });
-        });
-
+        if (isElectron()) {
+            ipcRenderer.on('voip-message', this.sendVoipListener);
+        }
     }
+
+    sendVoipListener = (event, msg) => {
+
+        let contentClazz = MessageConfig.getMessageContentClazz(msg.content.type);
+
+        let content = new contentClazz();
+        content.decode(msg.content);
+        console.log('to send voip message', content);
+        if (content.type === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT) {
+            this.participants.push(content.participants);
+        } else if (content.type === MessageContentType.VOIP_CONTENT_TYPE_END) {
+            this.conversation = null;
+            this.callId = null;
+            this.participants = [];
+            // 仅仅为了通知proxy，其他端已经接听电话了，关闭窗口时，不应当发送挂断信令
+            if (!content.callId) {
+                return;
+            }
+        }
+        wfc.sendConversationMessage(msg.conversation, content, msg.toUsers, (messageId, timestamp) => {
+
+        }, (uploaded, total) => {
+
+        }, (messageUid, timestamp) => {
+            this.emitToVoip('sendMessageResult', {error: 0, sendMessageId: msg.sendMessageId, timestamp: timestamp})
+        }, (errorCode) => {
+            this.emitToVoip('sendMessageResult', {error: errorCode, sendMessageId: msg.sendMessageId})
+        });
+    }
+
 
     onReceiveMessage = (msg) => {
         let now = (new Date()).valueOf();
@@ -167,6 +171,9 @@ export class AvEngineKitProxy {
             // listen for event from renderer
             ipcRenderer.on(event, listener);
         } else {
+            if (!this.events) {
+                this.events = new PostMessageEventEmitter(window.opener, window.location.origin);
+            }
             this.events.on(event, listener);
         }
     };
@@ -227,6 +234,10 @@ export class AvEngineKitProxy {
             win.addEventListener('load', () => {
                 this.onVoipWindowReady(win);
             }, true);
+
+            win.addEventListener('beforeunload', () => {
+                this.onVoipWindowClose();
+            });
         }
     }
 
@@ -247,6 +258,7 @@ export class AvEngineKitProxy {
         this.callWin = win;
         if (!isElectron()) {
             this.events = new PostMessageEventEmitter(win, window.location.origin)
+            this.events.on('voip-message', this.sendVoipListener)
         }
         if (this.queueEvents.length > 0) {
             this.queueEvents.forEach((eventArgs) => {
@@ -262,6 +274,7 @@ export class AvEngineKitProxy {
             events.forEach(e => ipcRenderer.removeAllListeners(e));
         } else {
             this.events.stop();
+            this.events = null;
         }
     }
 }
