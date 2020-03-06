@@ -70,8 +70,15 @@ export class AvEngineKitProxy {
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_MODIFY
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT_T
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT
+                || content.type === MessageContentType.VOIP_CONTENT_TYPE_MUTE_VIDEO
             ) {
                 console.log("receive voip message", msg);
+                if(msg.direction === 0
+                    && content.type !== MessageContentType.VOIP_CONTENT_TYPE_END
+                    && content.type !== MessageContentType.VOIP_CONTENT_TYPE_ACCEPT
+                    && content.type !== MessageContentType.VOIP_CONTENT_TYPE_ACCEPT){
+                    return;
+                }
 
                 let participantUserInfos = [];
                 let selfUserInfo = wfc.getUserInfo(wfc.getUserId());

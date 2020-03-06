@@ -85,6 +85,10 @@ export default class Voip extends Component {
             this.participantUserInfos.push(userInfo);
         };
 
+        sessionCallback.didVideoMuted = (userId, muted) => {
+            console.log('video muted', userId, muted);
+        }
+
         sessionCallback.didParticipantLeft = (userId, callEndReason) => {
             this.participantUserInfos = this.participantUserInfos.filter(u => u.uid !== userId);
         };
@@ -201,8 +205,8 @@ export default class Voip extends Component {
                 <div>
                     <p style={{visibility: 'hidden'}}>holder</p>
                     <img ref="toVoiceButton"
-                         src='assets/images/av_phone.png'
-                         onClick={() => this.session.downgrade2Voice()}
+                         src='assets/images/av_video_answer.png'
+                         onClick={() => this.session.setVideoEnabled(!this.session.videoMuted)}
                     />
                     <p>关闭/打开摄像头</p>
                 </div>
