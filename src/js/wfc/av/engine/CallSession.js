@@ -40,4 +40,8 @@ export default class CallSession {
     downgrade2Voice() {
     }
 
+    setVideoEnabled(enable){
+
+    }
+
 }

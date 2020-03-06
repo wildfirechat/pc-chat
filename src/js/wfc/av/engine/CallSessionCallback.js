@@ -44,6 +44,10 @@ export default class CallSessionCallback {
 
     }
 
+    didReportAudioVolume(userId, volume){
+
+    }
+
     didVideoMuted(userId, muted) {
 
     }
