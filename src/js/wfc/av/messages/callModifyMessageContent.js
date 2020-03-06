@@ -24,14 +24,14 @@ export default class CallModifyMessageContent extends MessageContent {
       } else {
           obj = '0';
       }
-      payload.binaryContent = Base64.encode(obj);
+      payload.binaryContent = wfc.utf8_to_b64(obj);
       return payload;
   };
 
   decode(payload) {
       super.decode(payload);
       this.callId = payload.content;
-      let str = Base64.decode(payload.binaryContent);
+      let str = wfc.b64_to_utf8(payload.binaryContent);
 
       this.audioOnly = (str === '1');
   }
