@@ -3,17 +3,17 @@
     padding: 0;
     margin: 0;
     list-style: none;
-    height: 50vh;
+    height: 345px;
     /* width: 35vw; */
     overflow-x: hidden;
     overflow-y: auto;
-    padding-left: 20px;
     margin-top: 7px;
 
     & li {
         margin: 0;
         position: relative;
         display: flex;
+        padding-left: 20px;
         /* margin: 24px; */
         height: 50px;
         justify-content: flex-start;
@@ -34,6 +34,11 @@
         }
     }
 
+    & li:hover,
+    & .active{
+        background: #e8e7e7;
+    }
+    
     & li i {
         position: absolute;
         top: 50%;
@@ -41,6 +46,10 @@
         font-size: 20px;
         color: #ddd;
         transform: translateY(-50%);
+        & svg {
+            background: #fff;
+            border-radius: 50%;
+        }
     }
 }
 .searchBarbg {

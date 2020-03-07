@@ -92,6 +92,8 @@ import nodePath from 'path';
                 }
             }
             stores.members.toggle(true, target);
+        }else{
+            stores.members.toggle(true,target);
         }
     },
     showContact: (userid) => {
@@ -883,18 +885,20 @@ export default class ChatContent extends Component {
                                         dangerouslySetInnerHTML={{__html: title}}
                                         title={title}/>
 
-                                    <span
-                                        className={classes.signature}
-                                        dangerouslySetInnerHTML={{__html: signature || ''}}
-                                        onClick={e => this.props.showMembers(target)}
-                                        title={signature}/>
+                                    
                                 </div>
 
                                 {
                                     isElectron() ? (
-                                        <i
-                                            className="icon-ion-android-more-vertical"
-                                            onClick={() => this.showMenu()}/>
+                                        <span
+                                        className={classes.signature}
+                                        // dangerouslySetInnerHTML={{__html: signature || '...'}}
+                                        onClick={e => this.props.showMembers(target)}
+                                        title={signature}><i className="icon-ion-android-more-vertical"/>
+                                        </span>
+                                        // <i
+                                        //     className="icon-ion-android-more-vertical"
+                                        //     onClick={() => this.showMenu()}/>
                                     ) : ''
                                 }
 
