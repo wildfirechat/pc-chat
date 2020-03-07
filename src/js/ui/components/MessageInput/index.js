@@ -425,6 +425,7 @@ export default class MessageInput extends Component {
         var canisend = this.canisend();
         let canStartVoip = this.props.conversation && this.props.conversation.type === ConversationType.Single;
         let isGroup = this.props.conversation && this.props.conversation.type === ConversationType.Group;
+        let enableMultiCall = false;
 
         return (
             <div
@@ -453,22 +454,23 @@ export default class MessageInput extends Component {
 
                     {
                         isGroup ? (
-                            <Popup key={'voip-video'}
-                                   trigger={
-                                       <i
-                                           className="icon-ion-android-camera"
-                                           id="videoCall"
-                                       />
-                                   }
-                                   modal
-                                   closeOnDocumentClick
-                                   position={"top center"}
-                            >
-                                {close => (
-                                    this.pickGroupMemberToVoip(false, close)
-                                )
-                                }
-                            </Popup>
+                            !enableMultiCall ? '' :
+                                <Popup key={'voip-video'}
+                                       trigger={
+                                           <i
+                                               className="icon-ion-android-camera"
+                                               id="videoCall"
+                                           />
+                                       }
+                                       modal
+                                       closeOnDocumentClick
+                                       position={"top center"}
+                                >
+                                    {close => (
+                                        this.pickGroupMemberToVoip(false, close)
+                                    )
+                                    }
+                                </Popup>
 
                         ) : (
                             <i
@@ -481,21 +483,22 @@ export default class MessageInput extends Component {
 
                     {
                         isGroup ? (
-                            <Popup key={'voip-audio'}
-                                   trigger={
-                                       <i
-                                           className="icon-ion-ios-telephone"
-                                           id="audioCall"
-                                       />
-                                   }
-                                   modal
-                                   closeOnDocumentClick={true}
-                            >
-                                {close => (
-                                    this.pickGroupMemberToVoip(true, close)
-                                )
-                                }
-                            </Popup>
+                            !enableMultiCall ? '' :
+                                <Popup key={'voip-audio'}
+                                       trigger={
+                                           <i
+                                               className="icon-ion-ios-telephone"
+                                               id="audioCall"
+                                           />
+                                       }
+                                       modal
+                                       closeOnDocumentClick={true}
+                                >
+                                    {close => (
+                                        this.pickGroupMemberToVoip(true, close)
+                                    )
+                                    }
+                                </Popup>
 
                         ) : (
                             <i
