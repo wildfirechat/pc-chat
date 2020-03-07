@@ -4,6 +4,7 @@ import pinyin from './../han';
 
 import helper from 'utils/helper';
 import GroupInfo from '../../wfc/model/groupInfo';
+import UserInfo from '../../wfc/model/UserInfo';
 import wfc from '../../wfc/client/wfc'
 
 class Members {
@@ -23,7 +24,9 @@ class Members {
                 userIds.push(m.memberId);
             });
             users = wfc.getUserInfos(userIds, target);
-        } else {
+        } else if(target instanceof UserInfo){
+            self.show = show;
+            self.target = target;
             return;
         }
 

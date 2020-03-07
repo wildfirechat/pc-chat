@@ -159,6 +159,7 @@ export default class UserList extends Component {
                     className={clazz({
                         [classes.selected]: this.state.selected.includes(e.UserName),
                         [classes.active]: this.state.active === e.UserName,
+                        [classes.active]:this.state.selected.includes(e.uid)
                     })}
                     data-userid={e.uid}
                     key={index}
