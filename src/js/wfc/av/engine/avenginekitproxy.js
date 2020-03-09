@@ -5,7 +5,7 @@ import MessageContentType from "../../messages/messageContentType";
 import wfc from "../../client/wfc";
 import MessageConfig from "../../client/messageConfig";
 import CallByeMessageContent from "../messages/callByeMessageContent";
-import CallEndReason from './callEndReason'
+import DetectRTC from 'detectrtc';
 
 const path = require('path');
 
@@ -18,8 +18,13 @@ export class AvEngineKitProxy {
     conversation;
     callId;
     participants = [];
+    isSupportVoip = false;
 
     setup(wfc) {
+        DetectRTC.load(() => {
+            this.isSupportVoip = (DetectRTC.isWebRTCSupported && DetectRTC.hasWebcam && DetectRTC.hasSpeakers && DetectRTC.hasMicrophone);
+            console.log('detectRTC', this.isSupportVoip, DetectRTC.isWebRTCSupported, DetectRTC.hasWebcam, DetectRTC.hasSpeakers, DetectRTC.hasMicrophone);
+        });
         this.event = wfc.eventEmitter;
         this.event.on(EventType.ReceiveMessage, this.onReceiveMessage);
 
@@ -59,6 +64,10 @@ export class AvEngineKitProxy {
 
 
     onReceiveMessage = (msg) => {
+        if (!this.isSupportVoip) {
+            console.log('not support voip, just ignore voip message')
+            return;
+        }
         let now = (new Date()).valueOf();
         let delta = wfc.getServerDeltaTime();
         if ((msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && now - (msg.timestamp - delta) < 90 * 1000) {
@@ -73,10 +82,10 @@ export class AvEngineKitProxy {
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_MUTE_VIDEO
             ) {
                 console.log("receive voip message", msg);
-                if(msg.direction === 0
+                if (msg.direction === 0
                     && content.type !== MessageContentType.VOIP_CONTENT_TYPE_END
                     && content.type !== MessageContentType.VOIP_CONTENT_TYPE_ACCEPT
-                    && content.type !== MessageContentType.VOIP_CONTENT_TYPE_ACCEPT){
+                    && content.type !== MessageContentType.VOIP_CONTENT_TYPE_ACCEPT) {
                     return;
                 }
 
