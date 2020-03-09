@@ -6,6 +6,7 @@ export default class Config {
     static ICE_ADDRESS = 'turn:turn.wildfirechat.cn:3478';
     static ICE_USERNAME = 'wfchat';
     static ICE_PASSWORD = 'wfchat';
+    static LANGUAGE = 'zh_CN';
 
     static getWFCPlatform() {
         if (isElectron()) {
