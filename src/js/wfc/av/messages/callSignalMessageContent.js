@@ -1,6 +1,6 @@
 import MessageContent from '../../messages/messageContent';
-import { Base64 } from 'js-base64';
 import MessageContentType from '../../messages/messageContentType';
+import wfc from "../../client/wfc"
 
 export default class CallSignalMessageContent extends MessageContent {
   callId;
@@ -17,13 +17,13 @@ export default class CallSignalMessageContent extends MessageContent {
   encode() {
       let payload = super.encode();
       payload.content = this.callId;
-      payload.binaryContent = Base64.encode(this.payload);
+      payload.binaryContent = wfc.utf8_to_b64(this.payload);
       return payload;
   };
 
   decode(payload) {
       super.decode(payload);
       this.callId = payload.content;
-      this.payload = Base64.decode(payload.binaryContent);
+      this.payload = wfc.b64_to_utf8(payload.binaryContent);
   }
 }
