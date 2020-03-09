@@ -45,6 +45,12 @@
     justify-content: space-between;
 }
 
+.voipTargetList {
+    height: calc(100vh - 160px); /* Height - Header - Footer - Search Input */
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 .tips {
     position: absolute;
     height: 32px;

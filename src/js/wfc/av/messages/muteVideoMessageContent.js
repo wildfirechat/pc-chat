@@ -9,20 +9,18 @@ class ParticipantStatus {
     videoMuted;
 }
 
-export default class AddParticipantsMessageContent extends NotificationMessageContent {
+export default class MuteVideoMessageContent extends NotificationMessageContent {
     callId;
-    initiator;
-    participants;
+    videoMuted;
     existParticipants;
-    audioOnly;
 
     constructor(mentionedType = 0, mentionedTargets = []) {
-        super(MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT, mentionedType, mentionedTargets);
+        super(MessageContentType.VOIP_CONTENT_TYPE_MUTE_VIDEO, mentionedType, mentionedTargets);
     }
 
     formatNotification(message) {
         // TODO
-        return "add participant";
+        return "mute video";
     }
 
     encode() {
@@ -30,10 +28,8 @@ export default class AddParticipantsMessageContent extends NotificationMessageCo
         payload.content = this.callId;
 
         let obj = {
-            initiator: this.initiator,
-            audioOnly: this.audioOnly ? 1 : 0,
-            participants: this.participants,
             existParticipants: this.existParticipants,
+            videoMuted:this.videoMuted,
         };
         payload.binaryContent = wfc.utf8_to_b64(JSON.stringify(obj));
 
@@ -45,9 +41,7 @@ export default class AddParticipantsMessageContent extends NotificationMessageCo
         this.callId = payload.content;
         let json = wfc.b64_to_utf8(payload.binaryContent);
         let obj = JSON.parse(json);
-        this.initiator = obj.initiator;
-        this.audioOnly = obj.audioOnly;
-        this.participants = obj.participants;
         this.existParticipants = obj.existParticipants;
+        this.videoMuted = obj.videoMuted;
     }
 }
