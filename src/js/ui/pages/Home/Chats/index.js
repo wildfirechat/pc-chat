@@ -170,11 +170,11 @@ export default class Chats extends Component {
             // Keep the conversation always in the viewport
             if (!(rect4active.top >= rect4viewport.top
                 && rect4active.bottom <= rect4viewport.bottom)) {
-                const scrollIntoViewSmoothly =
-                    'scrollBehavior' in document.documentElement.style
-                        ? scrollIntoView
-                        : smoothScrollIntoView
-                scrollIntoViewSmoothly(active, {behavior: 'auto'})
+                // const scrollIntoViewSmoothly =
+                //     'scrollBehavior' in document.documentElement.style
+                //         ? scrollIntoView
+                //         : smoothScrollIntoView
+                // scrollIntoViewSmoothly(active, {behavior: 'auto'})
             }
         }
     }
