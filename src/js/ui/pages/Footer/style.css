@@ -1,8 +1,8 @@
 
 :root {
     --icon-color: #777;
-    --active: #34b7f1;
-    --shadow-color: #eaedea;
+    --active: #07c160;
+    --shadow-color: #e0e0e0;
 }
 
 .footer {
@@ -79,7 +79,7 @@
     position: fixed;
     bottom: 0;
     right: 0;
-    width: calc(100% - 300px - 60px);
+    width: calc(100% - 250px - 60px);
     
 }
 .hideConversation {
@@ -195,7 +195,7 @@
     }
 
     .right {
-        width: calc(100% - 280px - 60px);
+        width: calc(100% - 250px - 60px);
         background: #ffffff;
     }
 

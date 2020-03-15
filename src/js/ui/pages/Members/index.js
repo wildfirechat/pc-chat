@@ -73,8 +73,9 @@ export default class Members extends Component {
     }
 
     CreateGroupChat(){
-        console.warn(this.props.target);
-        this.props.newChat([this.props.target.uid]);
+        // console.warn(this.props.target);
+        var id =  WildFireIM.config.loginUser.uid !== this.props.target.uid?this.props.target.uid:"";
+        this.props.newChat([id]);
     }
 
 
