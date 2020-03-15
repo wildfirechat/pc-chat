@@ -1,5 +1,5 @@
 import MessageContent from '../../messages/messageContent';
-import { Base64 } from 'js-base64';
+import wfc from "../../client/wfc"
 import MessageContentType from '../../messages/messageContentType';
 
 export default class CallModifyMessageContent extends MessageContent {
