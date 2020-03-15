@@ -181,7 +181,7 @@
 .btns {
     padding: 20px;
     line-height: 26px;
-    font-size: 16px;
+    font-size: 13px;
 
     & button {
         border: 0;
@@ -201,29 +201,30 @@
         }
     }
     & .btnauto{
-        height: 20px;
+        height: 15px;
         border-radius: 30px;
         line-height: 0;
-        width: 35px;
+        width: 25px;
         position: relative;
         transition: 0.5ms;
         background: #cbcbcb;
 
         & span{
             display: inline-block;
-            width: 15px;
-            height: 15px;
+            width: 11px;
+            height: 11px;
             background: #fff;
             border-radius: 50%;
             position: absolute;
             top: 2px;
-            left: 0px;
+            left: 1px;
         }
     }
     & .btnactive{
         background: #1aad19;
         & span{
-            right: 0px;
+            left: auto;
+            right: 1px;
         }
     }
 }

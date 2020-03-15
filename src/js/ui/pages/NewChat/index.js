@@ -30,6 +30,7 @@ import GroupType from "../../../wfc/model/groupType";
         return wfc.getUserInfo(userid);
     },
     search: stores.newchat.search,
+    alreadySelected: stores.newchat.alreadySelected,
     close: () => {
         stores.newchat.reset();
         stores.newchat.toggle(false);
@@ -44,7 +45,8 @@ export default class NewChat extends Component {
 
     async chat() {
         var selected = this.state.selected;
-
+        selected = selected.concat(this.props.alreadySelected.split(','));
+    
         if (selected.length === 1) {
             let conversation = new Conversation(ConversationType.Single, selected[0], 0);
             this.props.chatTo(conversation);

@@ -6,12 +6,10 @@
 }
 
 .footer {
-    position: absolute;
     background: #27282b;
     width: 60px;
     left: 0;
-    height: calc(100vh + 2px);
-    top: -2px;
+    height: calc(100vh);
     -webkit-app-region: drag;
 
     & > nav {
@@ -20,7 +18,7 @@
         width: initial;
         padding: 17px 17px 0;
         justify-content: space-between;
-        box-shadow: inset 0 1px 0 0 var(--shadow-color);
+        /* box-shadow: inset 0 1px 0 0 var(--shadow-color); */
         
         & > a{
             margin-bottom: 30px;
@@ -45,6 +43,17 @@
 
     & > nav span:hover i {
         color: var(--active) !important;
+    }
+
+    & .user {
+        width: 100%;
+        -webkit-app-region: no-drag;
+        
+        & img{
+            width: 35px;
+            height: 35px;
+            margin: 20px 0 10px 13px;
+        }
     }
 }
 

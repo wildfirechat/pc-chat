@@ -25,6 +25,7 @@
         cursor: pointer;
         transform: translateY(-50%) rotate(90deg);
         -webkit-app-region: no-drag;
+        padding: 8px;
     }
 
     & header i:hover {
