@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {inject, observer} from 'mobx-react';
+import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
 import clazz from 'classname';
 
 import classes from './style.css';
@@ -12,7 +12,7 @@ import EventType from '../../../wfc/client/wfcEvent';
 import Push from 'push.js'
 import MessageConfig from '../../../wfc/client/messageConfig';
 import PersistFlag from '../../../wfc/messages/persistFlag';
-import {isElectron} from '../../../platform'
+import { isElectron } from '../../../platform'
 
 @inject(stores => ({
     loading: stores.sessions.loading,
@@ -60,20 +60,19 @@ export default class Home extends Component {
         return (
             <div className={classes.container}>
 
-                <Loader fullscreen={true} show={false}/>
+                <Loader fullscreen={true} show={false} />
 
                 <div className={clazz(classes.inner, {
                     [classes.hideConversation]: !this.props.showConversation
                 })}>
                     <div className={classes.left}>
-                        <Chats/>
-
+                        <Chats />
                         {
                             this.props.showRedIcon && (
                                 <div
                                     className={classes.addChat}
                                     onClick={() => this.props.newChat()}>
-                                    <i className="icon-ion-android-add"/>
+                                    <i className="icon-ion-android-add" />
                                 </div>
                             )
                         }
@@ -81,7 +80,7 @@ export default class Home extends Component {
 
                     <div className={classes.right}>
                         <Header location={''} />
-                        <ChatContent/>
+                        <ChatContent />
                     </div>
                 </div>
             </div>
