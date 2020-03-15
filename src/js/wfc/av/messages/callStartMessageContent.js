@@ -1,6 +1,6 @@
 import MessageContent from '../../messages/messageContent';
-import { Base64 } from 'js-base64';
 import MessageContentType from '../../messages/messageContentType';
+import wfc from "../../client/wfc"
 
 export default class CallStartMessageContent extends MessageContent {
   callId;
@@ -34,14 +34,14 @@ export default class CallStartMessageContent extends MessageContent {
           ts: this.targetIds,
           t:this.targetIds[0]
       };
-      payload.binaryContent = Base64.encode(JSON.stringify(obj));
+      payload.binaryContent = wfc.utf8_to_b64(JSON.stringify(obj));
       return payload;
   };
 
   decode(payload) {
       super.decode(payload);
       this.callId = payload.content;
-      let json = Base64.decode(payload.binaryContent);
+      let json = wfc.b64_to_utf8(payload.binaryContent);
       let obj = JSON.parse(json);
 
       this.connectTime = obj.c;
