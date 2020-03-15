@@ -4,9 +4,9 @@ import {observer, inject} from 'mobx-react';
 import clazz from 'classname';
 import classes from './style.css';
 import {observable, action} from 'mobx';
-import CallState from "../../../../wfc/av/callState";
-import CallSessionCallback from "../../../../wfc/av/CallSessionCallback";
-import avenginekit from "../../../../wfc/av/avenginekit";
+import CallState from "../../../../wfc/av/engine/callState";
+import CallSessionCallback from "../../../../wfc/av/engine/CallSessionCallback";
+import avenginekit from "../../../../wfc/av/internal/engine.min";
 
 @observer
 export default class Voip extends Component {
@@ -38,14 +38,13 @@ export default class Voip extends Component {
             if (state === CallState.STATUS_CONNECTED) {
                 this.onUpdateTime();
             } else if (state === CallState.STATUS_IDLE) {
-                console.log('xxx clear time');
                 if (this.timer) {
                     clearInterval(this.timer);
                 }
             }
         };
 
-        sessionCallback.onInitial = (session, selfUserInfo, participantUserInfos) => {
+        sessionCallback.onInitial = (session, selfUserInfo, initiatorUserInfo, participantUserInfos) => {
             this.session = session;
             this.audioOnly = session.audioOnly;
         };
