@@ -47,6 +47,7 @@ import UserInfo from '../../../wfc/model/userInfo';
             }
             context.props.chatTo(conversation);
             context.backTo();
+            context.props.hideCard();
             document.querySelector('#messageInput').focus();
         });
     }
