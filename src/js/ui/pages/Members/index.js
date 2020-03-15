@@ -3,10 +3,15 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
 import classes from './style.css';
-import helper from 'utils/helper';
+// import helper from 'utils/helper';
 import GroupInfo from '../../../wfc/model/groupInfo';
+// import UserInfo from '../../../wfc/model/userInfo';
 import wfc from '../../../wfc/client/wfc';
 import clazz from 'classname';
+
+
+import UserCard from '../../components/userCard'
+
 
 import {isElectron} from '../../../platform';
 
@@ -23,6 +28,7 @@ import {isElectron} from '../../../platform';
     sticky: stores.sessions.sticky,
     removeChat: stores.sessions.removeConversation,
     toggleConversation: stores.chat.toggleConversation,
+    newChat: (alreadySelected) => stores.newchat.toggle(true,alreadySelected),
     showUserinfo: async (user) => {
         var caniremove = false;
         if (stores.chat.target instanceof GroupInfo) {
@@ -44,8 +50,34 @@ import {isElectron} from '../../../platform';
 export default class Members extends Component {
     state = {
         isTop: false,
-        full:false
+        full:false,
+        isShowUserCard:false,
+        user:{},
+        config:{ top:30,right:30},
+        noDisturbing:false
     };
+
+    showUserCard(user,ev){
+        
+        this.setState({
+            isShowUserCard:!this.state.isShowUserCard,
+            user:user,
+            config:{ top:ev.clientY,left: (ev.clientX - 340 )}
+        })
+    }
+
+    hideUserCard(){
+        this.setState({
+            isShowUserCard:!this.state.isShowUserCard
+        })
+    }
+
+    CreateGroupChat(){
+        console.warn(this.props.target);
+        this.props.newChat([this.props.target.uid]);
+    }
+
+
     toggleConversation(){
         this.setState({
             full: !this.state.full
@@ -65,19 +97,27 @@ export default class Members extends Component {
         })
     }
 
-    componentWillMount() {
+    setNoDisturbing(){
+
+    }
+
+    componentDidMount() {
         var bodyDom = document.body;
+        var context= this;
         bodyDom.onclick = (e) => { 
             if (!e.target.closest('.' + classes.container) && e.target.className != classes.container) {
-                this.props.close();
+                if(context.state.isShowUserCard){
+                    context.setState({
+                        isShowUserCard:false
+                    });
+                }
+                context.props.close();
+                
             }
         } 
     }
     componentDidUpdate(prevProps, prevState) {
-        console.warn(prevProps,prevState);
-        // console.warn(prevProps,prevState);
         let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
-        console.warn(covnersationInfo);
         if(covnersationInfo.isTop !== this.state.isTop && !this.props.show){
             this.setState({
                 isTop: covnersationInfo.isTop
@@ -96,10 +136,11 @@ export default class Members extends Component {
             targetName = target.name;
         }
         let isUserInfo = target instanceof GroupInfo;
-        // let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
-       
         return (
             <div className={classes.container}>
+                 <UserCard showCard={this.state.isShowUserCard} 
+                      user ={this.state.user} config ={this.state.config}  isCurrentUser={false}
+                      hideCard={()=>this.hideUserCard(false)} ></UserCard>
                 {
                     (isUserInfo) ? <div>
                         <header>
@@ -153,7 +194,7 @@ export default class Members extends Component {
                                     return (
                                         <li
                                             key={index}
-                                            onClick={ev => this.props.showUserinfo(e)}
+                                            onClick={ev => this.showUserCard(e,ev)}
                                         >
                                             <div
                                                 className={classes.cover}
@@ -170,16 +211,46 @@ export default class Members extends Component {
                         </ul>
 
                     </div>
-                        : ""
+                        : <ul className={classes.list}>
+ 
+                        {
+                            !searching?( <li>
+                                <div className={classes.cover, classes.useradd} >
+                                    <i className="icon-ion-android-add"
+                                        onClick={e => this.CreateGroupChat()} />
+                                </div>
+                                <span className={classes.username} >添加</span>
+                            </li>):''
+                        }
+                       
+                        { 
+                            <li 
+                                onClick={ev => this.showUserCard(target,ev)}
+                            >
+                                <div
+                                    className={classes.cover}
+                                    style={{
+                                        backgroundImage: `url(${target.portrait})`,
+                                    }} />
+                                <span
+                                    className={classes.username}
+                                    dangerouslySetInnerHTML={{ __html: wfc.getGroupMemberDisplayName(this.props.target.target, target.uid) }} />
+                            </li>
+                        }
+                    </ul>
+                     
+
                 }
                 {
                     isElectron()&& (
                         <div className={classes.btns}>
-                        <div><button onClick={() => this.toggleConversation()}>{!this.state.full?'全屏模式':'取消全屏'}</button></div>
-                        <div><button onClick={() => this.props.empty(this.props.conversation)}>清空会话消息</button></div>
+                        {/* <div><button onClick={() => this.toggleConversation()}>{!this.state.full?'全屏模式':'取消全屏'}</button></div> */}
+                        {/* <div><button onClick={() => this.props.empty(this.props.conversation)}>清空会话消息</button></div> */}
                         <div> 置顶/取消置顶 <br/> <button className={clazz(classes.btnauto,((this.state.isTop ) ?classes.btnactive:''))}
                              onClick={() => {this.setTop();}}><span> </span></button></div>
-                        <div><button onClick={() => this.removeChatItem(covnersationInfo)}>删除会话</button></div>
+                        <div> 消息免打扰 <br/> <button className={clazz(classes.btnauto,((this.state.isTop ) ?classes.btnactive:''))}
+                        onClick={() => {this.setTop();}}><span> </span></button></div>
+                        {/* <div><button onClick={() => this.removeChatItem(covnersationInfo)}>删除会话</button></div> */}
     
                     </div>
                     )

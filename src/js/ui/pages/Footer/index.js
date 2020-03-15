@@ -2,17 +2,29 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import clazz from 'classname';
+ 
 
 import classes from './style.css';
 import Home from './Home';
-import Contacts from './Contacts';
-import Settings from './Settings';
-import { inject } from 'mobx-react';
+import Contacts from './Contacts'; 
+import { inject , observer } from 'mobx-react'; 
+import UserCard from '../../components/userCard'
+
+import wfc from '../../../wfc/client/wfc'
 
 @inject(stores => ({
     showConversation: stores.chat.showConversation
 }))
+@observer
 export default class Footer extends Component {
+    state ={
+        isShowUserCard:false
+    }
+    showUserCard(){
+        this.setState({
+            isShowUserCard:!this.state.isShowUserCard
+        })
+    }
     render() {
         var { showConversation } = this.props;
         var pathname = this.props.location.pathname;
@@ -21,8 +33,20 @@ export default class Footer extends Component {
             '/contacts': Contacts
         }[pathname];
 
+        var user = wfc.getUserInfo(wfc.getUserId());
+        
         return (
             <footer className={classes.footer}>
+                <div className={classes.user} onClick= {()=>this.showUserCard()}>
+                    <img src={user.portrait}/>
+                    
+                </div>
+                <div>
+                        <UserCard showCard={this.state.isShowUserCard} 
+                        user ={user} config ={{ top:30,left:30}}  isCurrentUser={false}
+                        hideCard={()=>this.showUserCard()} ></UserCard>
+                </div>
+
                 <nav>
                     <Link
                         className="link"
@@ -69,6 +93,5 @@ export default class Footer extends Component {
         );
     }
 }
-
-
+ 
 {/* */ }

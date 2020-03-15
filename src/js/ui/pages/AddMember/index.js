@@ -103,7 +103,7 @@ export default class AddMember extends Component {
                                     return (
                                         <li>
                                             <img
-                                                key={index}
+                                                key={index || 0}
                                                 onClick={ev => this.refs.users.removeSelected(e)}
                                                 src={user.portrait} />
                                             <span >{user.displayName}</span>
