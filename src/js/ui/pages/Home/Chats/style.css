@@ -7,17 +7,19 @@
 .searchBar {
     position: relative;
     height: 30px;
-    width: 300px;
+    width: 250px;
     box-shadow: inset 0 -1px 0 0 #eaedea;
-    padding: 20px 0 15px 0 ;
+    padding: 20px 0 14px 0 ;
     -webkit-user-select: auto;
     -webkit-app-region: drag; 
 
     & div {
         background: #dbd9d8;
         width:240px;
-        border-radius:20px;
-        margin-left:10px;
+        border-radius:10px;
+        margin-left:-10px;
+        transform: scale(0.83);
+
         }
 & input {
     -webkit-app-region: no-drag;
@@ -30,7 +32,7 @@
     font-family: 'Helvetica';
     font-size: 18px;
     font-weight: 100;
-    text-indent: 11px;
+    text-indent: 19px;
     margin-left:18px ;
   }
 
@@ -46,13 +48,15 @@
 
 
 .chats {
-    /* height: calc(100vh - 160px); Height - Header - Footer - Search Input */
     overflow-x: hidden;
     overflow-y: auto;
-    height: calc(100vh - 65px);
+    height: calc(120vh - 65px);
     scroll-behavior: smooth;
     overflow: scroll;
     background: #e9e7e7;
+    transform: scale(0.83);
+    width: 300px;
+    transform-origin: 0 0;
 }
 
 .chat {
@@ -67,7 +71,7 @@
     & img {
         height: 48px;
         width: 48px;
-        border-radius: 48px;
+        border-radius: 5px;
     }
 
     & > div {
@@ -76,20 +80,15 @@
         align-items: center;
     }
 
+    &.sticky {
+        background:#e0dede;
+    }
+    
     &.active,
     &:hover {
         background: #bcbcbe;
     }
 
-    &.sticky::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        background: red;
-    }
 }
 
 .info {
@@ -163,9 +162,9 @@
             top: 55%; 
           }
     }
-    /* .chats {
-        height: calc(100vh - 90px);
-    } */
+    .chats {
+        top:12px;
+    }
 
     .chat {
         height: 36px;

@@ -362,7 +362,7 @@
     & .content {
         position: absolute;
         left: 48px;
-        top: 0;
+        top: 20px;
         display: flex;
         height: 32px;
         min-width: 120px;

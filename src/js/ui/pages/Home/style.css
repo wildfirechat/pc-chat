@@ -16,13 +16,15 @@
 
 .left {
     position: relative;
-    width: 300px;
+    width: 250px;
     box-shadow: inset -1px 0 0 0 #eaedea;
     background: #edeae8;
 
+   
+
     & .addChat {
         position: absolute;
-        right: 10px;
+        right: 5px;
         top: 20px;
         height: 30px;
         width: 30px;
@@ -36,6 +38,7 @@
         z-index: 9;
         color: #595959;
         -webkit-app-region: no-drag;
+        transform: scale(0.83);
     }
 }
 
@@ -45,7 +48,7 @@
 
 @media (width <= 800px) {
     .left {
-        width: 280px;
+        /* width: 250px; */
 
         & .addChat {
             right: 5px;

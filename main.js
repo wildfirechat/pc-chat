@@ -530,7 +530,7 @@ function regShortcut() {
 const createMainWindow = () => {
     var mainWindowState = windowStateKeeper({
         defaultWidth: 900,
-        defaultHeight: 600,
+        defaultHeight: 650,
     });
 
     mainWindow = new BrowserWindow({
