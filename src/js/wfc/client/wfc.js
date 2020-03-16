@@ -93,6 +93,10 @@ export class WfcManager {
         return userInfos;
     }
 
+    /*
+        searchType 0 模糊搜索displayName，精确搜索name和mobile; 1 精确搜索name和mobile; 2 精确搜索name；3 mobile;
+        page 页数，如果searchType是0，每次搜索20个，可以指定page。如果searchType非0，只能搜索一个，page无意义
+    */
     async searchUser(keyword, searchType, page, successCB, failCB) {
         impl.searchUser(keyword, searchType, page, successCB, failCB);
     }
