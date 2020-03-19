@@ -102,11 +102,11 @@ $ npm run dev
 1. 执行```node -p "process.arch"```, 确认node架构
 2. ```node```为32位时，执行```npm run copy-win32```
 3. ```node```为64位时，执行```npm run copy-win```
-4. ```npm install```
+4. ```npm install```（不能在管理员权限下运行，要用普通权限）
 5. ```npm run dev```
 
 ##### 打包
-1. ```npm install``` 安装依赖
+1. ```npm install``` 安装依赖（不能在管理员权限下运行，要用普通权限）
 2. ```npm run package-win32``` 打包windows 32位版本，软件生成在release目录下
 2. ```npm run package-win``` 打包window 64位版本，软件生成在release目录下
 
@@ -148,7 +148,7 @@ $ npm run dev
    ~/.electron-gyp
     ```
 0. windows上需要严格按照环境进行安装，mac上环境比较简单一些，安装node和node-gyp就可以了
-    另外如果还有问题，请试试命令```npm cache clean --force ```
+    另外如果还有问题，请试试命令```npm cache clean --force ```，然后删掉node_modules，再重新在非管理员权限下```npm install```
 
 1. 有些杀毒软件会对electron打包的软件报病毒，详情请参考[electron报病毒](https://www.baidu.com/s?wd=electron%20360%E6%8A%A5%E7%97%85%E6%AF%92&pn=0&oq=electron%20360%E6%8A%A5%E7%97%85%E6%AF%92&tn=84053098_3_dg&ie=utf-8&rsv_pq=ec2a876200198701&rsv_t=e981739vB2ZMksgGv8ZOV%2Fb4WIhJDXXzLTfMv24NmIN0itMzRiGjMNnh1qARt19Uzf1s%2FA)。安装时可能被杀毒软件限制安装，这时候可以让用户使用绿色免安装版（打包后release目录下的unpacked目录）。如果运行时报错，请在杀毒软件里加上例外。另外有条件的公司可以考虑去[360官方](https://open.soft.360.cn)或其他杀软的官方提交检测。
 
