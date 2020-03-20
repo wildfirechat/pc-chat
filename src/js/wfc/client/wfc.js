@@ -2,8 +2,7 @@ import Conversation from '../model/conversation';
 import {EventEmitter} from 'events';
 import MessageStatus from '../messages/messageStatus';
 import MessageContent from '../messages/messageContent';
-import atob from 'atob';
-import btoa from 'btoa';
+import {atob, btoa }from '../util/base64.min.js';
 
 import impl from '../proto/proto.min';
 import Config from "../../config";
@@ -11,12 +10,24 @@ import avenginekit from "../av/engine/avenginekitproxy";
 
 export class WfcManager {
 
+    /**
+     * 事件通知，{@link EventType}中定义的事件，都会采用本{@link eventEmitter} 通知
+     * @type {module:events.internal.EventEmitter}
+     */
     eventEmitter = new EventEmitter();
 
     constructor() {
         impl.eventEmitter = this.eventEmitter;
     }
 
+    /**
+     * 注册新的自定义消息
+     *
+     * @param {string} name
+     * @param {number} flag 用来标识本消息是否需要存储、计数等，{@link PersistFlag}
+     * @param {number} type 消息类型，{@link MessageContentType}
+     * @param {class} clazz 消息对应的class
+     */
     registerMessageContent(name, flag, type, clazz) {
         impl.registerMessageContent(name, flag, type, clazz);
     }
@@ -75,7 +86,7 @@ export class WfcManager {
 
     /**
      * 获取我保存到通讯录的群组信息
-     * @returns {array} 参考{@link GroupInfo}
+     * @returns {[GroupInfo]} 参考{@link GroupInfo}
      */
     getMyGroupList() {
         return impl.getMyGroupList();
@@ -228,12 +239,13 @@ export class WfcManager {
      * 处理好友请求
      * @param {string} userId 发送好友请求的用户的id
      * @param {boolean} accept true，接受好友请求；false，拒绝好友请求
+     * @param {string} extra 一些额外信息，可用来实现好友来源等，推荐使用json格式
      * @param {function ()} successCB
      * @param {function (number)} failCB
      * @returns {Promise<void>}
      */
-    async handleFriendRequest(userId, accept, successCB, failCB) {
-        impl.handleFriendRequest(userId, accept, successCB, failCB);
+    async handleFriendRequest(userId, accept, extra, successCB, failCB) {
+        impl.handleFriendRequest(userId, accept, extra, successCB, failCB);
     }
 
     /**
@@ -280,6 +292,10 @@ export class WfcManager {
      */
     getFriendAlias(userId) {
         return impl.getFriendAlias(userId);
+    }
+
+    getFriendExtra(userId) {
+        return impl.getFriendExtra(userId);
     }
 
     /**
