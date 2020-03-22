@@ -39,6 +39,14 @@
     & header i:hover {
         color: #34b7f1;
     }
+
+    & .searchall{
+        padding: 0 28%;
+        line-height: 20px;
+        & svg{
+            position: absolute;
+        }
+    }
 }
 
 .list {
@@ -227,6 +235,35 @@
             right: 1px;
         }
     }
+}
+.editbtn{
+    color: #9999a9;
+  
+    & span{
+        color: #000;
+        display: inline-block;
+        max-width: 150px;
+        min-width:80px;
+    }
+    & svg{
+        position: relative;
+        top: 4px;
+        left: 5px;
+        display: none;
+    }
+    & div:hover{
+        & svg{
+            display: inline-block;
+        }
+    }
+}
+.deleteBtn{
+    color: #f45454;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: -5px;
+    padding-top: 5px;
+    border-top: 1px solid #dedede;
 }
 
 @media (width <= 800px) {

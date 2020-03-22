@@ -1,11 +1,13 @@
 
 import { observable, action } from 'mobx';
 import pinyin from './../han';
+import axios from 'axios';
 
 import helper from 'utils/helper';
 import GroupInfo from '../../wfc/model/groupInfo';
 import UserInfo from '../../wfc/model/UserInfo';
 import wfc from '../../wfc/client/wfc'
+import Config from '../../config'
 
 class Members {
     @observable show = false;
@@ -14,17 +16,32 @@ class Members {
     @observable list = [];
     @observable filtered = [];
     @observable query = '';
+    @observable groupNotice = '';
 
     @action async toggle(show = self.show, target = self.target) {
         let userIds = [];
         let users = [];
-        if (target instanceof GroupInfo) {
+        async function getGroupNotice() {
+            var response = await axios.post('/get_group_announcement', {
+                token: WildFireIM.config.token,
+                groupId: target.target
+            });
+            if (response.data && response.data.result) {
+                self.groupNotice =  response.data.result.text 
+            }else{
+                self.groupNotice ='';
+            }
+        }
+        if (target instanceof GroupInfo) { 
             let members = wfc.getGroupMembers(target.target);
             members.forEach(m => {
                 userIds.push(m.memberId);
             });
             users = wfc.getUserInfos(userIds, target);
-        } else if(target instanceof UserInfo){
+            axios.defaults.baseURL = Config.APP_SERVER;
+            getGroupNotice();
+
+        } else if (target instanceof UserInfo) {
             self.show = show;
             self.target = target;
             return;
@@ -54,6 +71,8 @@ class Members {
         ).then(() => {
             self.list.replace(list);
         });
+
+
     }
 
     @action search(text = '') {
