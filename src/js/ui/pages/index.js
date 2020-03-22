@@ -6,5 +6,6 @@ import Settings from './Settings';
 
 window.WildFireIM= {};
 WildFireIM.config={};
+WildFireIM.cache={};
 
 export { Layout, Home, Second, Settings };

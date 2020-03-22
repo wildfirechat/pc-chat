@@ -9,17 +9,24 @@ import GroupInfo from '../../../wfc/model/groupInfo';
 import wfc from '../../../wfc/client/wfc';
 import clazz from 'classname';
 
-
+import Config from '../../../config';
 import UserCard from '../../components/userCard'
 
 
-import {isElectron} from '../../../platform';
+import { isElectron } from '../../../platform';
+import UserInfo from '../../../wfc/model/userInfo';
+import ConversationInfo from '../../../wfc/model/conversationInfo';
+
+import axios from 'axios';
+
+import MessageConfig from '../../../wfc/client/messageConfig';
 
 @inject(stores => ({
     show: stores.members.show,
     close: () => stores.members.toggle(false),
     target: stores.members.target,
     list: stores.members.list,
+    groupNotice: stores.members.groupNotice,
     search: stores.members.search,
     searching: stores.members.query,
     filtered: stores.members.filtered,
@@ -28,7 +35,7 @@ import {isElectron} from '../../../platform';
     sticky: stores.sessions.sticky,
     removeChat: stores.sessions.removeConversation,
     toggleConversation: stores.chat.toggleConversation,
-    newChat: (alreadySelected) => stores.newchat.toggle(true,alreadySelected),
+    newChat: (alreadySelected) => stores.newchat.toggle(true, alreadySelected),
     showUserinfo: async (user) => {
         var caniremove = false;
         if (stores.chat.target instanceof GroupInfo) {
@@ -41,45 +48,146 @@ import {isElectron} from '../../../platform';
         wfc.getUserInfo(user.uid, true);
         stores.userinfo.toggle(true, stores.chat.conversation, user, caniremove);
     },
+    modifyGroupInfo: async (name) => {
+        // var caniremove = false;
+        if (stores.chat.target instanceof GroupInfo) {
+            let groupInfo = stores.chat.target;
+            wfc.modifyGroupInfo(groupInfo.target, 0, name, [0], null, (e) => {
+                console.warn(e);
+            }, (e) => {
+                console.warn(e);
+            })
+        }
+    },
+    modifyGroupAlias: async (name, callback) => {
+        // var caniremove = false;
+        if (stores.chat.target instanceof GroupInfo) {
+            let groupInfo = stores.chat.target;
+            let contentClazz = MessageConfig.getMessageContentClazz('ModifyGroupAliasNotification');
+            // new contentClazz(wfc.getUserId(), name)
+            wfc.modifyGroupAlias(groupInfo.target, name, [0],
+                null, (e) => {
+                    console.warn(e);
+                    //TODO  需更新列表数据
+                    callback(true);
+                }, (e) => {
+                    console.warn(e);
+                })
+        }
+
+        // wfc.getUserInfo(user.uid, true);
+        // stores.userinfo.toggle(true, stores.chat.conversation, user, caniremove);
+    },
+    quitGroup: async () => {
+        wfc.quitGroup(stores.chat.target.target, [0], null, (e) => {
+
+        }, (e) => {
+            console.warn(e);
+        })
+    },
     addMember: () => {
         stores.members.toggle(false);
         stores.addmember.toggle(true);
-    }
+    },
+    saveIntoList: (isSaveInto, callback) => {
+        wfc.setUserSetting(6, stores.chat.target.target, isSaveInto ? "1" : "0", (e) => {
+            callback(!isSaveInto);
+        }, (e) => {
+
+        });
+    },
+    isMyFriend: wfc.isMyFriend
 }))
 @observer
 export default class Members extends Component {
     state = {
         isTop: false,
-        full:false,
-        isShowUserCard:false,
-        user:{},
-        config:{ top:30,right:30},
-        noDisturbing:false
+        full: false,
+        isShowUserCard: false,
+        user: {},
+        config: { top: 30, right: 30 },
+        noDisturbing: false,
+        userdisNames: {},
+        target: {},
+        showSize: 8,
+        isSaveInto: false
     };
 
-    showUserCard(user,ev){
-        
+    showUserCard(user, ev) {
+        var isMyFriend = this.props.isMyFriend(user.uid) || user.uid === WildFireIM.config.loginUser.uid;
         this.setState({
-            isShowUserCard:!this.state.isShowUserCard,
-            user:user,
-            config:{ top:ev.clientY,left: (ev.clientX - 340 )}
+            isShowUserCard: !this.state.isShowUserCard,
+            user: user,
+            config: { top: ev.clientY, left: (ev.clientX - 340) },
+            isMyFriend: isMyFriend
         })
     }
 
-    hideUserCard(){
+    hideUserCard() {
         this.setState({
-            isShowUserCard:!this.state.isShowUserCard
+            isShowUserCard: !this.state.isShowUserCard
         })
     }
-
-    CreateGroupChat(){
+    getDisName(uid) {
+        var disName = WildFireIM.cache[this.props.target.target] || {};
+        if (!disName[uid]) {
+            disName[uid] = wfc.getGroupMemberDisplayName(this.props.target.target, uid)
+            WildFireIM.cache[this.props.target.target] = disName;
+        }
+        return disName[uid];
+    }
+    CreateGroupChat() {
         // console.warn(this.props.target);
-        var id =  WildFireIM.config.loginUser.uid !== this.props.target.uid?this.props.target.uid:"";
+        var id = WildFireIM.config.loginUser.uid !== this.props.target.uid ? this.props.target.uid : "";
         this.props.newChat([id]);
     }
+    changeShowUser() {
+        this.setState({
+            showSize: 0
+        })
+    }
+    changeEditeMessage(e, type) {
+        var tagName = e.target.tagName;
+        if (tagName === 'svg' || tagName === 'path') {
+            var sp = tagName === 'path' ? e.target.parentNode.previousSibling : e.target.previousSibling;
+            sp.setAttribute('contenteditable', true);
+            sp.style.background = '#fff'
+        }
+    }
+    changeTagName(e, type) {
+        e.target.setAttribute('contenteditable', false);
+        e.target.style.background = 'inherit';
+        console.warn(e.target.innerText)
+        var val = e.target.innerText;
+        if (type == 'name') {
+            this.props.modifyGroupInfo(val);
+        } else if (type == 'disName') {
+            this.props.modifyGroupAlias(val, (key) => {
+                let disName = WildFireIM.cache[this.props.target.target];
+                disName[wfc.getUserId()] = val;
+                WildFireIM.cache[this.props.target.target] = disName;
+            });
+        } else {
+            axios.defaults.baseURL = Config.APP_SERVER;
+            this.getGroupNotice(val);
+        }
 
+    }
+    deleteBtn() {
+        this.props.quitGroup()
+    }
+    async getGroupNotice(text) {
+        var response = await axios.post('/put_group_announcement', {
+            author: wfc.getUserId(),
+            groupId: this.props.target.target,
+            text: text
+        });
+        if (response.data) {
+            console.warn(response.data);
+        }
+    }
 
-    toggleConversation(){
+    toggleConversation() {
         this.setState({
             full: !this.state.full
         });
@@ -97,38 +205,58 @@ export default class Members extends Component {
             isTop: !this.state.isTop
         })
     }
-
-    setNoDisturbing(){
+    showName() {
 
     }
+    saveIntoList() {
+        this.props.saveIntoList(this.state.isSaveInto, (e) => {
+            this.setState({
+                isSaveInto: e
+            })
+        });
+    }
+    noDisturbing() {
+
+    }
+
 
     componentDidMount() {
         var bodyDom = document.body;
-        var context= this;
-        bodyDom.onclick = (e) => { 
+        var context = this;
+        bodyDom.onclick = (e) => {
             if (!e.target.closest('.' + classes.container) && e.target.className != classes.container) {
-                if(context.state.isShowUserCard){
+                if (context.state.isShowUserCard) {
                     context.setState({
-                        isShowUserCard:false
+                        isShowUserCard: false
                     });
                 }
                 context.props.close();
-                
+
             }
-        } 
+        }
     }
     componentDidUpdate(prevProps, prevState) {
         let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
-        if(covnersationInfo.isTop !== this.state.isTop && !this.props.show){
+        if (covnersationInfo.isTop !== this.state.isTop && !this.props.show) {
             this.setState({
                 isTop: covnersationInfo.isTop
             })
+
         }
-       
-  }
-  
+        if (((prevProps.target instanceof GroupInfo && prevProps.target.target !== this.state.target.target) ||
+            (prevProps.target instanceof UserInfo && prevProps.target.uid !== this.state.target.uid)
+        ) && !this.props.show) {
+            this.setState({
+                isTop: covnersationInfo.isTop,
+                target: prevProps.target,
+                showSize: 10
+            })
+        }
+    }
+
     render() {
         var { target, searching, list, filtered } = this.props;
+        var editIcon = <svg t="1584766598709" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2796" width="16" height="16"><path d="M883.65056 861.20448H510.8224c-20.19328 0-36.24448 15.68768-36.24448 35.42528 0 19.7376 16.0512 35.42528 36.24448 35.42528h372.82816c20.19328 0 36.2496-15.68768 36.2496-35.42528-0.00512-19.7376-16.05632-35.42528-36.2496-35.42528zM613.97504 224.384c-8.82176 0-19.52768 4.9152-28.53376 13.91616-13.952 13.95712-18.08384 32.01536-9.3184 40.77568l161.77152 161.77152c3.10784 3.10784 7.38816 4.59776 12.24192 4.59776 8.82176 0 19.52768-4.9152 28.53376-13.91616 13.95712-13.95712 18.08384-32.01536 9.3184-40.77568l-161.77152-161.77152c-3.11296-3.10784-7.38816-4.59776-12.24192-4.59776z" fill="#dadada" p-id="2797"></path><path d="M753.26976 143.08352l129.13152 129.13152L365.9776 788.63872l-206.93504 75.48416 77.47072-204.288L753.26976 143.08352m0-75.03872a60.53376 60.53376 0 0 0-42.94144 17.78688L184.8832 611.28192a60.7232 60.7232 0 0 0-13.83936 21.40672l-101.76 268.33408c-10.49088 27.66336 10.89536 54.92736 37.63712 54.92736 4.5824 0 9.32864-0.80384 14.09024-2.53952l271.34976-98.98496a60.7232 60.7232 0 0 0 22.12864-14.11072l525.16352-525.1584c23.71584-23.71584 23.71584-62.16192 0-85.87776L796.2112 85.83168a60.544 60.544 0 0 0-42.94144-17.78688z" fill="#dadada" p-id="2798"></path></svg>;
         if (!this.props.show) {
             return false;
         }
@@ -137,11 +265,12 @@ export default class Members extends Component {
             targetName = target.name;
         }
         let isUserInfo = target instanceof GroupInfo;
+
         return (
             <div className={classes.container}>
-                 <UserCard showCard={this.state.isShowUserCard} 
-                      user ={this.state.user} config ={this.state.config}  isCurrentUser={false}
-                      hideCard={()=>this.hideUserCard(false)} ></UserCard>
+                <UserCard showCard={this.state.isShowUserCard}
+                    user={this.state.user} config={this.state.config} isCurrentUser={!this.state.isMyFriend}
+                    hideCard={() => this.hideUserCard(false)} ></UserCard>
                 {
                     (isUserInfo) ? <div>
                         <header>
@@ -178,24 +307,26 @@ export default class Members extends Component {
                                 )
                             }
                             {
-                                !searching?( <li>
+                                !searching ? (<li>
                                     <div className={classes.cover, classes.useradd} >
                                         <i className="icon-ion-android-add"
                                             onClick={e => this.props.addMember()} />
                                     </div>
                                     <span className={classes.username} >添加</span>
-                                </li>):''
+                                </li>) : ''
                             }
-                           
+
                             {
                                 (searching ? filtered : list).map((e, index) => {
                                     var pallet = e.pallet || [];
                                     var frontColor = pallet[1] || [0, 0, 0];
-
+                                    if (index > this.state.showSize && this.state.showSize != 0) {
+                                        return;
+                                    }
                                     return (
                                         <li
                                             key={index}
-                                            onClick={ev => this.showUserCard(e,ev)}
+                                            onClick={ev => this.showUserCard(e, ev)}
                                         >
                                             <div
                                                 className={classes.cover}
@@ -203,60 +334,97 @@ export default class Members extends Component {
                                                     backgroundImage: `url(${e.portrait})`,
                                                 }} />
                                             <span
-                                                className={classes.username}
-                                                dangerouslySetInnerHTML={{ __html: wfc.getGroupMemberDisplayName(this.props.target.target, e.uid) }} />
+                                                className={classes.username} >{this.getDisName(e.uid)}</span>
                                         </li>
                                     );
                                 })
                             }
                         </ul>
-
+                        {
+                            this.state.showSize === 0 || list.length < 11 ? '' : <div className={classes.searchall} onClick={e => { this.changeShowUser() }}>
+                                查看更多成员
+                               <svg t="1584625243832" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1883" width="32" height="18"><path d="M511.1 512.9l1.8-1.8-1.8 1.8z" fill="#8a8a8a" p-id="1884"></path><path d="M510.9 510.9l2.2 2.2c-0.7-0.8-1.4-1.5-2.2-2.2z" fill="#8a8a8a" p-id="1885"></path><path d="M512.1 648.1c8.3 0 15.8-3.1 21.5-8.3l2.2-2.2 21.5-21.5L743 430.4c12.4-12.4 12.4-32.8 0-45.3-12.4-12.4-32.8-12.4-45.3 0L512 570.9 326.2 385.2c-12.4-12.4-32.8-12.4-45.3 0-12.4 12.4-12.4 32.8 0.1 45.2l185.7 185.7 21.8 21.8 1.8 1.8c5.7 5.3 13.4 8.5 21.8 8.4z" fill="#8a8a8a" p-id="1886"></path><path d="M512.9 511.1l-1.8 1.8 1.8-1.8z" fill="#8a8a8a" p-id="1887"></path><path d="M513.1 513.1l-2.2-2.2c0.7 0.8 1.4 1.5 2.2 2.2z" fill="#8a8a8a" p-id="1888"></path></svg>
+                            </div>
+                        }
                     </div>
                         : <ul className={classes.list}>
- 
-                        {
-                            !searching?( <li>
-                                <div className={classes.cover, classes.useradd} >
-                                    <i className="icon-ion-android-add"
-                                        onClick={e => this.CreateGroupChat()} />
-                                </div>
-                                <span className={classes.username} >添加</span>
-                            </li>):''
-                        }
-                       
-                        { 
-                            <li 
-                                onClick={ev => this.showUserCard(target,ev)}
-                            >
-                                <div
-                                    className={classes.cover}
-                                    style={{
-                                        backgroundImage: `url(${target.portrait})`,
-                                    }} />
-                                <span
-                                    className={classes.username}
-                                    dangerouslySetInnerHTML={{ __html: wfc.getGroupMemberDisplayName(this.props.target.target, target.uid) }} />
-                            </li>
-                        }
-                    </ul>
-                     
+
+                            {
+                                !searching ? (<li>
+                                    <div className={classes.cover, classes.useradd} >
+                                        <i className="icon-ion-android-add"
+                                            onClick={e => this.CreateGroupChat()} />
+                                    </div>
+                                    <span className={classes.username} >添加</span>
+                                </li>) : ''
+                            }
+
+                            {
+                                <li
+                                    onClick={ev => this.showUserCard(target, ev)}
+                                >
+                                    <div
+                                        className={classes.cover}
+                                        style={{
+                                            backgroundImage: `url(${target.portrait})`,
+                                        }} />
+                                    <span
+                                        className={classes.username}
+                                        dangerouslySetInnerHTML={{ __html: wfc.getGroupMemberDisplayName(this.props.target.target, target.uid) }} />
+                                </li>
+                            }
+                        </ul>
+
 
                 }
                 {
-                    isElectron()&& (
+                    isElectron() && isUserInfo && (
                         <div className={classes.btns}>
-                        {/* <div><button onClick={() => this.toggleConversation()}>{!this.state.full?'全屏模式':'取消全屏'}</button></div> */}
-                        {/* <div><button onClick={() => this.props.empty(this.props.conversation)}>清空会话消息</button></div> */}
-                        <div> 置顶/取消置顶 <br/> <button className={clazz(classes.btnauto,((this.state.isTop ) ?classes.btnactive:''))}
-                             onClick={() => {this.setTop();}}><span> </span></button></div>
-                        <div> 消息免打扰 <br/> <button className={clazz(classes.btnauto,((this.state.isTop ) ?classes.btnactive:''))}
-                        onClick={() => {this.setTop();}}><span> </span></button></div>
-                        {/* <div><button onClick={() => this.removeChatItem(covnersationInfo)}>删除会话</button></div> */}
-    
-                    </div>
+                            {/* <div><button onClick={() => this.toggleConversation()}>{!this.state.full?'全屏模式':'取消全屏'}</button></div> */}
+                            {/* <div><button onClick={() => this.props.empty(this.props.conversation)}>清空会话消息</button></div> */}
+                            <div className={classes.editbtn}> 群名称 <br />
+                                <div onClick={(e) => {
+                                    this.changeEditeMessage(e, 'name');
+                                }}>
+                                    <span dangerouslySetInnerHTML={{ __html: target.name }} onBlur={(e) => { this.changeTagName(e, 'name') }} />
+                                    {editIcon}
+                                </div>
+                            </div>
+                            <div className={classes.editbtn}> 群公告 <br />
+                                <div onClick={(e) => {
+                                    this.changeEditeMessage(e, 'groupNotice');
+                                }} >
+                                    <span dangerouslySetInnerHTML={{ __html: this.props.groupNotice }} onBlur={(e) => { this.changeTagName(e, 'groupNotice') }} />
+                                    {editIcon}
+                                </div>
+                            </div>
+                            <div className={classes.editbtn} > 我在本群的名称 <br />
+                                <div onClick={(e) => {
+                                    this.changeEditeMessage(e, 'disName');
+                                }} >
+                                    <span dangerouslySetInnerHTML={{ __html: wfc.getGroupMemberDisplayName(this.props.target.target, WildFireIM.config.loginUser.uid) }}
+                                        onBlur={(e) => { this.changeTagName(e, 'disName') }}
+                                    />
+                                    {editIcon}
+                                </div>
+                            </div>
+                            <div> 显示群昵称 <br /> <button className={clazz(classes.btnauto, ((this.state.isTop) ? classes.btnactive : ''))}
+                                onClick={() => { this.showName(); }}><span> </span></button></div>
+
+                            <div> 保存到通讯录 <br /> <button className={clazz(classes.btnauto, ((this.state.isSaveInto) ? classes.btnactive : ''))}
+                                onClick={() => { this.saveIntoList(); }}><span> </span></button></div>
+
+                            <div> 置顶/取消置顶 <br /> <button className={clazz(classes.btnauto, ((this.state.isTop) ? classes.btnactive : ''))}
+                                onClick={() => { this.setTop(); }}><span> </span></button></div>
+
+                            <div> 消息免打扰 <br /> <button className={clazz(classes.btnauto, ((this.state.isTop) ? classes.btnactive : ''))}
+                                onClick={() => { this.noDisturbing(); }}><span> </span></button></div>
+                            {/* <div><button onClick={() => this.removeChatItem(covnersationInfo)}>删除会话</button></div> */}
+                            <div className={classes.deleteBtn} onClick={() => { this.deleteBtn(); }}> 删除并退出</div>
+                        </div>
                     )
                 }
-               
+
             </div>
         );
     }
