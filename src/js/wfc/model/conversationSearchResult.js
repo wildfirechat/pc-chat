@@ -12,7 +12,7 @@ export default class ConversationSearchResult {
         let conversationSearchResult = new ConversationSearchResult();
         conversationSearchResult.conversation = new Conversation(obj.conversationType, obj.target, obj.line)
         conversationSearchResult.matchCount = obj.marchedCount;
-        if (obj.matchCount === 1) {
+        if (obj.marchedCount === 1) {
             conversationSearchResult.matchMessage = Message.fromProtoMessage(obj.marchedMessage);
         }
         conversationSearchResult.timestamp = Number(obj.timestamp);

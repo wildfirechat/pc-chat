@@ -29,8 +29,4 @@ export default class UserInfo {
     extra = '';
     type = 0; //0 normal; 1 robot; 2 thing;
     updateDt = 1550652404513;
-
-    hello(){
-        console.log('userInfo hello', this.uid, this.name);
-    }
 }
