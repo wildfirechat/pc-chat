@@ -22,5 +22,7 @@ export default class EventType {
     // function (conversationInfo) {}
     static ConversationInfoUpdate = 'conversationInfoUpdate';
     // function () {}
-    static SettingUpdate = 'settingUpdate'
+    static SettingUpdate = 'settingUpdate';
+    // function (groupId) {}
+    static GroupMembersUpdate = 'groupMembersUpdate';
 }
