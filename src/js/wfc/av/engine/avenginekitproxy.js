@@ -30,7 +30,21 @@ export class AvEngineKitProxy {
 
         if (isElectron()) {
             ipcRenderer.on('voip-message', this.sendVoipListener);
+            ipcRenderer.on('update-call-start-message', this.updateCallStartMessageContentListener)
         }
+    }
+
+    updateCallStartMessageContentListener = (event, message) => {
+        let messageUid = message.messageUid;
+        let content = message.content;
+
+        let msg = wfc.getMessageByUid(messageUid);
+        let orgContent = msg.messageContent;
+        orgContent.connectTime = content.connectTime ? content.connectTime : orgContent.connectTime;
+        orgContent.endTime = content.endTime ? content.endTime : orgContent.endTime;
+        orgContent.status = content.status;
+        orgContent.audioOnly = content.audioOnly;
+        wfc.updateMessageContent(msg.messageId, orgContent);
     }
 
     sendVoipListener = (event, msg) => {
@@ -56,7 +70,12 @@ export class AvEngineKitProxy {
         }, (uploaded, total) => {
 
         }, (messageUid, timestamp) => {
-            this.emitToVoip('sendMessageResult', {error: 0, sendMessageId: msg.sendMessageId, timestamp: timestamp})
+            this.emitToVoip('sendMessageResult', {
+                error: 0,
+                sendMessageId: msg.sendMessageId,
+                messageUid: messageUid,
+                timestamp: timestamp
+            })
         }, (errorCode) => {
             this.emitToVoip('sendMessageResult', {error: errorCode, sendMessageId: msg.sendMessageId})
         });
@@ -275,6 +294,7 @@ export class AvEngineKitProxy {
         if (!isElectron()) {
             this.events = new PostMessageEventEmitter(win, window.location.origin)
             this.events.on('voip-message', this.sendVoipListener)
+            this.events.on('update-call-start-message', this.updateCallStartMessageContentListener)
         }
         if (this.queueEvents.length > 0) {
             this.queueEvents.forEach((eventArgs) => {
