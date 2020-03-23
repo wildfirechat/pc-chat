@@ -8,6 +8,8 @@ export default class Config {
     static ICE_PASSWORD = 'wfchat';
     static LANGUAGE = 'zh_CN';
 
+    static ENABLE_MULTI_CALL = true;
+
     static getWFCPlatform() {
         if (isElectron()) {
             if (window.process && window.process.platform === 'darwin') {
