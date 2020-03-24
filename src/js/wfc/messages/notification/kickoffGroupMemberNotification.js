@@ -18,7 +18,7 @@ export default class KickoffGroupMemberNotification extends GroupNotificationCon
         if (this.fromSelf) {
             notifyStr = '您把 ';
         } else {
-            return wfc.getGroupMemberDisplayName(this.groupId, this.operator) + '把 ';
+            notifyStr = wfc.getGroupMemberDisplayName(this.groupId, this.operator) + '把 ';
         }
 
         let kickedMembersStr = '';
