@@ -32,6 +32,10 @@ import CallSignalMessageContent from '../av/messages/callSignalMessageContent';
 import CallModifyMessageContent from '../av/messages/callModifyMessageContent';
 import AddParticipantsMessageContent from "../av/messages/addParticipantsMessageContent";
 import MuteVideoMessageContent from "../av/messages/muteVideoMessageContent";
+import GroupJoinTypeNotificationContent from "../messages/notification/groupJoinTypeNotificationContent";
+import GroupMuteNotificationContent from "../messages/notification/groupMuteNotificationContent";
+import GroupSetManagerNotificationContent from "../messages/notification/groupSetManagerNotificationContent";
+import GroupPrivateChatNotificationContent from "../messages/notification/groupPrivateChatNotificationContent";
 export default class MessageConfig {
     static getMessageContentClazz(type) {
         for (const content of MessageConfig.MessageContents) {
@@ -213,6 +217,30 @@ export default class MessageConfig {
             flag: PersistFlag.Persist,
             type: MessageContentType.TransferGroupOwner_Notification,
             contentClazz: TransferGroupOwnerNotification,
+        },
+        {
+            name: 'groupJoinTypeNotificationContent',
+            flag: PersistFlag.Persist,
+            type: MessageContentType.ChangeJoinType_Notification,
+            contentClazz: GroupJoinTypeNotificationContent,
+        },
+        {
+            name: 'groupMuteNotificationContent',
+            flag: PersistFlag.Persist,
+            type: MessageContentType.MuteGroupMember_Notification,
+            contentClazz: GroupMuteNotificationContent,
+        },
+        {
+            name: 'groupPrivateChatNotificationContent',
+            flag: PersistFlag.Persist,
+            type: MessageContentType.ChangePrivateChat_Notification,
+            contentClazz: GroupPrivateChatNotificationContent,
+        },
+        {
+            name: 'groupSetManagerNotificationContent',
+            flag: PersistFlag.Persist,
+            type: MessageContentType.SetGroupManager_Notification,
+            contentClazz: GroupSetManagerNotificationContent,
         },
         {
             name: 'recall',
