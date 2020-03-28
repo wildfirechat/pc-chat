@@ -43,7 +43,7 @@ export default class Footer extends Component {
                 </div>
                 <div>
                         <UserCard showCard={this.state.isShowUserCard} 
-                        user ={user} config ={{ top:30,left:30}}  isCurrentUser={false}
+                        user ={user} config ={{ top:60,left:50}}  isCurrentUser={false}
                         hideCard={()=>this.showUserCard()} ></UserCard>
                 </div>
 

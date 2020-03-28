@@ -219,8 +219,9 @@ export default class Members extends Component {
         });
     }
     noDisturbing() {
+        // TODO 此处代码调用会导致界面卡死
         let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
-        this.props.slient(covnersationInfo);
+        // this.props.slient(covnersationInfo);
         this.setState({
             isSlient: !this.state.isSlient
         });
@@ -257,7 +258,8 @@ export default class Members extends Component {
         if (prevProps.target instanceof GroupInfo &&  this.state.show !== this.props.show) {
             var isSaveInto = false;
             if (this.props.target) {
-                isSaveInto = this.props.isFavGroup(this.props.target.target);
+                // TODO 此处代码调用会导致界面卡死
+                // isSaveInto = this.props.isFavGroup(this.props.target.target);
             }
             this.setState({
                 show: this.props.show,

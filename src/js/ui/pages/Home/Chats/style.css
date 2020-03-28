@@ -86,7 +86,7 @@
     
     &.active,
     &:hover {
-        background: #bcbcbe;
+        background: #cfcfd2;
     }
 
 }
@@ -103,19 +103,19 @@
     margin: 0;
     padding: 0;
     padding-right: 4px;
-    margin-bottom: 12px;
-    font-family: 'Helvetica';
+    margin-bottom: 12px; 
     font-size: 15px;
-    color: rgba(74, 74, 74, .9);
+    color: #000;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-family: 'SimHei'
 }
 
 .message {
     max-width: 170px;
     font-size: 14px;
-    color: #9b9b9b;
+    color: #686464;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
