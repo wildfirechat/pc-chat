@@ -19,6 +19,7 @@ import GroupType from '../../../wfc/model/groupType';
 import GroupMemberType from '../../../wfc/model/groupMemberType';
 import avenginekitProxy from '../../../wfc/av/engine/avenginekitproxy';
 import CheckBox from "rc-checkbox";
+import Config from "../../../config";
 
 export default class MessageInput extends Component {
     static propTypes = {
@@ -425,7 +426,6 @@ export default class MessageInput extends Component {
         var canisend = this.canisend();
         let canStartVoip = this.props.conversation && this.props.conversation.type === ConversationType.Single;
         let isGroup = this.props.conversation && this.props.conversation.type === ConversationType.Group;
-        let enableMultiCall = false;
 
         return (
             <div
@@ -454,7 +454,7 @@ export default class MessageInput extends Component {
 
                     {
                         isGroup ? (
-                            !enableMultiCall ? '' :
+                            !Config.ENABLE_MULTI_CALL ? '' :
                                 <Popup key={'voip-video'}
                                        trigger={
                                            <i
@@ -483,7 +483,7 @@ export default class MessageInput extends Component {
 
                     {
                         isGroup ? (
-                            !enableMultiCall ? '' :
+                            !Config.ENABLE_MULTI_CALL ? '' :
                                 <Popup key={'voip-audio'}
                                        trigger={
                                            <i
