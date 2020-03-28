@@ -77,7 +77,7 @@
 ```
 $ cp proto_addon/marswrapper.mac.node marswrapper.node
 $ npm install
-$ npm run dev
+$ npm run dev (dev运行不支持截屏，打包后支持)
 ```
 
 
@@ -103,7 +103,7 @@ $ npm run dev
 2. ```node```为32位时，执行```npm run copy-win32```
 3. ```node```为64位时，执行```npm run copy-win```
 4. ```npm install```（不能在管理员权限下运行，要用普通权限）
-5. ```npm run dev```
+5. ```npm run dev``` (dev运行不支持截屏，打包后支持)
 
 ##### 打包
 1. ```npm install``` 安装依赖（不能在管理员权限下运行，要用普通权限）
@@ -125,7 +125,7 @@ $ npm run dev
 ```
 $ cp proto_addon/marswrapper.linux.node marswrapper.node
 $ npm install
-$ npm run dev
+$ npm run dev (dev运行不支持截屏，打包后支持)
 ```
 
 ##### 打包
@@ -147,13 +147,14 @@ $ npm run dev
    // mac/linux
    ~/.electron-gyp
     ```
-0. windows上需要严格按照环境进行安装，mac上环境比较简单一些，安装node和node-gyp就可以了
+2. windows上需要严格按照环境进行安装，mac上环境比较简单一些，安装node和node-gyp就可以了
     另外如果还有问题，请试试命令```npm cache clean --force ```，然后删掉node_modules，再重新在非管理员权限下```npm install```
 
-1. 有些杀毒软件会对electron打包的软件报病毒，详情请参考[electron报病毒](https://www.baidu.com/s?wd=electron%20360%E6%8A%A5%E7%97%85%E6%AF%92&pn=0&oq=electron%20360%E6%8A%A5%E7%97%85%E6%AF%92&tn=84053098_3_dg&ie=utf-8&rsv_pq=ec2a876200198701&rsv_t=e981739vB2ZMksgGv8ZOV%2Fb4WIhJDXXzLTfMv24NmIN0itMzRiGjMNnh1qARt19Uzf1s%2FA)。安装时可能被杀毒软件限制安装，这时候可以让用户使用绿色免安装版（打包后release目录下的unpacked目录）。如果运行时报错，请在杀毒软件里加上例外。另外有条件的公司可以考虑去[360官方](https://open.soft.360.cn)或其他杀软的官方提交检测。
+3. 有些杀毒软件会对electron打包的软件报病毒，详情请参考[electron报病毒](https://www.baidu.com/s?wd=electron%20360%E6%8A%A5%E7%97%85%E6%AF%92&pn=0&oq=electron%20360%E6%8A%A5%E7%97%85%E6%AF%92&tn=84053098_3_dg&ie=utf-8&rsv_pq=ec2a876200198701&rsv_t=e981739vB2ZMksgGv8ZOV%2Fb4WIhJDXXzLTfMv24NmIN0itMzRiGjMNnh1qARt19Uzf1s%2FA)。安装时可能被杀毒软件限制安装，这时候可以让用户使用绿色免安装版（打包后release目录下的unpacked目录）。如果运行时报错，请在杀毒软件里加上例外。另外有条件的公司可以考虑去[360官方](https://open.soft.360.cn)或其他杀软的官方提交检测。
 
-2. ubuntu下，启动时，若提示，```A JavaScript error occurred in the main process Uncaught Exception:Error: Cannot open /opt/wildfirechat/resources/app.asar/marswrapper.node: Error: libdouble-conversion.so.1: cannot open shared object file: No such file or directory```，可安装[libdouble-conversion1](https://packages.debian.org/buster/libdouble-conversion1)解决
+4. ubuntu下，启动时，若提示，```A JavaScript error occurred in the main process Uncaught Exception:Error: Cannot open /opt/wildfirechat/resources/app.asar/marswrapper.node: Error: libdouble-conversion.so.1: cannot open shared object file: No such file or directory```，可安装[libdouble-conversion1](https://packages.debian.org/buster/libdouble-conversion1)解决
 
+5. 截图不工作，确实一下是不是```npm run dev```运行的，只有打包后运行才能支持截屏功能。
 
 ## MAC 签名
 如果本地存在合法的mac签名，打包程序会尝试进行签名。签名会失败，提示```wfshot.app```没有签名，需要单独对截图应用签名，使用下面命令进行签名
