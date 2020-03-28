@@ -38,16 +38,6 @@
         font-size: 12px;
         color: #9b9b9b;
     }
-
-    & .signature,
-    & header p {
-        display: block;
-        max-width: calc(100vw - 300px - 60px);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
     & p {
         margin: 0;
         padding: 0;
@@ -56,6 +46,19 @@
         font-size: 15px;
         color: rgba(74, 74, 74, .9);
     }
+
+    & .signature,
+    & header p {
+        display: block;
+        max-width: calc(100vw - 300px - 60px);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #000;
+        font-family: 'SimHei'
+    }
+
+   
 }
 
 .container.hideConversation {
