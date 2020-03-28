@@ -96,12 +96,16 @@ import MessageConfig from '../../../wfc/client/messageConfig';
 
         });
     },
-    isMyFriend: wfc.isMyFriend
+    isMyFriend: wfc.isMyFriend,
+    isFavGroup: wfc.isFavGroup,
+    setFavGroup: wfc.setFavGroup,
+    slient: stores.sessions.slient
 }))
 @observer
 export default class Members extends Component {
     state = {
         isTop: false,
+        isSlient: false,
         full: false,
         isShowUserCard: false,
         user: {},
@@ -200,23 +204,26 @@ export default class Members extends Component {
     setTop() {
         let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
         this.props.sticky(covnersationInfo);
-        // info.isTop = !(info.isTop || this.state.isTop);
         this.setState({
             isTop: !this.state.isTop
-        })
+        });
     }
     showName() {
 
     }
     saveIntoList() {
-        this.props.saveIntoList(this.state.isSaveInto, (e) => {
+        this.props.setFavGroup(this.props.target.target, !this.state.isSaveInto, (e) => {
             this.setState({
-                isSaveInto: e
-            })
+                isSaveInto: !this.state.isSaveInto
+            });
         });
     }
     noDisturbing() {
-
+        let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
+        this.props.slient(covnersationInfo);
+        this.setState({
+            isSlient: !this.state.isSlient
+        });
     }
 
 
@@ -240,17 +247,32 @@ export default class Members extends Component {
         if (covnersationInfo.isTop !== this.state.isTop && !this.props.show) {
             this.setState({
                 isTop: covnersationInfo.isTop
-            })
-
+            });
         }
+        if (covnersationInfo.isSlient !== this.state.isSlient && !this.props.show) {
+            this.setState({
+                isSlient: covnersationInfo.isSlient
+            });
+        }
+        if (prevProps.target instanceof GroupInfo &&  this.state.show !== this.props.show) {
+            var isSaveInto = false;
+            if (this.props.target) {
+                isSaveInto = this.props.isFavGroup(this.props.target.target);
+            }
+            this.setState({
+                show: this.props.show,
+                isSaveInto: isSaveInto
+            });
+        }
+
+
         if (((prevProps.target instanceof GroupInfo && prevProps.target.target !== this.state.target.target) ||
             (prevProps.target instanceof UserInfo && prevProps.target.uid !== this.state.target.uid)
         ) && !this.props.show) {
             this.setState({
-                isTop: covnersationInfo.isTop,
                 target: prevProps.target,
                 showSize: 10
-            })
+            });
         }
     }
 
@@ -417,7 +439,7 @@ export default class Members extends Component {
                             <div> 置顶/取消置顶 <br /> <button className={clazz(classes.btnauto, ((this.state.isTop) ? classes.btnactive : ''))}
                                 onClick={() => { this.setTop(); }}><span> </span></button></div>
 
-                            <div> 消息免打扰 <br /> <button className={clazz(classes.btnauto, ((this.state.isTop) ? classes.btnactive : ''))}
+                            <div> 消息免打扰 <br /> <button className={clazz(classes.btnauto, ((this.state.isSlient) ? classes.btnactive : ''))}
                                 onClick={() => { this.noDisturbing(); }}><span> </span></button></div>
                             {/* <div><button onClick={() => this.removeChatItem(covnersationInfo)}>删除会话</button></div> */}
                             <div className={classes.deleteBtn} onClick={() => { this.deleteBtn(); }}> 删除并退出</div>
