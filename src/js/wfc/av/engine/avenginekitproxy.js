@@ -152,7 +152,7 @@ export class AvEngineKitProxy {
 
                 if (msg.conversation.type === ConversationType.Group
                     && (content.type === MessageContentType.VOIP_CONTENT_TYPE_START
-                        || content === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT
+                        || content.type === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT
                     )) {
                     let memberIds = wfc.getGroupMemberIds(msg.conversation.target);
                     msg.groupMemberUserInfos = wfc.getUserInfos(memberIds, msg.conversation.target);
