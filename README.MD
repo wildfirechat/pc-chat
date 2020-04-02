@@ -67,10 +67,11 @@
 
 > 请严格安装下面的版本安装对应依赖，否则无法打包
 
-1. 最新版本的xcode
-2. nodejs10.16.X
-3. python2.7X
-4. npm install -g node-gyp
+1. 最新版本的xCode
+2. nodejs 10.16.X
+3. npm 6.9.0
+4. python 2.7.X
+5. npm install -g node-gyp
 
 ##### 开发
 
@@ -93,9 +94,11 @@ $ npm run dev
 
 > 请严格安装下面的版本安装对应依赖，否则无法打包
 
-1. nodejs10.16.x
-2. npm install --global --vs2015 windows-build-tools # 安装内容较多，如果网络情况不好可能需要等较长时间，选择早上网络较好时安装是个好的选择
-3. npm install -g node-gyp
+1. nodejs v10.16.x
+2. python 2.7.X
+3. npm 6.9.0
+4. npm install --global --vs2015 windows-build-tools # 安装内容较多，如果网络情况不好可能需要等较长时间，选择早上网络较好时安装是个好的选择
+5. npm install -g node-gyp
 
 
 ##### 开发
