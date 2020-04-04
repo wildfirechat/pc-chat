@@ -8,7 +8,8 @@
     border-radius: 6px;
     font-size: 18px;
     padding: 25px 20px 10px 25px;
-
+    border: 1px solid #eee;
+    
     & .top{
         display: block; 
         color: #000;
@@ -63,6 +64,48 @@
             & span{
                 margin-left: 20px;
             }
+        }
+    }
+    & .alertcontent{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #fff;
+        color: #999999;
+        & .title{
+            margin: 20px;
+        }
+        & .desc{
+            font-size: 13px;
+            width: 270px;
+            margin-left: 20px;
+        }
+        & textarea{
+            margin: 0 0 0 20px;
+            height: 60px;
+            width: 280px;
+        }
+        & .btns{
+            float: right;
+            margin-right: 20px;
+            margin-top: 20px;
+        }
+        & button{
+            border: 0;
+            padding: 5px 10px 5px 10px;
+            color: #fff;
+            font-size: 15px;
+        }
+        & .subbtn{
+            background: #1aad19;
+        }
+        & .cancelbtn{
+            margin-left: 20px;
+            border: 1px solid #e7e7e7;
+            background: #fff;
+            color: #000;
         }
     }
 }
