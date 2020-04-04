@@ -2,16 +2,14 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import pinyin from '../../../han';
 import clazz from 'classname';
 
 import classes from './style.css';
-import Avatar from 'components/Avatar';
 import Conversation from '../../../../wfc/model/conversation';
 import ConversationType from '../../../../wfc/model/conversationType';
 import UserInfo from '../../../../wfc/model/userInfo';
 import GroupInfo from '../../../../wfc/model/groupInfo';
-import wfc from '../../../../wfc/client/wfc'
+import UserContactInfo from './UserContactInfo';
 
 @inject(stores => ({
     chatTo: (conversation) => {
@@ -55,72 +53,20 @@ class ContactInfo extends Component {
         var fontColor = '#777';
         var buttonColor = '#fff';
         var buttonBackground = '#1aad19';
-        
         var background = '#f5f5f5';
-         
- 
-
-
         return (
             <div className={classes.container}>
                 {
-                    user ? (<div
-                        className={clazz(classes.hero)}
-                        style={{
-                            background,
-                            color: fontColor,
-                        }}>
-
-
-                        <div className={classes.inner}>
-                            <div
-                                className={classes.mask}
-                                style={{
-                                    background: gradient
-                                }} />
-                            <Avatar src={user.portrait} />
+                    user.target || user.uid ? (<UserContactInfo></UserContactInfo>) : (
+                        <div className={clazz({
+                            [classes.noselected]: true,
+                        })}>
+                            <img
+                                className="disabledDrag"
+                                src="assets/images/noselected.png" />
+                            <h1>No Contact selected :(</h1>
                         </div>
-
-                        <div
-                            className={classes.username}
-                            dangerouslySetInnerHTML={{ __html: wfc.getUserDisplayName(user.uid) }} />
-
-                        {
-                            /* eslint-disable */
-                            // this.state.showEdit && (
-                            //     <input
-                            //         autoFocus={true}
-                            //         defaultValue={RemarkName}
-                            //         onKeyPress={e => this.handleEnter(e)}
-                            //         placeholder="Type the remark name"
-                            //         ref="input"
-                            //         type="text" />
-                            // )
-                            /* eslint-enable */
-                        }
-                        <div
-                            className={classes.action}
-                            onClick={() => this.handleAction(this.props.user)}
-                            style={{
-                                color: buttonColor,
-                                opacity: .6,
-                                background:buttonBackground,
-                                borderRadius: '5px',
-                                fontSize:'19px'
-                            }}>
-                            发送消息
-                        </div>
-                    </div>
-                    ) : (
-                            <div className={clazz({
-                                [classes.noselected]: true,
-                            })}>
-                                <img
-                                    className="disabledDrag"
-                                    src="assets/images/noselected.png" />
-                                <h1>No Contact selected :(</h1>
-                            </div>
-                        )
+                    )
                 }
             </div>
         );
