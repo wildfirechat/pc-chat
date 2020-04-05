@@ -9,7 +9,8 @@ import Loader from 'components/Loader';
 import Contacts from './Contacts';
 import ContactInfo from './ContactInfo';
 
-import Header from '../Header'
+import Header from '../Header';
+import { WfcManager } from '../../../wfc/client/wfc';
 
 @inject(stores => ({
     loading: stores.sessions.loading,
@@ -17,6 +18,7 @@ import Header from '../Header'
     toggleConversation: stores.chat.toggleConversation,
     showRedIcon: stores.settings.showRedIcon,
     newChat: () => stores.newchat.toggle(true),
+    getMyGroupList: WfcManager.getMyGroupList
 }))
 @observer
 export default class Second extends Component {

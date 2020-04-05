@@ -10,6 +10,7 @@ import ConversationType from '../../../../wfc/model/conversationType';
 import UserInfo from '../../../../wfc/model/userInfo';
 import GroupInfo from '../../../../wfc/model/groupInfo';
 import UserContactInfo from './UserContactInfo';
+// import { use } from 'builder-util';
 
 @inject(stores => ({
     chatTo: (conversation) => {
@@ -17,6 +18,8 @@ import UserContactInfo from './UserContactInfo';
         stores.chat.chatToN(conversation);
     },
     user: stores.contactInfo.user,
+    users: stores.contactInfo.users,
+    isNewFriend: stores.contactInfo.isNewFriend,
     setRemarkName: stores.userinfo.setRemarkName,
 }))
 
@@ -46,18 +49,78 @@ class ContactInfo extends Component {
             document.querySelector('#messageInput').focus();
         });
     }
-
-    render() {
-        var user = this.props.user;
-        var gradient = 'none';
-        var fontColor = '#777';
+    getUserList() {
+        return (
+            this.props.user.map((item, index) => {
+                return (
+                    <div className={classes.userList} key={index}>
+                        <div className={classes.userItem}>
+                            <img src={item.portrait}></img>
+                            <span className={classes.username}>{item.displayName}</span>
+                            <span className={classes.userReason}>{item.friendMsg.reason}</span>
+                        </div>
+                        <div></div>
+                    </div>
+                );
+            })
+        );
+    }
+    getGroupList() {
         var buttonColor = '#fff';
         var buttonBackground = '#1aad19';
-        var background = '#f5f5f5';
+        var list = this.props.users.map((item, index) => {
+            return (
+                <div className={classes.groupList} key={index}>
+                    <div className={classes.groupItem}>
+                        <img src={item.portrait}></img>
+                        <span className={classes.groupName}>{item.displayName}</span>
+                    </div>
+                    <div></div>
+                </div>
+            )
+        })
+        return (
+            <div style={{
+                height: '100%'
+            }}>
+                <div className={classes.groupListBox}>{list}</div>
+                <div
+                    className={classes.action}
+                    onClick={() => this.handleAction(this.props.user)}
+                    style={{
+                        color: buttonColor,
+                        opacity: .6,
+                        background: buttonBackground,
+                        borderRadius: '5px',
+                        fontSize: '19px',
+                        left: 'calc(50% - 60px)'
+                    }}>
+                    发送消息
+                </div>
+            </div >
+        );
+    }
+    render() {
+        var user = this.props.user;
+        var users = this.props.users;
+        // var gradient = 'none';
+        // var fontColor = '#777';
+        // var buttonColor = '#fff';
+        // var buttonBackground = '#1aad19';
+        // var background = '#f5f5f5';
+        var userInfo = user instanceof UserInfo ? (<UserContactInfo></UserContactInfo>) : '';
+        var groupInfo = user instanceof GroupInfo ? this.getGroupList() : '';
+        var userList = this.props.isNewFriend ? this.getUserList() : '';
         return (
             <div className={classes.container}>
                 {
-                    user.target || user.uid ? (<UserContactInfo></UserContactInfo>) : (
+                    this.props.isNewFriend ? (<div className={classes.newFriendtitle}>新的朋友</div>) : ''
+                }
+                {
+                    user instanceof GroupInfo ? (<div className={classes.newFriendtitle}>{user.name}({users.length + 1})</div>) : ''
+                }
+                {
+                    userInfo || userList || groupInfo || (
                         <div className={clazz({
                             [classes.noselected]: true,
                         })}>
