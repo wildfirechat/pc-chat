@@ -132,13 +132,13 @@ class Chat {
                     self.target = false;
                     self.conversation = null;
                 } else {
-                    let index = self.messageList.findIndex(m => m.messageUid.equals(message.messageUid));
+                    let index = self.messageList.findIndex(m => m.messageId === message.messageId);
                     if (index === -1) {
                         self.messageList.push(message);
                     }
                 }
             } else {
-                let index = self.messageList.findIndex(m => m.messageUid.equals(message.messageUid));
+                let index = self.messageList.findIndex(m => m.messageId === message.messageId);
                 if (index === -1) {
                     self.messageList.push(message);
                 }
@@ -392,7 +392,7 @@ class Chat {
             'doc': MessageContentMediaType.File,
         }[mediaType];
 
-        var messageContent;
+        let messageContent;
         switch (messageContentmediaType) {
             case MessageContentMediaType.Image:
                 let imageThumbnail = await self.imageThumbnail(file);

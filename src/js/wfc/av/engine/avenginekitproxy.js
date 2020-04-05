@@ -6,6 +6,7 @@ import wfc from "../../client/wfc";
 import MessageConfig from "../../client/messageConfig";
 import CallByeMessageContent from "../messages/callByeMessageContent";
 import DetectRTC from 'detectrtc';
+import Config from "../../../config";
 
 const path = require('path');
 
@@ -85,6 +86,14 @@ export class AvEngineKitProxy {
     onReceiveMessage = (msg) => {
         if (!this.isSupportVoip) {
             console.log('not support voip, just ignore voip message')
+            return;
+        }
+        if (!Config.ENABLE_MULTI_VOIP_CALL && msg.conversation.type === ConversationType.Group) {
+            console.log('not enable multi call ');
+            return;
+        }
+        if (!Config.ENABLE_SINGLE_VOIP_CALL && msg.conversation.type === ConversationType.Single) {
+            console.log('not enable multi call ');
             return;
         }
         let now = (new Date()).valueOf();
