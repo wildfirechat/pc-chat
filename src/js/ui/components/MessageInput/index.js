@@ -424,7 +424,6 @@ export default class MessageInput extends Component {
 
     render() {
         var canisend = this.canisend();
-        let canStartVoip = this.props.conversation && this.props.conversation.type === ConversationType.Single;
         let isGroup = this.props.conversation && this.props.conversation.type === ConversationType.Group;
 
         return (
@@ -454,7 +453,7 @@ export default class MessageInput extends Component {
 
                     {
                         isGroup ? (
-                            !Config.ENABLE_MULTI_CALL ? '' :
+                            !Config.ENABLE_MULTI_VOIP_CALL ? '' :
                                 <Popup key={'voip-video'}
                                        trigger={
                                            <i
@@ -473,17 +472,18 @@ export default class MessageInput extends Component {
                                 </Popup>
 
                         ) : (
+                            !Config.ENABLE_SINGLE_VOIP_CALL ? '' :
                             <i
                                 className="icon-ion-android-camera"
                                 id="videoCall"
-                                onClick={e => canisend && canStartVoip && this.videoCall()}
+                                    onClick={e => canisend && this.videoCall()}
                             />
                         )
                     }
 
                     {
                         isGroup ? (
-                            !Config.ENABLE_MULTI_CALL ? '' :
+                            !Config.ENABLE_MULTI_VOIP_CALL ? '' :
                                 <Popup key={'voip-audio'}
                                        trigger={
                                            <i
@@ -500,11 +500,11 @@ export default class MessageInput extends Component {
                                     }
                                 </Popup>
 
-                        ) : (
+                        ) : (!Config.ENABLE_SINGLE_VOIP_CALL ? '' :
                             <i
                                 className="icon-ion-ios-telephone"
                                 id="audioCall"
-                                onClick={e => canisend && canStartVoip && this.audioCall()}
+                                    onClick={e => canisend && this.audioCall()}
                             />
                         )
                     }
