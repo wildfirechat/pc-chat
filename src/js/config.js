@@ -5,7 +5,7 @@ export default class Config {
     // 是否支持1对1音视频通话
     static ENABLE_SINGLE_VOIP_CALL = true;
     static DEFAULT_PORTRAIT_URL = 'https://static.wildfirechat.cn/user-fallback.png';
-    static APP_SERVER = 'http://192.168.31.113:8888';
+    static APP_SERVER = 'http://wildfirechat.cn:8888';
     static QR_CODE_PREFIX_PC_SESSION = "wildfirechat://pcsession/";
     static ICE_ADDRESS = 'turn:turn.wildfirechat.cn:3478';
     static ICE_USERNAME = 'wfchat';
