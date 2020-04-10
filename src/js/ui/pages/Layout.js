@@ -177,7 +177,6 @@ export default class Layout extends Component {
             || this.connectionStatus === ConnectionStatus.ConnectionStatusLogout
             || this.connectionStatus === ConnectionStatus.ConnectionStatusSecretKeyMismatch
             || this.connectionStatus === ConnectionStatus.ConnectionStatusTokenIncorrect
-            || this.connectionStatus === ConnectionStatus.ConnectionStatusUnconnected
             || wfc.getUserId() === '') {
             return <Login />;
         }
@@ -185,7 +184,7 @@ export default class Layout extends Component {
         if (ipcRenderer) {
             ipcRenderer.send('logined');
         }
-        loading = wfc.isLogin() && (this.connectionStatus === 0 || this.connectionStatus === 2/** receving */);
+        loading = !wfc.isLogin() && (this.connectionStatus === 0 || this.connectionStatus === 2/** receving */);
 
         return (
             <div>
