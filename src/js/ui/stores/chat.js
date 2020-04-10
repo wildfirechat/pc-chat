@@ -6,6 +6,7 @@ import helper from 'utils/helper';
 import contacts from './contacts';
 import settings from './settings';
 import members from './members';
+import sessions from './sessions';
 import snackbar from './snackbar';
 import wfc from '../../wfc/client/wfc'
 import Message from '../../wfc/messages/message';
@@ -143,6 +144,8 @@ class Chat {
                     self.messageList.push(message);
                 }
             }
+            let conversationInfo = wfc.getConversationInfo(self.conversation);
+            sessions.clearConversationUnreadStatus(conversationInfo);
         }
     }
 
