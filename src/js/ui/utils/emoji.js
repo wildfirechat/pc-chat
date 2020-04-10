@@ -365,7 +365,16 @@ function getEmojiClassName(name) {
 }
 
 function parser(text) {
-    var decodeText = anchorme(text);
+    var decodeText = anchorme(text, {
+        attributes:[
+            {
+                // attribute name
+                name:"target",
+                // attribute value
+                value:"_blank"
+            }
+        ]
+    });
 
     (text.match(/\[[\w\s\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29\ud840-\ud868\udc00-\udfff\ud869[\udc00-\uded6\udf00-\udfff\ud86a-\ud86c\udc00-\udfff\ud86d[\udc00-\udf34\udf40-\udfff\ud86e\udc00-\udc1d]+\]/g) || []).map(e => {
         var className = getEmojiClassName(e);
@@ -374,7 +383,7 @@ function parser(text) {
             // Invalid emoji
             return;
         }
-        text = decodeText = text.split(`${e}`).join(`<a class="${className}"></a>`);
+        text = decodeText = text.split(`${e}`).join(`<a target="_blank" class="${className}"></a>`);
     });
 
     return normalize(decodeText);

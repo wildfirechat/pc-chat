@@ -4,25 +4,24 @@ import {
     Route
 } from 'react-router-dom'
 import ErrorBoundary from "./components/ErrorBoundary";
+import App from '../../app'
+import VoipApp from "../../voip";
 
 class ViewManager extends Component {
 
     static View(props) {
         let name = props.location.search.substr(1);
         if ('voip-single' === name) {
-            let TargetView = require('../../voip')
             return (
-                <TargetView type='single'/>
+                <VoipApp type='single'/>
             );
         } else if ('voip-multi' === name) {
-            let TargetView = require('../../voip')
             return (
-                <TargetView type='multi'/>
+                <VoipApp type='multi'/>
             );
         } else {
-            let TargetView = require('../../app')
             return (
-                <TargetView/>
+                <App/>
             );
         }
     }

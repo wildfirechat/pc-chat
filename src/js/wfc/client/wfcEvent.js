@@ -13,6 +13,8 @@ export default class EventType {
     static ConnectionStatusChanged = 'connectionStatusChanged';
     // function (userInfos) {}
     static UserInfosUpdate = 'userInfosUpdate';
+    // function (channelInfos) {}
+    static ChannelInfosUpdate = 'channelInfosUpdate';
     // function (groupInfos) {}
     static GroupInfosUpdate = 'groupInfosUpdate';
     // function (updatedFriendIds) {}
