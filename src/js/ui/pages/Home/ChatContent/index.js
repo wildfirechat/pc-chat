@@ -87,9 +87,9 @@ import nodePath from 'path';
             let groupInfo = target;
             let groupMember = wfc.getGroupMember(groupInfo.target, wfc.getUserId());
             if (groupInfo.type === GroupType.Restricted) {
-                if (!groupMember || groupMember.type === GroupMemberType.Normal) {
-                    return;
-                }
+                // if (!groupMember || groupMember.type === GroupMemberType.Normal) {
+                //     return;
+                // }
             }
             stores.members.toggle(true, target);
         }else{
@@ -107,6 +107,7 @@ import nodePath from 'path';
     rememberConversation: stores.settings.rememberConversation,
     showConversation: stores.chat.showConversation,
     toggleConversation: stores.chat.toggleConversation,
+    showUserName: stores.members.showUserName,
 }))
 @observer
 export default class ChatContent extends Component {
@@ -406,11 +407,11 @@ export default class ChatContent extends Component {
                                 this.userInfoLayout(user, message)
                             }
 
-                            <p
+                           { this.props.showUserName && <p
                                 className={classes.username}
                                 //dangerouslySetInnerHTML={{__html: user.DisplayName || user.RemarkName || user.NickName}}
                                 dangerouslySetInnerHTML={{__html: wfc.getUserDisplayName(user.uid)}}
-                            />
+                            />}
 
                             {
                                 this.messageContentLayout(message)

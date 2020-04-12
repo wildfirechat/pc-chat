@@ -109,7 +109,7 @@ class ContactInfo extends Component {
                         background: buttonBackground,
                         borderRadius: '5px',
                         fontSize: '19px',
-                        left: 'calc(50% - 60px)'
+                        left: 'calc(50% - 54px)'
                     }}>
                     发送消息
                 </div>
