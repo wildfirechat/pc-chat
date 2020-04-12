@@ -55,11 +55,11 @@ class ContactInfo extends Component {
                 return (
                     <div className={classes.userList} key={index}>
                         <div className={classes.userItem}>
-                            <img src={item.portrait}></img>
+                            <img src={item.portrait} />
                             <span className={classes.username}>{item.displayName}</span>
                             <span className={classes.userReason}>{item.friendMsg.reason}</span>
                         </div>
-                        <div></div>
+                        <div />
                     </div>
                 );
             })
@@ -68,22 +68,29 @@ class ContactInfo extends Component {
     getGroupList() {
         var buttonColor = '#fff';
         var buttonBackground = '#1aad19';
-        var list = this.props.users.map((item, index) => {
-            return (
-                <div className={classes.groupList} key={index}>
-                    <div className={classes.groupItem}>
-                        <img src={item.portrait}></img>
-                        <span className={classes.groupName}>{item.displayName}</span>
-                    </div>
-                    <div></div>
-                </div>
-            )
-        })
+        // var list = this.props.users.map((item, index) => {
+        //     return (
+        //         <div className={classes.groupList} key={index}>
+        //             <div className={classes.groupItem}>
+        //                 <img src={item.portrait}></img>
+        //                 <span className={classes.groupName}>{item.displayName}</span>
+        //             </div>
+        //             <div></div>
+        //         </div>
+        //     )
+        // });
         return (
             <div style={{
                 height: '100%'
             }}>
-                <div className={classes.groupListBox}>{list}</div>
+                <div className={classes.groupListBox}>
+                    <img style={{
+                        width: '80px',
+                        position: 'absolute',
+                        top: '25%',
+                        left: 'calc(50% - 40px)'
+                    }} src={this.props.user.portrait} />
+                </div>
                 <div
                     className={classes.action}
                     onClick={() => this.handleAction(this.props.user)}
@@ -108,7 +115,7 @@ class ContactInfo extends Component {
         // var buttonColor = '#fff';
         // var buttonBackground = '#1aad19';
         // var background = '#f5f5f5';
-        var userInfo = user instanceof UserInfo ? (<UserContactInfo></UserContactInfo>) : '';
+        var userInfo = user instanceof UserInfo ? (<UserContactInfo />) : '';
         var groupInfo = user instanceof GroupInfo ? this.getGroupList() : '';
         var userList = this.props.isNewFriend ? this.getUserList() : '';
         return (
@@ -119,18 +126,25 @@ class ContactInfo extends Component {
                 {
                     user instanceof GroupInfo ? (<div className={classes.newFriendtitle}>{user.name}({users.length + 1})</div>) : ''
                 }
-                {
-                    userInfo || userList || groupInfo || (
-                        <div className={clazz({
-                            [classes.noselected]: true,
-                        })}>
-                            <img
-                                className="disabledDrag"
-                                src="assets/images/noselected.png" />
-                            <h1>No Contact selected :(</h1>
-                        </div>
-                    )
-                }
+                <div style={{
+                    height: 'calc(100vh - 70px)',
+                    overflow: 'auto'
+                }}>
+
+                    {
+                        userInfo || userList || groupInfo || (
+                            <div className={clazz({
+                                [classes.noselected]: true,
+                            })}>
+                                <img
+                                    className="disabledDrag"
+                                    src="assets/images/noselected.png" />
+                                <h1>No Contact selected :(</h1>
+                            </div>
+                        )
+                    }
+                </div>
+
             </div>
         );
     }

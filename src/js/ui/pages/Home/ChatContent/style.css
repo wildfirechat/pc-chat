@@ -106,7 +106,7 @@
 }
 
 .message {
-    max-width: calc(100% - 34px - 48px);
+    max-width: calc(100% - 34px - 48px - 68px);
     padding: 0 34px;
     margin-bottom: 20px;
    
@@ -210,7 +210,7 @@
         color: #777;
         line-height: 22.65px;
         user-select: text;
-        word-break:normal;
+        word-break:break-all;
       }
 
     & .times {
