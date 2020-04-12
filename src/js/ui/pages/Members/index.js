@@ -32,6 +32,7 @@ import MessageConfig from '../../../wfc/client/messageConfig';
     filtered: stores.members.filtered,
     empty: stores.chat.empty,
     conversation: stores.chat.conversation,
+    conversationInfo: stores.chat.conversationInfo,
     sticky: stores.sessions.sticky,
     removeChat: stores.sessions.removeConversation,
     toggleConversation: stores.chat.toggleConversation,
@@ -72,7 +73,7 @@ import MessageConfig from '../../../wfc/client/messageConfig';
                     callback(true);
                 }, (e) => {
                     console.warn(e);
-                })
+                });
         }
 
         // wfc.getUserInfo(user.uid, true);
@@ -89,17 +90,28 @@ import MessageConfig from '../../../wfc/client/messageConfig';
         stores.members.toggle(false);
         stores.addmember.toggle(true);
     },
-    saveIntoList: (isSaveInto, callback) => {
-        wfc.setUserSetting(6, stores.chat.target.target, isSaveInto ? "1" : "0", (e) => {
-            callback(!isSaveInto);
+    saveIntoList: (blo, callback) => {
+        wfc.setFavGroup(stores.chat.target.target, !stores.members.isFavGroup, (e) => {
+            stores.members.changeIsFavGroup(!stores.members.isFavGroup);
+        });
+    },
+    setUserSetting: () => {
+        wfc.setUserSetting(5, stores.chat.target.target, !stores.members.showUserName ? '1' : '0', (e) => {
+            // callback(!blo);
+            stores.members.changeShowUserName(!stores.members.showUserName);
         }, (e) => {
-
         });
     },
     isMyFriend: wfc.isMyFriend,
-    isFavGroup: wfc.isFavGroup,
+    isFavGroup: stores.members.isFavGroup,
+    showUserName: stores.members.showUserName,
     setFavGroup: wfc.setFavGroup,
-    slient: stores.sessions.slient
+    slient: async (info) => {
+        stores.sessions.slient(info, (e) => {
+            console.warn('>>>>>>>>>>>>>', e);
+            stores.chat.changeConversationInfo(stores.chat.conversation);
+        });
+    }
 }))
 @observer
 export default class Members extends Component {
@@ -113,8 +125,7 @@ export default class Members extends Component {
         noDisturbing: false,
         userdisNames: {},
         target: {},
-        showSize: 8,
-        isSaveInto: false
+        showSize: 8
     };
 
     showUserCard(user, ev) {
@@ -130,7 +141,7 @@ export default class Members extends Component {
     hideUserCard() {
         this.setState({
             isShowUserCard: !this.state.isShowUserCard
-        })
+        });
     }
     getDisName(uid) {
         var disName = WildFireIM.cache[this.props.target.target] || {};
@@ -148,14 +159,14 @@ export default class Members extends Component {
     changeShowUser() {
         this.setState({
             showSize: 0
-        })
+        });
     }
     changeEditeMessage(e, type) {
         var tagName = e.target.tagName;
         if (tagName === 'svg' || tagName === 'path') {
             var sp = tagName === 'path' ? e.target.parentNode.previousSibling : e.target.previousSibling;
             sp.setAttribute('contenteditable', true);
-            sp.style.background = '#fff'
+            sp.style.background = '#fff';
         }
     }
     changeTagName(e, type) {
@@ -178,7 +189,7 @@ export default class Members extends Component {
 
     }
     deleteBtn() {
-        this.props.quitGroup()
+        this.props.quitGroup();
     }
     async getGroupNotice(text) {
         var response = await axios.post('/put_group_announcement', {
@@ -199,7 +210,7 @@ export default class Members extends Component {
     }
     removeChatItem(covnersationInfo) {
         // let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
-        this.props.removeChat(covnersationInfo)
+        this.props.removeChat(covnersationInfo);
     }
     setTop() {
         let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
@@ -211,23 +222,17 @@ export default class Members extends Component {
     showName() {
 
     }
-    saveIntoList() {
-        this.props.setFavGroup(this.props.target.target, !this.state.isSaveInto, (e) => {
-            this.setState({
-                isSaveInto: !this.state.isSaveInto
-            });
-        });
-    }
+    // saveIntoList() {
+    //     this.props.setFavGroup(this.props.target.target, !this.props.isFavGroup, (e) => {
+    //         stores.members.changeIsFavGroup(!stores.members.isFavGroup);
+    //     });
+    // }
     noDisturbing() {
         // TODO 此处代码调用会导致界面卡死
         let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
-        // this.props.slient(covnersationInfo);
-        this.setState({
-            isSlient: !this.state.isSlient
-        });
+        covnersationInfo.isSilent = !covnersationInfo.isSilent;
+        this.props.slient(covnersationInfo);
     }
-
-
     componentDidMount() {
         var bodyDom = document.body;
         var context = this;
@@ -250,20 +255,14 @@ export default class Members extends Component {
                 isTop: covnersationInfo.isTop
             });
         }
-        if (covnersationInfo.isSlient !== this.state.isSlient && !this.props.show) {
+        // if (covnersationInfo.isSlient !== this.state.isSlient && !this.props.show) {
+        //     this.setState({
+        //         isSlient: covnersationInfo.isSlient
+        //     });
+        // }
+        if (prevProps.target instanceof GroupInfo && this.state.show !== this.props.show) {
             this.setState({
-                isSlient: covnersationInfo.isSlient
-            });
-        }
-        if (prevProps.target instanceof GroupInfo &&  this.state.show !== this.props.show) {
-            var isSaveInto = false;
-            if (this.props.target) {
-                // TODO 此处代码调用会导致界面卡死
-                // isSaveInto = this.props.isFavGroup(this.props.target.target);
-            }
-            this.setState({
-                show: this.props.show,
-                isSaveInto: isSaveInto
+                show: this.props.show
             });
         }
 
@@ -432,16 +431,16 @@ export default class Members extends Component {
                                     {editIcon}
                                 </div>
                             </div>
-                            <div> 显示群昵称 <br /> <button className={clazz(classes.btnauto, ((this.state.isTop) ? classes.btnactive : ''))}
-                                onClick={() => { this.showName(); }}><span> </span></button></div>
+                            <div> 显示群昵称 <br /> <button className={clazz(classes.btnauto, ((this.props.showUserName) ? classes.btnactive : ''))}
+                                onClick={() => { this.props.setUserSetting(); }}><span> </span></button></div>
 
-                            <div> 保存到通讯录 <br /> <button className={clazz(classes.btnauto, ((this.state.isSaveInto) ? classes.btnactive : ''))}
-                                onClick={() => { this.saveIntoList(); }}><span> </span></button></div>
+                            <div> 保存到通讯录 <br /> <button className={clazz(classes.btnauto, ((this.props.isFavGroup) ? classes.btnactive : ''))}
+                                onClick={() => { this.props.saveIntoList(); }}><span> </span></button></div>
 
                             <div> 置顶/取消置顶 <br /> <button className={clazz(classes.btnauto, ((this.state.isTop) ? classes.btnactive : ''))}
                                 onClick={() => { this.setTop(); }}><span> </span></button></div>
 
-                            <div> 消息免打扰 <br /> <button className={clazz(classes.btnauto, ((this.state.isSlient) ? classes.btnactive : ''))}
+                            <div> 消息免打扰 <br /> <button className={clazz(classes.btnauto, ((this.props.conversationInfo.isSilent) ? classes.btnactive : ''))}
                                 onClick={() => { this.noDisturbing(); }}><span> </span></button></div>
                             {/* <div><button onClick={() => this.removeChatItem(covnersationInfo)}>删除会话</button></div> */}
                             <div className={classes.deleteBtn} onClick={() => { this.deleteBtn(); }}> 删除并退出</div>

@@ -111,11 +111,12 @@ class sessions {
     }
 
     @action
-    async slient(conversationInfo) {
-        wfc.setConversationSlient(conversationInfo.conversation, !conversationInfo.isSilent, () => {
+    async slient(conversationInfo, callback) {
+        wfc.setConversationSlient(conversationInfo.conversation, conversationInfo.isSilent, () => {
             updateMenus({
                 conversations: self.conversations.slice(0, 10)
             });
+            callback(self.conversations.slice(0, 10));
         }, (errorCode) => {
             // do nothing
         });
