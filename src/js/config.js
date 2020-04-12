@@ -1,7 +1,7 @@
 import { isElectron } from './platform'
 export default class Config {
     // 是否支持多人音视频通话
-    static ENABLE_MULTI_VOIP_CALL = false;
+    static ENABLE_MULTI_VOIP_CALL = true;
     // 是否支持1对1音视频通话
     static ENABLE_SINGLE_VOIP_CALL = true;
     static DEFAULT_PORTRAIT_URL = 'https://static.wildfirechat.cn/user-fallback.png';
