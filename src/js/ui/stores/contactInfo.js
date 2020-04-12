@@ -28,7 +28,6 @@ class ContactInfo {
             var userIds = [];
             // userIds.push();
             let members = wfc.getGroupMembers(user.target);
-            console.warn(">>>>>>>>>>>>>>>>..", members);
             members.forEach(m => {
                 userIds.push(m.memberId);
             });

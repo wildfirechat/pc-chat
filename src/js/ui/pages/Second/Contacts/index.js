@@ -26,7 +26,9 @@ import { use } from 'builder-util';
 @observer
 export default class Contacts extends Component {
     state = {
-        groupList: []
+        groupList: [],
+        expand: false,
+        userExpand: true
     }
     renderColumns(data, index, query) {
         console.log('render c', data);
@@ -133,9 +135,21 @@ export default class Contacts extends Component {
             );
         });
     }
+    expandIconEvent() {
+        this.setState({
+            expand: !this.state.expand
+        });
+    }
+    userExpandEvent() {
+        this.setState({
+            userExpand: !this.state.userExpand
+        });
+    }
     render() {
         var { query, result } = this.props.filtered;
+        var closeIcon = <svg t="1586664960550" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1668" width="32" height="32"><path d="M332.16 883.84a40.96 40.96 0 0 0 58.24 0l338.56-343.04a40.96 40.96 0 0 0 0-58.24L390.4 140.16a40.96 40.96 0 0 0-58.24 58.24L640 512l-307.84 314.24a40.96 40.96 0 0 0 0 57.6z" fill="#999999" p-id="1669"></path></svg>;
 
+        var expandIcon = <svg t="1586664992872" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2490" width="32" height="32"><path d="M140.16 332.16a40.96 40.96 0 0 0 0 58.24l343.04 338.56a40.96 40.96 0 0 0 58.24 0l342.4-338.56a40.96 40.96 0 1 0-58.24-58.24L512 640 197.76 332.16a40.96 40.96 0 0 0-57.6 0z" fill="#999999" p-id="2491"></path></svg>;
         // TODO 未搜索到结果的ui
         // if (query && result.length === 0) {
         //     return (
@@ -169,31 +183,42 @@ export default class Contacts extends Component {
                             type="text" />
                     </div>
                 </div>
-                {
-                    !query && (
-                        <div className={classes.userList}>
-                            <div className={classes.userListTitle}>新的朋友</div>
-                            <div className={classes.adduser} onClick={() => { this.getAllNewFriend(); }}>
-                                {addUserIcon}
-                                <span >新的朋友</span>
-                            </div>
-                        </div>
-                    )
-                }
-                {
-                    !query && (
-                        <div className={classes.userList}>
-                            <div className={classes.userListTitle}>群聊</div>
-                            {this.renderGroupColumns()}
-                        </div>
-                    )
-                }
-
-                <div className={classes.contacts}
-                    ref="container">
+                <div className={classes.userListContainer}>
                     {
-                        this.renderColumns(result, 0, query)
+                        !query && (
+                            <div className={classes.userList}>
+                                <div className={classes.userListTitle}>新的朋友</div>
+                                <div className={classes.adduser} onClick={() => { this.getAllNewFriend(); }}>
+                                    {addUserIcon}
+                                    <span >新的朋友</span>
+                                </div>
+                            </div>
+                        )
                     }
+                    {
+                        !query && (
+                            <div className={classes.userList}>
+                                <div className={classes.userListTitle} onClick={() => { this.expandIconEvent(); }}>
+                                    {this.state.expand ? expandIcon : closeIcon}
+                                    <span>群聊</span>
+                                </div>
+                                {this.state.expand && this.renderGroupColumns()}
+                            </div>
+                        )
+                    }
+
+                    <div className={classes.contacts}
+                        ref="container">
+                        {
+                            <div className={classes.userList}>
+                                <div className={classes.userListTitle} onClick={() => { this.userExpandEvent(); }}>
+                                    {this.state.userExpand ? expandIcon : closeIcon}
+                                    <span>联系人</span>
+                                </div>
+                                {this.state.userExpand && this.renderColumns(result, 0, query)}
+                            </div>
+                        }
+                    </div>
                 </div>
             </div >
         );
