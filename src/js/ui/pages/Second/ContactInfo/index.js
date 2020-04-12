@@ -84,12 +84,21 @@ class ContactInfo extends Component {
                 height: '100%'
             }}>
                 <div className={classes.groupListBox}>
-                    <img style={{
-                        width: '80px',
+                    <div style={{
                         position: 'absolute',
                         top: '25%',
-                        left: 'calc(50% - 40px)'
-                    }} src={this.props.user.portrait} />
+                        left: '0px',
+                        textAlign: 'center',
+                        width: '100%'
+                    }}>
+                        <img style={{
+                            width: '80px'
+                        }} src={this.props.user.portrait} />
+                        <div style={{
+                            color: '#000',
+                            height: '30px'
+                        }}>{this.props.user.name}</div>
+                    </div>
                 </div>
                 <div
                     className={classes.action}
@@ -123,9 +132,9 @@ class ContactInfo extends Component {
                 {
                     this.props.isNewFriend ? (<div className={classes.newFriendtitle}>新的朋友</div>) : ''
                 }
-                {
+                {/* {
                     user instanceof GroupInfo ? (<div className={classes.newFriendtitle}>{user.name}({users.length + 1})</div>) : ''
-                }
+                } */}
                 <div style={{
                     height: 'calc(100vh - 70px)',
                     overflow: 'auto'

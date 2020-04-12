@@ -17,6 +17,8 @@ class Members {
     @observable filtered = [];
     @observable query = '';
     @observable groupNotice = '';
+    @observable isFavGroup = false;
+    @observable showUserName = false;
 
     @action async toggle(show = self.show, target = self.target) {
         let userIds = [];
@@ -27,12 +29,12 @@ class Members {
                 groupId: target.target
             });
             if (response.data && response.data.result) {
-                self.groupNotice =  response.data.result.text 
-            }else{
-                self.groupNotice ='';
+                self.groupNotice = response.data.result.text;
+            } else {
+                self.groupNotice = '';
             }
         }
-        if (target instanceof GroupInfo) { 
+        if (target instanceof GroupInfo) {
             let members = wfc.getGroupMembers(target.target);
             members.forEach(m => {
                 userIds.push(m.memberId);
@@ -40,6 +42,8 @@ class Members {
             users = wfc.getUserInfos(userIds, target);
             axios.defaults.baseURL = Config.APP_SERVER;
             getGroupNotice();
+            self.isFavGroup = wfc.isFavGroup(target.target);
+            self.showUserName = wfc.isHiddenGroupMemberName(target.target);
 
         } else if (target instanceof UserInfo) {
             self.show = show;
@@ -71,8 +75,6 @@ class Members {
         ).then(() => {
             self.list.replace(list);
         });
-
-
     }
 
     @action search(text = '') {
@@ -90,6 +92,12 @@ class Members {
         }
 
         self.filtered.replace([]);
+    }
+    @action changeIsFavGroup(isFavGroup = self.isFavGroup) {
+        self.isFavGroup = isFavGroup;
+    }
+    @action changeShowUserName(showUserName = self.showUserName) {
+        self.showUserName = showUserName;
     }
 }
 
