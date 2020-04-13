@@ -149,7 +149,9 @@
     "tmp": "0.0.33",
     "tributejs": "^3.6.0",
     "underscore": "^1.9.1",
-    "webrtc-adapter": "7.3.0"
+    "webrtc-adapter": "7.3.0",
+    "string.prototype.trimleft": "2.1.1",
+    "string.prototype.trimright": "2.1.1"
   },
   "devDependencies": {
     "acorn": "^6.0.0",
