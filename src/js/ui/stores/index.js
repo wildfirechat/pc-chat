@@ -12,6 +12,7 @@ import contacts from './contacts';
 import settings from './settings';
 import snackbar from './snackbar';
 import wfc from '../../wfc/client/wfc'
+import batchsend from './batchsend'
 import confirmImagePaste from './confirmImagePaste';
 
 const stores = {
@@ -29,6 +30,7 @@ const stores = {
     snackbar,
     confirmImagePaste,
     wfc,
+    batchsend,
 };
 
 export default stores;
