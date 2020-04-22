@@ -76,8 +76,8 @@
 ##### 开发
 
 ```
-$ cp proto_addon/marswrapper.mac.node marswrapper.node
 $ npm install
+$ npm run copy-mac
 $ npm run dev (dev运行不支持截屏，打包后支持)
 ```
 
@@ -95,7 +95,7 @@ $ npm run dev (dev运行不支持截屏，打包后支持)
 > 请严格安装下面的版本安装对应依赖，否则无法打包
 
 1. nodejs v10.16.x
-2. python 2.7.X
+2. python 2.7.x
 3. npm 6.9.0
 4. npm install --global --vs2015 windows-build-tools # 安装内容较多，如果网络情况不好可能需要等较长时间，选择早上网络较好时安装是个好的选择
 5. npm install -g node-gyp
@@ -120,14 +120,14 @@ $ npm run dev (dev运行不支持截屏，打包后支持)
 
 > 请严格安装下面的版本安装对应依赖，否则无法打包
 
-1. nodejs10.16.X
-2. python2.7X
+1. nodejs10.16.x
+2. python2.7.x
 
 ##### 开发
 
 ```
-$ cp proto_addon/marswrapper.linux.node marswrapper.node
 $ npm install
+$ npm run copy-linux
 $ npm run dev (dev运行不支持截屏，打包后支持)
 ```
 
