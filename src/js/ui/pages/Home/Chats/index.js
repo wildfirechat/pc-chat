@@ -9,6 +9,8 @@ import ConversationType from '../../../../wfc/model/conversationType';
 import scrollIntoView from 'scroll-into-view-if-needed'
 import smoothScrollIntoView from 'smooth-scroll-into-view-if-needed'
 import wfc from '../../../../wfc/client/wfc'
+import DismissGroupNotification from "../../../../wfc/messages/notification/dismissGroupNotification";
+import QuitGroupNotification from "../../../../wfc/messages/notification/quitGroupNotification";
 
 moment.updateLocale('en', {
     relativeTime: {
@@ -79,6 +81,9 @@ export default class Chats extends Component {
 
     onReceiveMessage = (msg) => {
         // this.props.reloadConversation(msg.conversation);
+        if(msg.messageContent instanceof DismissGroupNotification || msg.messageContent instanceof QuitGroupNotification){
+            wfc.removeConversation(msg.conversation, true);
+        }
         this.props.loadConversations();
     }
 
