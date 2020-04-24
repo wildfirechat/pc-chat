@@ -23,8 +23,8 @@ export class AvEngineKitProxy {
 
     setup(wfc) {
         DetectRTC.load(() => {
-            this.isSupportVoip = (DetectRTC.isWebRTCSupported && DetectRTC.hasWebcam && DetectRTC.hasSpeakers && DetectRTC.hasMicrophone);
-            console.log('detectRTC', this.isSupportVoip, DetectRTC.isWebRTCSupported, DetectRTC.hasWebcam, DetectRTC.hasSpeakers, DetectRTC.hasMicrophone);
+            this.isSupportVoip = (DetectRTC.isWebRTCSupported );
+            console.log(`detectRTC, isWebRTCSupported: ${DetectRTC.isWebRTCSupported}, hasWebcam: ${DetectRTC.hasWebcam}, hasSpeakers: ${DetectRTC.hasSpeakers}, hasMicrophone: ${DetectRTC.hasMicrophone}`, this.isSupportVoip);
         });
         this.event = wfc.eventEmitter;
         this.event.on(EventType.ReceiveMessage, this.onReceiveMessage);
@@ -275,17 +275,25 @@ export class AvEngineKitProxy {
             win.show();
         } else {
             let win = window.open(window.location.origin + '?' + type, 'target', 'width=360,height=640,left=200,top=200,toolbar=no,menubar=no,resizable=no,location=no, maximizable');
+            if(!win){
+                console.log('can not open voip window');
+                return;
+            }
             win.addEventListener('load', () => {
                 this.onVoipWindowReady(win);
             }, true);
 
-            win.addEventListener('beforeunload', () => {
-                this.onVoipWindowClose();
+            win.addEventListener('beforeunload', (event) => {
+                this.onVoipWindowClose(event);
             });
         }
     }
 
-    onVoipWindowClose() {
+    onVoipWindowClose(event) {
+        if(event.srcElement.URL === 'about:blank'){
+            // fix safari bug: safari 浏览器，页面刚打开的时候，也会走到这个地方
+            return;
+        }
         if (this.conversation) {
             let byeMessage = new CallByeMessageContent();
             byeMessage.callId = this.callId;

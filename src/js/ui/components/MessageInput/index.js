@@ -523,14 +523,18 @@ export default class MessageInput extends Component {
                             color: 'red',
                         }}
                     />
-                    <i
-                        className="icon-ion-scissors"
-                        id="screenShot"
-                        onClick={e => canisend && this.screenShot()}
-                        style={{
-                            color: 'black',
-                        }}
-                    />
+                    {
+                        isElectron() && (
+                            <i
+                                className="icon-ion-scissors"
+                                id="screenShot"
+                                onClick={e => canisend && this.screenShot()}
+                                style={{
+                                    color: 'black',
+                                }}
+                            />
+                        )
+                    }
 
                     <input
                         onChange={e => {

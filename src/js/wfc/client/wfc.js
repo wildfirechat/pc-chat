@@ -85,10 +85,19 @@ export class WfcManager {
     }
 
     /**
-     * 获取我保存到通讯录的群组信息
+     * 已废弃，请使用{@link getFavGroupList}
+     * 获取我保存到通讯录的群组信息列表
      * @returns {[GroupInfo]} 参考{@link GroupInfo}
      */
     getMyGroupList() {
+        return impl.getMyGroupList();
+    }
+
+    /**
+     * 获取我保存到通讯录的群组信息列表
+     * @returns {[GroupInfo]} 参考{@link GroupInfo}
+     */
+    getFavGroupList(){
         return impl.getMyGroupList();
     }
 
