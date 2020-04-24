@@ -76,11 +76,10 @@
 ##### 开发
 
 ```
-$ cp proto_addon/marswrapper.mac.node marswrapper.node
 $ npm install
+$ npm run copy-mac
 $ npm run dev
 ```
-
 
 ##### 打包
 
@@ -126,8 +125,8 @@ $ npm run dev
 ##### 开发
 
 ```
-$ cp proto_addon/marswrapper.linux.node marswrapper.node
 $ npm install
+$ npm run copy-linux
 $ npm run dev
 ```
 
