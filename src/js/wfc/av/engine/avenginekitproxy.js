@@ -110,10 +110,10 @@ export class AvEngineKitProxy {
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_MUTE_VIDEO
             ) {
                 console.log("receive voip message", msg);
-                if (msg.direction === 0
+                if(msg.direction === 0
                     && content.type !== MessageContentType.VOIP_CONTENT_TYPE_END
                     && content.type !== MessageContentType.VOIP_CONTENT_TYPE_ACCEPT
-                    && content.type !== MessageContentType.VOIP_CONTENT_TYPE_ACCEPT) {
+                    && content.type !== MessageContentType.VOIP_CONTENT_TYPE_ACCEPT){
                     return;
                 }
 
@@ -275,10 +275,6 @@ export class AvEngineKitProxy {
             win.show();
         } else {
             let win = window.open(window.location.origin + '?' + type, 'target', 'width=360,height=640,left=200,top=200,toolbar=no,menubar=no,resizable=no,location=no, maximizable');
-            if(!win){
-                console.log('can not open voip window');
-                return;
-            }
             win.addEventListener('load', () => {
                 this.onVoipWindowReady(win);
             }, true);
@@ -290,7 +286,7 @@ export class AvEngineKitProxy {
     }
 
     onVoipWindowClose(event) {
-        if(event.srcElement.URL === 'about:blank'){
+        if(event && event.srcElement && event.srcElement.URL === 'about:blank'){
             // fix safari bug: safari 浏览器，页面刚打开的时候，也会走到这个地方
             return;
         }
