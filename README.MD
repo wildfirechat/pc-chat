@@ -156,6 +156,8 @@ $ npm run dev
 
 2. ubuntu下，启动时，若提示，```A JavaScript error occurred in the main process Uncaught Exception:Error: Cannot open /opt/wildfirechat/resources/app.asar/marswrapper.node: Error: libdouble-conversion.so.1: cannot open shared object file: No such file or directory```，可安装[libdouble-conversion1](https://packages.debian.org/buster/libdouble-conversion1)解决
 
+3. win平台野火客户端依赖Visual C++ Redistributable Package runtime。如果用户PC上没有安装就需要安装之后才能运行，请从微软官方下载安装
+https://www.microsoft.com/zh-CN/download/details.aspx?id=48145。
 
 ## MAC 签名
 如果本地存在合法的mac签名，打包程序会尝试进行签名。签名会失败，提示```wfshot.app```没有签名，需要单独对截图应用签名，使用下面命令进行签名
