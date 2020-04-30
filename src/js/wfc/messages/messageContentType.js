@@ -29,7 +29,7 @@ export default class MessageContentType {
     static MuteGroupMember_Notification = 113;
     static ChangeJoinType_Notification = 114;
     static ChangePrivateChat_Notification = 115;
-    static ChangeSearchable_Notificaiton = 116;
+    static ChangeSearchable_Notification = 116;
     static SetGroupManager_Notification = 117;
     static VOIP_CONTENT_TYPE_START = 400;
     static VOIP_CONTENT_TYPE_END = 402;

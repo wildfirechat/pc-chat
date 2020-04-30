@@ -68,4 +68,18 @@ export default class CallSession {
 
     }
 
+    /**
+     * 开始屏幕共享
+     */
+    startScreenShare() {
+
+    }
+
+    isScreenSharing(){
+
+    }
+
+    stopScreenShare(){
+
+    }
 }

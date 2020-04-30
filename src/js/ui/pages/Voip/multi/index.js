@@ -206,9 +206,18 @@ export default class Voip extends Component {
                     <p style={{visibility: 'hidden'}}>holder</p>
                     <img ref="toVoiceButton"
                          src='assets/images/av_video_answer.png'
-                         onClick={() => this.session.setVideoEnabled(this.session.videoMuted)}
+                         onClick={() => this.session.setVideoEnabled(!this.session.videoMuted)}
                     />
                     <p>关闭/打开摄像头</p>
+                </div>
+
+                <div>
+                    <p style={{visibility: 'hidden'}}>holder</p>
+                    <img ref="tovoicebutton"
+                         src='assets/images/av_share.png'
+                         onClick={e => this.session.isScreenSharing() ? this.session.stopScreenShare() : this.session.startScreenShare()}
+                    />
+                    <p>屏幕共享</p>
                 </div>
                 <Popup key={'voip-invite'}
                        trigger={

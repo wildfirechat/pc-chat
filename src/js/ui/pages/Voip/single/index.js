@@ -7,6 +7,7 @@ import {observable, action} from 'mobx';
 import CallState from "../../../../wfc/av/engine/callState";
 import CallSessionCallback from "../../../../wfc/av/engine/CallSessionCallback";
 import avenginekit from "../../../../wfc/av/internal/engine.min";
+const systemPreferences  = require('electron').remote.systemPreferences
 
 @observer
 export default class Voip extends Component {
@@ -89,6 +90,7 @@ export default class Voip extends Component {
         this.switchMicrophone = this.refs.switchMicorphone;
         this.localVideo = this.refs.localVideo;
         this.remoteVideo = this.refs.remoteVideo;
+        console.log('test---------', systemPreferences, 'oooo')
 
     }
 
@@ -133,6 +135,20 @@ export default class Voip extends Component {
                          onClick={() => this.session.downgrade2Voice()}
                     />
                     <p>切换到语音聊天</p>
+                </div>
+                <div>
+                    <p style={{visibility: 'hidden'}}>holder</p>
+                    <img ref="toVoiceButton"
+                         src='assets/images/av_phone.png'
+                         onClick={() => {
+                             if(systemPreferences.getMediaAccessStatus('screen') === 'granted'){
+                                 this.session.isScreenSharing() ? this.session.stopScreenShare() : this.session.startScreenShare();
+                             }else {
+                                 systemPreferences.askForMediaAccess('screen')
+                             }
+                         }}
+                    />
+                    <p>屏幕共享</p>
                 </div>
             </div>
         )
