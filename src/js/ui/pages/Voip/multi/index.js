@@ -215,7 +215,29 @@ export default class Voip extends Component {
                     <p style={{visibility: 'hidden'}}>holder</p>
                     <img ref="tovoicebutton"
                          src='assets/images/av_share.png'
-                         onClick={e => this.session.isScreenSharing() ? this.session.stopScreenShare() : this.session.startScreenShare()}
+                         onClick={e => {
+                             if(this.session.isScreenSharing()){
+                                 this.session.stopScreenShare();
+                             }else {
+                                 let sources = this.session.getDesktopSources(['screen']);
+                                 if(sources){
+                                     // desktop
+                                     sources.then(ss =>{
+                                         console.log('desktop sources', ss)
+                                         this.session.startScreenShare(
+                                             {sourceId: ss[0].id,
+                                                 minWidth: 1280,
+                                                 maxWidth: 1280,
+                                                 minHeight: 720,
+                                                 maxHeight: 720}
+                                         )
+                                     })
+                                 }else {
+                                     // web
+                                     this.session.startScreenShare();
+                                 }
+                             }
+                         } }
                     />
                     <p>屏幕共享</p>
                 </div>

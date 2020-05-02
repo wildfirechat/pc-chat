@@ -69,17 +69,32 @@ export default class CallSession {
     }
 
     /**
+     * 仅当桌面是有效，web无效。
+     * 获取可用用于共享的源，可以是screen或者某个具体的window
+     * @param {[string]} types 媒体源类型，可选screen、window
+     * @return {Promise<DesktopCapturerSource[]>}
+     */
+    getDesktopSources (types) {
+
+    }
+
+    /**
+     * @param {{sourceId: source.id,
+                minWidth: 1280,
+                maxWidth: 1280,
+                minHeight: 720,
+                maxHeight: 720}} desktopShareOptions 仅当桌面时有效
      * 开始屏幕共享
      */
-    startScreenShare() {
+    async startScreenShare (desktopShareOptions) {
 
     }
 
-    isScreenSharing(){
+    isScreenSharing () {
 
     }
 
-    stopScreenShare(){
+    stopScreenShare () {
 
     }
 }

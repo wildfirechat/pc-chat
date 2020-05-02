@@ -53,6 +53,10 @@
     },
     "mac": {
       "icon": "../resource/dock.icns",
+      "extendInfo": {
+        "NSCameraUsageDescription": "This app requires camera access to record video.",
+        "NSMicrophoneUsageDescription": "This app requires microphone access to record audio."
+      },
       "extraResources": [
         {
           "from": "../mac-qt-denpendency/framework",
@@ -146,12 +150,12 @@
     "resize-image": "^0.1.0",
     "scroll-into-view-if-needed": "^2.2.20",
     "smooth-scroll-into-view-if-needed": "^1.1.23",
+    "string.prototype.trimleft": "2.1.1",
+    "string.prototype.trimright": "2.1.1",
     "tmp": "0.0.33",
     "tributejs": "^3.6.0",
     "underscore": "^1.9.1",
-    "webrtc-adapter": "7.3.0",
-    "string.prototype.trimleft": "2.1.1",
-    "string.prototype.trimright": "2.1.1"
+    "webrtc-adapter": "7.3.0"
   },
   "devDependencies": {
     "acorn": "^6.0.0",
