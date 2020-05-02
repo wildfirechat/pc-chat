@@ -19,8 +19,11 @@ class Members {
     @observable groupNotice = '';
     @observable isFavGroup = false;
     @observable showUserName = false;
+    @observable imgCache = {};
+
 
     @action async toggle(show = self.show, target = self.target) {
+        sessionStorage.setItem("isShowMember", show);
         let userIds = [];
         let users = [];
         async function getGroupNotice() {
@@ -65,12 +68,17 @@ class Members {
 
         Promise.all(
             users.map(async e => {
-                var pallet = e.pallet;
+                var pallet = e.pallet || self.imgCache[e.portrait];
 
                 if (!pallet) {
                     e.pallet = await helper.getPallet(e.portrait);
+                    self.imgCache[e.portrait] = e.pallet;
                 }
                 list.push(e);
+                // console.warn("userInfo信息：",e);
+                // if (e.userIds) {
+                //     wfc.getGroupMemberDisplayName(self.target.target, e.uid)
+                // }
             })
         ).then(() => {
             self.list.replace(list);

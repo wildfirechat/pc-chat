@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import {inject, observer} from 'mobx-react';
-import {ipcRenderer, popMenu, isElectron, fs, ContextMenuTrigger, hideMenu} from '../../../../platform';
+import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
+import { ipcRenderer, popMenu, isElectron, fs, ContextMenuTrigger, hideMenu } from '../../../../platform';
 import clazz from 'classname';
 import moment from 'moment';
 import axios from 'axios';
@@ -9,8 +9,8 @@ import classes from './style.css';
 import Avatar from 'components/Avatar';
 import PreviewImage from './PreviewImage'
 import helper from 'utils/helper';
-import {parser as emojiParse} from 'utils/emoji';
-import {on, off} from 'utils/event';
+import { parser as emojiParse } from 'utils/emoji';
+import { on, off } from 'utils/event';
 import MessageContentType from '../../../../wfc/messages/messageContentType';
 import UnsupportMessageContent from '../../../../wfc/messages/unsupportMessageConten';
 import wfc from '../../../../wfc/client/wfc'
@@ -29,6 +29,8 @@ import GroupMemberType from '../../../../wfc/model/groupMemberType';
 import FileSaver from 'file-saver';
 import InfiniteScroll from 'react-infinite-scroller';
 import nodePath from 'path';
+
+import UserCard from '../../../components/userCard';
 
 @inject(stores => ({
     sticky: stores.sessions.sticky,
@@ -54,6 +56,7 @@ import nodePath from 'path';
         var user = stores.contacts.memberList.find(e => e.UserName === id) || {};
         return helper.isContact(user);
     },
+    isMyFriend: wfc.isMyFriend,
     showUserinfo: async (isme, user) => {
         var caniremove = false;
         if (stores.chat.target instanceof GroupInfo) {
@@ -81,7 +84,7 @@ import nodePath from 'path';
     deleteMessage: (messageId) => {
         stores.chat.deleteMessage(messageId);
     },
-    showMembers: (target) => {
+    showMembers: (target, isShow) => {
         // TODO show channel members
         if (target instanceof GroupInfo) {
             let groupInfo = target;
@@ -91,9 +94,12 @@ import nodePath from 'path';
                 //     return;
                 // }
             }
-            stores.members.toggle(true, target);
-        }else{
-            stores.members.toggle(true,target);
+
+        }
+        if (isShow) {
+            stores.members.toggle(isShow, target);
+        } else {
+            stores.members.toggle(isShow);
         }
     },
     showContact: (userid) => {
@@ -108,13 +114,41 @@ import nodePath from 'path';
     showConversation: stores.chat.showConversation,
     toggleConversation: stores.chat.toggleConversation,
     showUserName: stores.members.showUserName,
+    showMember: stores.members.show
 }))
 @observer
 export default class ChatContent extends Component {
     lastBottomMessage;
     isAudioPlaying = false;
     arm;
-
+    state = {
+        isShowMembers: false,
+        isShowUserCard: false,
+        user: {},
+        config: { top: 30, right: 30 }
+    }
+    hideUserCard() {
+        this.setState({
+            isShowUserCard: !this.state.isShowUserCard
+        });
+    }
+    showUserCard(user, ev) {
+        var isMyFriend = this.props.isMyFriend(user.uid) || user.uid === WildFireIM.config.loginUser.uid;
+        // var height = document.body.offsetHeight;
+        // var width = document.body.offsetWidth;
+        var cardWidth = 400;
+        var cardHeight = 250;
+        // width: 280px;
+        // height: 200px;
+        var top = ev.clientY - cardHeight < 0 ? 0 : (ev.clientY - cardHeight);
+        var left = ev.clientX - cardWidth < 0 ? 0 : (ev.clientX - cardWidth);
+        this.setState({
+            isShowUserCard: !this.state.isShowUserCard,
+            user: user,
+            config: { top: top, left: left },
+            isMyFriend: isMyFriend
+        });
+    }
     getMessageContent(message) {
         var uploading = message.status === MessageStatus.Sending;
 
@@ -212,7 +246,7 @@ export default class ChatContent extends Component {
                 let contact = message.contact;
                 let isFriend = this.props.isFriend(contact.UserName);
                 let html = `
-                    <div class="${clazz(classes.contact, {'is-friend': isFriend})}" data-userid="${contact.UserName}">
+                    <div class="${clazz(classes.contact, { 'is-friend': isFriend })}" data-userid="${contact.UserName}">
                         <img src="${contact.image}" class="unload disabledDrag" />
 
                         <div>
@@ -305,7 +339,7 @@ export default class ChatContent extends Component {
                     uploading
                         ? '<i class="icon-ion-android-arrow-up"></i>'
                         : (download ? '<i class="icon-ion-android-more-horizontal is-file"></i>' : '<i class="icon-ion-android-arrow-down is-download"></i>')
-                }
+                    }
                     </div>
                 `;
             /* eslint-enable */
@@ -374,7 +408,7 @@ export default class ChatContent extends Component {
                     <div
                         key={message.messageUid}
                         className={clazz('unread', classes.message, classes.system)}
-                        dangerouslySetInnerHTML={{__html: message.messageContent.formatNotification(message)}}/>
+                        dangerouslySetInnerHTML={{ __html: message.messageContent.formatNotification(message) }} />
                 );
             }
 
@@ -388,7 +422,7 @@ export default class ChatContent extends Component {
                     <div
                         className={clazz('unread', classes.message, classes.system)}
                         data-force-rerennder={message.forceRerender}
-                        dangerouslySetInnerHTML={{__html: helper.timeFormat(message.timestamp)}}/>
+                        dangerouslySetInnerHTML={{ __html: helper.timeFormat(message.timestamp) }} />
                     <div className={clazz('unread', classes.message, {
                         [classes.uploading]: message.status === MessageStatus.Sending,
 
@@ -407,10 +441,10 @@ export default class ChatContent extends Component {
                                 this.userInfoLayout(user, message)
                             }
 
-                           { this.props.showUserName && <p
+                            {this.props.showUserName && <p
                                 className={classes.username}
                                 //dangerouslySetInnerHTML={{__html: user.DisplayName || user.RemarkName || user.NickName}}
-                                dangerouslySetInnerHTML={{__html: wfc.getUserDisplayName(user.uid)}}
+                                dangerouslySetInnerHTML={{ __html: wfc.getUserDisplayName(user.uid) }}
                             />}
 
                             {
@@ -432,7 +466,7 @@ export default class ChatContent extends Component {
                     src={user.portrait ? user.portrait : 'assets/images/user-fallback.png'}
                     className={classes.avatar}
                     onContextMenu={e => this.showUserAction(user)}
-                    onClick={ev => this.props.showUserinfo(message.direction === 0, user)}
+                    onClick={ev => this.showUserCard(user, ev)}
                 />
             );
         } else {
@@ -443,7 +477,7 @@ export default class ChatContent extends Component {
                             //src={message.isme ? message.HeadImgUrl : user.HeadImgUrl}
                             src={user.portrait ? user.portrait : 'assets/images/user-fallback.png'}
                             className={classes.avatar}
-                            onClick={ev => this.props.showUserinfo(message.direction === 0, user)}
+                            onClick={ev => this.showUserCard(user, ev)}
                         />
                     </ContextMenuTrigger>
                     {
@@ -459,10 +493,10 @@ export default class ChatContent extends Component {
         if (isElectron()) {
             return (
                 <div className={classes.content} data-message-id={message.messageId}
-                     onClick={e => this.handleClick(e)}>
+                    onClick={e => this.handleClick(e)}>
                     <p
                         onContextMenu={e => this.showMessageAction(message)}
-                        dangerouslySetInnerHTML={{__html: this.getMessageContent(message)}}/>
+                        dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
                 </div>
             );
         } else {
@@ -470,10 +504,10 @@ export default class ChatContent extends Component {
                 <div>
                     <ContextMenuTrigger id={`menu_item_${message.messageId}`}>
                         <div className={classes.content} data-message-id={message.messageId}
-                             onClick={e => this.handleClick(e)}>
+                            onClick={e => this.handleClick(e)}>
                             <p
                                 // onContextMenu={e => this.showMessageAction(message)}
-                                dangerouslySetInnerHTML={{__html: this.getMessageContent(message)}}/>
+                                dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
                         </div>
                     </ContextMenuTrigger>
                     {
@@ -522,7 +556,7 @@ export default class ChatContent extends Component {
             // file
             if (src) {
                 // Get image from cache and convert to base64
-                let response = await axios.get(src, {responseType: 'arraybuffer'});
+                let response = await axios.get(src, { responseType: 'arraybuffer' });
                 // eslint-disable-next-line
                 base64 = Buffer.from(response.data, 'binary').toString('base64');
             }
@@ -641,7 +675,7 @@ export default class ChatContent extends Component {
             && target.classList.contains('is-download')) {
             let message = this.props.getMessage(e.target.parentElement.dataset.id);
             let file = message.messageContent;
-            let response = await axios.get(file.remotePath, {responseType: 'arraybuffer'});
+            let response = await axios.get(file.remotePath, { responseType: 'arraybuffer' });
             // eslint-disable-next-line
             if (isElectron()) {
                 let base64 = Buffer.from(response.data, 'binary').toString('base64');
@@ -860,9 +894,22 @@ export default class ChatContent extends Component {
         }
         return title;
     }
+    showMembers(target) {
+        // this.setState({
+        //     isShowMembers: !this.state.isShowMembers
+        // });
+        // console.warn(this.props.showMember,this.state.isShowMembers);
 
+        let isShowMember = sessionStorage.getItem("isShowMember");
+        this.props.showMembers(target, isShowMember !== 'true');
+        // if(!this.props.showMember == )
+        // if (this.props.showMember != this.state.isShowMembers) {
+        // }else{
+        //     this.props.showMembers(target, !this.props.showMember);
+        // }
+    }
     render() {
-        var {loading, showConversation, messages, conversation, target} = this.props;
+        var { loading, showConversation, messages, conversation, target } = this.props;
 
         var signature = '点击查看群成员';
         if (target instanceof UserInfo) {
@@ -877,25 +924,28 @@ export default class ChatContent extends Component {
                 className={clazz(classes.container, {
                     [classes.hideConversation]: !showConversation,
                 })}>
+                <UserCard showCard={this.state.isShowUserCard}
+                    user={this.state.user} config={this.state.config} isCurrentUser={!this.state.isMyFriend}
+                    hideCard={() => this.hideUserCard(false)} ></UserCard>
                 {
                     conversation ? (
                         <div>
                             <header>
                                 <div className={classes.info}>
                                     <p
-                                        dangerouslySetInnerHTML={{__html: title}}
-                                        title={title}/>
+                                        dangerouslySetInnerHTML={{ __html: title }}
+                                        title={title} />
 
-                                    
+
                                 </div>
 
                                 {
                                     isElectron() ? (
                                         <span
-                                        className={classes.signature}
-                                        // dangerouslySetInnerHTML={{__html: signature || '...'}}
-                                        onClick={e => this.props.showMembers(target)}
-                                        title={signature}><i className="icon-ion-android-more-vertical"/>
+                                            className={classes.signature}
+                                            // dangerouslySetInnerHTML={{__html: signature || '...'}}
+                                            onClick={e => this.showMembers(target)}
+                                            title={signature}><i className="icon-ion-android-more-vertical" />
                                         </span>
                                         // <i
                                         //     className="icon-ion-android-more-vertical"
@@ -928,15 +978,15 @@ export default class ChatContent extends Component {
                             </div>
                         </div>
                     ) : (
-                        <div className={clazz({
-                            [classes.noselected]: !target,
-                        })}>
-                            <img
-                                className="disabledDrag"
-                                src="assets/images/noselected.png"/>
-                            <h1>请选择会话 :(</h1>
-                        </div>
-                    )
+                            <div className={clazz({
+                                [classes.noselected]: !target,
+                            })}>
+                                <img
+                                    className="disabledDrag"
+                                    src="assets/images/noselected.png" />
+                                <h1>请选择会话 :(</h1>
+                            </div>
+                        )
                 }
 
                 <div
@@ -944,7 +994,7 @@ export default class ChatContent extends Component {
                     ref="tips">
                     Unread message.
                 </div>
-                <PreviewImage onRef={ref => (this.previewImage = ref)}/>
+                <PreviewImage onRef={ref => (this.previewImage = ref)} />
             </div>
         );
     }
