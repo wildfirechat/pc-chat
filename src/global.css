@@ -45,6 +45,11 @@ body {
     padding: 5px 5px;
     cursor: pointer; 
     color:#000;
+    display: flex;
+    align-items: center;
+}
+.tribute-container li img {
+    margin-right: 5px;
 }
 .tribute-container li.highlight {
     background: rgb(229, 165, 165);
