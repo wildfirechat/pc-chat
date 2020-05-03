@@ -79,7 +79,9 @@ class Modal extends Component {
         }
 
         return (
-            <div className={clazz('Modal-content', this.props.className)}>
+            <div className={clazz('Modal-content', this.props.className)} style={{
+                transform: 'translate(-50%, -50%) scale(0.9)'
+            }}>
                 {this.props.children}
             </div>
         );

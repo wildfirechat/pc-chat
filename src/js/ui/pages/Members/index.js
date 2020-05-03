@@ -289,9 +289,9 @@ export default class Members extends Component {
             targetName = target.name;
         }
         let isUserInfo = target instanceof GroupInfo;
-
+        let _style = isUserInfo ? '' : 'calc(100vh - 65px)';
         return (
-            <div className={classes.container}>
+            <div className={classes.container} style={{ height: _style }}>
                 <UserCard showCard={this.state.isShowUserCard}
                     user={this.state.user} config={this.state.config} isCurrentUser={!this.state.isMyFriend}
                     hideCard={() => this.hideUserCard(false)} addUserEvent={() => { this.props.close() }}></UserCard>
