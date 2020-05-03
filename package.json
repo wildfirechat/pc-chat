@@ -66,7 +66,11 @@
           "from": "../mac-qt-denpendency/app",
           "to": "../"
         }
-      ]
+      ],
+      "hardenedRuntime" : true,
+      "gatekeeperAssess": false,
+      "entitlements": "mac/entitlements.mac.plist",
+      "entitlementsInherit": "mac/entitlements.mac.plist"
     },
     "linux": {
       "icon": "../resource",
@@ -150,8 +154,6 @@
     "resize-image": "^0.1.0",
     "scroll-into-view-if-needed": "^2.2.20",
     "smooth-scroll-into-view-if-needed": "^1.1.23",
-    "string.prototype.trimleft": "2.1.1",
-    "string.prototype.trimright": "2.1.1",
     "tmp": "0.0.33",
     "tributejs": "^3.6.0",
     "underscore": "^1.9.1",
