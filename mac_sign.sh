@@ -15,6 +15,7 @@ if [ -n "$1" ];then
   codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/Frameworks/QtWidgets.framework
 
   codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app
+  codesign --sign $1 --force proto_addon/marswrapper.mac.node
 else
   echo "使用方法：sh $0 signcode"
   echo "signcode是你的证书编号，可以先编译一遍mac版本，会出现如下的错误提示"
