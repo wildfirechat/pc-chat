@@ -10,9 +10,7 @@ import wfc from '../../../wfc/client/wfc';
 import clazz from 'classname';
 
 import Config from '../../../config';
-import UserCard from '../../components/userCard'
-
-
+import UserCard from '../../components/userCard';
 import { isElectron } from '../../../platform';
 import UserInfo from '../../../wfc/model/userInfo';
 import ConversationInfo from '../../../wfc/model/conversationInfo';
@@ -24,6 +22,7 @@ import MessageConfig from '../../../wfc/client/messageConfig';
 @inject(stores => ({
     show: stores.members.show,
     close: () => stores.members.toggle(false),
+    showMembers: () => stores.members.toggle(true, stores.members.target),
     target: stores.members.target,
     list: stores.members.list,
     groupNotice: stores.members.groupNotice,
@@ -135,7 +134,7 @@ export default class Members extends Component {
             user: user,
             config: { top: ev.clientY, left: (ev.clientX - 340) },
             isMyFriend: isMyFriend
-        })
+        });
     }
 
     hideUserCard() {
@@ -167,6 +166,7 @@ export default class Members extends Component {
             var sp = tagName === 'path' ? e.target.parentNode.previousSibling : e.target.previousSibling;
             sp.setAttribute('contenteditable', true);
             sp.style.background = '#fff';
+            sp.style.outline = 'none';
         }
     }
     changeTagName(e, type) {
@@ -237,14 +237,15 @@ export default class Members extends Component {
         var bodyDom = document.body;
         var context = this;
         bodyDom.onclick = (e) => {
-            if (!e.target.closest('.' + classes.container) && e.target.className != classes.container) {
+            if (!e.target.closest('.' + classes.container) && e.target.className != classes.container && !e.target.closest('.src-js-ui-pages-Home-ChatContent-style__signature--2qCXq')) {
                 if (context.state.isShowUserCard) {
                     context.setState({
                         isShowUserCard: false
                     });
                 }
-                context.props.close();
-
+                setTimeout(() => {
+                    context.props.close();
+                }, 200);
             }
         }
     }
@@ -293,7 +294,7 @@ export default class Members extends Component {
             <div className={classes.container}>
                 <UserCard showCard={this.state.isShowUserCard}
                     user={this.state.user} config={this.state.config} isCurrentUser={!this.state.isMyFriend}
-                    hideCard={() => this.hideUserCard(false)} ></UserCard>
+                    hideCard={() => this.hideUserCard(false)} addUserEvent={() => { this.props.close() }}></UserCard>
                 {
                     (isUserInfo) ? <div>
                         <header>
@@ -389,7 +390,7 @@ export default class Members extends Component {
                                     <div
                                         className={classes.cover}
                                         style={{
-                                            backgroundImage: `url(${target.portrait})`,
+                                            backgroundImage: `url(${target.pallet})`,
                                         }} />
                                     <span
                                         className={classes.username}
@@ -443,11 +444,14 @@ export default class Members extends Component {
                             <div> 消息免打扰 <br /> <button className={clazz(classes.btnauto, ((this.props.conversationInfo.isSilent) ? classes.btnactive : ''))}
                                 onClick={() => { this.noDisturbing(); }}><span> </span></button></div>
                             {/* <div><button onClick={() => this.removeChatItem(covnersationInfo)}>删除会话</button></div> */}
-                            <div className={classes.deleteBtn} onClick={() => { this.deleteBtn(); }}> 删除并退出</div>
-                        </div>
-                    )
-                }
 
+                        </div>
+
+                    )}
+
+                {
+                    isElectron() && isUserInfo && (<div className={classes.deleteBtn} onClick={() => { this.deleteBtn(); }}> 删除并退出</div>)
+                }
             </div>
         );
     }
