@@ -95,9 +95,9 @@ export default class ConversationItem extends Component {
         }
 
         if (isElectron()) {
-            var userInfo = this.props.getUserInfo && this.props.getUserInfo(e.lastMessage.from, false, e.target);
+            var userInfo = this.props.getUserInfo && e.lastMessage && this.props.getUserInfo(e.lastMessage.from, false, e.target);
             // console.warn("console-user-list", e);
-            var userName = e.conversation.conversationType === 1 ? userInfo.displayName + ':' : '';
+            var userName = userInfo && e.conversation.conversationType === 1 ? userInfo.displayName + ':' : '';
             return (
                 <div
                     className={clazz(classes.chat, {
