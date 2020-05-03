@@ -57,27 +57,30 @@ class UserList extends Component {
         });
     }
     handleChange(e) {
-        console.warn(e);
+        console.warn(e.target.value);
         this.setState({
-            reason: e
+            reason: e.target.value
         });
     }
     showAddCard() {
         this.setState({
             isShowAddCard: true
         });
+        this.props.addUserEvent && this.props.addUserEvent();
         // this.props.sendFriendRequest()
     }
     cancelbtn() {
         this.setState({
-            isShowAddCard: false
+            isShowAddCard: false,
+            reason: ''
         });
     }
     addUser() {
         this.setState({
-            isShowAddCard: false
+            isShowAddCard: false,
+            reason: ''
         });
-        var reason = this.state.reason ? this.state.reason : '我是 ' + this.props.user.displayName;
+        var reason = this.state.reason ? this.state.reason : '我是 ' + WildFireIM.config.loginUser.displayName;
         this.props.sendFriendRequest(reason, this.props.user.uid);
     }
     componentWillMount() {
@@ -87,7 +90,8 @@ class UserList extends Component {
                 if (this.props.showCard) {
                     this.props.hideCard();
                     this.setState({
-                        isShowAddCard: false
+                        isShowAddCard: false,
+                        reason: ''
                     })
                 }
             }
@@ -116,14 +120,14 @@ class UserList extends Component {
                     <div className={classes.area}>地区： <span> China</span></div>
                     <div className={classes.btns}>
                         {
-                            this.props.isCurrentUser ? <span onClick={() => { this.showAddCard(user) }}>{addUser}</span> :
+                            this.props.isCurrentUser ? <span onClick={() => { this.showAddCard(user)}}>{addUser}</span> :
                                 <span onClick={() => { this.handleAction(user) }}>{message}</span>
                         }
                     </div>
                 </div>
                 {this.state.isShowAddCard ? <div className={classes.alertcontent} >
                     <div className={classes.title}>添加朋友</div>
-                    <textarea onChange={this.handleChange} value={'我是' + user.displayName}></textarea>
+                    <textarea onChange={(ev)=>{ this.handleChange(ev) }} value={this.state.reason || ('我是' + WildFireIM.config.loginUser.displayName)}></textarea>
                     <div className={classes.desc}>你需要发送验证请求，对方通过后你才能添加其为朋友</div>
                     <div className={classes.btns}>
                         <button className={classes.subbtn} onClick={() => { this.addUser() }}>确定</button>

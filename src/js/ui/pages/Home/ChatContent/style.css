@@ -106,7 +106,7 @@
 }
 
 .message {
-    max-width: calc(100% - 34px - 48px - 68px);
+    max-width: calc(100% - 120px);
     padding: 0 34px;
     margin-bottom: 20px;
    
@@ -563,7 +563,9 @@
         background: #405de6;
     }
 }
-
+.message.isme{
+    max-width: 100%;
+}
 .message.isme.isText {
     & > div {
         display: flex;
