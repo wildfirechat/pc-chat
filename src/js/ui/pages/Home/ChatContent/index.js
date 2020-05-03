@@ -393,6 +393,7 @@ export default class ChatContent extends Component {
     renderMessages(list, from) {
         //return list.data.map((e, index) => {
         console.log('to render message count', list.length);
+        var chatch = {};
         return list.map((e) => {
             var message = e;
             let user;
@@ -416,13 +417,21 @@ export default class ChatContent extends Component {
             // if (!user) {
             //     return false;
             // }
-
+            // console.warn("message", message);
+            var time =new Date(message.timestamp);
+            var timem = +new Date(time.getFullYear() + '/' + (time.getMonth() + 1) + '/' + (time.getDate()) + ' ' + (time.getHours()) + ':' + (time.getMinutes()))
+            var isShwoTime = !!chatch[timem];
+            if (!isShwoTime) {
+                chatch[timem] = timem;
+            }
             return (
                 <div key={message.messageId}>
-                    <div
-                        className={clazz('unread', classes.message, classes.system)}
-                        data-force-rerennder={message.forceRerender}
-                        dangerouslySetInnerHTML={{ __html: helper.timeFormat(message.timestamp) }} />
+                    {
+                        !isShwoTime?(<div
+                            className={clazz('unread', classes.message, classes.system)}
+                            data-force-rerennder={message.forceRerender}
+                            dangerouslySetInnerHTML={{ __html: helper.timeFormat(message.timestamp) }} />):''
+                    }
                     <div className={clazz('unread', classes.message, {
                         [classes.uploading]: message.status === MessageStatus.Sending,
 
@@ -434,6 +443,7 @@ export default class ChatContent extends Component {
                         [classes.isVoice]: type === MessageContentType.Voice,
                         [classes.isVideo]: type === MessageContentType.Video,
                         [classes.isFile]: type === MessageContentType.File,
+                        [classes.isVoip]: type >= MessageContentType.VOIP_CONTENT_TYPE_START
                     })}>
 
                         <div>

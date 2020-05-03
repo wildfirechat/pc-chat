@@ -1,6 +1,6 @@
-import {inject, observer} from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import moment from 'moment';
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import EventType from '../../../../wfc/client/wfcEvent';
 import ConversationItem from './conversationItem';
 import classes from './style.css';
@@ -37,6 +37,7 @@ moment.updateLocale('en', {
 
         stores.chat.chatToN(conversation);
     },
+    getUserInfo: wfc.getUserInfo,
     conversation: stores.chat.conversation,
     messages: stores.chat.messages,
     markedRead: stores.sessions.clearConversationUnreadStatus,
@@ -180,7 +181,7 @@ export default class Chats extends Component {
     }
 
     render() {
-        var {chats, filtered, conversation, chatTo, markedRead, sticky, removeChat} = this.props;
+        var { chats, filtered, conversation, chatTo, markedRead, sticky, removeChat } = this.props;
         if (filtered.query) {
             chats = filtered.result;
         }
@@ -194,8 +195,8 @@ export default class Chats extends Component {
         return (
             <div className={classes.container}>
                 <div className={classes.searchBar}>
-                    <div className= "searchBar-bg">
-                        <i className="icon-ion-ios-search-strong"/>
+                    <div className="searchBar-bg">
+                        <i className="icon-ion-ios-search-strong" />
                         <input
                             id="search"
                             // onFocus={e => this.filter(e.target.value)}
@@ -204,7 +205,7 @@ export default class Chats extends Component {
                             placeholder={filtered.query ? '' : '搜索 ...'}
                             value={filtered.query ? filtered.query : ''}
                             ref="search"
-                            type="text"/>
+                            type="text" />
                     </div>
                 </div>
                 <div
@@ -217,7 +218,7 @@ export default class Chats extends Component {
                                     <ConversationItem
                                         key={e.conversation.target + e.conversation.type + e.conversation.line}
                                         chatTo={chatToEx} markedRead={markedRead} sticky={sticky}
-                                        removeChat={removeChat}
+                                        removeChat={removeChat} getUserInfo={this.props.getUserInfo}
                                         currentConversation={conversation} conversationInfo={e}
                                         isSearching={!!filtered.query}
                                     />
