@@ -29,7 +29,7 @@
     }
 
     & header i:hover {
-        color: #34b7f1;
+        color: #07c160;
     }
 
     & .signature,
@@ -424,7 +424,7 @@
 
     & .playing i,
     & .playing span {
-        color: #34b7f1 !important;
+        color: #07c160 !important;
     }
 
     /* stylelint-disable */
