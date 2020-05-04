@@ -42,7 +42,10 @@
     width: 180px;
     margin-right: 17px;
     display: flex;
-    justify-content: space-between;
+    & i{
+        margin-right: 20px;
+    }
+    /* justify-content: space-between; */
 }
 
 .voipTargetList {

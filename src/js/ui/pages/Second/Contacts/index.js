@@ -28,6 +28,7 @@ export default class Contacts extends Component {
     state = {
         groupList: [],
         expand: false,
+        newExpand: false,
         userExpand: true
     }
     renderColumns(data, index, query) {
@@ -140,6 +141,11 @@ export default class Contacts extends Component {
             expand: !this.state.expand
         });
     }
+    expandNewEvent() {
+        this.setState({
+            newExpand: !this.state.newExpand
+        });
+    }
     userExpandEvent() {
         this.setState({
             userExpand: !this.state.userExpand
@@ -187,11 +193,16 @@ export default class Contacts extends Component {
                     {
                         !query && (
                             <div className={classes.userList}>
-                                <div className={classes.userListTitle}>新的朋友</div>
-                                <div className={classes.adduser} onClick={() => { this.getAllNewFriend(); }}>
-                                    {addUserIcon}
-                                    <span >新的朋友</span>
+                                <div className={classes.userListTitle} onClick={() => { this.expandNewEvent(); }}>
+                                    {this.state.newExpand ? expandIcon : closeIcon}
+                                    <span>新的朋友</span>
                                 </div>
+                                {
+                                    this.state.newExpand && (<div className={classes.adduser} onClick={() => { this.getAllNewFriend(); }}>
+                                        {addUserIcon}
+                                        <span >新的朋友</span>
+                                    </div>)
+                                }
                             </div>
                         )
                     }
@@ -200,7 +211,7 @@ export default class Contacts extends Component {
                             <div className={classes.userList}>
                                 <div className={classes.userListTitle} onClick={() => { this.expandIconEvent(); }}>
                                     {this.state.expand ? expandIcon : closeIcon}
-                                    <span>群聊</span>
+                                    <span>群聊</span><i>{this.state.groupList.length}</i>
                                 </div>
                                 {this.state.expand && this.renderGroupColumns()}
                             </div>
@@ -213,7 +224,7 @@ export default class Contacts extends Component {
                             <div className={classes.userList}>
                                 <div className={classes.userListTitle} onClick={() => { this.userExpandEvent(); }}>
                                     {this.state.userExpand ? expandIcon : closeIcon}
-                                    <span>联系人</span>
+                                    <span>联系人</span><i>{result.length}</i>
                                 </div>
                                 {this.state.userExpand && this.renderColumns(result, 0, query)}
                             </div>
