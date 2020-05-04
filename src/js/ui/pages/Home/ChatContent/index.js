@@ -1023,8 +1023,11 @@ export default class ChatContent extends Component {
         if (this.messageList) {
             const scrollHeight = this.messageList.scrollHeight;
             const height = this.messageList.clientHeight;
-            const maxScrollTop = scrollHeight - height;
-            this.messageList.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
+            // const maxScrollTop = scrollHeight - height;
+            var messageList = this.messageList;
+            setTimeout(()=>{
+                messageList.scrollTop = scrollHeight > 0 ? scrollHeight : 0;
+            },300)
         }
     }
 
