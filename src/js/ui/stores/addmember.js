@@ -7,6 +7,7 @@ import contacts from './contacts';
 import sessions from './sessions';
 import helper from 'utils/helper';
 import wfc from '../../wfc/client/wfc'
+import UserInfo from "../../wfc/model/userInfo";
 
 class AddMember {
     @observable show = false;
@@ -21,20 +22,15 @@ class AddMember {
         text = pinyin.letter(text.toLocaleLowerCase(), '', null);
 
         var list = contacts.memberList.filter(e => {
-            var res = pinyin.letter(e.NickName, '', null).toLowerCase().indexOf(text) > -1;
+            let name = contacts.contactItemName(e);
+            var res = pinyin.letter(name, '', null).toLowerCase().indexOf(text) > -1;
 
-            if (e.UserName === sessions.user.User.UserName
-                || !helper.isContact(e)
-                || helper.isChatRoom(e.UserName)
-                || helper.isFileHelper(e)) {
-                return false;
-            }
+            // if (e.RemarkName) {
+            //     res = res || pinyin.letter(e.RemarkName, null).toLowerCase().indexOf(text) > -1;
+            // }
 
-            if (e.RemarkName) {
-                res = res || pinyin.letter(e.RemarkName, '', null).toLowerCase().indexOf(text) > -1;
-            }
-
-            return res;
+            // return helper.isContact(e) && res;
+            return e instanceof UserInfo && res;
         });
 
         self.query = text;
