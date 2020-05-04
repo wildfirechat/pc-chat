@@ -237,7 +237,7 @@ export default class Members extends Component {
         var bodyDom = document.body;
         var context = this;
         bodyDom.onclick = (e) => {
-            if (!e.target.closest('.' + classes.container) && e.target.className != classes.container && !e.target.closest('.src-js-ui-pages-Home-ChatContent-style__signature--2qCXq')) {
+            if (this.props.show &&　!e.target.closest('.' + classes.container) && e.target.className != classes.container && !e.target.closest('.src-js-ui-pages-Home-ChatContent-style__signature--2qCXq')) {
                 if (context.state.isShowUserCard) {
                     context.setState({
                         isShowUserCard: false
@@ -347,6 +347,8 @@ export default class Members extends Component {
                                     if (index > this.state.showSize && this.state.showSize != 0) {
                                         return;
                                     }
+
+                                    console.warn("EndTime:", +new Date())
                                     return (
                                         <li
                                             key={index}
