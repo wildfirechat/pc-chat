@@ -88,11 +88,11 @@ class UserContactInfo extends Component {
                                     <div className={classes.image}><img src={user.portrait} /></div>
                                 </div>
                                 <div className={classes.bottom} >
-                                    <div className={classes.area}>备注： <span> {user.extra}</span></div>
+                                    <div className={classes.area}><span>备注:</span><span> {user.extra}</span></div>
 
-                                    <div className={classes.area}>地区： <span> China</span></div>
+                                    <div className={classes.area}><span>地区:</span><span> China</span></div>
 
-                                    <div className={classes.area}>野火号： <span> {user.uid}</span></div>
+                                    <div className={classes.area}><span>野火号:</span> <span> {user.uid}</span></div>
 
                                     {/* <div className={classes.area}>来源： <span> China</span></div> */}
                                     {/* <div className={classes.btns}>
