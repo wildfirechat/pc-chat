@@ -146,7 +146,8 @@ class ContactInfo extends Component {
         // var buttonColor = '#fff';
         // var buttonBackground = '#1aad19';
         // var background = '#f5f5f5';
-        var userInfo = user instanceof UserInfo ? (<UserContactInfo />) : '';
+        var _userinfo = ()=>{return <UserContactInfo />};
+        var userInfo = user instanceof UserInfo ? _userinfo() : '';
         var groupInfo = user instanceof GroupInfo ? this.getGroupList() : '';
         var userList = this.props.isNewFriend ? this.getUserList() : '';
         return (
