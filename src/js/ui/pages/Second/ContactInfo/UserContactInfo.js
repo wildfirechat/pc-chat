@@ -19,7 +19,8 @@ import classes from './userStyle.css';
         stores.members.show = false;
         stores.chat.chatToN(conversation);
     },
-    user: stores.contactInfo.user
+    user: stores.contactInfo.user,
+    setFriendAlias: wfc.setFriendAlias
 }))
 
 @observer
@@ -52,7 +53,26 @@ class UserContactInfo extends Component {
             document.querySelector('#messageInput').focus();
         });
     }
-
+    editDesc(ev) {
+        var sp = ev.target;
+        sp.setAttribute('contenteditable', true);
+        sp.className=classes.editSpan;
+        sp.focus();
+    }
+    editChange(ev,user) {
+        var sp = ev.target;
+        sp.setAttribute('contenteditable', false);
+        if(!ev.target.innerHTML || ev.target.innerHTML.trim().length===0){
+            sp.className=classes.editbtn;
+        }else{
+            sp.className='';
+        }
+        this.props.setFriendAlias(user.uid,ev.target.innerHTML,(e)=>{
+            console.warn("修改备注名称成功")
+        },(e)=>{
+            console.warn('修改备注失败！')
+        })
+    }
     render() {
         var user = this.props.user;
         var gradient = 'none';
@@ -77,8 +97,6 @@ class UserContactInfo extends Component {
                             background,
                             color: fontColor,
                         }}>
-
-
                         <div className={classes.inner}>
 
                             <div className={classes.container} >
@@ -88,7 +106,11 @@ class UserContactInfo extends Component {
                                     <div className={classes.image}><img src={user.portrait} /></div>
                                 </div>
                                 <div className={classes.bottom} >
-                                    <div className={classes.area}><span>备注:</span><span> {user.extra}</span></div>
+                                    <div className={classes.area}><span>备注:</span>
+                                    <span className={!user.friendAlias && classes.editbtn} 
+                                    onClick={(ev) => { this.editDesc(ev, user) }}
+                                    onBlur={(e) => { this.editChange(e, user) }}
+                                    > {user.friendAlias}</span></div>
 
                                     <div className={classes.area}><span>地区:</span><span> China</span></div>
 
