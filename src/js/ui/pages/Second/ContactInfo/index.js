@@ -10,6 +10,7 @@ import ConversationType from '../../../../wfc/model/conversationType';
 import UserInfo from '../../../../wfc/model/userInfo';
 import GroupInfo from '../../../../wfc/model/groupInfo';
 import UserContactInfo from './UserContactInfo';
+import wfc from '../../../../wfc/client/wfc';
 // import { use } from 'builder-util';
 
 @inject(stores => ({
@@ -21,12 +22,14 @@ import UserContactInfo from './UserContactInfo';
     users: stores.contactInfo.users,
     isNewFriend: stores.contactInfo.isNewFriend,
     setRemarkName: stores.userinfo.setRemarkName,
+    handleFriendRequest:wfc.handleFriendRequest
 }))
 
 @observer
 class ContactInfo extends Component {
     state = {
         showEdit: true,
+        status:{}
     };
 
     handleAction(user) {
@@ -49,15 +52,34 @@ class ContactInfo extends Component {
             document.querySelector('#messageInput').focus();
         });
     }
+    acceptEvent(user){
+        console.warn(user);
+        this.props.handleFriendRequest(user.uid,true,"", (e)=>{
+            console.log('添加好友成功');
+            var status = this.state.status;
+            status[user.uid] = true;
+            this.setState({
+                status:status
+            })
+        }, (e)=>{
+            console.log('添加好友失败');
+        });
+    }
     getUserList() {
         return (
             this.props.user.map((item, index) => {
+                var friendMsg = item.friendMsg;
                 return (
                     <div className={classes.userList} key={index}>
                         <div className={classes.userItem}>
                             <img src={item.portrait} />
                             <span className={classes.username}>{item.displayName}</span>
                             <span className={classes.userReason}>{item.friendMsg.reason}</span>
+                        </div>
+                        <div className={classes.userBtns}>
+                            {friendMsg.status === 0 && !this.state.status[item.uid]&& <button onClick={()=>{this.acceptEvent(item)}}>接受</button>}
+                            {(friendMsg.status === 1 || this.state.status[item.uid])&& <button disabled>已添加</button>}
+                            {friendMsg.status === 3 && <button disabled>已拒绝</button>}
                         </div>
                         <div />
                     </div>

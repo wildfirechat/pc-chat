@@ -60,14 +60,36 @@
       color: #999999;
       font-size: 14px;
       margin-bottom: 7px;
+      line-height: 30px;
+      display: flex;
+      align-items: center;
+
       & span {
         color: #000;
         font-size: 16px;
+        display: inline-block;
+        height: 30px;
+        min-width: 60px;
       }
       & span:first-child {
         display: inline-block;
         width: 60px;
         color: #999999;
+      }
+      & .editSpan{
+        background:rgba(221, 221, 221,0.5);
+        border-bottom :1px solid #000;
+        outline:none;
+      }
+      & .editbtn{
+        box-sizing: border-box;
+      }
+      & .editbtn::before{
+        content: "点击添加备注";
+        font-size: 14px;
+      }
+      & .editbtn:hover{
+        border: 1px solid #ddd;
       }
     }
     & .btns {
