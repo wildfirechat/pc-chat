@@ -36,7 +36,9 @@ export default class Footer extends Component {
         var user = WildFireIM.config.loginUser;
         
         return (
-            <footer className={classes.footer}>
+            <footer className={clazz(classes.footer,{
+                [classes.winrleft]:this.props.isMac(),
+            })}>
                 <div className={classes.user} onClick= {()=>this.showUserCard()}>
                     <img src={user.portrait}/>
                     
@@ -84,6 +86,7 @@ export default class Footer extends Component {
 
                 <div className={clazz(classes.right, {
                     [classes.hideConversation]: !showConversation,
+                    [classes.winright]:this.props.isMac()
                 })}>
                     {
                         component ? React.createElement(component) : ""

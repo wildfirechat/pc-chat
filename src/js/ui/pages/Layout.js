@@ -23,6 +23,7 @@ import wfc from '../../wfc/client/wfc'
 import { observable, action } from 'mobx';
 import EventType from '../../wfc/client/wfcEvent';
 import ConnectionStatus from '../../wfc/client/connectionStatus';
+import clazz from 'classname';
 
 @inject(stores => ({
     isLogin: () => !!stores.sessions.auth,
@@ -160,7 +161,14 @@ export default class Layout extends Component {
     componentWillUnmount() {
         wfc.eventEmitter.removeListener(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
     }
-
+    isMac(){
+        // var agent = navigator.userAgent.toLowerCase();
+        // var isMac = /macintosh|mac os x/i.test(navigator.userAgent);
+        // if(isMac){
+        //   return true;
+        // }
+        return   (navigator.platform == "Win32") || (navigator.platform == "Windows");
+      }
     render() {
         var { isLogin, loading, show, close, message, location } = this.props;
 
@@ -196,13 +204,16 @@ export default class Layout extends Component {
 
                 <Loader show={loading} />
                 <div
-                    className={classes.container}
+                    className={clazz(classes.container,{
+                        [classes.winContainer]:this.isMac()
+                    })}
                     ref="viewport">
                     {this.props.children}
                 </div>
                 <Footer 
                     className={classes.footer}
                     location={location}
+                    isMac={this.isMac}
                     ref="footer" />
                 <UserInfo />
                 <AddFriend />

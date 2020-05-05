@@ -15,6 +15,10 @@
         filter: blur(6px);
     }
 }
+.winContainer{
+    width: calc(100vw - 60px);
+    left: 60px;
+}
 
 
 .dragDropHolder {
