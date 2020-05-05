@@ -167,12 +167,20 @@ export default class Members extends Component {
             sp.setAttribute('contenteditable', true);
             sp.style.background = '#fff';
             sp.style.outline = 'none';
+            sp.setAttribute('tabindex', 0);
+            sp.onkeydown = (e) => { this.keyTagName(e, type) }
+            sp.focus();
+        }
+    }
+    keyTagName(e, type) {
+        if (e.keyCode === 13) {
+            e.target.blur();
         }
     }
     changeTagName(e, type) {
         e.target.setAttribute('contenteditable', false);
         e.target.style.background = 'inherit';
-        console.warn(e.target.innerText)
+        // console.warn(e.target.innerText)
         var val = e.target.innerText;
         if (type == 'name') {
             this.props.modifyGroupInfo(val);
@@ -237,7 +245,7 @@ export default class Members extends Component {
         var bodyDom = document.body;
         var context = this;
         bodyDom.onclick = (e) => {
-            if (this.props.show &&　!e.target.closest('.' + classes.container) && e.target.className != classes.container && !e.target.closest('.src-js-ui-pages-Home-ChatContent-style__signature--2qCXq')) {
+            if (this.props.show && !e.target.closest('.' + classes.container) && e.target.className != classes.container && !e.target.closest('.src-js-ui-pages-Home-ChatContent-style__signature--2qCXq')) {
                 if (context.state.isShowUserCard) {
                     context.setState({
                         isShowUserCard: false
@@ -404,52 +412,48 @@ export default class Members extends Component {
 
                 }
                 {
-                    isElectron() && isUserInfo && (
+                    isElectron() && (
                         <div className={classes.btns}>
-                            {/* <div><button onClick={() => this.toggleConversation()}>{!this.state.full?'全屏模式':'取消全屏'}</button></div> */}
-                            {/* <div><button onClick={() => this.props.empty(this.props.conversation)}>清空会话消息</button></div> */}
-                            <div className={classes.editbtn}> 群名称 <br />
-                                <div onClick={(e) => {
-                                    this.changeEditeMessage(e, 'name');
-                                }}>
-                                    <span dangerouslySetInnerHTML={{ __html: target.name }} onBlur={(e) => { this.changeTagName(e, 'name') }} />
-                                    {editIcon}
+                            {isUserInfo && (<div>
+                                <div className={classes.editbtn}> 群名称 <br />
+                                    <div onClick={(e) => {
+                                        this.changeEditeMessage(e, 'name');
+                                    }}>
+                                        <span dangerouslySetInnerHTML={{ __html: target.name }} onBlur={(e) => { this.changeTagName(e, 'name') }} />
+                                        {editIcon}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className={classes.editbtn}> 群公告 <br />
-                                <div onClick={(e) => {
-                                    this.changeEditeMessage(e, 'groupNotice');
-                                }} >
-                                    <span dangerouslySetInnerHTML={{ __html: this.props.groupNotice }} onBlur={(e) => { this.changeTagName(e, 'groupNotice') }} />
-                                    {editIcon}
+                                <div className={classes.editbtn}> 群公告 <br />
+                                    <div onClick={(e) => {
+                                        this.changeEditeMessage(e, 'groupNotice');
+                                    }} >
+                                        <span dangerouslySetInnerHTML={{ __html: this.props.groupNotice }} onBlur={(e) => { this.changeTagName(e, 'groupNotice') }} />
+                                        {editIcon}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className={classes.editbtn} > 我在本群的名称 <br />
-                                <div onClick={(e) => {
-                                    this.changeEditeMessage(e, 'disName');
-                                }} >
-                                    <span dangerouslySetInnerHTML={{ __html: wfc.getGroupMemberDisplayName(this.props.target.target, WildFireIM.config.loginUser.uid) }}
-                                        onBlur={(e) => { this.changeTagName(e, 'disName') }}
-                                    />
-                                    {editIcon}
+                                <div className={classes.editbtn} > 我在本群的名称 <br />
+                                    <div onClick={(e) => {
+                                        this.changeEditeMessage(e, 'disName');
+                                    }} >
+                                        <span dangerouslySetInnerHTML={{ __html: wfc.getGroupMemberDisplayName(this.props.target.target, WildFireIM.config.loginUser.uid) }}
+                                            onBlur={(e) => { this.changeTagName(e, 'disName') }}
+                                        />
+                                        {editIcon}
+                                    </div>
                                 </div>
-                            </div>
-                            <div> 显示群昵称 <br /> <button className={clazz(classes.btnauto, ((this.props.showUserName) ? classes.btnactive : ''))}
-                                onClick={() => { this.props.setUserSetting(); }}><span> </span></button></div>
-
-                            <div> 保存到通讯录 <br /> <button className={clazz(classes.btnauto, ((this.props.isFavGroup) ? classes.btnactive : ''))}
-                                onClick={() => { this.props.saveIntoList(); }}><span> </span></button></div>
-
+                                <div> 显示群昵称 <br /> <button className={clazz(classes.btnauto, ((this.props.showUserName) ? classes.btnactive : ''))}
+                                    onClick={() => { this.props.setUserSetting(); }}><span> </span></button></div>
+                                <div> 保存到通讯录 <br /> <button className={clazz(classes.btnauto, ((this.props.isFavGroup) ? classes.btnactive : ''))}
+                                    onClick={() => { this.props.saveIntoList(); }}><span> </span></button></div>
+                            </div>)}
                             <div> 置顶/取消置顶 <br /> <button className={clazz(classes.btnauto, ((this.state.isTop) ? classes.btnactive : ''))}
                                 onClick={() => { this.setTop(); }}><span> </span></button></div>
-
                             <div> 消息免打扰 <br /> <button className={clazz(classes.btnauto, ((this.props.conversationInfo.isSilent) ? classes.btnactive : ''))}
                                 onClick={() => { this.noDisturbing(); }}><span> </span></button></div>
-                            {/* <div><button onClick={() => this.removeChatItem(covnersationInfo)}>删除会话</button></div> */}
-
                         </div>
 
                     )}
+
 
                 {
                     isElectron() && isUserInfo && (<div className={classes.deleteBtn} onClick={() => { this.deleteBtn(); }}> 删除并退出</div>)
