@@ -73,7 +73,7 @@ class OverallUserCard extends Component {
             isShowAddCard: true,
             reason: ('我是' + WildFireIM.config.loginUser.displayName)
         });
-        this.props.addUserEvent && this.props.addUserEvent();
+        // this.props.addUserEvent && this.props.addUserEvent();
         // this.props.sendFriendRequest()
     }
     cancelbtn() {
