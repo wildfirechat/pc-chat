@@ -13,6 +13,7 @@ import AddFriend from './AddFriend';
 import NewChat from './NewChat';
 import Members from './Members';
 import AddMember from './AddMember';
+import OverallUserCard from './OverallUserCard';
 import Forward from './Forward';
 import ConfirmImagePaste from './ConfirmImagePaste';
 import Loader from 'components/Loader';
@@ -219,6 +220,7 @@ export default class Layout extends Component {
                 <AddFriend />
                 <NewChat />
                 <Members />
+                <OverallUserCard />
                 <AddMember />
                 <ConfirmImagePaste />
                 <Forward />

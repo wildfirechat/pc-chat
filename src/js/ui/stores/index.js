@@ -11,6 +11,7 @@ import contactInfo from './contactInfo'
 import contacts from './contacts';
 import settings from './settings';
 import snackbar from './snackbar';
+import OverallUserCard from './OverallUserCard';
 import wfc from '../../wfc/client/wfc'
 import confirmImagePaste from './confirmImagePaste';
 
@@ -27,6 +28,7 @@ const stores = {
     members,
     forward,
     snackbar,
+    OverallUserCard,
     confirmImagePaste,
     wfc,
 };
