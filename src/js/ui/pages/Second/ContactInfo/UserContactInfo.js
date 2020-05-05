@@ -57,6 +57,12 @@ class UserContactInfo extends Component {
         var sp = ev.target;
         sp.setAttribute('contenteditable', true);
         sp.className=classes.editSpan;
+        sp.setAttribute('tabindex', 0);
+        sp.onkeydown = (e) => {
+            if (e.keyCode === 13) {
+                e.target.blur();
+            }
+         }
         sp.focus();
     }
     editChange(ev,user) {
