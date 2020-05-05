@@ -90,6 +90,9 @@
   right: 0;
   width: calc(100% - 250px - 80px);
 }
+.winright {
+  width: calc(100% - 250px - 60px);
+}
 .hideConversation {
   width: calc(100vw - 60px);
 }
@@ -125,6 +128,7 @@
     display: flex;
     justify-content: space-between;
   }
+  
 }
 
 .settings {
@@ -180,4 +184,19 @@
   font-size: 14px;
   color: rgba(0, 0, 0, 0.8);
   text-transform: uppercase;
+}
+
+.winrleft {
+  width: 60px;
+  & div{
+    & img{
+      margin: 10px 0 10px 5px !important;
+    }
+  }
+  & nav{
+    padding: 17px 18px 0 !important;
+    & a:last-child{
+      left: 16px !important;
+    }
+  }
 }

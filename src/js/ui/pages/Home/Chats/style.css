@@ -65,9 +65,11 @@
     height: 48px;
     padding: 8px 15px;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     cursor: pointer;
-
+    & .fristchat{
+        max-width: 180px;
+    }
     & img {
         height: 48px;
         width: 48px;
@@ -99,7 +101,7 @@
 }
 
 .username {
-    max-width: 170px;
+    max-width: 140px;
     margin: 0;
     padding: 0;
     padding-right: 4px;
@@ -119,6 +121,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: inline-block;
+    min-height: 15px;
 }
 
 .times {
