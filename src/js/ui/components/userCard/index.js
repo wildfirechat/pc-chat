@@ -64,7 +64,8 @@ class UserList extends Component {
     }
     showAddCard() {
         this.setState({
-            isShowAddCard: true
+            isShowAddCard: true,
+            reason: ('我是' + WildFireIM.config.loginUser.displayName)
         });
         this.props.addUserEvent && this.props.addUserEvent();
         // this.props.sendFriendRequest()
@@ -127,7 +128,7 @@ class UserList extends Component {
                 </div>
                 {this.state.isShowAddCard ? <div className={classes.alertcontent} >
                     <div className={classes.title}>添加朋友</div>
-                    <textarea onChange={(ev)=>{ this.handleChange(ev) }} value={this.state.reason || ('我是' + WildFireIM.config.loginUser.displayName)}></textarea>
+                    <textarea onChange={(ev)=>{ this.handleChange(ev) }} value={this.state.reason}></textarea>
                     <div className={classes.desc}>你需要发送验证请求，对方通过后你才能添加其为朋友</div>
                     <div className={classes.btns}>
                         <button className={classes.subbtn} onClick={() => { this.addUser() }}>确定</button>

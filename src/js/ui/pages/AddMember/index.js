@@ -13,7 +13,9 @@ import wfc from '../../../wfc/client/wfc'
     searching: stores.addmember.query,
     getList: () => {
         var { addmember, contacts } = stores;
-        contacts.getContacts();
+        if(contacts.memberList.length<1){
+            contacts.getContacts();
+        }
         if (addmember.query) {
             return addmember.list;
         }
