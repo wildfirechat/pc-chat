@@ -114,7 +114,8 @@ import UserCard from '../../../components/userCard';
     showConversation: stores.chat.showConversation,
     toggleConversation: stores.chat.toggleConversation,
     showUserName: stores.members.showUserName,
-    showMember: stores.members.show
+    showMember: stores.members.show,
+    OverallUserCard: stores.OverallUserCard
 }))
 @observer
 export default class ChatContent extends Component {
@@ -136,18 +137,24 @@ export default class ChatContent extends Component {
         var isMyFriend = this.props.isMyFriend(user.uid) || user.uid === WildFireIM.config.loginUser.uid;
         // var height = document.body.offsetHeight;
         // var width = document.body.offsetWidth;
-        var cardWidth = 400;
+        var cardWidth = 310;
         var cardHeight = 250;
         // width: 280px;
         // height: 200px;
         var top = ev.clientY - cardHeight < 0 ? 0 : (ev.clientY - cardHeight);
         var left = ev.clientX - cardWidth < 0 ? 0 : (ev.clientX - cardWidth);
-        this.setState({
-            isShowUserCard: !this.state.isShowUserCard,
-            user: user,
-            config: { top: top, left: left },
-            isMyFriend: isMyFriend
-        });
+        setTimeout(()=>{
+            this.props.OverallUserCard.toggle(true, user, { top: top, left: left }, isMyFriend)
+        },200)
+        ev.preventDefault(); 
+        ev.stopPropagation();
+        return false;
+        // this.setState({
+        //     isShowUserCard: !this.state.isShowUserCard,
+        //     user: user,
+        //     config: { top: top, left: left },
+        //     isMyFriend: isMyFriend
+        // });
     }
     getMessageContent(message) {
         var uploading = message.status === MessageStatus.Sending;
@@ -418,7 +425,7 @@ export default class ChatContent extends Component {
             //     return false;
             // }
             // console.warn("message", message);
-            var time =new Date(message.timestamp);
+            var time = new Date(message.timestamp);
             var timem = +new Date(time.getFullYear() + '/' + (time.getMonth() + 1) + '/' + (time.getDate()) + ' ' + (time.getHours()) + ':' + (time.getMinutes()))
             var isShwoTime = !!chatch[timem];
             if (!isShwoTime) {
@@ -427,10 +434,10 @@ export default class ChatContent extends Component {
             return (
                 <div key={message.messageId}>
                     {
-                        !isShwoTime?(<div
+                        !isShwoTime ? (<div
                             className={clazz('unread', classes.message, classes.system)}
                             data-force-rerennder={message.forceRerender}
-                            dangerouslySetInnerHTML={{ __html: helper.timeFormat(message.timestamp) }} />):''
+                            dangerouslySetInnerHTML={{ __html: helper.timeFormat(message.timestamp) }} />) : ''
                     }
                     <div className={clazz('unread', classes.message, {
                         [classes.uploading]: message.status === MessageStatus.Sending,
@@ -1025,9 +1032,9 @@ export default class ChatContent extends Component {
             const height = this.messageList.clientHeight;
             // const maxScrollTop = scrollHeight - height;
             var messageList = this.messageList;
-            setTimeout(()=>{
+            setTimeout(() => {
                 messageList.scrollTop = scrollHeight > 0 ? scrollHeight : 0;
-            },300)
+            }, 300)
         }
     }
 
