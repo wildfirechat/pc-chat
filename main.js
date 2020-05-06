@@ -437,6 +437,8 @@ function updateTray(unread = 0) {
     // Update unread mesage count
     // trayMenu[0].label = `你有 ${unread} 条信息`;
 
+    console.log('__dirname', __dirname);
+
     if (settings.showOnTray) {
         if (tray
             && updateTray.lastUnread === unread) {
