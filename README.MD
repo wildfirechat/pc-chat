@@ -160,13 +160,18 @@ $ npm run dev
 https://www.microsoft.com/zh-CN/download/details.aspx?id=48145。
 
 ## MAC 签名
-如果本地存在合法的mac签名，打包程序会尝试进行签名。签名会失败，提示```wfshot.app```没有签名，需要单独对截图应用签名，使用下面命令进行签名
+如果本地存在合法的mac签名，打包程序会尝试进行签名。签名会失败，提示如下
+```
+⨯ Command failed: codesign --sign EACAEF96A100626DC13376F03E7F9E5D33A270AE --force --options runtime --entitlements mac/entitlements.mac.plist /Users/dali/Workspace/pc-chat/release/mac/wildfirechat.app/Contents/MacOS/wildfirechat
+/Users/dali/Workspace/pc-chat/release/mac/wildfirechat.app/Contents/MacOS/wildfirechat: code object is not signed at all
+In subcomponent: /Users/dali/Workspace/pc-chat/release/mac/wildfirechat.app/Contents/wfshot.app
+```
+其中```--sign```后的```EACAEF96A100626DC13376F03E7F9E5D33A270AE```为您的证书ID，然后使用下面命令进行签名，需要把下面的证书ID换成您自己的
 ```
 # 把证书名称换成自己的
-codesign --force --sign "Apple Development: FengYun Sun (U2266X7K8M)" wfshot.app
+sh mac_sign.sh EACAEF96A100626DC13376F03E7F9E5D33A270AE
 ```
-对截图应用签名时会继续失败，提示截图应用下的某些库没有签名，需要先对这些库签名，全部签名过后，截图应用才可以签名过。之后就打包就能顺利签名了。
-
+执行成功后，再次打包，就会顺利完成。
 
 ## License
 
