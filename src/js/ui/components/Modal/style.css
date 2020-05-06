@@ -34,11 +34,11 @@
     position: fixed;
     top: 50%;
     left: 50%;
-    min-width: 240px;
+    min-width: 580px;
     font-size: 12px;
     color: #777;
     z-index: 999;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(0.9);
 
     & > div {
         pointer-events: all;

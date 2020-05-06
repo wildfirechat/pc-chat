@@ -93,12 +93,15 @@ export default class Login extends Component {
                     let userId = response.data.result.userId;
                     let token = response.data.result.token;
                     connect(userId, token);
+                    WildFireIM.config.loginUser= wfc.getUserInfo(wfc.getUserId());
+                    WildFireIM.config.token= this.token;
                     break;
                 default:
                     this.lastToken = '';
                     console.log(response.data);
                     break
             }
+           
         }
     }
 

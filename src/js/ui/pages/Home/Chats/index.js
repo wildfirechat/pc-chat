@@ -1,13 +1,13 @@
-import {inject, observer} from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import moment from 'moment';
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import EventType from '../../../../wfc/client/wfcEvent';
 import ConversationItem from './conversationItem';
 import classes from './style.css';
 import ConversationType from '../../../../wfc/model/conversationType';
 
-import scrollIntoView from 'scroll-into-view-if-needed'
-import smoothScrollIntoView from 'smooth-scroll-into-view-if-needed'
+// import scrollIntoView from 'scroll-into-view-if-needed'
+// import smoothScrollIntoView from 'smooth-scroll-into-view-if-needed'
 import wfc from '../../../../wfc/client/wfc'
 import DismissGroupNotification from "../../../../wfc/messages/notification/dismissGroupNotification";
 import QuitGroupNotification from "../../../../wfc/messages/notification/quitGroupNotification";
@@ -39,6 +39,7 @@ moment.updateLocale('en', {
 
         stores.chat.chatToN(conversation);
     },
+    getUserInfo: wfc.getUserInfo,
     conversation: stores.chat.conversation,
     messages: stores.chat.messages,
     markedRead: stores.sessions.clearConversationUnreadStatus,
@@ -164,6 +165,7 @@ export default class Chats extends Component {
     }
 
     componentDidUpdate() {
+        // 以下代码为自动滚动当前chat为主显示，存在bug 暂时注释掉使用代码
         var container = this.refs.container;
         var active = container.querySelector(`.${classes.chat}.${classes.active}`);
 
@@ -174,17 +176,17 @@ export default class Chats extends Component {
             // Keep the conversation always in the viewport
             if (!(rect4active.top >= rect4viewport.top
                 && rect4active.bottom <= rect4viewport.bottom)) {
-                const scrollIntoViewSmoothly =
-                    'scrollBehavior' in document.documentElement.style
-                        ? scrollIntoView
-                        : smoothScrollIntoView
-                scrollIntoViewSmoothly(active, {behavior: 'smooth'})
+                // const scrollIntoViewSmoothly =
+                //     'scrollBehavior' in document.documentElement.style
+                //         ? scrollIntoView
+                //         : smoothScrollIntoView
+                // scrollIntoViewSmoothly(active, {behavior: 'auto'})
             }
         }
     }
 
     render() {
-        var {chats, filtered, conversation, chatTo, markedRead, sticky, removeChat} = this.props;
+        var { chats, filtered, conversation, chatTo, markedRead, sticky, removeChat } = this.props;
         if (filtered.query) {
             chats = filtered.result;
         }
@@ -198,16 +200,18 @@ export default class Chats extends Component {
         return (
             <div className={classes.container}>
                 <div className={classes.searchBar}>
-                    <i className="icon-ion-ios-search-strong"/>
-                    <input
-                        id="search"
-                        // onFocus={e => this.filter(e.target.value)}
-                        onInput={e => this.filter(e.target.value)}
-                        // onKeyUp={e => this.navigation(e)}
-                        placeholder={filtered.query ? '' : '搜索 ...'}
-                        value={filtered.query ? filtered.query : ''}
-                        ref="search"
-                        type="text"/>
+                    <div className="searchBar-bg">
+                        <i className="icon-ion-ios-search-strong" />
+                        <input
+                            id="search"
+                            // onFocus={e => this.filter(e.target.value)}
+                            onInput={e => this.filter(e.target.value)}
+                            // onKeyUp={e => this.navigation(e)}
+                            placeholder={filtered.query ? '' : '搜索 ...'}
+                            value={filtered.query ? filtered.query : ''}
+                            ref="search"
+                            type="text" />
+                    </div>
                 </div>
                 <div
                     className={classes.chats}
@@ -219,7 +223,7 @@ export default class Chats extends Component {
                                     <ConversationItem
                                         key={e.conversation.target + e.conversation.type + e.conversation.line}
                                         chatTo={chatToEx} markedRead={markedRead} sticky={sticky}
-                                        removeChat={removeChat}
+                                        removeChat={removeChat} getUserInfo={this.props.getUserInfo}
                                         currentConversation={conversation} conversationInfo={e}
                                         isSearching={!!filtered.query}
                                     />

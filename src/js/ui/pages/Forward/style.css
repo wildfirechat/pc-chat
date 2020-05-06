@@ -1,43 +1,57 @@
 
 .container {
     background: #fff;
-    height: 100vh;
-    width: 100vw;
+    /* height: 100vh;
+    width: 100vw; */
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     font-family: 'Roboto';
-    font-size: 36px;
+    font-size: 18px;
     color: #000;
     font-weight: 100;
     letter-spacing: 2px;
     word-spacing: 4px;
-
+    position: relative;
+    width: 520px;
+    height: 380px;
+    & .close{
+        position: absolute;
+        right: 5px;
+        top: 5px;
+    }
+    & .newchartbtns{
+        float: right;
+    }
+    & .little{
+        font-size: 12px;
+    }
     & input {
-        height: 64px;
-        line-height: 64px;
+        /* height: 64px; */
+        /* line-height: 64px; */
         width: 80%;
         text-align: center;
         border: none;
         background: none;
         outline: 0;
-        font-size: 32px;
+        font-size: 18px;
         font-weight: 100;
     }
 
     & button {
         display: inline-block;
         height: 36px;
-        background-color: rgba(99, 99, 99, 0);
+        background-color: #1aad19;
         font-family: 'Roboto';
         font-weight: 500;
-        color: rgba(33, 150, 243, .9);
+        color: #ffffff;
         line-height: 36px;
         text-align: center;
         letter-spacing: .4px;
         padding: 0 16px;
-        border: 0;
+        border: 1px solid #e7e7e7;
+        border-radius: 1px;
         text-transform: uppercase;
         margin: 0 12px;
         font-size: 16px;
@@ -45,21 +59,70 @@
         cursor: pointer;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         transition: .2s;
+        border-radius: 5px;
     }
 
     & button:disabled {
-        background: rgba(99, 99, 99, .2);
+        background: #76b676;
         opacity: .5;
     }
 
     & button:hover {
-        background: rgba(99, 99, 99, .2);
+        /* background: rgba(99, 99, 99, .2); */
+        background: #259025;
+    }
+    & .cancelbtn{
+        background: #ffffff;
+        color: #60606c;
+    }
+
+    & .cancelbtn:hover{
+        background: #e7e7e7; 
     }
 }
-
+/* right */
 .avatars {
     min-height: 20px;
+    width: 265px;
+    height: calc(100% - 20px - 30px );
+    /* background: red; */
+    position: absolute;
+    right:0;
 
+    & .title{
+        padding-left: 20px;
+    }
+    & ul{
+        height: calc(100% - 55px);
+        list-style: none;
+        margin: 0;
+        padding-left: 20px;
+        overflow: auto;
+        margin-top: 10px;
+
+        & li{
+            margin: 0;
+            padding: 0;
+            position: relative;
+            height: 50px;
+            & img{
+                width: 32px;
+                height: 32px;
+                transform: translateY(10px);
+                margin: 0;
+            }
+            & span{
+                display: inline-block;
+                margin-left: 20px;
+                font-size: 18px;
+            }
+            & i{
+                position: absolute;
+                right: 12px;
+                bottom: 6px;
+            }
+        }
+    }
     & img {
         height: 24px;
         width: 24px;
@@ -68,10 +131,19 @@
         cursor: pointer;
     }
 }
+/* left */
+.leftUser{
+    position: absolute;
+    left: 0;
+    width: 265px;
+    height: 100%;
+    /* background: blue; */
+    border-right: 1px solid #f1f1f1;
+}
 
 @media (width <= 800px) {
     .container {
-        font-size: 26px;
+        font-size: 18px;
         letter-spacing: 2px;
         word-spacing: 2px;
 

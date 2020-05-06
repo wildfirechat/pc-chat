@@ -13,6 +13,7 @@ import AddFriend from './AddFriend';
 import NewChat from './NewChat';
 import Members from './Members';
 import AddMember from './AddMember';
+import OverallUserCard from './OverallUserCard';
 import Forward from './Forward';
 import ConfirmImagePaste from './ConfirmImagePaste';
 import Loader from 'components/Loader';
@@ -23,6 +24,7 @@ import wfc from '../../wfc/client/wfc'
 import { observable, action } from 'mobx';
 import EventType from '../../wfc/client/wfcEvent';
 import ConnectionStatus from '../../wfc/client/connectionStatus';
+import clazz from 'classname';
 
 @inject(stores => ({
     isLogin: () => !!stores.sessions.auth,
@@ -165,7 +167,14 @@ export default class Layout extends Component {
         console.log('layout', 'will unmount')
         wfc.eventEmitter.removeListener(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
     }
-
+    isMac(){
+        // var agent = navigator.userAgent.toLowerCase();
+        // var isMac = /macintosh|mac os x/i.test(navigator.userAgent);
+        // if(isMac){
+        //   return true;
+        // }
+        return   (navigator.platform == "Win32") || (navigator.platform == "Windows");
+      }
     render() {
         var { isLogin, loading, show, close, message, location } = this.props;
 
@@ -200,21 +209,23 @@ export default class Layout extends Component {
                     text={message} />
 
                 <Loader show={loading} />
-                {
-                    isElectron() && window.process.platform !== 'linux' ? <Header location={location} /> : ''
-                }
                 <div
-                    className={classes.container}
+                    className={clazz(classes.container,{
+                        [classes.winContainer]:this.isMac()
+                    })}
                     ref="viewport">
                     {this.props.children}
                 </div>
-                <Footer
+                <Footer 
+                    className={classes.footer}
                     location={location}
+                    isMac={this.isMac}
                     ref="footer" />
                 <UserInfo />
                 <AddFriend />
                 <NewChat />
                 <Members />
+                <OverallUserCard />
                 <AddMember />
                 <ConfirmImagePaste />
                 <Forward />

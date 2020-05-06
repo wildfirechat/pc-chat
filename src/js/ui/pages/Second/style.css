@@ -16,7 +16,7 @@
 
 .left {
     position: relative;
-    width: 311px;
+    width: 250px;
     box-shadow: inset -1px 0 0 0 #eaedea;
 
     & .addChat {
@@ -37,7 +37,7 @@
 }
 
 .right {
-    width: calc(100vw - 311px);
+    width: calc(100vw - 250px);
 }
 
 @media (width <= 800px) {

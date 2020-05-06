@@ -45,6 +45,11 @@ body {
     padding: 5px 5px;
     cursor: pointer; 
     color:#000;
+    display: flex;
+    align-items: center;
+}
+.tribute-container li img {
+    margin-right: 5px;
 }
 .tribute-container li.highlight {
     background: rgb(229, 165, 165);
@@ -155,7 +160,7 @@ label {
 }
 
 .isWin {
-    border: thin solid #ddd;
+    border: 0;
 }
 
 .clearfix::after {
@@ -1083,4 +1088,19 @@ label {
 }
 
 
-
+/* 
+    图片全屏展示时，拖动事件影响到图片切换，需要对比例进行调整
+    以下样式是针对react-images插件进行样式调整
+    ***start***
+*/
+.fullscreen .react-images__positioner,.react-images__blanket{
+    width: 80vw;
+    height: 80vh;
+    margin-top: 10vh;
+    margin-left: 10vw;
+}
+.react-images__view .css-zjq1i3{
+    max-height: 75vh;
+    /* width: 90%; */
+}
+/* react-images 插件样式修改 *** END****  */

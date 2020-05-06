@@ -2,15 +2,17 @@
 .container {
     position: relative;
     height: 100%;
+    background: #f5f5f5;
 
     & header {
         position: relative;
         display: flex;
         width: 100%;
-        height: 60px;
+        height: 45px;
         padding-left: 32px;
         justify-content: space-between;
         align-items: center;
+        -webkit-app-region: drag; 
     }
 
     & header i {
@@ -21,28 +23,21 @@
         font-size: 24px;
         color: #000;
         cursor: pointer;
-        transform: translateY(-50%);
+        transform: translateY(-50%) rotate(90deg);
+        -webkit-app-region: no-drag;
+        padding: 8px;
     }
 
     & header i:hover {
-        color: #34b7f1;
+        color: #07c160;
     }
 
     & .signature,
     & .times {
+        -webkit-app-region: no-drag;
         font-size: 12px;
         color: #9b9b9b;
     }
-
-    & .signature,
-    & header p {
-        display: block;
-        max-width: calc(100vw - 311px - 60px);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
     & p {
         margin: 0;
         padding: 0;
@@ -51,6 +46,19 @@
         font-size: 15px;
         color: rgba(74, 74, 74, .9);
     }
+
+    & .signature,
+    & header p {
+        display: block;
+        max-width: calc(100vw - 300px - 60px);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #000;
+        font-family: 'SimHei'
+    }
+
+   
 }
 
 .container.hideConversation {
@@ -63,11 +71,12 @@
 .noselected {
     position: relative;
     display: flex;
-    height: 100%;
+    height: 80%;
     width: 100%;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    transform: scale(0.7);
 
     & img {
         width: 200px;
@@ -85,10 +94,11 @@
 
 .messages {
     width: 100%;
-    height: calc(100vh - 280px - 16px); /* Height - Header - Footer - Subtitle - Padding top */
+    height: calc(100vh - 260px ); /*Height - Header - Footer - Subtitle - Padding top */
     padding-top: 16px;
     overflow-x: hidden;
     overflow-y: auto;
+    border-top: 1px solid #e7e7e7;
 
     & :global(.qqemoji) {
         transform: translateY(3px);
@@ -96,10 +106,19 @@
 }
 
 .message {
-    max-width: calc(100% - 34px - 48px);
+    max-width: calc(100% - 120px);
     padding: 0 34px;
     margin-bottom: 20px;
+   
 
+    & .content :hover{
+        opacity: 0.7;
+    }
+    
+    & .content{
+        border-radius: 4px;
+        opacity: 1;
+    }
     & > div {
         position: relative;
         display: inline-block;
@@ -108,7 +127,7 @@
 
     & .avatar {
         position: absolute;
-        top: 0;
+        top: 15px;
         left: 0;
         height: 32px;
         width: 32px;
@@ -166,18 +185,32 @@
         max-width: 100%;
         background: #fff;
         box-shadow: 0 6px 28px 0 rgba(230, 230, 230, 100);
+        border-radius: 4px;
+        left: 26px;
     }
-
+    & .content::after{
+        content: "";
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        line-height: 0px;
+        border-bottom: 5px solid #f5f5f5;
+        border-left: 6px solid #fff;
+        border-top: 5px solid #f5f5f5;
+        left: -6px;
+        top: 11px;
+        transform: scale(-1);
+    }
     & p {
         min-width: 47px;
         margin: 0;
-        padding: 10.82px 14.8px 8px 40px;
+        padding: 10.82px 14.8px 8px 15px;
         font-family: 'Helvetica';
         font-size: 14px;
         color: #777;
         line-height: 22.65px;
         user-select: text;
-        word-break:normal;
+        word-break:break-all;
       }
 
     & .times {
@@ -194,14 +227,39 @@
         transform: translateY(-6px);
     }
 }
-
+.message.isVoip {
+    & .content {
+        position: relative;
+        max-width: 100%;
+        background: #fff;
+        box-shadow: 0 6px 28px 0 rgba(230, 230, 230, 100);
+        border-radius: 4px;
+        left: 26px;
+        padding: 0 13px;
+        line-height: 30px;
+    }
+    & .content::after{
+        content: "";
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        line-height: 0px;
+        border-bottom: 5px solid #f5f5f5;
+        border-left: 6px solid #fff;
+        border-top: 5px solid #f5f5f5;
+        left: -6px;
+        top: 11px;
+        transform: scale(-1);
+    }
+}
 .message.isEmoji {
     & > div {
         padding: 16px 0 0 47px;
     }
 
     & .content img {
-        max-width: 80%;
+        max-width: 60%;
+        max-height: 250px;
     }
 }
 
@@ -331,7 +389,7 @@
     & .content {
         position: absolute;
         left: 48px;
-        top: 0;
+        top: 20px;
         display: flex;
         height: 32px;
         min-width: 120px;
@@ -366,7 +424,7 @@
 
     & .playing i,
     & .playing span {
-        color: #34b7f1 !important;
+        color: #07c160 !important;
     }
 
     /* stylelint-disable */
@@ -482,6 +540,7 @@
         padding-right: 32px;
         background: #fff;
         box-shadow: 0 6px 28px 0 rgba(230, 230, 230, 100);
+        border-radius: 4px;
     }
 
     & .file img {
@@ -528,7 +587,9 @@
         background: #405de6;
     }
 }
-
+.message.isme{
+    max-width: 100%;
+}
 .message.isme.isText {
     & > div {
         display: flex;
@@ -541,12 +602,32 @@
     }
 
     & .content {
-        background: #7ebef8;
+        background: #9eea6a;
+        border-radius: 4px;
+        left: auto;
+        right: 25px;
+        max-width: 90%;
+    }
+    & .content::after{
+        content: "";
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        line-height: 0px;
+        border-bottom: 5px solid #f5f5f5;
+        border-left: 6px solid #9eea6a;
+        border-top: 5px solid #f5f5f5;
+        left: auto;
+        right: -6px;
+        top: 11px;
+        transform: scale(1);
     }
 
     & p {
-        padding: 10.82px 40px 8px 14.8px;
-        word-break:normal;
+        padding: 10.82px 15px 8px 14.8px;
+        /* word-break:normal; */
+        word-wrap:break-word;
+        word-break:break-all;
     }
 
     & .times {
@@ -555,7 +636,7 @@
 
     & p,
     & .times {
-        color: #fff !important;
+        color: #232323;
     }
 }
 
@@ -757,10 +838,28 @@
     }
 
     .message.isText {
+    
+    & .content{
+        border-radius: 5px;
+        left: 26px;
+    }
+    & .content::after{
+        content: "";
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        line-height: 0px;
+        border-bottom: 4px solid #f5f5f5;
+        border-left: 5px solid #fff;
+        border-top: 4px solid #f5f5f5;
+        left: -4px;
+        top: 11px;
+        transform: scale(-1);
+    }
         & p {
             white-space: pre-wrap;
             min-width: 37px;
-            padding: 8.32px 11.3px 6px 26px;
+            padding: 8.32px 11.3px 6px 11.3px;
             font-size: 13px;
             word-break:normal;
             line-height: 16px;
@@ -953,14 +1052,43 @@
     }
 
     .message.isme.isText {
+        
+    & .content {
+        background: #9eea6a;
+        border-radius: 7px;
+        left: auto;
+        right: 25px;
+        max-width: 90%;
+    }
+    & .content::after{
+        content: "";
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        line-height: 0px;
+        border-bottom: 4px solid #f5f5f5;
+        border-left: 5px solid #9eea6a;
+        border-top: 4px solid #f5f5f5;
+        left: auto;
+        right: -4px;
+        top: 11px;
+        transform: scale(1);
+    }
+
+    & p {
+        padding: 8.32px 11.3px 6px 11.3px;
+        /* word-break:normal; */
+        word-wrap:break-word;
+        word-break:break-all;
+    }
         & .avatar {
             right: -12px;
         }
 
-        & p {
+        /* & p {
             padding: 8.32px 30px 6px 11.3px;
             word-break:normal;
-        }
+        } */
 
         & .times {
             margin-left: 11.3px;

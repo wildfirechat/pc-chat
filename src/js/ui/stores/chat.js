@@ -1,6 +1,6 @@
-import {observable, action} from 'mobx';
+import { observable, action } from 'mobx';
 import axios from 'axios';
-import {ipcRenderer, isElectron} from '../../platform'
+import { ipcRenderer, isElectron } from '../../platform'
 
 import helper from 'utils/helper';
 import contacts from './contacts';
@@ -47,7 +47,7 @@ function hasUnreadMessage(messages) {
     }
 }
 
-async function updateMenus({conversations = [], contacts = []}) {
+async function updateMenus({ conversations = [], contacts = [] }) {
     ipcRenderer.send('menu-update', {
         conversations: conversations.map(e => ({
             id: e.UserName,
@@ -75,6 +75,7 @@ class Chat {
     @observable target = false;
 
     @observable conversation;
+    @observable conversationInfo;
 
     initialized = false;
 
@@ -99,7 +100,7 @@ class Chat {
                 }
                 // when in electron, can not load local path
                 let src = imageMsgs[i].messageContent.remotePath;
-                imgs.push({src: src});
+                imgs.push({ src: src });
             }
 
             self.toPreivewImageOption.images = imgs;
@@ -166,6 +167,10 @@ class Chat {
             }
         }
     }
+    @action
+    changeConversationInfo(conversation) {
+        self.conversationInfo = wfc.getConversationInfo(conversation);
+    }
 
     @action
     async chatToN(conversation) {
@@ -186,7 +191,7 @@ class Chat {
         self.conversation = conversation;
         self.loading = false;
         self.hasMore = true;
-
+        self.conversationInfo = wfc.getConversationInfo(conversation);
         self.loadConversationMessages(conversation, 10000000);
 
         // TODO update observable for chat content

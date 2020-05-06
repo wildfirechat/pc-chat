@@ -1,13 +1,13 @@
 /* eslint-disable no-eval */
 import axios from 'axios';
-import {observable, action} from 'mobx';
-import {ipcRenderer} from '../../platform';
+import { observable, action } from 'mobx';
+import { ipcRenderer } from '../../platform';
 
 import wfc from '../../wfc/client/wfc';
 import ConversationType from '../../wfc/model/conversationType';
 import pinyin from "../han/lib";
 
-async function updateMenus({conversations = [], contacts = []}) {
+async function updateMenus({ conversations = [], contacts = [] }) {
     if (!ipcRenderer) {
         return;
     }
@@ -109,6 +109,19 @@ class sessions {
             // do nothing
         });
     }
+
+    @action
+    async slient(conversationInfo, callback) {
+        wfc.setConversationSlient(conversationInfo.conversation, conversationInfo.isSilent, () => {
+            updateMenus({
+                conversations: self.conversations.slice(0, 10)
+            });
+            callback(self.conversations.slice(0, 10));
+        }, (errorCode) => {
+            // do nothing
+        });
+    }
+
 
     @action filter(text = '') {
         if (!text) {
