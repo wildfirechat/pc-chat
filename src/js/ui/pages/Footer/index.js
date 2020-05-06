@@ -79,7 +79,7 @@ export default class Footer extends Component {
                         <span className={clazz({
                             [classes.active]: pathname === '/settings'
                         })}>
-                            <i className="icon-ion-android-more-vertical" />
+                            <i className="icon-ion-android-settings" />
                         </span>
                     </Link>
                 </nav>
