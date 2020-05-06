@@ -1,183 +1,321 @@
-
 .container {
-    position: fixed;
-    top: 40px;
-    left: 0;
-    width: 100vw;
-    background: #fff;
+  position: fixed;
+  top: 65px;
+  right: 0;
+  width: 231px;
+  background: #f5f5f5;
+  color: #333;
+  z-index: 9;
+  height: calc(100vh - 105px);
+  border: 1px solid #ececec;
+  overflow: auto;
+
+  & header {
+    display: flex;
+    padding: 0 12px;
+    height: 50px;
+    line-height: 50px;
+    justify-content: space-between;
+    align-items: center;
+    font-family: "Roboto";
+    font-weight: 100;
+    font-size: 20px;
     color: #333;
-    z-index: 9;
+    box-shadow: inset 0 -1px 0 0 #eaedea;
+  }
 
-    & header {
-        display: flex;
-        padding: 0 12px;
-        height: 50px;
-        line-height: 50px;
-        justify-content: space-between;
-        align-items: center;
-        font-family: 'Roboto';
-        font-weight: 100;
-        font-size: 20px;
-        color: #333;
-        box-shadow: inset 0 -1px 0 0 #eaedea;
-    }
+  & header i {
+    cursor: pointer;
+  }
 
-    & header i {
-        cursor: pointer;
-    }
+  & header span:nth-child(1) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 17px;
+  }
 
-    & header span:nth-child(1) {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding-right: 17px;
-    }
+  & header i:hover {
+    color: #34b7f1;
+  }
 
-    & header i:hover {
-        color: #34b7f1;
+  & .searchall {
+    padding: 0 28%;
+    line-height: 20px;
+    & svg {
+      position: absolute;
     }
+  }
 }
 
 .list {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  /* height: calc(100vh - 90px - 60px); */
+  overflow: hidden;
+  overflow-y: auto;
+
+  & li {
     position: relative;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    height: calc(100vh - 90px - 60px);
+    display: inline-block;
+    /* padding: 0 14px; */
+    margin: 3px 5px;
+    height: 32px;
+    min-width: 45px;
+    line-height: 32px;
+    border-radius: 1px;
+    text-align: center;
+    cursor: pointer;
+    /* box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .3); */
     overflow: hidden;
-    overflow-y: auto;
+    transition: 0.2s;
+    height: 65px;
+  }
 
-    & li {
-        position: relative;
-        display: inline-block;
-        padding: 0 14px;
-        margin: 6px 8px;
-        height: 32px;
-        min-width: 70px;
-        line-height: 32px;
-        border-radius: 1px;
-        text-align: center;
-        cursor: pointer;
-        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .3);
-        overflow: hidden;
-        transition: .2s;
-    }
-
-
-    & li:hover .cover {
+  /* & li:hover .cover {
         filter: opacity(1);
         transform: scale(1.2);
-    }
+    } */
 }
-
+.list::after {
+  content: " ";
+  border-bottom: 1px solid #ececec;
+  position: absolute;
+  bottom: 0px;
+  left: 5%;
+  width: 90%;
+}
 .cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 45px;
+  background-size: cover;
+  background-position: center;
+  filter: opacity(0.6);
+  transform: scale(1);
+  transition: 0.2s;
+
+  &::after {
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-size: cover;
-    background-position: center;
-    filter: opacity(.6);
-    transform: scale(1);
-    transition: .2s;
-
-    &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, .3);
-    }
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+.useradd {
+  border: 1px solid #dadada;
+  background: #fff;
+  font-size: 30px;
+  height: 43px;
+  width: 43px;
+  text-align: center;
+  & i {
+    margin-top: 8px;
+    display: block;
+    color: #a5a5a5;
+  }
 }
 
 .username {
-    position: relative;
-    font-size: 13px;
+  position: absolute;
+  font-size: 10px;
+  bottom: 0;
+  left: 0;
+  width: 45px;
+  height: 26px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 29px;
 }
 
 .footer {
-    height: 60px;
-    box-shadow: inset 0 1px 0 0 #eaedea;
+  height: 30px;
+  box-shadow: inset 0 1px 0 0 #eaedea;
+  position: relative;
+  background: #e1e1e1;
+  width: 100%;
+  border-radius: 5px;
 
-    & input {
-        height: 60px;
-        width: 100%;
-        text-align: center;
-        line-height: 60px;
-        border: 0;
-        background: 0;
-        color: #333;
-        font-size: 14px;
-        outline: 0;
-    }
+  & i {
+    position: absolute;
+    top: 7px;
+    left: 5px;
+  }
+  & input {
+    position: absolute;
+    top: 1px;
+    height: 28px;
+    /* text-align: center; */
+    line-height: 28px;
+    border: 0;
+    background: 0;
+    color: #333;
+    font-size: 14px;
+    outline: 0;
+    text-indent: 0px;
+    left: 21px;
+  }
 }
 
 .notfound {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
 
-    & img {
-        width: 240px;
-    }
+  & img {
+    width: 100px;
+  }
 
-    & h1 {
-        font-family: 'Roboto';
-        font-weight: 100;
-        color: rgba(0, 0, 0, .8);
-        letter-spacing: 2px;
-        word-spacing: 4px;
+  & h3 {
+    font-family: "Roboto";
+    font-weight: 100;
+    color: rgba(0, 0, 0, 0.8);
+    letter-spacing: 2px;
+    word-spacing: 4px;
+  }
+}
+.btns {
+  padding: 20px;
+  line-height: 26px;
+  font-size: 13px;
+  outline: none;
+
+  & button {
+    outline: none;
+    border: 0;
+    border-radius: 5px;
+    line-height: 26px;
+    font-size: 16px;
+    background: #1aad19;
+    color: #f5f5f5;
+    padding: 3px 11px;
+    margin-bottom: 10px;
+
+    & span {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: #fff;
     }
+  }
+  & .btnauto {
+    height: 15px;
+    border-radius: 30px;
+    line-height: 0;
+    width: 25px;
+    position: relative;
+    transition: 0.5ms;
+    background: #cbcbcb;
+
+    & span {
+      display: inline-block;
+      width: 11px;
+      height: 11px;
+      background: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 1px;
+    }
+  }
+  & .btnactive {
+    background: #1aad19;
+    & span {
+      left: auto;
+      right: 1px;
+    }
+  }
+}
+.editbtn {
+  color: #9999a9;
+
+  & span {
+    color: #000;
+    display: inline-block;
+    max-width: 150px;
+    min-width: 80px;
+  }
+  & svg {
+    position: relative;
+    top: 4px;
+    left: 5px;
+    display: none;
+  }
+  & div:hover {
+    & svg {
+      display: inline-block;
+    }
+  }
+}
+.deleteBtn {
+    color: #f45454;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: -5px;
+    padding-top: 5px;
+    border-top: 1px solid #dedede;
+    position: fixed;
+    width: 232px;
+    right: 0;
+    bottom: 0px;
+    border-left: 1px solid #dedede;
+    height: 40px;
+    background: #f5f5f5;
 }
 
 @media (width <= 800px) {
-    .container {
-        & header {
-            padding: 0 10px;
-            height: 40px;
-            line-height: 40px;
-            font-size: 16px;
-        }
+  .container {
+    & header {
+      padding: 0 10px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 16px;
+    }
+  }
+
+  .list {
+    height: calc(100vh - 80px - 46px);
+
+    & li {
+      padding: 0 10px;
+      margin: 4px 6px;
+      height: 28px;
+      min-width: 70px;
+      line-height: 28px;
+    }
+  }
+
+  .footer {
+    height: 46px;
+
+    & input {
+      height: 46px;
+      line-height: 46px;
+      font-size: 13px;
+    }
+  }
+
+  .username {
+    font-size: 12px;
+  }
+
+  .notfound {
+    & img {
+      width: 220px;
     }
 
-    .list {
-        height: calc(100vh - 80px - 46px);
-
-        & li {
-            padding: 0 10px;
-            margin: 4px 6px;
-            height: 28px;
-            min-width: 70px;
-            line-height: 28px;
-        }
+    & h1 {
+      word-spacing: 2px;
     }
-
-    .footer {
-        height: 46px;
-
-        & input {
-            height: 46px;
-            line-height: 46px;
-            font-size: 13px;
-        }
-    }
-
-    .username {
-        font-size: 12px;
-    }
-
-    .notfound {
-        & img {
-            width: 220px;
-        }
-
-        & h1 {
-            word-spacing: 2px;
-        }
-    }
+  }
 }

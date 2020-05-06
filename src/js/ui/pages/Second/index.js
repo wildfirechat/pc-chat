@@ -9,12 +9,16 @@ import Loader from 'components/Loader';
 import Contacts from './Contacts';
 import ContactInfo from './ContactInfo';
 
+import Header from '../Header';
+import { WfcManager } from '../../../wfc/client/wfc';
+
 @inject(stores => ({
     loading: stores.sessions.loading,
     showConversation: stores.chat.showConversation,
     toggleConversation: stores.chat.toggleConversation,
     showRedIcon: stores.settings.showRedIcon,
     newChat: () => stores.newchat.toggle(true),
+    getMyGroupList: WfcManager.getMyGroupList
 }))
 @observer
 export default class Second extends Component {
@@ -36,6 +40,7 @@ export default class Second extends Component {
                     </div>
 
                     <div className={classes.right}>
+                        <Header location={""} />
                         <ContactInfo />
                     </div>
                 </div>

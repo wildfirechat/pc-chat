@@ -1,203 +1,202 @@
-
 :root {
-    --icon-color: #777;
-    --active: #34b7f1;
-    --shadow-color: #eaedea;
+  --icon-color: #777;
+  --active: #3B62E0;
+  --shadow-color: #e0e0e0;
 }
 
 .footer {
-    position: relative;
-    background: #fff;
+  background: #27282b;
+  width: 80px;
+  left: 0;
+  height: calc(100vh);
+  -webkit-app-region: drag;
+  padding-top: 20px;
 
-    & > nav {
-        display: flex;
-        width: calc(311px - 34px);
-        height: 60px;
-        padding: 17px 17px 0;
-        justify-content: space-between;
-        box-shadow: inset 0 1px 0 0 var(--shadow-color);
+  & > nav {
+    display: inline-block;
+    width: initial;
+    padding: 17px 27px 0;
+    justify-content: space-between;
+    height: 100vh;
+    /* box-shadow: inset 0 1px 0 0 var(--shadow-color); */
+
+    & > a {
+      -webkit-app-region: no-drag;
+      margin-bottom: 30px;
+      display: inline-block;
     }
 
-    & > nav span {
-        display: block;
-        width: 24px;
-        height: 27px;
-        text-align: center;
-        cursor: pointer;
+    & a:last-child {
+      position: fixed;
+      left: 26px;
+      bottom: 0;
     }
+  }
 
-    & > nav i {
-        color: var(--icon-color);
-        font-size: 24px;
-        cursor: pointer;
-    }
+  & > nav span {
+    display: block;
+    width: 24px;
+    height: 27px;
+    text-align: center;
+    cursor: pointer;
+  }
 
-    & > nav span:hover i {
-        color: var(--active) !important;
+  & > nav i {
+    color: var(--icon-color);
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  & > nav span:hover i {
+    color: var(--active) !important;
+  }
+
+  & .user {
+    width: 100%;
+    -webkit-app-region: no-drag;
+    margin-left: 8px;
+
+    & img {
+      width: 35px;
+      height: 35px;
+      margin: 20px 0 10px 13px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
     }
+  }
 }
 
 .footer .active {
-    position: relative;
+  position: relative;
 
-    &::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 1px;
-        width: 100%;
-        background: var(--active);
-    }
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    background: var(--active);
+  }
 
-    & i {
-        color: var(--active) !important;
-    }
+  & i {
+    color: var(--active) !important;
+  }
 }
 
 .right {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: calc(100% - 311px);
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: calc(100% - 250px - 80px);
+}
+.winright {
+  width: calc(100% - 250px - 60px);
+}
+.hideConversation {
+  width: calc(100vw - 60px);
 }
 
 .contacts {
-    box-shadow: inset 0 1px 0 0 var(--shadow-color);
-    position: relative;
-    display: flex;
+  /* box-shadow: inset 0 1px 0 0 var(--shadow-color); */
+  position: relative;
+  display: flex;
+  height: 60px;
+  align-items: center;
+  justify-content: space-between;
+
+  & input {
     height: 60px;
-    align-items: center;
+    width: calc(100% - 200px);
+    margin-left: 32px;
+    line-height: 60px;
+    border: 0;
+    background: 0;
+    color: #333;
+    font-size: 14px;
+    outline: 0;
+  }
+
+  & label {
+    display: flex;
+    height: 23px;
+    line-height: 23px;
+  }
+
+  & .action {
+    margin-right: 17px;
+    display: flex;
     justify-content: space-between;
-
-    & input {
-        height: 60px;
-        width: calc(100% - 200px);
-        margin-left: 32px;
-        line-height: 60px;
-        border: 0;
-        background: 0;
-        color: #333;
-        font-size: 14px;
-        outline: 0;
-    }
-
-    & label {
-        display: flex;
-        height: 23px;
-        line-height: 23px;
-    }
-
-    & .action {
-        margin-right: 17px;
-        display: flex;
-        justify-content: space-between;
-    }
+  }
+  
 }
 
 .settings {
-    box-shadow: inset 0 1px 0 0 var(--shadow-color);
-    display: flex;
-    height: 60px;
-    text-align: right;
-    justify-content: flex-end;
-    align-items: center;
+  /* box-shadow: inset 0 1px 0 0 var(--shadow-color); */
+  display: flex;
+  height: 60px;
+  text-align: right;
+  /* justify-content: flex-end; */
+  align-items: center;
 
-    & .button {
-        position: relative;
-        margin-right: 17px;
-        width: 166px;
-        color: rgba(0, 0, 0, .8);
-        font-size: 14px;
-        padding: 9px 8px;
-        font-family: 'Roboto';
-        border: 0;
-        border-radius: 2px;
-        background: 0;
-        outline: 0;
-        text-transform: uppercase;
-        text-align: left;
-        cursor: pointer;
-        text-decoration: none;
-        transform: translateY(4px);
-        transition: .2s;
+  & .button {
+    /* position: relative; */
+    margin-right: 17px;
+    width: 166px;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 14px;
+    padding: 9px 8px;
+    font-family: "Roboto";
+    border: 0;
+    border-radius: 2px;
+    background: 0;
+    outline: 0;
+    text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
+    text-decoration: none;
+    transform: translateY(4px);
+    transition: 0.2s;
 
-        &:hover {
-            background: color(var(--shadow-color) alpha(-50%));
-        }
+    &:hover {
+      background: color(var(--shadow-color) alpha(-50%));
     }
+  }
 
-
-    & .button i {
-        position: absolute;
-        right: 14px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 20px;
+  & .button i {
+    /* position: absolute;
+        right: 14px; */
+    /* top: 50%; */
+    transform: translateY(-30%);
+    font-size: 20px;
+    margin-left: 3px;
+    &::before {
+      position: absolute;
+      top: 8px;
     }
+  }
 }
 
 .options {
-    display: inline-block;
-    margin-right: 12px;
-    font-family: 'Roboto';
-    font-size: 14px;
-    color: rgba(0, 0, 0, .8);
-    text-transform: uppercase;
+  display: inline-block;
+  margin-right: 12px;
+  font-family: "Roboto";
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.8);
+  text-transform: uppercase;
 }
 
-@media (width <= 800px) {
-    .footer {
-        & > nav {
-            width: calc(280px - 34px);
-            padding: 14px 17px 0;
-            height: 46px;
-        }
-
-        & > nav span {
-            width: 20px;
-            height: 20px;
-        }
-
-        & > nav i {
-            font-size: 16px;
-        }
+.winrleft {
+  width: 60px;
+  & div{
+    & img{
+      margin: 10px 0 10px 5px !important;
     }
-
-    .right {
-        width: calc(100% - 280px);
+  }
+  & nav{
+    padding: 17px 18px 0 !important;
+    & a:last-child{
+      left: 16px !important;
     }
-
-    .contacts {
-        box-shadow: inset 0 1px 0 0 var(--shadow-color);
-        height: 46px;
-
-        & input {
-            height: 46px;
-            width: calc(100% - 200px);
-            margin-left: 20px;
-            line-height: 46px;
-        }
-    }
-
-    .settings {
-        box-shadow: inset 0 1px 0 0 var(--shadow-color);
-        height: 46px;
-
-        & .button {
-            margin-right: 8px;
-            width: 130px;
-            font-size: 12px;
-            padding: 6px 8px;
-            transform: translateY(0);
-        }
-
-        & .button i {
-            font-size: 16px;
-        }
-    }
-
-    .options {
-        font-size: 12px;
-    }
+  }
 }

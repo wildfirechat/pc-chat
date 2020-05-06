@@ -12,6 +12,7 @@ class NewChat {
     @observable show = false;
     @observable query = '';
     @observable list = [];
+    @observable alreadySelected='';
 
     // Defaults
     defaultOptions = {
@@ -22,8 +23,9 @@ class NewChat {
         Canvas: undefined
     };
 
-    @action toggle(show = !self.show) {
+    @action toggle(show = !self.show,alreadySelected = [] ) {
         self.show = show;
+        self.alreadySelected = alreadySelected.join(',');
     }
 
     @action search(text) {

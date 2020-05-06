@@ -3,7 +3,6 @@
   padding: 0 !important;
   overflow: hidden;
   height: 100%;
-  background: #f5f5f5;
 
   & input {
     position: absolute;
@@ -15,96 +14,92 @@
     font-size: 16px;
     outline: 0;
   }
-  & .userList {
-    height: 60px;
+  & .top {
+    display: block;
     color: #000;
-    width: 450px;
-    position: relative;
-    margin: auto;
-    min-width: 250px;
-    border-bottom: 1px solid #eee;
+    height: 45%;
+    border-bottom: 1px solid #f4f4f4;
 
-    & .userItem {
-      & img {
-        width: 40px;
-        height: 40px;
-        position: absolute;
-        top: 12px;
-      }
-      & .username {
-        position: absolute;
-        left: 60px;
-        top: 12px;
-      }
-      & .userReason {
-        position: absolute;
-        bottom: 8px;
-        left: 60px;
-        color: #999;
-      }
+    & div {
+      height: 30px;
+      line-height: 25px;
     }
-    & .userBtns {
+    & .displayName {
+      font-family: "SimHei";
+      font-size: 24px;
+    }
+    & .uid {
+      color: #999999;
+      font-size: 14px;
+    }
+    & .image {
+      width: 70px;
+      height: 70px;
       position: absolute;
-      right: 0px;
-      top: 0px;
-      height: 100%;
-      align-items: center;
-      display: flex;
-      & button {
-        background: #1aad19;
-        border: 1px solid #ddd;
-        color: #fff;
-        padding: 5px 10px;
-        font-weight: 600;
-      }
-      & button:disabled {
-        color: #999;
-        background: inherit;
-        border: 0;
-      }
-    }
-  }
-  & .groupListBox {
-    height: 60%;
-    width: 80%;
-    margin: auto;
-  }
-  & .groupList {
-    height: 60px;
-    color: #000;
-    width: 50px;
-    position: relative;
-    display: inline-block;
-    margin: 10px;
+      right: 25px;
+      top: 5px;
 
-    & .groupItem {
       & img {
-        width: 40px;
-        height: 40px;
-        position: absolute;
-        top: 0px;
-        left: 6px;
-      }
-      & .groupName {
-        position: absolute;
-        left: 0px;
-        bottom: 0px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        word-break: break-all;
-        width: 50px;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        border-radius: 5px;
       }
     }
   }
-  & .newFriendtitle {
+
+  & .bottom {
     color: #000;
-    padding-left: 20px;
-    height: 30px;
-    border-bottom: 1px solid #ddd;
-    font-size: 18px;
-    font-weight: 600;
-    padding-bottom: 10px;
+    margin-top: 30px;
+    border-top: 1px solid #e7e7e7;
+    padding: 30px 0 60px 0;
+    border-bottom: 1px solid #e7e7e7;
+
+    & .area {
+      color: #999999;
+      font-size: 14px;
+      margin-bottom: 7px;
+      line-height: 30px;
+      display: flex;
+      align-items: center;
+
+      & span {
+        color: #000;
+        font-size: 16px;
+        display: inline-block;
+        height: 30px;
+        min-width: 60px;
+      }
+      & span:first-child {
+        display: inline-block;
+        width: 60px;
+        color: #999999;
+      }
+      & .editSpan{
+        background:rgba(221, 221, 221,0.5);
+        border-bottom :1px solid #000;
+        outline:none;
+      }
+      & .editbtn{
+        box-sizing: border-box;
+      }
+      & .editbtn::before{
+        content: "点击添加备注";
+        font-size: 14px;
+      }
+      & .editbtn:hover{
+        border: 1px solid #ddd;
+      }
+    }
+    & .btns {
+      margin-top: 25px;
+      float: right;
+      margin-right: 10px;
+      & span {
+        margin-left: 20px;
+      }
+    }
   }
 }
 
@@ -113,7 +108,7 @@
   display: flex;
   height: 100%;
   width: 100%;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   flex-direction: column;
 
@@ -155,7 +150,7 @@
   height: 100%;
   padding-top: 20px;
   font-family: "Helvetica";
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   flex-direction: column;
   text-align: center;
@@ -242,6 +237,9 @@
   position: relative;
   display: inline-block;
   margin-bottom: 14px;
+  width: 450px;
+  text-align: left;
+  margin-top: 30px;
 
   & img {
     width: 130px;

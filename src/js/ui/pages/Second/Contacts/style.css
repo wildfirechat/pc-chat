@@ -1,217 +1,332 @@
-
 .container {
-    width: 100%;
+  width: 100%;
+  height: 100vh;
+  background: #edeae8;
 }
 
 .searchBar {
-    position: relative;
-    height: 60px;
-    width: 311px;
-    box-shadow: inset 0 -1px 0 0 #eaedea;
-
-& input {
-      height: 60px;
-      width: 100%;
-      line-height: 60px;
-      background: none;
-      outline: 0;
-      border: 0;
-      font-family: 'Helvetica';
-      font-size: 24px;
-      font-weight: 100;
-      text-indent: 62px;
+  position: relative;
+  height: 30px;
+  width: 250px;
+  box-shadow: inset 0 -1px 0 0 #eaedea;
+  padding: 20px 0 15px 0;
+  -webkit-user-select: auto;
+  -webkit-app-region: drag;
+  & div {
+    background: #dbd9d8;
+    width: 250px;
+    border-radius: 10px;
+    margin-left: 10px;
+    transform: scale(0.83);
+    transform-origin: 0 0;
+  }
+  & input {
+    -webkit-app-region: no-drag;
+    height: 30px;
+    width: 100%;
+    line-height: 30px;
+    background: none;
+    outline: 0;
+    border: 0;
+    font-family: "Helvetica";
+    font-size: 18px;
+    font-weight: 100;
+    text-indent: 16px;
+    margin-left: 18px;
   }
 
-& i {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      font-size: 28px;
-      color: #d9d9d9;
-      transform: translateY(-50%);
+  & i {
+    position: absolute;
+    left: 16px;
+    top: 55%;
+    font-size: 24px;
+    color: #6b6a6a;
+    transform: translateY(-50%);
   }
 }
 
-
 .contacts {
-    height: calc(100vh - 160px); /* Height - Header - Footer - Search Input */
-    overflow-x: hidden;
-    overflow-y: auto;
+  height: auto; /* Height - Header - Footer - Search Input */
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .notfound {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  justify-content: center;
+  align-items: center;
 
-    & h1 {
-        margin-bottom: 25vh;
-        font-family: 'Roboto';
-        font-weight: 100;
-        color: rgba(0, 0, 0, .8);
-        letter-spacing: 2px;
-        word-spacing: 4px;
-    }
+  & h1 {
+    margin-bottom: 25vh;
+    font-family: "Roboto";
+    font-weight: 100;
+    color: rgba(0, 0, 0, 0.8);
+    letter-spacing: 2px;
+    word-spacing: 4px;
+  }
 }
 
 .inner {
-    text-align: center;
+  text-align: center;
 
-    & img {
-        width: 220px;
-        margin-bottom: 30px;
-    }
+  & img {
+    width: 220px;
+    margin-bottom: 30px;
+  }
 }
 
 .column {
-    width: 274px;
+  width: 274px;
 }
 
 .group {
-    width: 100%;
-    padding: 8px 5px 8px 20px;
+  width: 100%;
+  /* padding: 8px 5px 8px 20px; */
+  border-bottom: 1px solid #dcdbdb;
 }
 
 .header {
-    position: relative;
+  /* position: relative;
     width: 100%;
-    height: 36px;
+    height: 36px; */
 
-    & label {
-        position: absolute;
+  & label {
+    /* position: absolute;
         left: 12px;
-        bottom: 8px;
-        font-family: 'Helvetica Neue';
-        font-size: 24px;
-        font-weight: 300;
-        color: #000;
-    }
+        bottom: 8px; */
+    font-family: "Helvetica Neue";
+    font-size: 16px;
+    font-weight: 300;
+    color: #999999;
+    padding-left: 12px;
+  }
 
-    & span {
-        position: absolute;
-        right: 0;
-        left: 12px;
-        bottom: 8px;
-        display: block;
-        font-family: 'Roboto';
-        font-size: 12px;
-        color: #9b9b9b;
-    }
+  & span {
+    position: absolute;
+    right: 0;
+    left: 12px;
+    bottom: 8px;
+    display: block;
+    font-family: "Roboto";
+    font-size: 12px;
+    color: #9b9b9b;
+  }
 }
 
 .item {
-    width: 100%;
-    display: flex;
-    height: 20px;
-    margin: 5px 0;
-    padding: 20px 10px;
-    align-items: center;
-    cursor: pointer;
+  /* width: 100%; */
+  display: flex;
+  height: 20px;
+  margin: 5px 0;
+  padding: 20px 10px 20px 20px;
+  align-items: center;
+  cursor: pointer;
 
-    & p {
-        transition: .2s;
-    }
+  & p {
+    transition: 0.2s;
+  }
 
-    &:hover p {
-        color: #405de6 !important;
-    }
+  &:hover p {
+    color: #405de6 !important;
+  }
 
-    & img {
-        margin-top: 3px;
-        margin-right: 19px;
-        border-radius: 32px;
-    }
+  & img {
+    margin-top: 3px;
+    margin-right: 19px;
+    border-radius: 5px;
+  }
 }
 
+.item:hover {
+  background: #d7d8d9;
+}
 .avatar,
 .info {
-    display: inline-block;
+  display: inline-block;
 }
 
 .username,
 .signature {
-    max-width: 200px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .username {
-    font-family: 'Helvetica';
-    font-size: 14px;
-    color: #4a4a4a;
-    margin: 0;
-    margin-bottom: 4px;
+  font-family: "Helvetica";
+  font-size: 14px;
+  color: #4a4a4a;
+  margin: 0;
+  margin-bottom: 4px;
 }
 
 .signature {
-    font-family: 'Helvetica';
-    font-size: 12px;
-    color: #777;
-    margin: 0;
+  font-family: "Helvetica";
+  font-size: 12px;
+  color: #777;
+  margin: 0;
 }
+.userListContainer {
+  height: calc(100vh - 60px);
+  overflow: auto;
+}
+.userList {
+  height: auto;
 
+  & .userListTitle {
+    color: #000;
+    margin-left: 10px;
+    margin-bottom: 7px;
+    position: relative;
+    height: 22px;
+    font-family: 'SimHei';
+    
+    & svg {
+      transform: scale(0.4);
+      position: absolute;
+      left: -12px;
+      top: -9px;
+    }
+    & span{
+        position: absolute;
+        left: 15px;
+    }
+    & i{
+      position: absolute;
+      right: 15px;
+      font-style:normal;
+      color: #999;
+    }
+  }
+  & .adduser {
+    height: 60px;
+    padding-left: 10px;
+    color: #000;
+    font-size: 15px;
+    font-weight: 600;
+    position: relative;
+
+    & svg {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+    & span {
+      display: inline-block;
+      line-height: 30px;
+      position: absolute;
+      left: 50px;
+      top: 13px;
+    }
+  }
+  & .adduser:hover {
+    background: #d7d8d9;
+  }
+}
+.groupList {
+  height: 60px;
+  padding-left: 20px;
+  color: #000;
+  position: relative;
+
+  & img {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    margin-top: 3px;
+    margin-right: 19px;
+    border-radius: 3px;
+    top: 10px;
+  }
+  & span {
+    display: inline-block;
+    line-height: 30px;
+    position: absolute;
+    left: 70px;
+    top: 13px;
+    width: 60px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-break: break-all;
+    font-size: 14px;
+  }
+}
+.groupList:hover {
+  background: #d7d8d9;
+}
 @media (width <= 800px) {
-    .columns {
-        padding: 20px 17px 0;
+  .searchBar {
+    & div {
+      width: 230px;
     }
 
-    .notfound {
-        & h1 {
-            word-spacing: 2px;
-        }
+    & i {
+      left: 16px;
+      top: 55%;
+    }
+  }
+  .columns {
+    padding: 20px 17px 0;
+  }
+
+  .notfound {
+    & h1 {
+      word-spacing: 2px;
+    }
+  }
+
+  .column {
+    width: 230px;
+  }
+
+  .group {
+    width: 100%;
+    padding: 6px 0;
+    margin-bottom: 20px;
+  }
+
+  .header {
+    width: 100%;
+    height: 26px;
+
+    & label {
+      bottom: 6px;
+      font-size: 18px;
     }
 
-    .column {
-        width: 230px;
+    & span {
+      font-size: 11px;
     }
+  }
 
-    .group {
-        width: 100%;
-        padding: 6px 0;
-        margin-bottom: 20px;
+  .item {
+    height: 36px;
+    margin: 8px 0;
+    padding: 0 8px;
+
+    & img {
+      margin-top: 4px;
+      margin-right: 14px;
     }
+  }
 
-    .header {
-        width: 100%;
-        height: 26px;
+  .avatar img {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 28px;
+  }
 
-        & label {
-            bottom: 6px;
-            font-size: 18px;
-        }
+  .username,
+  .signature {
+    max-width: 160px;
+  }
 
-        & span {
-            font-size: 11px;
-        }
-    }
-
-    .item {
-        height: 36px;
-        margin: 8px 0;
-        padding: 0 8px;
-
-        & img {
-            margin-top: 4px;
-            margin-right: 14px;
-        }
-    }
-
-    .avatar img {
-        width: 28px !important;
-        height: 28px !important;
-        border-radius: 28px;
-    }
-
-    .username,
-    .signature {
-        max-width: 160px;
-    }
-
-    .username {
-        font-size: 13px;
-        margin-bottom: 2px;
-    }
+  .username {
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
 }
