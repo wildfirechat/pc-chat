@@ -827,6 +827,19 @@ const createMainWindow = () => {
 app.setName(pkg.name);
 app.dock && app.dock.setIcon(icon);
 
+if (!app.requestSingleInstanceLock()) {
+    console.log('only allow start one instance!')
+    app.quit()
+}
+
+app.on('second-instance', () => {
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore()
+        mainWindow.focus()
+        mainWindow.show()
+    }
+})
+
 app.on('ready', createMainWindow);
 app.on('before-quit', () => {
     // Fix issues #14
