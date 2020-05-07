@@ -7,7 +7,6 @@ import classes from './style.css';
 import EventType from '../../../../wfc/client/wfcEvent';
 import stores from '../../../stores';
 import wfc from '../../../../wfc/client/wfc';
-import { use } from 'builder-util';
 
 @inject(stores => ({
     filter: stores.contacts.filter,
