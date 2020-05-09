@@ -252,6 +252,39 @@
         transform: scale(-1);
     }
 }
+.message.isme.isVoip {
+    & > div {
+      display: flex;
+      justify-content: flex-end;
+    }
+    & .avatar {
+      left: auto;
+      right: -16px;
+    }
+    & .content {
+      max-width: 100%;
+      box-shadow: 0 6px 28px 0 rgba(230, 230, 230, 100);
+      border-radius: 4px;
+      left: auto;
+      right: 25px;
+      padding: 0 13px;
+      line-height: 30px;
+    }
+    & .content::after{
+          content: "";
+          position: absolute;
+          width: 0px;
+          height: 0px;
+          line-height: 0px;
+          border-bottom: 5px solid #f5f5f5;
+          border-left: 6px solid #fff;
+          border-top: 5px solid #f5f5f5;
+          left: auto;
+          right: -6px;
+          top: 11px;
+          transform: scale(1);
+    }
+}
 .message.isEmoji {
     & > div {
         padding: 16px 0 0 47px;

@@ -173,7 +173,7 @@ export default class Layout extends Component {
         // if(isMac){
         //   return true;
         // }
-        return   (navigator.platform == "Win32") || (navigator.platform == "Windows");
+        return   (navigator.platform === "Win32") || (navigator.platform === "Windows");
       }
     render() {
         var { isLogin, loading, show, close, message, location } = this.props;

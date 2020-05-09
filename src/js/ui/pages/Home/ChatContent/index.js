@@ -41,7 +41,6 @@ import UserCard from '../../../components/userCard';
     loadOldMessages: stores.chat.loadOldMessages,
     conversation: stores.chat.conversation,
     target: stores.chat.target,
-    forceRerenderMessage: stores.chat.forceRerenderMessage,
     togglePreviewImage: stores.chat.togglePreviewImage,
     getTimePanel: (messageTime) => {
         // 当天的消息，以每5分钟为一个跨度显示时间；
@@ -109,7 +108,6 @@ import UserCard from '../../../components/userCard';
     showForward: (message) => stores.forward.toggle(true, message),
     showAddFriend: (user) => stores.addfriend.toggle(true, user),
     recallMessage: stores.chat.recallMessage,
-    downloads: stores.settings.downloads,
     rememberConversation: stores.settings.rememberConversation,
     showConversation: stores.chat.showConversation,
     toggleConversation: stores.chat.toggleConversation,
@@ -146,7 +144,7 @@ export default class ChatContent extends Component {
         setTimeout(()=>{
             this.props.OverallUserCard.toggle(true, user, { top: top, left: left }, isMyFriend)
         },200)
-        ev.preventDefault(); 
+        ev.preventDefault();
         ev.stopPropagation();
         return false;
         // this.setState({
@@ -383,7 +381,7 @@ export default class ChatContent extends Component {
 
                 return `
                     <div >
-                        <i class="icon-ion-android-volume-up"></i>
+                        <i class="icon-ion-android-call"></i>
                         <span>
                             ${desc}
                         </span>
@@ -414,7 +412,7 @@ export default class ChatContent extends Component {
             if (message.messageContent instanceof NotificationMessageContent) {
                 return (
                     <div
-                        key={message.messageUid}
+                        key={message.messageId}
                         className={clazz('unread', classes.message, classes.system)}
                         dangerouslySetInnerHTML={{ __html: message.messageContent.formatNotification(message) }} />
                 );
@@ -450,7 +448,7 @@ export default class ChatContent extends Component {
                         [classes.isVoice]: type === MessageContentType.Voice,
                         [classes.isVideo]: type === MessageContentType.Video,
                         [classes.isFile]: type === MessageContentType.File,
-                        [classes.isVoip]: type >= MessageContentType.VOIP_CONTENT_TYPE_START
+                        [classes.isVoip]: type === MessageContentType.VOIP_CONTENT_TYPE_START
                     })}>
 
                         <div>
@@ -692,27 +690,43 @@ export default class ChatContent extends Component {
             && target.classList.contains('is-download')) {
             let message = this.props.getMessage(e.target.parentElement.dataset.id);
             let file = message.messageContent;
-            let response = await axios.get(file.remotePath, { responseType: 'arraybuffer' });
             // eslint-disable-next-line
             if (isElectron()) {
-                let base64 = Buffer.from(response.data, 'binary').toString('base64');
-                let filename = ipcRenderer.sendSync(
-                    'file-download',
-                    {
-                        filename: `${message.messageId}_${file.name}`,
-                        raw: base64,
-                    },
-                );
-                file.localPath = filename;
-
-                wfc.updateMessageContent(message.messageId, file);
-                this.props.forceRerenderMessage(message.messageId);
+                // let response = await axios.get(file.remotePath, { responseType: 'arraybuffer' });
+                // let base64 = Buffer.from(response.data, 'binary').toString('base64');
+                // let filename = ipcRenderer.sendSync(
+                //     'file-download',
+                //     {
+                //         filename: `${message.messageId}_${file.name}`,
+                //         raw: base64,
+                //     },
+                // );
+                // file.localPath = filename;
+                //
+                // wfc.updateMessageContent(message.messageId, file);
+                // this.props.forceRerenderMessage(message.messageId);
+                ipcRenderer.send('file-download', {messageId : message.messageId, remotePath : file.remotePath});
             } else {
-                FileSaver.saveAs(new Blob([response.data]), file.name);
+                let varExt = file.remotePath.split('.');
+                if (varExt[varExt.length - 1] === "txt" || varExt[varExt.length -1] === "log") {
+                    window.open(file.remotePath);
+                }
+                else {
+                    let iframe;
+                    iframe = document.getElementById("hiddenDownloader");
+                    if (iframe == null) {
+                        iframe = document.createElement('iframe');
+                        iframe.id = "hiddenDownloader";
+                        iframe.style.visibility = 'hidden';
+                        document.body.appendChild(iframe);
+                    }
+                    iframe.src = file.remotePath;
+                }
             }
         }
     }
 
+    // electron only
     showFileAction(path) {
         var templates = [
             {
@@ -788,79 +802,6 @@ export default class ChatContent extends Component {
         return popMenu(templates, message, menuId);
     }
 
-    showMenu() {
-        var user = this.props.user;
-        let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
-        var templates = [
-            {
-                label: '全屏模式/正常模式',
-                click: () => {
-                    this.props.toggleConversation();
-                }
-            },
-            {
-                type: 'separator',
-            },
-            {
-                label: '清空会话消息',
-                click: () => {
-                    this.props.empty(this.props.conversation);
-                }
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: covnersationInfo.isTop ? '取消置顶' : '置顶',
-                click: () => {
-                    this.props.sticky(covnersationInfo);
-                }
-            },
-            {
-                label: '删除会话',
-                click: () => {
-                    this.props.removeChat(this.props.conversation);
-                }
-            },
-        ];
-
-        popMenu(templates);
-    }
-
-    handleScroll(e) {
-        hideMenu();
-        var tips = this.refs.tips;
-        var viewport = e.target;
-        var unread = viewport.querySelectorAll(`.${classes.message}.unread`);
-        var rect = viewport.getBoundingClientRect();
-        var counter = 0;
-
-        const offset = 100 // 100 px before the request
-        if (viewport.scrollTop < offset) {
-            this.props.loadOldMessages();
-        }
-
-        // if (viewport.clientHeight + viewport.scrollTop === viewport.scrollHeight) {
-        //     wfc.clearConversationUnreadStatus(this.props.conversation);
-        //     wfc.eventEmitter.emit(EventType.ConversationInfoUpdate, this.props.conversation);
-        // }
-
-        Array.from(unread).map(e => {
-            if (e.getBoundingClientRect().top > rect.bottom) {
-                counter += 1;
-            } else {
-                e.classList.remove('unread');
-            }
-        });
-
-        if (counter) {
-            tips.innerHTML = `You has ${counter} unread messages.`;
-            tips.classList.add(classes.show);
-        } else {
-            tips.classList.remove(classes.show);
-        }
-    }
-
     componentWillMount() {
         console.log('componentWillMount');
         wfc.eventEmitter.on(EventType.UserInfoUpdate, this.onUserInfoUpdate);
@@ -928,10 +869,6 @@ export default class ChatContent extends Component {
     render() {
         var { loading, showConversation, messages, conversation, target } = this.props;
 
-        var signature = '点击查看群成员';
-        if (target instanceof UserInfo) {
-            signature = '';
-        }
 
         // maybe userName, groupName, ChannelName or ChatRoomName
         let title = this.title();
@@ -943,7 +880,7 @@ export default class ChatContent extends Component {
                 })}>
                 <UserCard showCard={this.state.isShowUserCard}
                     user={this.state.user} config={this.state.config} isCurrentUser={!this.state.isMyFriend}
-                    hideCard={() => this.hideUserCard(false)} ></UserCard>
+                    hideCard={() => this.hideUserCard(false)} />
                 {
                     conversation ? (
                         <div>
@@ -957,17 +894,13 @@ export default class ChatContent extends Component {
                                 </div>
 
                                 {
-                                    isElectron() ? (
-                                        <span
-                                            className={classes.signature}
-                                            // dangerouslySetInnerHTML={{__html: signature || '...'}}
-                                            onClick={e => this.showMembers(target)}
-                                            title={signature}><i className="icon-ion-android-more-vertical" />
-                                        </span>
-                                        // <i
-                                        //     className="icon-ion-android-more-vertical"
-                                        //     onClick={() => this.showMenu()}/>
-                                    ) : ''
+                                    <span
+                                        className={classes.signature}
+                                        // dangerouslySetInnerHTML={{__html: signature || '...'}}
+                                        onClick={e => this.showMembers(target)}
+                                        >
+                                        <i className="icon-ion-android-more-vertical" />
+                                    </span>
                                 }
 
                             </header>

@@ -38,9 +38,6 @@ export default class ConversationItem extends Component {
                 }
             },
             {
-                type: 'separator'
-            },
-            {
                 label: conversationInfo.isTop ? 'Unsticky' : 'Sticky on Top',
                 click: () => {
                     this.props.sticky(conversationInfo);

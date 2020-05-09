@@ -11,7 +11,6 @@ import clazz from 'classname';
 
 import Config from '../../../config';
 import UserCard from '../../components/userCard';
-import { isElectron } from '../../../platform';
 import UserInfo from '../../../wfc/model/userInfo';
 import ConversationInfo from '../../../wfc/model/conversationInfo';
 
@@ -259,7 +258,7 @@ export default class Members extends Component {
     }
     componentDidUpdate(prevProps, prevState) {
         let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
-        if (covnersationInfo.isTop !== this.state.isTop && !this.props.show) {
+        if (covnersationInfo && covnersationInfo.isTop !== this.state.isTop && !this.props.show) {
             this.setState({
                 isTop: covnersationInfo.isTop
             });
@@ -412,7 +411,6 @@ export default class Members extends Component {
 
                 }
                 {
-                    isElectron() && (
                         <div className={classes.btns}>
                             {isUserInfo && (<div>
                                 <div className={classes.editbtn}> 群名称 <br />
@@ -452,11 +450,11 @@ export default class Members extends Component {
                                 onClick={() => { this.noDisturbing(); }}><span> </span></button></div>
                         </div>
 
-                    )}
+                    }
 
 
                 {
-                    isElectron() && isUserInfo && (<div className={classes.deleteBtn} onClick={() => { this.deleteBtn(); }}> 删除并退出</div>)
+                    isUserInfo && (<div className={classes.deleteBtn} onClick={() => { this.deleteBtn(); }}> 删除并退出</div>)
                 }
             </div>
         );
