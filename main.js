@@ -36,6 +36,7 @@ let forceQuit = false;
 let downloading = false;
 let mainWindow;
 let tray;
+let downloadFileMap = new Map()
 let settings = {};
 let isFullScreen = false;
 let isWin = process.platform === 'win32';
@@ -437,8 +438,6 @@ function updateTray(unread = 0) {
     // Update unread mesage count
     // trayMenu[0].label = `你有 ${unread} 条信息`;
 
-    console.log('__dirname', __dirname);
-
     if (settings.showOnTray) {
         if (tray
             && updateTray.lastUnread === unread) {
@@ -585,6 +584,39 @@ const createMainWindow = () => {
             mainWindow.hide();
         }
     });
+
+    mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
+        // 设置保存路径,使Electron不提示保存对话框。
+        // item.setSavePath('/tmp/save.pdf')
+
+        item.on('updated', (event, state) => {
+            if (state === 'interrupted') {
+                console.log('Download is interrupted but can be resumed')
+            } else if (state === 'progressing') {
+                if (item.isPaused()) {
+                    console.log('Download is paused')
+                } else {
+                    console.log(`Received bytes: ${item.getReceivedBytes()}, ${item.getTotalBytes()}`)
+                    let messageId = downloadFileMap.get(item.getURL())
+                    mainWindow.webContents.send('file-download-progress', {
+                        messageId : messageId,
+                        receivedBytes : item.getReceivedBytes(),
+                        totalBytes :  item.getTotalBytes()}
+                    );
+                }
+            }
+        })
+        item.once('done', (event, state) => {
+            let messageId = downloadFileMap.get(item.getURL())
+            if (state === 'completed') {
+                console.log('Download successfully')
+                mainWindow.webContents.send('file-downloaded', {messageId : messageId, filePath: item.getSavePath()});
+            } else {
+                console.log(`Download failed: ${state}`)
+            }
+            downloadFileMap.delete(item.getURL());
+        })
+    })
 
     ipcMain.on('voip-message', (event, args) => {
         // console.log('main voip-message event', args);
@@ -734,7 +766,11 @@ const createMainWindow = () => {
     });
 
     ipcMain.on('file-download', async (event, args) => {
-        var filename = args.filename;
+        var filename = args.remotePath;
+        var messageId = args.messageId;
+        downloadFileMap.set(filename, messageId);
+
+        mainWindow.webContents.loadURL(filename)
 
         // // TODO bug here
         // fs.exists(filename, (exists) => {
@@ -748,22 +784,22 @@ const createMainWindow = () => {
         //     event.returnValue = filename;
         // });
 
-        dialog.showSaveDialog({defaultPath: filename,}, (fileName) => {
-            if (fileName === undefined) {
-                console.log("You didn't save the file");
-                event.returnValue = '';
-                return;
-            }
-
-            let content = args.raw.replace(/^data:image\/png;base64,/, '');
-            // fileName is a string that contains the path and filename created in the save file dialog.
-            fs.writeFileSync(fileName, content, 'base64', (err) => {
-                if (err) {
-                    console.log("An error ocurred creating the file " + err.message)
-                }
-            });
-            event.returnValue = fileName;
-        });
+        // dialog.showSaveDialog({defaultPath: filename,}, (fileName) => {
+        //     if (fileName === undefined) {
+        //         console.log("You didn't save the file");
+        //         event.returnValue = '';
+        //         return;
+        //     }
+        //
+        //     let content = args.raw.replace(/^data:image\/png;base64,/, '');
+        //     // fileName is a string that contains the path and filename created in the save file dialog.
+        //     fs.writeFileSync(fileName, content, 'base64', (err) => {
+        //         if (err) {
+        //             console.log("An error ocurred creating the file " + err.message)
+        //         }
+        //     });
+        //     event.returnValue = fileName;
+        // });
     });
 
     ipcMain.on('open-file', async (event, filename) => {
