@@ -17,7 +17,7 @@
     "copy-linux": "node scripts/del.js ./marswrapper.node && node scripts/copy-proto.js ./proto_addon/marswrapper.linux.node ./",
     "package-win": "npm run copy-win && npm run build && node scripts/del.js release && electron-builder --win --x64 --projectDir ./dist -p never",
     "package-win32": "npm run copy-win32 && npm run build && node scripts/del.js release && electron-builder --win --ia32 --projectDir ./dist -p never",
-    "package-mac": "npm run copy-mac && npm run build && node scripts/del.js release && electron-builder --mac --projectDir ./dist -p never",
+    "package-mac": "npm run copy-mac && npm run build && node scripts/del.js release && export CSC_IDENTITY_AUTO_DISCOVERY=false && electron-builder --mac --projectDir ./dist -p never",
     "package-linux": "npm run copy-linux && npm run build && node scripts/del.js release && electron-builder --linux --projectDir ./dist -p never",
     "hot-server": "cross-env NODE_ENV=development node -r babel-register scripts/dev.js",
     "start-hot": "cross-env HOT=1 NODE_ENV=development ./node_modules/.bin/electron --remote-debugging-port=9222 -r babel-register -r babel-polyfill ./main",
