@@ -82,6 +82,16 @@ export default class App extends Component {
             stores.chat.toggleConversation(true);
         });
 
+        ipcRenderer.on('file-downloaded', (event, msg) => {
+            console.log('file-downloaded', msg);
+            stores.chat.updateFileMessageContent(msg.messageId, msg.filePath);
+        });
+
+        ipcRenderer.on('file-download-progress', (event, msg) => {
+            console.log('file-download-progress', msg);
+            stores.chat.updateFileMessageDownloadProgress(msg.messageId, msg.filePath);
+        });
+
         // Insert the qq emoji
         ipcRenderer.on('show-emoji', () => {
             if (this.canisend()) {
