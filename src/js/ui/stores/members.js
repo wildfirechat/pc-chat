@@ -5,7 +5,7 @@ import axios from 'axios';
 
 import helper from 'utils/helper';
 import GroupInfo from '../../wfc/model/groupInfo';
-import UserInfo from '../../wfc/model/UserInfo';
+import UserInfo from '../../wfc/model/userInfo';
 import wfc from '../../wfc/client/wfc';
 import Config from '../../config';
 

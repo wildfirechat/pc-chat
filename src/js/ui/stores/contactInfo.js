@@ -4,7 +4,7 @@ import wfc from '../../wfc/client/wfc';
 import storage from 'utils/storage';
 
 import GroupInfo from '../../wfc/model/groupInfo';
-import UserInfo from '../../wfc/model/UserInfo';
+import UserInfo from '../../wfc/model/userInfo';
 
 const isArray = (arr) => {
     return Object.prototype.toString.call(arr) === '[object Array]';
