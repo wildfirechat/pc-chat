@@ -5,5 +5,7 @@ export default class MessageContentMediaType {
     static Video = 3;
     static File = 4;
     static Portrait = 5;
-    static Fvaorite = 6;
+    static Favorite = 6;
+    static Sticker = 7;
+    static Moments = 8;
 }

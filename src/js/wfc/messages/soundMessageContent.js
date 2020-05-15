@@ -4,7 +4,7 @@ import MessageContentType from './messageContentType';
 export default class SoundMessageContent extends MediaMessageContent {
     duration;
     constructor(fileOrLocalPath, remotePath, duration) {
-        super(MessageContentType.Voice, MessageContentMediaType.File, fileOrLocalPath, remotePath);
+        super(MessageContentType.Voice, MessageContentMediaType.Voice, fileOrLocalPath, remotePath);
         this.duration = duration;
     }
 
