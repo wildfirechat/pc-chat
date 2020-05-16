@@ -107,7 +107,6 @@ import MessageConfig from '../../../wfc/client/messageConfig';
     setFavGroup: wfc.setFavGroup,
     slient: async (info) => {
         stores.sessions.slient(info, (e) => {
-            console.warn('>>>>>>>>>>>>>', e);
             stores.chat.changeConversationInfo(stores.chat.conversation);
         });
     }
@@ -400,7 +399,7 @@ export default class Members extends Component {
                                     <div
                                         className={classes.cover}
                                         style={{
-                                            backgroundImage: `url(${target.pallet})`,
+                                            backgroundImage: `url(${target.pallet ||target.portrait})`,
                                         }} />
                                     <span
                                         className={classes.username}
