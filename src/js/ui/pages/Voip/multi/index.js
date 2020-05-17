@@ -103,7 +103,7 @@ export default class Voip extends Component {
             this.timer = setInterval(this.onUpdateTime, 1000);
         }
 
-        console.log(this.duration);
+        // console.log(this.duration);
     };
 
     checkedIds = new Set();
@@ -475,7 +475,7 @@ export default class Voip extends Component {
 
     renderVideo() {
         let renderFn;
-        console.log('render video ', this.status);
+        // console.log('render video ', this.status);
         switch (this.status) {
             case CallState.STATUS_IDLE:
                 renderFn = this.renderIdle;

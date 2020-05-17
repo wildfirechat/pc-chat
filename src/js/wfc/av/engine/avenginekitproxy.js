@@ -109,7 +109,7 @@ export class AvEngineKitProxy {
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_MUTE_VIDEO
             ) {
-                console.log("receive voip message", msg);
+                console.log("receive voip message", msg.messageContent.type, msg.messageUid.toString(), msg);
                 if(msg.direction === 0
                     && content.type !== MessageContentType.VOIP_CONTENT_TYPE_END
                     && content.type !== MessageContentType.VOIP_CONTENT_TYPE_ACCEPT
@@ -223,6 +223,10 @@ export class AvEngineKitProxy {
     };
 
     startCall(conversation, audioOnly, participants) {
+        if(!this.isSupportVoip){
+            console.log('not support voip');
+            return;
+        }
         let callId = conversation.target + Math.random();
         this.conversation = conversation;
         this.participants.push(...participants)
