@@ -539,7 +539,7 @@ const createMainWindow = () => {
         y: mainWindowState.y,
         minWidth: 400,
         minHeight: 400,
-        titleBarStyle: 'hiddenInset',
+        titleBarStyle: 'hidden',
         backgroundColor: 'none',
         // 以下两属性设置时会导致win不能正常unmaximize. electron bug
         // transparent: true,
