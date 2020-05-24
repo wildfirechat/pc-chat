@@ -37,6 +37,13 @@ export class WfcManager {
     }
 
     /**
+     * 获取host
+     */
+    getHost(){
+        return impl.getHost();
+    }
+
+    /**
      * 获取clientId，获取用户token时，一定要通过调用此方法获取clientId，否则会连接失败。
      * @returns {string} clientId
      */
@@ -44,6 +51,27 @@ export class WfcManager {
         return impl.getClientId();
     }
 
+    getEncodedClientId(){
+        return impl.getEncodedClientId();
+    }
+
+    /**
+     *
+     * @param {string} data 将要编码的数据
+     * @returns {string} 编码结果，base64格式
+     */
+    encodeData(data){
+        return impl.encodeData(data);
+    }
+
+    /**
+     *
+     * @param {string} encodedData 将要解码的数据，base64格式
+     * @returns {null | string} 解码之后的数据
+     */
+    decodeData(encodedData){
+        return impl.decodeData(encodedData);
+    }
     /**
      * 获取当前用户的id
      * @returns {string} 当前用户的id
@@ -915,6 +943,30 @@ export class WfcManager {
     }
 
     /**
+     * 获取会话的远程历史消息
+     * @param {Conversation} conversation 目标会话
+     * @param {number | Long} beforeUid 消息uid，表示拉取本条消息之前的消息
+     * @param {number} count
+     * @param {function (Message)} successCB
+     * @param failCB
+     */
+     loadRemoteConversationMessages(conversation, beforeUid, count, successCB, failCB) {
+        impl.loadRemoteMessages(conversation, beforeUid, count, successCB, failCB);
+    }
+
+    /**
+     * 根据会话线路，获取远程历史消息
+     * @param {number} line 会话线路
+     * @param {number | Long} beforeUid 消息uid，表示拉取本条消息之前的消息
+     * @param {number} count
+     * @param {function (Message)} successCB
+     * @param failCB
+     */
+    loadRemoteLineMessages(line, beforeUid, count, successCB, failCB){
+        impl.loadRemoteLineMessages(line, beforeUid, count, successCB, failCB)
+    }
+
+    /**
      * 获取消息
      * @param {number} messageId 消息id
      * @returns {null|Message}
@@ -1059,6 +1111,24 @@ export class WfcManager {
         impl.connect(userId, token);
     }
 
+
+    /**
+     *
+     * @param conversation
+     * @return {Map<string, Number>}
+     */
+    getConversationDelivery(conversation){
+        return impl.getConversationDelivery(conversation);
+    }
+
+    /**
+     *
+     * @param conversation
+     * @return {Map<string, Number>}
+     */
+    getConversationRead(conversation){
+        return impl.getConversationRead(conversation);
+    }
     _getStore() {
         return impl._getStore();
     }
