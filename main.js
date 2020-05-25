@@ -39,8 +39,9 @@ let tray;
 let downloadFileMap = new Map()
 let settings = {};
 let isFullScreen = false;
-let isWin = process.platform === 'win32';
 let isOsx = process.platform === 'darwin';
+let isWin = !isOsx;
+
 let isSuspend = false;
 let userData = app.getPath('userData');
 let imagesCacheDir = `${userData}/images`;
