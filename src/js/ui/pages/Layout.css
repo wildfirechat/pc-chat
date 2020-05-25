@@ -8,8 +8,8 @@
     filter: blur(0);
     transition: .2s;
     position: absolute;
-    width: calc(100vw - 80px);
-    left: 80px;
+    width: calc(100vw - 68px);
+    left: 68px;
 
     &.blur {
         filter: blur(6px);
