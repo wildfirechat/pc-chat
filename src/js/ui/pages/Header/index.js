@@ -32,10 +32,10 @@ export default class Header extends Component {
     }
 
     render() {
-        var isWin = window.process && window.process.platform === 'win32';
+        var isWin = window.process && window.process.platform != 'darwin';
         return (
             <div className={classes.container}>
-                
+
                 {
                     isElectron() && (isWin) && (
                         <div>
