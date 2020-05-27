@@ -855,6 +855,15 @@ export class WfcManager {
     }
 
     /**
+     * 更新会话时间戳，如果会话不存在，则先创建会话
+     * @param {Conversation} conversation
+     * @param {number} timestamp
+     */
+    setConversationTimestamp(conversation, timestamp){
+        impl.setConversationTimestamp(conversation, timestamp);
+    }
+
+    /**
      * 获取未读消息数
      * @param {[number]} types 获取未读数时，包含哪些类型的会话，可选值参考{@link ConversationType}
      * @param {[number]} lines 获取未读数时，包含哪些会话线路，默认传[0]即可
