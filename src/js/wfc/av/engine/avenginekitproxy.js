@@ -7,6 +7,7 @@ import MessageConfig from "../../client/messageConfig";
 import CallByeMessageContent from "../messages/callByeMessageContent";
 import DetectRTC from 'detectrtc';
 import Config from "../../../config";
+import {numberValue} from '../../util/longUtil'
 
 const path = require('path');
 
@@ -98,7 +99,7 @@ export class AvEngineKitProxy {
         }
         let now = (new Date()).valueOf();
         let delta = wfc.getServerDeltaTime();
-        if ((msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && now - (msg.timestamp - delta) < 90 * 1000) {
+        if ((msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && now - (numberValue(msg.timestamp) - delta) < 90 * 1000) {
             let content = msg.messageContent;
             if (content.type === MessageContentType.VOIP_CONTENT_TYPE_START
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_END

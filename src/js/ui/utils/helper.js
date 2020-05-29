@@ -1,5 +1,6 @@
 import axios from 'axios';
 import MD5 from 'browser-md5-file';
+import {numberValue} from '../../wfc/util/longUtil'
 
 
 const CHATROOM_NOTIFY_CLOSE = 0;
@@ -325,7 +326,10 @@ const helper = {
      */
     timeFormat: (date) => {
         if (!date) return ''
-        let newtime
+        if((typeof date) === 'object'){
+            date = numberValue(date);
+        }
+        let newtime;
         let nowtime = new Date()
         // if (date.constructor !== Date) {
         //     date = new Date(date.replace(/\-/g, '/')) // 解决ios日期显示NAN问题

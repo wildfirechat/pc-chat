@@ -189,20 +189,20 @@ export default class Members extends Component {
                 WildFireIM.cache[this.props.target.target] = disName;
             });
         } else {
-            axios.defaults.baseURL = Config.APP_SERVER;
-            this.getGroupNotice(val);
+            // axios.defaults.baseURL = Config.APP_SERVER;
+            this.updateGroupNotice(val);
         }
 
     }
     deleteBtn() {
         this.props.quitGroup();
     }
-    async getGroupNotice(text) {
+    async updateGroupNotice(text) {
         var response = await axios.post('/put_group_announcement', {
             author: wfc.getUserId(),
             groupId: this.props.target.target,
             text: text
-        });
+        }, { withCredentials:true });
         if (response.data) {
             console.warn(response.data);
         }

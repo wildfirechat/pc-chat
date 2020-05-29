@@ -1,7 +1,7 @@
 import { isElectron } from './platform'
 export default class Config {
     // 是否支持多人音视频通话
-    static ENABLE_MULTI_VOIP_CALL = false;
+    static ENABLE_MULTI_VOIP_CALL = true;
     // 是否支持1对1音视频通话
     static ENABLE_SINGLE_VOIP_CALL = true;
     // 打开voip调试模式时，voip window不会自动关闭，方便分析控制台日志，需要手动关闭。

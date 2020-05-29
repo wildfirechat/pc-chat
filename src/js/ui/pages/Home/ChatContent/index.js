@@ -26,11 +26,11 @@ import ConversationType from '../../../../wfc/model/conversationType';
 
 import GroupType from '../../../../wfc/model/groupType';
 import GroupMemberType from '../../../../wfc/model/groupMemberType';
-import FileSaver from 'file-saver';
 import InfiniteScroll from 'react-infinite-scroller';
 import nodePath from 'path';
 
 import UserCard from '../../../components/userCard';
+import {numberValue}  from '../../../../wfc/util/longUtil'
 
 @inject(stores => ({
     sticky: stores.sessions.sticky,
@@ -423,7 +423,7 @@ export default class ChatContent extends Component {
             //     return false;
             // }
             // console.warn("message", message);
-            var time = new Date(message.timestamp);
+            var time = new Date(numberValue(message.timestamp));
             var timem = +new Date(time.getFullYear() + '/' + (time.getMonth() + 1) + '/' + (time.getDate()) + ' ' + (time.getHours()) + ':' + (time.getMinutes()))
             var isShwoTime = !!chatch[timem];
             if (!isShwoTime) {
