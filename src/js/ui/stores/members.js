@@ -30,7 +30,7 @@ class Members {
             var response = await axios.post('/get_group_announcement', {
                 token: WildFireIM.config.token,
                 groupId: target.target
-            });
+            }, { withCredentials :true });
             if (response.data && response.data.result) {
                 self.groupNotice = response.data.result.text;
             } else {
@@ -43,7 +43,7 @@ class Members {
                 userIds.push(m.memberId);
             });
             users = wfc.getUserInfos(userIds, target);
-            axios.defaults.baseURL = Config.APP_SERVER;
+            // axios.defaults.baseURL = Config.APP_SERVER;
             getGroupNotice();
             self.isFavGroup = wfc.isFavGroup(target.target);
             self.showUserName = wfc.isHiddenGroupMemberName(target.target);

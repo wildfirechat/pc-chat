@@ -1,6 +1,7 @@
 import Conversation from "./conversation";
 import Message from "../messages/message";
 import wfc from '../client/wfc'
+import {eq} from '../util/longUtil'
 
 import ConversationType from "./conversationType";
 
@@ -83,7 +84,7 @@ export default class ConversationInfo {
         }
 
         // 其他的应当都会反应在timestamp上
-        return info1.timestamp === info2.timestamp && info1.draft === info2.draft;
+        return eq(info1.timestamp, info2.timestamp) && info1.draft === info2.draft;
 
     }
 }
