@@ -27,7 +27,7 @@ export default class Login extends Component {
         axios.defaults.baseURL = Config.APP_SERVER;
 
         this.getCode();
-        this.keepLogin();
+        // this.keepLogin();
         this.refreshQrCode();
     }
 
@@ -64,14 +64,15 @@ export default class Login extends Component {
             let session = Object.assign(new PCSession(), response.data.result);
             this.token = session.token;
             this.qrCode = jrQRCode.getQrBase64(Config.QR_CODE_PREFIX_PC_SESSION + session.token);
+            this.login();
         }
     }
 
-    async keepLogin() {
-        this.loginTimer = setInterval(() => {
-            this.login();
-        }, 1 * 1000);
-    }
+    // async keepLogin() {
+    //     this.loginTimer = setInterval(() => {
+    //         this.login();
+    //     }, 1 * 1000);
+    // }
 
     async refreshQrCode() {
         this.qrCodeTimer = setInterval(() => {
