@@ -9,9 +9,11 @@ import Conversation from '../../../../wfc/model/conversation';
 import ConversationType from '../../../../wfc/model/conversationType';
 import UserInfo from '../../../../wfc/model/userInfo';
 import GroupInfo from '../../../../wfc/model/groupInfo';
+import stores from "../../../stores";
 import wfc from '../../../../wfc/client/wfc'
 
 import classes from './userStyle.css';
+import EventType from "../../../../wfc/client/wfcEvent";
 
 @inject(stores => ({
 
@@ -78,6 +80,19 @@ class UserContactInfo extends Component {
         },(e)=>{
             console.warn('修改备注失败！')
         })
+    }
+    onUserInfosUpdate = (userInfos) =>{
+        userInfos.forEach(userInfo => {
+            stores.contactInfo.onUserInfoUpdate(userInfo)
+        })
+    }
+
+    componentWillMount() {
+        wfc.eventEmitter.on(EventType.UserInfosUpdate, this.onUserInfosUpdate)
+    }
+
+    componentWillUnmount() {
+        wfc.eventEmitter.removeListener(EventType.UserInfosUpdate, this.onUserInfosUpdate)
     }
     render() {
         var user = this.props.user;

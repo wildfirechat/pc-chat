@@ -7,6 +7,7 @@ import classes from './style.css';
 import EventType from '../../../../wfc/client/wfcEvent';
 import stores from '../../../stores';
 import wfc from '../../../../wfc/client/wfc';
+import connectionStatus from "../../../../wfc/client/connectionStatus";
 
 @inject(stores => ({
     filter: stores.contacts.filter,
@@ -87,24 +88,37 @@ export default class Contacts extends Component {
         return e.portrait;
     }
 
-    onContactUpdate = () => {
+    onContactUpdate = (friendIds) => {
         this.props.getContacts();
     };
+    onUserInfosUpdate = (userInfos) =>{
+        this.props.getContacts();
+    }
+
+    onGroupInfosUpdate = (groupInfos) =>{
+        let groupList = this.props.getMyGroupList();
+        this.setState({
+            groupList: groupList
+        });
+    }
 
     componentWillMount() {
         this.props.getContacts();
         // this.props.filter();
         this.props.event.on(EventType.FriendListUpdate, this.onContactUpdate);
+        this.props.event.on(EventType.UserInfosUpdate, this.onUserInfosUpdate);
+        this.props.event.on(EventType.GroupInfosUpdate, this.onGroupInfosUpdate)
         let groupList = this.props.getMyGroupList();
         this.setState({
             groupList: groupList
         });
 
-        // console.warn('>>>>>>>>>>>>>>>>>>>>', this.state.groupList);
     }
 
     componentWillUnmount() {
         this.props.event.removeListener(EventType.FriendListUpdate, this.onContactUpdate);
+        this.props.event.removeListener(EventType.UserInfosUpdate, this.onUserInfosUpdate);
+        this.props.event.removeListener(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
     }
 
     filter(text = '') {
@@ -151,7 +165,7 @@ export default class Contacts extends Component {
         });
     }
     render() {
-        var { query, result } = this.props.filtered;
+        var { query, result, count } = this.props.filtered;
         var closeIcon = <svg t="1586664960550" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1668" width="32" height="32"><path d="M332.16 883.84a40.96 40.96 0 0 0 58.24 0l338.56-343.04a40.96 40.96 0 0 0 0-58.24L390.4 140.16a40.96 40.96 0 0 0-58.24 58.24L640 512l-307.84 314.24a40.96 40.96 0 0 0 0 57.6z" fill="#999999" p-id="1669"></path></svg>;
 
         var expandIcon = <svg t="1586664992872" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2490" width="32" height="32"><path d="M140.16 332.16a40.96 40.96 0 0 0 0 58.24l343.04 338.56a40.96 40.96 0 0 0 58.24 0l342.4-338.56a40.96 40.96 0 1 0-58.24-58.24L512 640 197.76 332.16a40.96 40.96 0 0 0-57.6 0z" fill="#999999" p-id="2491"></path></svg>;
@@ -223,7 +237,7 @@ export default class Contacts extends Component {
                             <div className={classes.userList}>
                                 <div className={classes.userListTitle} onClick={() => { this.userExpandEvent(); }}>
                                     {this.state.userExpand ? expandIcon : closeIcon}
-                                    <span>联系人</span><i>{result.length}</i>
+                                    <span>联系人</span><i>{count}</i>
                                 </div>
                                 {this.state.userExpand && this.renderColumns(result, 0, query)}
                             </div>

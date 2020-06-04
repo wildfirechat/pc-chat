@@ -28,9 +28,11 @@ class ContactInfo {
             var userIds = [];
             // userIds.push();
             let members = wfc.getGroupMembers(user.target);
+            if(members){
             members.forEach(m => {
                 userIds.push(m.memberId);
             });
+            }
             self.users = wfc.getUserInfos(userIds, user);
         }
     }
@@ -41,7 +43,19 @@ class ContactInfo {
         self.groupList = groupList;
     };
 
-};
+    @action onUserInfoUpdate(user){
+        if(self.user && self.user instanceof UserInfo && self.user.uid === user.uid){
+            self.user = user;
+        }
+    }
+
+    @action onGroupInfoUpdate(group){
+        if(self.user && self.user instanceof GroupInfo && self.user.target === group.target){
+            self.user = group;
+        }
+    }
+
+}
 
 const self = new ContactInfo();
 export default self;
