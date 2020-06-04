@@ -13,6 +13,11 @@ class OverallUserCard {
         self.config = config;
         self.isMyFriend = isMyFriend;
     }
+    @action onUserInfoUpdate(user){
+        if(self.user && self.user.uid === user.uid){
+            self.user = user;
+        }
+    }
 }
 
 const self = new OverallUserCard();

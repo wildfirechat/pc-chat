@@ -21,6 +21,7 @@ class Contacts {
     @observable filtered = {
         query: '',
         result: [],
+        count:0
     };
 
     @action group(list, showall = false) {
@@ -55,7 +56,7 @@ class Contacts {
             });
         }
 
-        sorted.sort((a, b) => a.prefix.charCodeAt() - b.prefix.charCodeAt());
+        sorted.sort((a, b) => a.prefix.charCodeAt(0) - b.prefix.charCodeAt(0));
         return sorted;
     }
 
@@ -102,6 +103,7 @@ class Contacts {
         console.log('contacts lenght', self.memberList.length);
         self.loading = false;
         self.filtered.result = self.group(self.memberList, true);
+        self.filtered.count = self.memberList.length;
 
         return (window.list = self.memberList);
     }
@@ -128,6 +130,7 @@ class Contacts {
         self.filtered = {
             query: text,
             result: list.length ? self.group(list, showall) : [],
+            count: list.length
         };
     }
 

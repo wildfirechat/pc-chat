@@ -31,6 +31,7 @@ import nodePath from 'path';
 
 import UserCard from '../../../components/userCard';
 import {numberValue}  from '../../../../wfc/util/longUtil'
+import stores from "../../../stores";
 
 @inject(stores => ({
     sticky: stores.sessions.sticky,
@@ -144,6 +145,7 @@ export default class ChatContent extends Component {
         setTimeout(()=>{
             this.props.OverallUserCard.toggle(true, user, { top: top, left: left }, isMyFriend)
         },200)
+        wfc.getUserInfo(user.uid, true);
         ev.preventDefault();
         ev.stopPropagation();
         return false;
@@ -804,8 +806,8 @@ export default class ChatContent extends Component {
 
     componentWillMount() {
         console.log('componentWillMount');
-        wfc.eventEmitter.on(EventType.UserInfoUpdate, this.onUserInfoUpdate);
-        wfc.eventEmitter.on(EventType.GroupInfoUpdate, this.onGroupInfoUpdate);
+        wfc.eventEmitter.on(EventType.UserInfosUpdate, this.onUserInfosUpdate);
+        wfc.eventEmitter.on(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
     }
 
     componentWillUnmount() {
@@ -813,8 +815,8 @@ export default class ChatContent extends Component {
         !this.props.rememberConversation && this.props.reset();
         this.stopAudio();
 
-        wfc.eventEmitter.removeListener(EventType.UserInfoUpdate, this.onUserInfoUpdate);
-        wfc.eventEmitter.removeListener(EventType.GroupInfoUpdate, this.onGroupInfoUpdate);
+        wfc.eventEmitter.removeListener(EventType.UserInfosUpdate, this.onUserInfosUpdate);
+        wfc.eventEmitter.removeListener(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
     }
 
     stopAudio() {
@@ -976,16 +978,17 @@ export default class ChatContent extends Component {
         this.props.loadOldMessages();
     }
 
-    onUserInfoUpdate = (userId) => {
-        this.props.messages.map((c, index) => {
-            if (c.conversation.conversationType === ConversationType.Single && c.conversation.target === userId) {
-                // Todo update user info
+    onUserInfosUpdate = (userInfos) => {
+        for (const userInfo of userInfos) {
+            this.props.OverallUserCard.onUserInfoUpdate(userInfo)
             }
-        });
+        //TODO optimize
+        this.forceUpdate();
     }
 
-    onGroupInfoUpdate = (groupId) => {
-        // Todo update group info
+    onGroupInfosUpdate = (groupInfos) => {
+        // TODO optimize
+        this.forceUpdate();
     }
 
     zeroPad(nr, base) {
