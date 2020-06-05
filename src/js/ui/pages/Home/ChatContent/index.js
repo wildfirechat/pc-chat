@@ -30,8 +30,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import nodePath from 'path';
 
 import UserCard from '../../../components/userCard';
-import {numberValue}  from '../../../../wfc/util/longUtil'
-import stores from "../../../stores";
+import {gt, gte, numberValue} from '../../../../wfc/util/longUtil'
 
 @inject(stores => ({
     sticky: stores.sessions.sticky,
@@ -121,6 +120,8 @@ export default class ChatContent extends Component {
     lastBottomMessage;
     isAudioPlaying = false;
     arm;
+    deliveries;
+    readEntries;
     state = {
         isShowMembers: false,
         isShowUserCard: false,
@@ -509,11 +510,20 @@ export default class ChatContent extends Component {
     messageContentLayout(message) {
         if (isElectron()) {
             return (
-                <div className={classes.content} data-message-id={message.messageId}
-                    onClick={e => this.handleClick(e)}>
-                    <p
-                        onContextMenu={e => this.showMessageAction(message)}
-                        dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
+                <div>
+                    <div className={classes.content} data-message-id={message.messageId}
+                        onClick={e => this.handleClick(e)}>
+                        <p
+                            onContextMenu={e => this.showMessageAction(message)}
+                            dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
+                    </div>
+                    {
+                        message.direction === 0 ?
+                            <p style={{
+                                fontSize:'10px',
+                                color:'#a9a9a9'
+                            }}>{this.formatReceiptMessage(message.timestamp)}</p> : ''
+                    }
                 </div>
             );
         } else {
@@ -529,6 +539,13 @@ export default class ChatContent extends Component {
                     </ContextMenuTrigger>
                     {
                         this.showMessageAction(message, `menu_item_${message.messageId}`)
+                    }
+                    {
+                        message.direction === 0 ?
+                        <p style={{
+                            fontSize:'10px',
+                            color:'#a9a9a9'
+                        }}>{this.formatReceiptMessage(message.timestamp)}</p> : ''
                     }
                 </div>
             );
@@ -808,6 +825,8 @@ export default class ChatContent extends Component {
         console.log('componentWillMount');
         wfc.eventEmitter.on(EventType.UserInfosUpdate, this.onUserInfosUpdate);
         wfc.eventEmitter.on(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
+        wfc.eventEmitter.on(EventType.MessageReceived, this.onMessageDelivered)
+        wfc.eventEmitter.on(EventType.MessageRead, this.onMessageRead)
     }
 
     componentWillUnmount() {
@@ -817,6 +836,8 @@ export default class ChatContent extends Component {
 
         wfc.eventEmitter.removeListener(EventType.UserInfosUpdate, this.onUserInfosUpdate);
         wfc.eventEmitter.removeListener(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
+        wfc.eventEmitter.removeListener(EventType.MessageReceived, this.onMessageDelivered)
+        wfc.eventEmitter.removeListener(EventType.MessageRead, this.onMessageRead)
     }
 
     stopAudio() {
@@ -869,6 +890,11 @@ export default class ChatContent extends Component {
         // }
     }
     render() {
+        if(this.props.conversation){
+            this.deliveries = wfc.getConversationDelivery(this.props.conversation);
+            this.readEntries = wfc.getConversationRead(this.props.conversation);
+        }
+
         var { loading, showConversation, messages, conversation, target } = this.props;
 
 
@@ -989,6 +1015,78 @@ export default class ChatContent extends Component {
     onGroupInfosUpdate = (groupInfos) => {
         // TODO optimize
         this.forceUpdate();
+    }
+    onMessageDelivered = (deliveries) => {
+        if(!this.props.conversation){
+            return ;
+        }
+        //single
+        if(this.props.conversation.type === 0){
+            let recvDt = deliveries.get(this.props.conversation.target);
+            if(recvDt) {
+                this.forceUpdate();
+            }
+        }else if(this.props.conversation.type === 1){
+            // group
+            // TODO optimize
+            this.forceUpdate();
+        }
+    }
+
+    onMessageRead = (readEntries) => {
+        if(!this.props.conversation){
+            return ;
+        }
+        //single
+        if(this.props.conversation.type === 0){
+            for (const readEntry of readEntries) {
+                if(readEntry.userId === this.props.conversation.target){
+                    this.forceUpdate();
+                }
+            }
+        }else if(this.props.conversation.type === 1){
+            // group
+            // TODO optimize
+            this.forceUpdate();
+        }
+    }
+
+    formatReceiptMessage(timestamp){
+        let receiptDesc = '';
+        if(this.props.conversation.type === 0){
+            let recvDt = this.deliveries ? this.deliveries.get(this.props.conversation.target) : 0;
+            let readDt = this.readEntries ? this.readEntries.get(this.props.conversation.target) : 0;
+            if(readDt && gte(readDt, timestamp)){
+                receiptDesc = '已读';
+            }else if(recvDt && gte(recvDt, timestamp)){
+                receiptDesc = '未读'
+            }else {
+                receiptDesc = '未送达'
+            }
+        }else if(this.props.conversation.type === 1){
+            let groupMembers = wfc.getGroupMemberIds(this.props.conversation.target, false);
+            if(!groupMembers || groupMembers.length === 0){
+                receiptDesc = '';
+            }else {
+                let memberCount = groupMembers.length;
+                let recvCount = 0;
+                let readCount = 0;
+
+                groupMembers.forEach(memberId => {
+                    let recvDt = this.deliveries ? this.deliveries.get(memberId) : 0;
+                    let readDt = this.readEntries ? this.readEntries.get(memberId) : 0;
+                    if(readDt && gte(readDt, timestamp)){
+                        readCount ++;
+                        recvCount ++;
+                    }else if(recvDt && gte(recvDt, timestamp)){
+                        recvCount ++;
+                    }
+                });
+                receiptDesc = `已送达 ${recvCount}/${memberCount}，已读 ${readCount}/${memberCount}`
+            }
+        }
+
+        return receiptDesc;
     }
 
     zeroPad(nr, base) {
