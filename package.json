@@ -1,6 +1,6 @@
 {
   "name": "wildfireChat",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "WildfireChat client built with React, MobX and Electron.",
   "main": "main.js",
   "scripts": {
