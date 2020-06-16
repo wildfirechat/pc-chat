@@ -576,13 +576,14 @@ export class WfcManager {
     }
 
     /**
-     * 修改个人信息
-     * @param {[ModifyMyInfoEntry]} modifyMyInfoEntries 需要修改的信息列表
-     * @param successCB
-     * @param failCB
+     * 修改个人信息，一次只能修改一个信息
+     * @param {number} type 修改类型，可选类型参考{@link ModifyMyInfoType}
+     * @param {string} value 修改值
+     * @param  {function ()} successCB
+     * @param {function (errorCode)} failCB
      */
-    modifyMyInfo(modifyMyInfoEntries, successCB, failCB) {
-        impl.modifyMyInfo(modifyMyInfoEntries, successCB, failCB);
+    modifyMyInfo(type, value, successCB, failCB) {
+        impl.modifyMyInfo(type, value, successCB, failCB);
     }
 
     /**
