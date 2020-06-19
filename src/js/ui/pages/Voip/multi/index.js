@@ -96,14 +96,14 @@ export default class Voip extends Component {
     }
 
     @action onUpdateTime = () => {
-        let elapsedTime = window.performance.now() - this.session.startTime;
+        let elapsedTime = new Date().getTime() - this.session.startTime;
         elapsedTime /= 1000;
         this.duration = parseInt(elapsedTime / 60) + ':' + parseInt(elapsedTime % 60);
         if (!this.timer) {
             this.timer = setInterval(this.onUpdateTime, 1000);
         }
 
-        // console.log(this.duration);
+        console.log(this.duration);
     };
 
     checkedIds = new Set();
@@ -475,7 +475,7 @@ export default class Voip extends Component {
 
     renderVideo() {
         let renderFn;
-        // console.log('render video ', this.status);
+        console.log('render video ', this.status);
         switch (this.status) {
             case CallState.STATUS_IDLE:
                 renderFn = this.renderIdle;

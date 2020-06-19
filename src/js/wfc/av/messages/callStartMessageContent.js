@@ -9,6 +9,7 @@ export default class CallStartMessageContent extends MessageContent {
   endTime;
   status;
   audioOnly;
+  pin;
 
   constructor(mentionedType = 0, mentionedTargets = []) {
       super(MessageContentType.VOIP_CONTENT_TYPE_START, mentionedType, mentionedTargets);
@@ -32,7 +33,8 @@ export default class CallStartMessageContent extends MessageContent {
           s: this.status,
           a: this.audioOnly ? 1 : 0,
           ts: this.targetIds,
-          t:this.targetIds[0]
+          t:this.targetIds[0],
+          p:this.pin
       };
       payload.binaryContent = wfc.utf8_to_b64(JSON.stringify(obj));
       return payload;
@@ -52,5 +54,6 @@ export default class CallStartMessageContent extends MessageContent {
       if(!this.targetIds){
           this.targetIds = [obj.t];
       }
+      this.pin = obj.p;
   }
 }

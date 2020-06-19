@@ -29,9 +29,11 @@ export class AvEngineKitProxy {
         });
         this.event = wfc.eventEmitter;
         this.event.on(EventType.ReceiveMessage, this.onReceiveMessage);
+        this.event.on(EventType.ConferenceEvent, this.onReceiveConferenceEvent)
 
         if (isElectron()) {
             ipcRenderer.on('voip-message', this.sendVoipListener);
+            ipcRenderer.on('conference-request', this.sendConferenceRequestListener);
             ipcRenderer.on('update-call-start-message', this.updateCallStartMessageContentListener)
         }
     }
@@ -47,6 +49,12 @@ export class AvEngineKitProxy {
         orgContent.status = content.status;
         orgContent.audioOnly = content.audioOnly;
         wfc.updateMessageContent(msg.messageId, orgContent);
+    }
+
+    sendConferenceRequestListener = (event, request) =>{
+        wfc.sendConferenceRequest(request.sessionId ? request.sessionId : 0, request.roomId, request.request, request.data, (errorCode, res) => {
+            this.emitToVoip('sendConferenceRequestResult', {error: errorCode, sendConferenceRequestId: request.sendConferenceRequestId, response: res})
+        });
     }
 
     sendVoipListener = (event, msg) => {
@@ -83,6 +91,9 @@ export class AvEngineKitProxy {
         });
     }
 
+    onReceiveConferenceEvent = (event) =>{
+        this.emitToVoip("conferenceEvent", event);
+    }
 
     onReceiveMessage = (msg) => {
         if (!this.isSupportVoip) {
@@ -228,7 +239,7 @@ export class AvEngineKitProxy {
             console.log('not support voip');
             return;
         }
-        let callId = conversation.target + Math.random();
+        let callId = conversation.target + Math.floor(Math.random() * 10000);
         this.conversation = conversation;
         this.participants.push(...participants)
         this.callId = callId;
@@ -280,7 +291,7 @@ export class AvEngineKitProxy {
             win.loadURL(path.join('file://', AppPath, 'src/index.html?' + type));
             win.show();
         } else {
-            let win = window.open(window.location.origin + '?' + type, 'target', 'width=360,height=640,left=200,top=200,toolbar=no,menubar=no,resizable=no,location=no, maximizable');
+            let win = window.open(window.location.origin + '?' + type, '_blank', 'width=360,height=640,left=200,top=200,toolbar=no,menubar=no,resizable=no,location=no, maximizable');
             if(!win){
                 console.log('can not open voip window');
                 return;
@@ -317,6 +328,7 @@ export class AvEngineKitProxy {
         if (!isElectron()) {
             this.events = new PostMessageEventEmitter(win, window.location.origin)
             this.events.on('voip-message', this.sendVoipListener)
+            this.events.on('conference-request', this.sendConferenceRequestListener);
             this.events.on('update-call-start-message', this.updateCallStartMessageContentListener)
         }
         if (this.queueEvents.length > 0) {
@@ -332,8 +344,10 @@ export class AvEngineKitProxy {
             // renderer
             events.forEach(e => ipcRenderer.removeAllListeners(e));
         } else {
+            if(this.events){
             this.events.stop();
             this.events = null;
+            }
         }
     }
 }
