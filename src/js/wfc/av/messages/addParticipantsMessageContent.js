@@ -12,6 +12,7 @@ class ParticipantStatus {
 export default class AddParticipantsMessageContent extends NotificationMessageContent {
     callId;
     initiator;
+    pin;
     participants;
     existParticipants;
     audioOnly;
@@ -32,6 +33,7 @@ export default class AddParticipantsMessageContent extends NotificationMessageCo
         let obj = {
             initiator: this.initiator,
             audioOnly: this.audioOnly ? 1 : 0,
+            pin: this.pin,
             participants: this.participants,
             existParticipants: this.existParticipants,
         };
@@ -47,6 +49,7 @@ export default class AddParticipantsMessageContent extends NotificationMessageCo
         let obj = JSON.parse(json);
         this.initiator = obj.initiator;
         this.audioOnly = obj.audioOnly;
+        this.pin = obj.pin;
         this.participants = obj.participants;
         this.existParticipants = obj.existParticipants;
     }

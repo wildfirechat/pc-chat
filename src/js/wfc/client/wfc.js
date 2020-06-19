@@ -1148,6 +1148,11 @@ export class WfcManager {
     getConversationRead(conversation){
         return impl.getConversationRead(conversation);
     }
+
+    sendConferenceRequest(sessionId, roomId, request, data, callback){
+        impl.sendConferenceRequest(sessionId, roomId, request, data, callback)
+    }
+
     _getStore() {
         return impl._getStore();
     }
