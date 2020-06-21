@@ -6,7 +6,7 @@ import classes from './style.css';
 import {observable, action} from 'mobx';
 import CallState from "../../../../wfc/av/engine/callState";
 import CallSessionCallback from "../../../../wfc/av/engine/CallSessionCallback";
-import avenginekit from "../../../../wfc/av/internal/engine.min";
+import avenginekit from "../../../../wfc/av/internal/avenginekitImpl";
 const systemPreferences  = require('electron').remote.systemPreferences
 
 @observer
