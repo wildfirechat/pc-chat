@@ -6,9 +6,10 @@ import classes from './style.css';
 import {action, observable} from 'mobx';
 import CallState from "../../../../wfc/av/engine/callState";
 import CallSessionCallback from "../../../../wfc/av/engine/CallSessionCallback";
-import avenginekit from "../../../../wfc/av/internal/engine.min";
+import avenginekit from "../../../../wfc/av/internal/avenginekitImpl";
 import Popup from "reactjs-popup";
 import Checkbox from "rc-checkbox";
+import {isElectron} from '../../../../platform'
 
 @observer
 export default class Voip extends Component {
@@ -37,6 +38,8 @@ export default class Voip extends Component {
     session;
 
     current = 0;
+    // desktop only
+    desktopSources = [];
 
     setupSessionCallback() {
         let sessionCallback = new CallSessionCallback();
@@ -211,36 +214,43 @@ export default class Voip extends Component {
                     <p>关闭/打开摄像头</p>
                 </div>
 
-                <div>
-                    <p style={{visibility: 'hidden'}}>holder</p>
-                    <img ref="tovoicebutton"
-                         src='assets/images/av_share.png'
-                         onClick={e => {
-                             if(this.session.isScreenSharing()){
-                                 this.session.stopScreenShare();
-                             }else {
-                                 let sources = this.session.getDesktopSources(['screen']);
-                                 if(sources){
-                                     // desktop
-                                     sources.then(ss =>{
-                                         console.log('desktop sources', ss)
-                                         this.session.startScreenShare(
-                                             {sourceId: ss[0].id,
-                                                 minWidth: 1280,
-                                                 maxWidth: 1280,
-                                                 minHeight: 720,
-                                                 maxHeight: 720}
-                                         )
-                                     })
-                                 }else {
-                                     // web
-                                     this.session.startScreenShare();
-                                 }
-                             }
-                         } }
-                    />
-                    <p>屏幕共享</p>
-                </div>
+                {
+                    isElectron() ? (
+                            <Popup key={'screen-share'}
+                                   trigger={ open => <div>
+                                           <img ref="tovoicebutton"
+                                                src='assets/images/av_share.png'
+                                           />
+                                           <p>屏幕共享</p>
+                                       open={this.session.getDesktopSources(['screen', 'window']).then(sources => this.desktopSources = sources)&&open}
+                                       </div>
+                                   }
+                                   modal
+                                   closeOnDocumentClick={true}
+                            >
+                                {close => (
+                                    this.pickPCDesktopToShare(close)
+                                )
+                                }
+                            </Popup>
+                        ):
+                        (
+                            <div>
+                                <img ref="tovoicebutton"
+                                     src='assets/images/av_share.png'
+                                     onClick={e => {
+                                         if(this.session.isScreenSharing()){
+                                             this.session.stopScreenShare();
+                                         }else {
+                                             this.session.startScreenShare();
+                                         }
+                                     } }
+                                />
+                                <p>屏幕共享</p>
+                            </div>
+                        )
+                }
+
                 <Popup key={'voip-invite'}
                        trigger={
                            <div>
@@ -261,6 +271,43 @@ export default class Voip extends Component {
                 </Popup>
             </div>
         )
+    }
+
+    pickPCDesktopToShare(close){
+        let sources = this.desktopSources;
+        console.log('sources', sources)
+        // let sources =[{id:'123', name:'namexxx'}];
+        if(sources){
+            // desktop
+            return (
+                <div style={{display:"flex", height:"640px", flexDirection:"column", overflowY:"auto"}}>
+                    <p style={{color:"black" }}>选择窗口或桌面进行共享</p>
+                    {
+                        sources.map(desktopCapturerSource => {
+                            return (
+                                <div key={desktopCapturerSource.id}
+                                     onClick={ ()=>{
+                                             this.session.startScreenShare(
+                                                 {sourceId: desktopCapturerSource.id,
+                                                 minWidth: 1280,
+                                                 maxWidth: 1280,
+                                                 minHeight: 720,
+                                                 maxHeight: 720}
+                                                 );
+                                             close()
+                                        }
+                                     }
+                                >
+                                    <p style={{color:"blue", width:"100%", textOverflow:"ellipsis"}}>{desktopCapturerSource.name}</p>
+                                    <img src={desktopCapturerSource.thumbnail.toDataURL()}/>
+                                    <br/>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            );
+        }
     }
 
     videoIncomingDesc() {
