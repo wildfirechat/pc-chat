@@ -23,6 +23,7 @@ import StickerMessageContent from '../messages/stickerMessageContent';
 import SoundMessageContent from '../messages/soundMessageContent';
 import TypingMessageContent from '../messages/typingMessageContent';
 import RecallMessageNotification from '../messages/notification/recallMessageNotification';
+import DeleteMessageContent from '../messages/deleteMessageContent';
 
 import CallStartMessageContent from '../av/messages/callStartMessageContent';
 import CallAnswerMessageContent from '../av/messages/callAnswerMessageContent';
@@ -248,6 +249,13 @@ export default class MessageConfig {
             type: MessageContentType.RecallMessage_Notification,
             contentClazz: RecallMessageNotification,
         },
+        {
+            name: 'delete',
+            flag: PersistFlag.No_Persist,
+            type: MessageContentType.DeleteMessage_Notification,
+            contentClazz: DeleteMessageContent,
+        },
+
         {
             name: 'callStartMessageContent',
             flag: PersistFlag.Persist,

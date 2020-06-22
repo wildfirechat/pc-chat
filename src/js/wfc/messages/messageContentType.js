@@ -13,6 +13,7 @@ export default class MessageContentType {
 
     // 提醒消息
     static RecallMessage_Notification = 80;
+    static DeleteMessage_Notification = 81; //不存储的
     static Tip_Notification = 90;
     static Typing = 91;
 
