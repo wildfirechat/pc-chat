@@ -24,6 +24,7 @@ import KickoffGroupMemberNotification from '../../wfc/messages/notification/kick
 import MessageConfig from "../../wfc/client/messageConfig";
 import PersistFlag from "../../wfc/messages/persistFlag";
 import MediaMessageContent from "../../wfc/messages/mediaMessageContent";
+import {eq} from "../../wfc/util/longUtil";
 
 function hasUnreadMessage(messages) {
     var counter = 0;
@@ -114,8 +115,9 @@ class Chat {
 
     onRecallMessage(operatorUid, messageUid) {
         let msg = wfc.getMessageByUid(messageUid);
+        console.log('onRecall message', messageUid,msg, self.conversation)
         if (self.conversation && self.conversation.equal(msg.conversation)) {
-            let index = self.messageList.findIndex(m => m.messageId === msg.messageId);
+            let index = self.messageList.findIndex(m => eq(m.messageUid, msg.messageUid));
             self.messageList[index] = msg;
         }
     }
