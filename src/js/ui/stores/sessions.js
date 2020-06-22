@@ -131,10 +131,10 @@ class sessions {
             };
             return;
         }
-        text = pinyin.letter(text.toLocaleLowerCase(), '', null);
+        let pinyinText = pinyin.letter(text.toLocaleLowerCase(), '', null);
         var list = self.conversations.filter(c => {
             let name = c.title();
-            var res = pinyin.letter(name, '', null).toLowerCase().indexOf(text) > -1;
+            var res = pinyin.letter(name, '', null).toLowerCase().indexOf(pinyinText) > -1;
 
             return res;
         });
