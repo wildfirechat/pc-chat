@@ -329,6 +329,7 @@ export default class MessageInput extends Component {
 
         if (
             this.props.conversation
+            && nextProps.conversation
             && !this.props.conversation.equal(nextProps.conversation)
         ) {
             let text = input.value.trim();
