@@ -109,10 +109,10 @@ class Contacts {
     }
 
     @action filter(text = '', showall = false) {
-        text = pinyin.letter(text.toLocaleLowerCase(), '', null);
+        let pinyinText = pinyin.letter(text.toLocaleLowerCase(), '', null);
         var list = self.memberList.filter(e => {
             let name = self.contactItemName(e);
-            var res = pinyin.letter(name, '', null).toLowerCase().indexOf(text) > -1;
+            var res = pinyin.letter(name, '', null).toLowerCase().indexOf(pinyinText) > -1;
 
             // if (e.RemarkName) {
             //     res = res || pinyin.letter(e.RemarkName, null).toLowerCase().indexOf(text) > -1;
