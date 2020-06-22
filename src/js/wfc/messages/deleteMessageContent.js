@@ -1,9 +1,10 @@
 import MessageContent from './messageContent'
-import MessagePayload from './messagePayload';
 import MessageContentType from './messageContentType';
+import wfc from '../../wfc/client/wfc'
+import Long from 'long'
 
+// 本消息由调用server api删除消息触发，请勿直接发送本消息
 export default class DeleteMessageContent extends MessageContent {
-    content;
     operatorId = '';
     messageUid = new Long(0);
 
