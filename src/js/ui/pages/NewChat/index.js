@@ -45,8 +45,10 @@ export default class NewChat extends Component {
 
     async chat() {
         var selected = this.state.selected;
-        selected = selected.concat(this.props.alreadySelected.split(','));
-    
+        if(this.props.alreadySelected){
+            selected = selected.concat(this.props.alreadySelected.split(','));
+        }
+
         if (selected.length === 1) {
             let conversation = new Conversation(ConversationType.Single, selected[0], 0);
             this.props.chatTo(conversation);
