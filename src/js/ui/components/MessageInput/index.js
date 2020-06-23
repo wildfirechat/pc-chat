@@ -20,6 +20,7 @@ import GroupMemberType from '../../../wfc/model/groupMemberType';
 import avenginekitProxy from '../../../wfc/av/engine/avenginekitproxy';
 import CheckBox from "rc-checkbox";
 import Config from "../../../config";
+import { parser as emojiParse } from 'utils/emoji';
 
 export default class MessageInput extends Component {
     static propTypes = {
@@ -141,7 +142,7 @@ export default class MessageInput extends Component {
     }
 
     async handleEnter(e) {
-        var message = this.refs.input.value.trim();
+        var message = this.refs.input.innerHTML.trim();
         var conversation = this.props.conversation;
 
         if (
@@ -153,7 +154,7 @@ export default class MessageInput extends Component {
 
         if (e.ctrlKey && e.charCode === 13) {
             e.preventDefault();
-            this.refs.input.value = this.refs.input.value + "\n";
+            this.refs.input.innerHTML= this.refs.input.innerHTML+ "\n";
             return;
         }
 
@@ -164,9 +165,14 @@ export default class MessageInput extends Component {
         // await this.props.sendMessage(
         //     new TextMessageContent(message)
         // )
+
+        // TODO 处理表情路径变化
+        message = message.replace(/<img class="emoji" draggable="false" alt="/g, '')
+            .replace(/" src="https:\/\/twemoji\.maxcdn\.com\/v\/12\.1\.6\/72x72\/[0-9a-z]+\.png">/g, '')
+
         let textMessageContent = this.handleMention(message);
         this.props.sendMessage(textMessageContent);
-        this.refs.input.value = '';
+        this.refs.input.innerHTML= '';
         wfc.setConversationDraft(conversation, '');
         e.preventDefault();
     }
@@ -215,8 +221,42 @@ export default class MessageInput extends Component {
         var input = this.refs.input;
 
         //input.value += `[${emoji}]`;
-        input.value += emoji;
+        // input.innerHTML += emojiParse(emoji);
+        this.insertTextAtCaret(emojiParse(emoji));
         input.focus();
+    }
+
+
+    createElementFromHTML(htmlString) {
+        let div = document.createElement('div');
+        div.innerHTML = htmlString.trim();
+
+        // Change this to div.childNodes to support multiple top-level nodes
+        return div.firstChild;
+    }
+
+    insertTextAtCaret(text) {
+        let sel, range;
+        if (window.getSelection) {
+            sel = window.getSelection();
+            if (sel.getRangeAt && sel.rangeCount) {
+                range = sel.getRangeAt(0);
+                range.deleteContents();
+                if(text.startsWith('<')){
+                    let imgEmoji = this.createElementFromHTML(text);
+                    range.insertNode(imgEmoji);
+                    range = document.createRange();
+                    range.setStartAfter(imgEmoji);
+                    range.collapse(true);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }else {
+                    range.insertNode( document.createTextNode(text) );
+                }
+            }
+        } else if (document.selection && document.selection.createRange) {
+            document.selection.createRange().text = text;
+        }
     }
 
     async batchProcess(file) {
@@ -556,7 +596,8 @@ export default class MessageInput extends Component {
                     />
                 </div>
 
-                <textarea
+                <div contentEditable={true}
+                    className={classes.test}
                     id="messageInput"
                     ref="input"
                     placeholder="输入内容发送，Ctrl + Enter 换行 ..."
