@@ -8,20 +8,6 @@
     justify-content: space-between;
     background: #fff;
 
-    & > textarea {
-        height: 100px;
-        width: 100%;
-        margin-left: 24px;
-        margin-top: 32px;
-        line-height: 150%;
-        border: 0;
-        padding-right: 17px;
-        background: 0;
-        color: #333;
-        resize: none;
-        font-size: 14px;
-        outline: 0;
-    }
 
     & i {
         font-size: 24px;
@@ -32,6 +18,21 @@
     & i:hover {
         color: #34b7f1;
     }
+}
+
+.test{
+    height: 100px;
+    width: 100%;
+    margin-left: 24px;
+    margin-top: 32px;
+    line-height: 150%;
+    border: 0;
+    padding-right: 17px;
+    background: 0;
+    color: #333;
+    resize: none;
+    font-size: 14px;
+    outline: 0;
 }
 
 .action {
@@ -76,38 +77,3 @@
     top: calc(-32px - 24px);
 }
 
-
-@media (width <= 800px) {
-    .container {
-        height: 138px;
-
-        & > input {
-            height: 46px;
-            margin-left: 20px;
-            line-height: 46px;
-        }
-
-        & i {
-            font-size: 16px;
-        }
-    }
-
-    & .action {
-          margin-top: 10px;
-          margin-left: 20px;
-          width: 120px;
-    }
-
-    .tips {
-        height: 24px;
-        top: -24px;
-        padding: 0 12px;
-        line-height: 24px;
-        font-size: 12px;
-    }
-
-    .shouldSelectUser:hover .tips {
-        opacity: 1;
-        top: calc(-24px - 12px);
-    }
-}
