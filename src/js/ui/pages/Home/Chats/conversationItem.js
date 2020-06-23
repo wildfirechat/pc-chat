@@ -1,5 +1,6 @@
 import clazz from 'classname';
 import React, { Component } from 'react';
+import { parser as emojiParse } from 'utils/emoji';
 import helper from 'utils/helper';
 import ConversationType from '../../../../wfc/model/conversationType';
 import classes from './style.css';

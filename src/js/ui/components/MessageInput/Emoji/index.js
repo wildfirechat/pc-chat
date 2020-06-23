@@ -39,7 +39,7 @@ export class Emoji extends Component {
                 className={clazz(classes.container, classes.show)}
                 onBlur={e => this.props.close()}>
 
-                <Picker set='emojione'
+                <Picker set='twitter'
                     ref='emojiPicker'
                     onClick={this.onEmojiSelect}
                     // onSelect={this.onEmojiSelect}

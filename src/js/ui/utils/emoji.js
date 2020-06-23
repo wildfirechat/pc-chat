@@ -1,5 +1,6 @@
 
 import anchorme from "anchorme";
+import uEmojiParser from 'universal-emoji-parser'
 const EmojiList = ['笑脸', '生病', '破涕为笑', '吐舌', '脸红', '恐惧', '失望', '无语', '嘿哈', '捂脸', '奸笑', '机智', '皱眉', '耶', '鬼魂', '合十', '强壮', '庆祝', '礼物', '红包', '鸡', '开心', '大笑', '热情', '眨眼', '色', '接吻', '亲吻', '露齿笑', '满意', '戏弄', '得意', '汗', '低落', '呸', '焦虑', '担心', '震惊', '悔恨', '眼泪', '哭', '晕', '心烦', '生气', '睡觉', '恶魔', '外星人', '心', '心碎', '丘比特', '闪烁', '星星', '叹号', '问号', '睡着', '水滴', '音乐', '火', '便便', '弱', '拳头', '胜利', '上', '下', '右', '左', '第一', '吻', '热恋', '男孩', '女孩', '女士', '男士', '天使', '骷髅', '红唇', '太阳', '下雨', '多云', '雪人', '月亮', '闪电', '海浪', '猫', '小狗', '老鼠', '仓鼠', '兔子', '狗', '青蛙', '老虎', '考拉', '熊', '猪', '牛', '野猪', '猴子', '马', '蛇', '鸽子', '鸡', '企鹅', '毛虫', '章鱼', '鱼', '鲸鱼', '海豚', '玫瑰', '花', '棕榈树', '仙人掌', '礼盒', '南瓜灯', '圣诞老人', '圣诞树', '礼物', '铃', '气球', 'CD', '相机', '录像机', '电脑', '电视', '电话', '解锁', '锁', '钥匙', '成交', '灯泡', '邮箱', '浴缸', '钱', '炸弹', '手枪', '药丸', '橄榄球', '篮球', '足球', '棒球', '高尔夫', '奖杯', '入侵者', '唱歌', '吉他', '比基尼', '皇冠', '雨伞', '手提包', '口红', '戒指', '钻石', '咖啡', '啤酒', '干杯', '鸡尾酒', '汉堡', '薯条', '意面', '寿司', '面条', '煎蛋', '冰激凌', '蛋糕', '苹果', '飞机', '火箭', '自行车', '高铁', '警告', '旗', '男人', '女人', 'O', 'X', '版权', '注册商标', '商标'];
 const QQFaceMap = {
     '微笑': '0',
@@ -376,17 +377,17 @@ function parser(text) {
         ]
     });
 
-    (text.match(/\[[\w\s\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29\ud840-\ud868\udc00-\udfff\ud869[\udc00-\uded6\udf00-\udfff\ud86a-\ud86c\udc00-\udfff\ud86d[\udc00-\udf34\udf40-\udfff\ud86e\udc00-\udc1d]+\]/g) || []).map(e => {
-        var className = getEmojiClassName(e);
+    // (text.match(/\[[\w\s\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29\ud840-\ud868\udc00-\udfff\ud869[\udc00-\uded6\udf00-\udfff\ud86a-\ud86c\udc00-\udfff\ud86d[\udc00-\udf34\udf40-\udfff\ud86e\udc00-\udc1d]+\]/g) || []).map(e => {
+    //     var className = getEmojiClassName(e);
+    //
+    //     if (!className) {
+    //         // Invalid emoji
+    //         return;
+    //     }
+    //     text = decodeText = text.split(`${e}`).join(`<a target="_blank" class="${className}"></a>`);
+    // });
 
-        if (!className) {
-            // Invalid emoji
-            return;
-        }
-        text = decodeText = text.split(`${e}`).join(`<a target="_blank" class="${className}"></a>`);
-    });
-
-    return normalize(decodeText);
+    return uEmojiParser.parse(decodeText);
 }
 
 function normalize(text = '') {
