@@ -197,7 +197,7 @@ export default class Contacts extends Component {
                             id="search"
                             onInput={e => this.filter(e.target.value)}
                             placeholder={query ? '' : '搜索 ...'}
-                            value={query ? query : ''}
+                            // value={query ? query : ''}
                             ref="search"
                             type="text" />
                     </div>

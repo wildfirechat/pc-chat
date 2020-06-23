@@ -208,7 +208,7 @@ export default class Chats extends Component {
                             onInput={e => this.filter(e.target.value)}
                             // onKeyUp={e => this.navigation(e)}
                             placeholder={filtered.query ? '' : '搜索 ...'}
-                            value={filtered.query ? filtered.query : ''}
+                            // value={filtered.query ? filtered.query : ''}
                             ref="search"
                             type="text" />
                     </div>
