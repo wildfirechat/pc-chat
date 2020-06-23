@@ -157,6 +157,7 @@
     "tmp": "0.0.33",
     "tributejs": "^3.6.0",
     "underscore": "^1.9.1",
+    "universal-emoji-parser": "^0.5.22",
     "webrtc-adapter": "7.3.0"
   },
   "devDependencies": {
