@@ -168,7 +168,7 @@ export default class MessageInput extends Component {
 
         // TODO 处理表情路径变化
         message = message.replace(/<img class="emoji" draggable="false" alt="/g, '')
-            .replace(/" src="https:\/\/twemoji\.maxcdn\.com\/v\/12\.1\.6\/72x72\/[0-9a-z]+\.png">/g, '')
+            .replace(/" src="assets\/twemoji\/72x72\/[0-9a-z]+\.png">/g, '')
 
         let textMessageContent = this.handleMention(message);
         this.props.sendMessage(textMessageContent);

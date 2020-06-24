@@ -43,6 +43,10 @@ export default {
                 to: config.dist,
             },
             {
+                from: `${config.assets}/twemoji/**/*`,
+                to: config.dist,
+            },
+            {
                 from: path.resolve(__dirname, '../package.json'),
                 to: config.dist,
             },

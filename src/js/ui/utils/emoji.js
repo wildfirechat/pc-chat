@@ -387,7 +387,9 @@ function parser(text) {
     //     text = decodeText = text.split(`${e}`).join(`<a target="_blank" class="${className}"></a>`);
     // });
 
-    return uEmojiParser.parse(decodeText);
+    let emoji = uEmojiParser.parse(decodeText);
+    emoji = emoji.replace(/src="https:\/\/twemoji\.maxcdn\.com\/v\/12\.1\.6\//g, 'src="assets/twemoji/')
+    return emoji;
 }
 
 function normalize(text = '') {

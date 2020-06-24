@@ -47,6 +47,7 @@ export class Emoji extends Component {
                     showPreview={false}
                     showSkinTones={false}
                     emojiTooltip={false}
+                    backgroundImageFn={(set, sheetSize) => 'assets/twemoji/64.png'}
                 />
 
             </div>
