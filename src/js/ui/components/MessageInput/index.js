@@ -372,7 +372,7 @@ export default class MessageInput extends Component {
             && nextProps.conversation
             && !this.props.conversation.equal(nextProps.conversation)
         ) {
-            let text = input.value.trim();
+            let text = input.innerHTML.trim();
             let conversationInfo = wfc.getConversationInfo(this.props.conversation);
             if(!conversationInfo){
                 return;
@@ -382,7 +382,7 @@ export default class MessageInput extends Component {
             }
 
             conversationInfo = wfc.getConversationInfo(nextProps.conversation);
-            input.value = conversationInfo ? conversationInfo.draft : '';
+            input.innerHTML = conversationInfo ? conversationInfo.draft : '';
 
             if (this.tribute) {
                 this.tribute.detach(document.getElementById('messageInput'));
@@ -397,7 +397,7 @@ export default class MessageInput extends Component {
             if(!conversationInfo){
                 return;
             }
-            input.value = conversationInfo.draft ? conversationInfo.draft : '';
+            input.innerHTML = conversationInfo.draft ? conversationInfo.draft : '';
 
             if (!this.tribute && this.shouldHandleMention(nextProps.conversation)) {
                 this.initMention(nextProps.conversation);
@@ -410,7 +410,7 @@ export default class MessageInput extends Component {
         var input = this.refs.input;
         let groupDisplayName = wfc.getGroupMemberDisplayNameEx(mentionUser)
         if (mentionUser) {
-            input.value += ' @' + groupDisplayName + ' ';
+            input.innerHTML += ' @' + groupDisplayName + ' ';
             this.mentions.push({key: groupDisplayName, value: '@' + mentionUser.uid});
             input.focus();
         }
