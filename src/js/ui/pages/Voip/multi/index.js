@@ -502,7 +502,7 @@ export default class Voip extends Component {
                             let ref = React.createRef();
                             this.remoteVideoMap.set(u.uid, ref);
                             return (
-                                <video key={u.uid} ref={ref} playsInline autoPlay muted/>
+                                <video key={u.uid} ref={ref} playsInline autoPlay hidden={false}/>
                             );
                         })
                     }
