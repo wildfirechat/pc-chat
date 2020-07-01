@@ -20,6 +20,8 @@ export default class UserInfo {
     uid = '';
     name = '';
     displayName = '';
+    groupAlias = '';
+    friendAlias = '';
     gender = 0;
     portrait = '';
     mobile = '';

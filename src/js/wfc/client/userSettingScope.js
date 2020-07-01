@@ -15,6 +15,8 @@ export default class UserSettingScope {
     static Listened_Channel = 9;
     static UserSettingPCOnline = 10;
     static UserSettingConversationReaded = 11;
+    static WebOnline = 12;
+    static DisableReceipt = 13;
 
     // 用户自定义的scope需从1000开始，以防冲突
     static kUserSettingCustomBegin = 1000;

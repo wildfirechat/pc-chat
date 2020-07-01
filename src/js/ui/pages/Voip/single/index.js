@@ -427,6 +427,8 @@ export default class Voip extends Component {
         }
         return (
             <div className={classes.container}>
+                <video ref="remoteVideo" className={classes.remoteVideo} playsInline autoPlay hidden={true}>
+                </video>
                 {
                     renderFn.bind(this)()
                 }

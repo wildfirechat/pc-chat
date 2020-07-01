@@ -521,7 +521,8 @@ export default class ChatContent extends Component {
                         message.direction === 0 ?
                             <p style={{
                                 fontSize:'10px',
-                                color:'#a9a9a9'
+                                color:'#a9a9a9',
+                                userSelect:'none'
                             }}>{this.formatReceiptMessage(message.timestamp)}</p> : ''
                     }
                 </div>
@@ -544,7 +545,8 @@ export default class ChatContent extends Component {
                         message.direction === 0 ?
                         <p style={{
                             fontSize:'10px',
-                            color:'#a9a9a9'
+                            color:'#a9a9a9',
+                            userSelect:'none'
                         }}>{this.formatReceiptMessage(message.timestamp)}</p> : ''
                     }
                 </div>
