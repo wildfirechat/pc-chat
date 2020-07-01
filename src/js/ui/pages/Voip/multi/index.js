@@ -70,10 +70,10 @@ export default class Voip extends Component {
         };
 
         sessionCallback.didReceiveRemoteVideoTrack = (userId, stream) => {
-            if (!this.audioOnly) {
+            // if (!this.audioOnly) {
                 let video = this.remoteVideoMap.get(userId);
                 video.current.srcObject = stream;
-            }
+            // }
         };
 
         sessionCallback.didVideoMuted = (userId, muted) => {
