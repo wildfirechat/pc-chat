@@ -542,8 +542,13 @@ export default class Voip extends Component {
                 <div className={classes.videoParticipantVideos}>
                     {
                         this.participantUserInfos && this.participantUserInfos.map(u => {
+                            let ref = React.createRef();
+                            this.remoteVideoMap.set(u.uid, ref);
                             return (
+                                <div>
                                 <img key={u.uid} src={u.portrait}/>
+                                    <video key={u.uid} ref={ref} playsInline autoPlay hidden={true}/>
+                                </div>
                             )
                         })
                     }
