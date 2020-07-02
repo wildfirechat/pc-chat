@@ -392,7 +392,6 @@ export default class Voip extends Component {
         return (
             <div className={classes.container}>
                 <video ref="localVideo" className={classes.localVideo} playsInline autoPlay muted>
-
                 </video>
 
                 <video ref="remoteVideo" className={classes.remoteVideo} playsInline autoPlay hidden={false}>
@@ -427,6 +426,9 @@ export default class Voip extends Component {
         }
         return (
             <div className={classes.container}>
+                <video ref="localVideo" className={classes.localVideo} playsInline autoPlay muted hidden={true}>
+                </video>
+
                 <video ref="remoteVideo" className={classes.remoteVideo} playsInline autoPlay hidden={true}>
                 </video>
                 {
