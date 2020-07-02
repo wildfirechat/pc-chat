@@ -124,6 +124,7 @@ $ npm run dev
 2. python2.7X
 
 ##### 开发
+> 具体开发、集成相关说明，请参考[pc开发](https://docs.wildfirechat.cn/pc/)
 
 ```
 $ npm install
