@@ -37,7 +37,7 @@ export class Emoji extends Component {
                 ref="container"
                 tabIndex="-1"
                 className={clazz(classes.container, classes.show)}
-                onBlur={e => this.props.close()}>
+                >
 
                 <Picker set='twitter'
                     ref='emojiPicker'
