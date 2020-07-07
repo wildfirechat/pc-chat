@@ -33,7 +33,7 @@ export default class Footer extends Component {
             '/contacts': Contacts
         }[pathname];
 
-        var user = WildFireIM.config.loginUser;
+        let user = wfc.getUserInfo(wfc.getUserId());
         
         return (
             <footer className={clazz(classes.footer,{
