@@ -1100,7 +1100,7 @@ export class WfcManager {
     }
 
     /**
-     * 删除媒体文件
+     * 上传媒体文件
      * @param {string} fileName
      * @param {string} fileOrData base64格式的dataUri
      * @param {number} mediaType 媒体类型，可选值参考{@link MessageContentMediaType}
