@@ -178,6 +178,17 @@ export class WfcManager {
     }
 
     /**
+     * 获取用户信息
+     * @param {string} userId 用户ID
+     * @param {boolean} refresh 是否强制从服务器更新，如果本地没有或者强制，会从服务器刷新，然后发出通知UserInfosUpdate
+     * @param {function (UserInfo)} success 成功回调
+     * @param {function (number)} fail 失败回调
+     */
+    getUserInfoEx(userId, refresh, success, fail){
+        impl.getUserInfoEx(userId, refresh, success, fail);
+    }
+
+    /**
      * 批量获取用户信息
      * @param {[string]} userIds 用户ids
      * @param {string} groupId 群组id
@@ -382,12 +393,23 @@ export class WfcManager {
 
     /**
      * 获取群信息
-     * @param groupId 群id
-     * @param refresh 是否刷新，如果刷新，且有更新的话，会通过{@link eventEmitter}通知
+     * @param {string} groupId 群id
+     * @param {boolean} refresh 是否刷新，如果刷新，且有更新的话，会通过{@link eventEmitter}通知
      * @returns {GroupInfo}
      */
     getGroupInfo(groupId, refresh = false) {
         return impl.getGroupInfo(groupId, refresh);
+    }
+
+    /**
+     * 获取群信息
+     * @param {string} groupId 群id
+     * @param {boolean} refresh 是否刷新，如果刷新，且有更新的话，会通过{@link eventEmitter}通知
+     * @param {function (GroupInfo)} successCB 成功回调
+     * @param {function (number)} failCB 失败回调
+     */
+    getGroupInfoEx(groupId, refresh = false, successCB, failCB) {
+        impl.getGroupInfoEx(groupId, refresh, successCB, failCB);
     }
 
     /**
@@ -421,6 +443,17 @@ export class WfcManager {
      */
     getGroupMembers(groupId, fresh = false) {
         return impl.getGroupMembers(groupId, fresh);
+    }
+
+    /**
+     * 获取群成员信息
+     * @param {string} groupId 群id
+     * @param {boolean} fresh 是否强制从服务器更新，如果不刷新则从本地缓存中读取
+     * @param {function ([GroupMember])} successCB
+     * @param {function (number)} failCB
+     */
+    getGroupMembersEx(groupId, fresh = false, successCB, failCB) {
+        impl.getGroupMembersEx(groupId, fresh, successCB, failCB);
     }
 
     /**
