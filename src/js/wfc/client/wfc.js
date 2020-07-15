@@ -1164,6 +1164,14 @@ export class WfcManager {
         return impl.isReceiptEnabled();
     }
 
+    isUserReceiptEnabled(){
+        return impl.isUserReceiptEnabled();
+    }
+
+    isCommercialServer() {
+        return impl.isCommercialServer();
+    }
+
     /**
      *
      * @param conversation

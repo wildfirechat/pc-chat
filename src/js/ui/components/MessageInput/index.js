@@ -276,25 +276,6 @@ export default class MessageInput extends Component {
         }
     }
 
-    placeCaretAtEnd(el) {
-        el.focus();
-        if (typeof window.getSelection != "undefined"
-            && typeof document.createRange != "undefined") {
-            var range = document.createRange();
-            range.selectNodeContents(el);
-            range.collapse(false);
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-        }
-        else if (typeof document.body.createTextRange != "undefined") {
-            var textRange = document.body.createTextRange();
-            textRange.moveToElementText(el);
-            textRange.collapse(false);
-            textRange.select();
-        }
-    }
-
     async batchProcess(file) {
         if (this.canisend() === false) {
             return;
@@ -409,6 +390,7 @@ export default class MessageInput extends Component {
             && !this.props.conversation.equal(nextProps.conversation)
         ) {
             let text = input.innerHTML.trim();
+            text = text.replace(/<br>/g, '\n').trim()
             let conversationInfo = wfc.getConversationInfo(this.props.conversation);
             if(!conversationInfo){
                 return;

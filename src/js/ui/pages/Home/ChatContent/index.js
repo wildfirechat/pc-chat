@@ -518,7 +518,7 @@ export default class ChatContent extends Component {
                             dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
                     </div>
                     {
-                        message.direction === 0 ?
+                        message.direction === 0 && wfc.isCommercialServer() && wfc.isReceiptEnabled() && wfc.isUserReceiptEnabled() ?
                             <p style={{
                                 fontSize:'10px',
                                 color:'#a9a9a9',
