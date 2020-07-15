@@ -31,6 +31,7 @@ import nodePath from 'path';
 
 import UserCard from '../../../components/userCard';
 import {gt, gte, numberValue} from '../../../../wfc/util/longUtil'
+import {copyImg, copyText} from "../../../utils/clipboard";
 
 @inject(stores => ({
     sticky: stores.sessions.sticky,
@@ -804,6 +805,21 @@ export default class ChatContent extends Component {
                 label: 'Forward',
                 click: () => {
                     this.props.showForward(message);
+                }
+            });
+        }
+
+        if([MessageContentType.Text, MessageContentType.Image].indexOf(message.messageContent.type) >= 0){
+            templates.unshift({
+                label: 'copy',
+                click: () => {
+                    // this.props.showForward(message);
+                    let blob;
+                    if(message.messageContent.type === MessageContentType.Image){
+                        copyImg(message.messageContent.localPath ? message.messageContent.localPath : message.messageContent.remotePath);
+                    } else {
+                        copyText(message.messageContent.content);
+                    }
                 }
             });
         }
