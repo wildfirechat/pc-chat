@@ -20,7 +20,7 @@
     }
 }
 
-.test{
+.messageInput{
     height: 100px;
     width: 100%;
     margin-left: 24px;
@@ -34,6 +34,17 @@
     font-size: 14px;
     outline: 0;
 }
+/*为空时显示 element attribute content*/
+.messageInput:empty:before{
+    content: attr(placeholder);   /* element attribute*/
+    /*content: 'this is content';*/
+    color:#333;
+}
+/*焦点时内容为空*/
+.messageInput:focus:before{
+    content:none;
+}
+
 
 .action {
     position: absolute;

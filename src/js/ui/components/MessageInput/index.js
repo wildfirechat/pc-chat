@@ -154,7 +154,21 @@ export default class MessageInput extends Component {
 
         if (e.ctrlKey && e.charCode === 13) {
             e.preventDefault();
-            this.refs.input.innerHTML= this.refs.input.innerHTML+ "\n";
+            // this.refs.input.innerHTML = this.refs.input.innerHTML+ "<div><br></div>";
+            document.execCommand('InsertHTML', true, '<br>');
+            if (window.getSelection) {
+                let selection = window.getSelection(),
+                    range = selection.getRangeAt(0),
+                    br = document.createElement("br");
+                range.deleteContents();
+                range.insertNode(br);
+                range.setStartAfter(br);
+                range.setEndAfter(br);
+                // range.collapse(false);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                // return false;
+            }
             return;
         }
 
@@ -167,6 +181,9 @@ export default class MessageInput extends Component {
         // )
 
         // TODO 处理表情路径变化
+        if(!message.startsWith('<')){
+            message = message.replace(/<br>/g, '\n').trim()
+        }
         message = message.replace(/<img class="emoji" draggable="false" alt="/g, '')
             .replace(/" src="assets\/twemoji\/72x72\/[0-9a-z-]+\.png">/g, '')
 
@@ -256,6 +273,25 @@ export default class MessageInput extends Component {
             }
         } else if (document.selection && document.selection.createRange) {
             document.selection.createRange().text = text;
+        }
+    }
+
+    placeCaretAtEnd(el) {
+        el.focus();
+        if (typeof window.getSelection != "undefined"
+            && typeof document.createRange != "undefined") {
+            var range = document.createRange();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        else if (typeof document.body.createTextRange != "undefined") {
+            var textRange = document.body.createTextRange();
+            textRange.moveToElementText(el);
+            textRange.collapse(false);
+            textRange.select();
         }
     }
 
@@ -597,7 +633,7 @@ export default class MessageInput extends Component {
                 </div>
 
                 <div contentEditable={true}
-                    className={classes.test}
+                    className={classes.messageInput}
                     id="messageInput"
                     ref="input"
                     placeholder="输入内容发送，Ctrl + Enter 换行 ..."

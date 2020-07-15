@@ -180,7 +180,7 @@ export class WfcManager {
     /**
      * 获取用户信息
      * @param {string} userId 用户ID
-     * @param {boolean} refresh 是否强制从服务器更新，如果本地没有或者强制，会从服务器刷新，然后发出通知UserInfosUpdate
+     * @param {boolean} refresh 是否刷新用户
      * @param {function (UserInfo)} success 成功回调
      * @param {function (number)} fail 失败回调
      */
