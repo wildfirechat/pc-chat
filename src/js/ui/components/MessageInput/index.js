@@ -180,10 +180,11 @@ export default class MessageInput extends Component {
         //     new TextMessageContent(message)
         // )
 
-        // TODO 处理表情路径变化
+
         if(!message.startsWith('<')){
             message = message.replace(/<br>/g, '\n').trim()
         }
+        // TODO 处理表情路径变化
         message = message.replace(/<img class="emoji" draggable="false" alt="/g, '')
             .replace(/" src="assets\/twemoji\/72x72\/[0-9a-z-]+\.png">/g, '')
 
