@@ -412,7 +412,7 @@ export default class MessageInput extends Component {
             }
         } else if (nextProps.conversation) {
             let conversationInfo = wfc.getConversationInfo(nextProps.conversation);
-            if(!conversationInfo){
+            if(!conversationInfo || (this.props.conversation && this.props.conversation.equal(nextProps.conversation))) {
                 return;
             }
             input.innerHTML = conversationInfo.draft ? conversationInfo.draft : '';
