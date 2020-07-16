@@ -1164,6 +1164,10 @@ export class WfcManager {
         return impl.isReceiptEnabled();
     }
 
+    /**
+     * 当前用户是否开启消息回执
+     * @return {boolean}
+     */
     isUserReceiptEnabled(){
         return impl.isUserReceiptEnabled();
     }
