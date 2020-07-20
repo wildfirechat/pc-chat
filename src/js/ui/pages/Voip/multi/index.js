@@ -92,6 +92,11 @@ export default class Voip extends Component {
         sessionCallback.didParticipantLeft = (userId, callEndReason) => {
             this.participantUserInfos = this.participantUserInfos.filter(u => u.uid !== userId);
         };
+
+        sessionCallback.didCallEndWithReason = (reason) =>{
+            console.log('callEndWithReason', reason)
+        }
+
         avenginekit.sessionCallback = sessionCallback;
     }
 
