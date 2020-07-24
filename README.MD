@@ -115,7 +115,7 @@ $ npm run dev
 2. ```npm run package-win``` 打包window 64位版本，软件生成在release目录下
 
 
-#### linux系统
+#### linux系统x64 arch
 
 ##### 环境准备
 
@@ -137,6 +137,36 @@ $ npm run dev
 
 1. ```npm install``` 安装依赖
 2. ```npm run package-linux``` 打包linux版本，软件生成在release目录下
+
+#### linux系统arm64 arch
+
+##### 环境准备
+
+> 请严格安装下面的版本安装对应依赖，否则无法打包
+
+1. nodejs10.16.X
+2. python2.7X
+3. fpm
+4. qt5
+```
+sudo apt-get update
+sudo apt-get install ruby-dev build-essential qt5-default
+sudo gem install fpm
+
+```
+##### 开发
+> 具体开发、集成相关说明，请参考[pc开发](https://docs.wildfirechat.cn/pc/)
+
+```
+$ npm install
+$ npm run copy-linux-arm64
+$ npm run dev
+```
+
+##### 打包
+
+1. ```npm install``` 安装依赖
+2. ```npm run package-linux-arm64``` 打包linux版本，软件生成在release目录下
 
 
 ##### 常见问题
@@ -162,6 +192,12 @@ https://www.microsoft.com/zh-CN/download/details.aspx?id=48145。
 6. MAC应用截屏时只能截屏空白桌面，无法截图窗口内容。这是因为没有通过mac系统的安全许可，在设置-》安全与隐私-》切换到隐私那个标签-》屏幕录制-》在野火IM PC应用前打勾，并重启应用。
 
 7. 使用```cnpm```后打包失败，在某些平台```cnpm```是会出现问题的，请使用npm。
+
+8. Arm64 linux client need install QT dependency, install command as follow:
+```
+sudo apt-get update
+sudo apt-get install qt5-default
+```
 
 ## MAC 签名
 如果本地存在合法的mac签名，打包程序会尝试进行签名。签名会失败，提示如下
