@@ -123,6 +123,7 @@
     white-space: nowrap;
     display: inline-block;
     min-height: 15px;
+    max-height: 28px;
 }
 
 .times {
