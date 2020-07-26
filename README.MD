@@ -115,7 +115,7 @@ $ npm run dev
 2. ```npm run package-win``` 打包window 64位版本，软件生成在release目录下
 
 
-#### linux系统x64 arch
+#### linux系统x64架构
 
 ##### 环境准备
 
@@ -138,7 +138,7 @@ $ npm run dev
 1. ```npm install``` 安装依赖
 2. ```npm run package-linux``` 打包linux版本，软件生成在release目录下
 
-#### linux系统arm64 arch
+#### linux系统arm64架构
 
 ##### 环境准备
 
@@ -148,12 +148,14 @@ $ npm run dev
 2. python2.7X
 3. fpm
 4. qt5
+
 ```
 sudo apt-get update
 sudo apt-get install ruby-dev build-essential qt5-default
-sudo gem install fpm
-
+sudo gem install fpm -v 1.10.2
 ```
+> fpm 1.11版本有问题，需要使用1.10.2版本
+
 ##### 开发
 > 具体开发、集成相关说明，请参考[pc开发](https://docs.wildfirechat.cn/pc/)
 
@@ -193,7 +195,7 @@ https://www.microsoft.com/zh-CN/download/details.aspx?id=48145。
 
 7. 使用```cnpm```后打包失败，在某些平台```cnpm```是会出现问题的，请使用npm。
 
-8. Arm64 linux client need install QT dependency, install command as follow:
+8. Linux版本对Qt5有依赖，如果客户端无法运行，请安装Qt5。
 ```
 sudo apt-get update
 sudo apt-get install qt5-default
