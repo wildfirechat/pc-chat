@@ -353,7 +353,7 @@ export default class ChatContent extends Component {
                 `;
             /* eslint-enable */
 
-            case 49 + 17:
+            case MessageContentType.Location:
                 // Location sharing...
                 return `
                     <div class="${classes.locationSharing}">
@@ -446,7 +446,7 @@ export default class ChatContent extends Component {
 
                         [classes.isme]: message.direction === 0,
                         [classes.isText]: type === MessageContentType.Text || type === MessageContentType.P_Text || (message.messageContent instanceof UnknownMessageContent) || (message.messageContent instanceof UnsupportMessageContent),
-                        [classes.isLocation]: type === MessageContentType.Location,
+                        // [classes.isLocation]: type === MessageContentType.Location,
                         [classes.isImage]: type === MessageContentType.Image,
                         [classes.isEmoji]: type === MessageContentType.Sticker,
                         [classes.isVoice]: type === MessageContentType.Voice,
