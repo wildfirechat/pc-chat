@@ -1,5 +1,6 @@
 import axios from 'axios';
-import MD5 from 'browser-md5-file';
+// ie11 not support browser-md5-file
+// import MD5 from 'browser-md5-file';
 import {numberValue} from '../../wfc/util/longUtil'
 
 
@@ -286,13 +287,13 @@ const helper = {
         return ipcRenderer.sendSync('is-suspend');
     },
 
-    md5: (file) => {
-        return new Promise((resolve, reject) => {
-            new MD5().md5(file, (err, md5) => {
-                resolve(err ? false : md5);
-            });
-        });
-    },
+    // md5: (file) => {
+    //     return new Promise((resolve, reject) => {
+    //         new MD5().md5(file, (err, md5) => {
+    //             resolve(err ? false : md5);
+    //         });
+    //     });
+    // },
 
     weekFormat: (num) => {
         let str

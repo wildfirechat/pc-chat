@@ -18,6 +18,7 @@ export default class MessagePayload{
     type;
     searchableContent;
     pushContent;
+    pushData;
     content;
     binaryContent; // base64 string, 图片时，不包含头部信息:data:image/png;base64,
     localContent;

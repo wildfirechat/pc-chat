@@ -223,7 +223,7 @@ export default class ChatContent extends Component {
                         </span>
 
                         <audio controls="controls">
-                            <source src="${voice.remotePath}"  type="audio/AMR" />
+                            <source src="${voice.remotePath}"  type="audio/mp4" />
                         </audio>
                     </div>
                 `;
@@ -635,32 +635,19 @@ export default class ChatContent extends Component {
                 }
             }
 
-            audio.onplay = () => {
-                this.amr = new BenzAMRRecorder();
-                this.amr.initWithUrl(voiceUrl).then(() => {
-                    this.isAudioPlaying = true;
-                    this.amr.play();
-                });
-                this.amr.onEnded(() => {
-                    this.isAudioPlaying = false;
-                    // do not uncomment the following line
-                    // this.amr = null;
-                    target.classList.remove(classes.playing)
-                    audio.pause();
-                    audio.currentTime = 0;
-                })
+  
+            this.amr = new BenzAMRRecorder();
+            this.amr.initWithUrl(voiceUrl).then(() => {
                 target.classList.add(classes.playing)
-            };
-            // audio不支持amr，所以下面两个回调不会走
-            // audio.onended = () => {
-            //     console.log('onended');
-            //     target.classList.remove(classes.playing)
-            // };
-            audio.onerror = (e) => {
+                this.isAudioPlaying = true;
+                this.amr.play();
+            });
+            this.amr.onEnded(() => {
+                this.isAudioPlaying = false;
                 target.classList.remove(classes.playing)
-                console.log('on error', e);
-            }
-            audio.play();
+                audio.pause();
+                audio.currentTime = 0;
+            })
 
             return;
         }
@@ -729,20 +716,38 @@ export default class ChatContent extends Component {
                 // this.props.forceRerenderMessage(message.messageId);
                 ipcRenderer.send('file-download', {messageId : message.messageId, remotePath : file.remotePath});
             } else {
-                let varExt = file.remotePath.split('.');
-                if (varExt[varExt.length - 1] === "txt" || varExt[varExt.length -1] === "log") {
-                    window.open(file.remotePath);
-                }
-                else {
-                    let iframe;
-                    iframe = document.getElementById("hiddenDownloader");
-                    if (iframe == null) {
-                        iframe = document.createElement('iframe');
-                        iframe.id = "hiddenDownloader";
-                        iframe.style.visibility = 'hidden';
-                        document.body.appendChild(iframe);
-                    }
-                    iframe.src = file.remotePath;
+                // let varExt = file.remotePath.split('.');
+                // if (varExt[varExt.length - 1] === "txt" || varExt[varExt.length -1] === "log") {
+                //     window.open(file.remotePath);
+                // }
+                // else {
+                //     let iframe;
+                //     iframe = document.getElementById("hiddenDownloader");
+                //     if (iframe == null) {
+                //         iframe = document.createElement('iframe');
+                //         iframe.id = "hiddenDownloader";
+                //         iframe.style.visibility = 'hidden';
+                //         document.body.appendChild(iframe);
+                //     }
+                //     iframe.src = file.remotePath;
+                // }
+                let fileHref = file.remotePath;
+                let filename = file.name;
+                if (window.navigator.msSaveBlob) {// ie
+                    let xhr = new XMLHttpRequest();
+                    xhr.onloadstart = function () {
+                        xhr.responseType = 'blob';
+                    };
+                    xhr.onload = function () {
+                        navigator.msSaveOrOpenBlob(xhr.response, filename);
+                    };
+                    xhr.open("GET", fileHref, true);
+                    xhr.send();
+                }else {
+                    let anchor = document.createElement('a');
+                    anchor.setAttribute("download", true);
+                    anchor.setAttribute("href", fileHref);
+                    anchor.click();
                 }
             }
         }
