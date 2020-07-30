@@ -448,6 +448,16 @@ export class WfcManager {
     /**
      * 获取群成员信息
      * @param {string} groupId 群id
+     * @param {int} memberType 成员类型，0 普通成员；1 管理员；2 owner；3 禁言成员
+     * @returns {[GroupMember]} 群成员信息
+     */
+    getGroupMembersByType(groupId, memberType) {
+        return impl.getGroupMembersByType(groupId, memberType);
+    }
+
+    /**
+     * 获取群成员信息
+     * @param {string} groupId 群id
      * @param {boolean} fresh 是否强制从服务器更新，如果不刷新则从本地缓存中读取
      * @param {function ([GroupMember])} successCB
      * @param {function (number)} failCB
