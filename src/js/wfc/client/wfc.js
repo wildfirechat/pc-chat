@@ -1217,6 +1217,53 @@ export class WfcManager {
     getConversationRead(conversation){
         return impl.getConversationRead(conversation);
     }
+
+    /**
+     * 获取认证过的媒体信息url
+     *
+     * @param {Long} messageUid
+     * @param {number} mediaType
+     * @param {string} mediaPath
+     * @param {function ()} successCB
+     * @param {function (number)} failCB
+     */
+    getAuthorizedMediaUrl(messaggeUid, mediaType, mediaPath, successCB, failCB) {
+        impl.getAuthorizedMediaUrl(messaggeUid, mediaType, mediaPath, successCB, failCB);
+    }
+
+    /**
+     * 获取会话的历史文件记录
+     * @param {Conversation} conversation 目标会话
+     * @param {number | Long} beforeUid 消息uid，表示拉取本条消息之前的消息
+     * @param {number} count
+     * @param {function (Message)} successCB
+     * @param failCB
+     */
+     getConversationFileRecords(conversation, beforeUid, count, successCB, failCB) {
+        impl.getConversationFileRecords(conversation, beforeUid, count, successCB, failCB);
+    }
+
+    /**
+     * 获取当前用户发送的历史文件记录
+     * @param {number | Long} beforeUid 消息uid，表示拉取本条消息之前的消息
+     * @param {number} count
+     * @param {function (Message)} successCB
+     * @param failCB
+     */
+     getMyFileRecords(beforeUid, count, successCB, failCB) {
+        impl.getMyFileRecords(beforeUid, count, successCB, failCB);
+    }
+
+    /**
+     * 获取历史文件记录
+     * @param {number | Long} beforeUid 消息uid，表示拉取本条消息之前的消息
+     * @param {function (Message)} successCB
+     * @param failCB
+     */
+     deleteFileRecord(beforeUid, count, successCB, failCB) {
+        impl.deleteFileRecord(beforeUid, count, successCB, failCB);
+    }
+
     _getStore() {
         return impl._getStore();
     }
