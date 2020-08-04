@@ -504,6 +504,20 @@ export class WfcManager {
     }
 
     /**
+     * 群成员开启允许发言白名单。当群组禁言时，白名单中的用户可以发言
+     * @param {string} groupId 群id
+     * @param {boolean} isSet true，白名单；false，取消白名单
+     * @param {[string]} memberIds 群成员id列表
+     * @param {[number]} notifyLines 默认传[0]即可
+     * @param {MessageContent} notifyMsg 默认传null即可
+     * @param {function ()} successCB 成功回调
+     * @param {function (number)} failCB 失败回调
+     */
+    allowGroupMembers(groupId, isSet, memberIds, notifyLines, notifyMsg, successCB, failCB){
+        impl.allowGroupMembers(groupId, isSet, memberIds, notifyLines, notifyMsg, successCB, failCB);
+    }
+
+    /**
      * 退出群组
      * @param groupId 群id
      * @param {[]} lines 默认传[0]即可
