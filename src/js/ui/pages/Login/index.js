@@ -19,10 +19,10 @@ import { connect } from '../../../platform'
 export default class Login extends Component {
     @observable qrCode;
     @observable desc = '扫码登录野火IM'
-    token = '';
+    appToken = '';
     loginTimer;
     qrCodeTimer;
-    lastToken;
+    lastAppToken;
 
     componentDidMount() {
         axios.defaults.baseURL = Config.APP_SERVER;
@@ -55,7 +55,7 @@ export default class Login extends Component {
 
     async getCode() {
         var response = await axios.post('/pc_session', {
-            token: this.token,
+            token: this.appToken,
             device_name: 'pc',
             clientId: wfc.getClientId(),
             platform: Config.getWFCPlatform()
@@ -63,7 +63,7 @@ export default class Login extends Component {
         console.log('----------- getCode', response.data);
         if (response.data) {
             let session = Object.assign(new PCSession(), response.data.result);
-            this.token = session.token;
+            this.appToken = session.token;
             this.qrCode = jrQRCode.getQrBase64(Config.QR_CODE_PREFIX_PC_SESSION + session.token);
             this.desc = '扫码登录野火IM'
             this.login();
@@ -78,7 +78,7 @@ export default class Login extends Component {
 
     async refreshQrCode() {
         this.qrCodeTimer = setInterval(() => {
-            this.token = '';
+            this.appToken = '';
             this.getCode();
         }, 30 * 1000);
     }
@@ -90,21 +90,21 @@ export default class Login extends Component {
             return;
         }
 
-        if (this.token === '' || this.lastToken === this.token) {
+        if (this.appToken === '' || this.lastAppToken === this.appToken) {
             console.log('-------- token is empty or invalid');
             return;
         }
-        var response = await axios.post('/session_login/' + this.token);
+        var response = await axios.post('/session_login/' + this.appToken);
         console.log('---------- login', response.data);
         if (response.data) {
             switch (response.data.code) {
                 case 0:
-                    this.lastToken = this.token;
+                    this.lastAppToken = this.appToken;
                     let userId = response.data.result.userId;
-                    let token = response.data.result.token;
-                    connect(userId, token);
+                    let imToken = response.data.result.token;
+                    connect(userId, imToken);
                     WildFireIM.config.loginUser= wfc.getUserInfo(wfc.getUserId());
-                    WildFireIM.config.token= this.token;
+                    WildFireIM.config.token = this.appToken;
 
                     sessionStorage.setItem('token', token);
                     sessionStorage.setItem('userId', userId);
@@ -117,7 +117,7 @@ export default class Login extends Component {
                     this.login();
                     break;
                 default:
-                    this.lastToken = '';
+                    this.lastAppToken = '';
                     console.log(response.data);
                     break
             }

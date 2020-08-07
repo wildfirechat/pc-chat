@@ -9,7 +9,7 @@ export default class FileMessageContent extends MediaMessageContent {
 
     constructor(fileOrLocalPath, remotePath) {
         super(MessageContentType.File, MessageContentMediaType.File, fileOrLocalPath, remotePath);
-        if (fileOrLocalPath instanceof File) {
+        if (typeof File !== 'undefined' && fileOrLocalPath instanceof File) {
             this.name = fileOrLocalPath.name;
             this.size = fileOrLocalPath.size;
         }
@@ -32,9 +32,9 @@ export default class FileMessageContent extends MediaMessageContent {
             if(payload.searchableContent.indexOf(FileMessageContent.FILE_NAME_PREFIX) === 0){
                 this.name = payload.searchableContent.substring(payload.searchableContent.indexOf(FileMessageContent.FILE_NAME_PREFIX) + FileMessageContent.FILE_NAME_PREFIX.length);
             }else {
-                this.name = payload.searchableContent;
+        this.name = payload.searchableContent;
             }
-            this.size = Number(payload.content);
+        this.size = Number(payload.content);
         }
     }
 
