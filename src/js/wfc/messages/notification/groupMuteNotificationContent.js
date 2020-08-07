@@ -9,7 +9,7 @@ export default class GroupMuteNotificationContent extends GroupNotificationConte
     muteType;
 
     constructor(operator, muteType) {
-        super(MessageContentType.MuteGroupMember_Notification);
+        super(MessageContentType.MuteGroup_Notification);
         this.operator = operator;
         this.muteType = muteType;
     }

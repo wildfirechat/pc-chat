@@ -6,6 +6,7 @@ import ConversationType from '../../../../wfc/model/conversationType';
 import classes from './style.css';
 import ConversationInfo from '../../../../wfc/model/conversationInfo';
 import { isElectron, popMenu, ContextMenuTrigger, hideMenu } from '../../../../platform'
+import {eq} from "../../../../wfc/util/longUtil";
 
 
 export default class ConversationItem extends Component {
@@ -135,7 +136,7 @@ export default class ConversationItem extends Component {
 
                     <span className={classes.times}>
                         {
-                            e.timestamp ? helper.timeFormat(e.timestamp) : ''
+                            e.timestamp && !eq(e.timestamp, 0) ? helper.timeFormat(e.timestamp) : ''
                         }
                     </span>
                 </div>
@@ -181,7 +182,7 @@ export default class ConversationItem extends Component {
 
                             <span className={classes.times}>
                                 {
-                                    e.timestamp ? helper.timeFormat(e.timestamp) : ''
+                                    e.timestamp && !eq(e.timestamp, 0) ? helper.timeFormat(e.timestamp) : ''
                                 }
                             </span>
                         </div>

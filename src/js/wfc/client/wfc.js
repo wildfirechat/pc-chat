@@ -446,10 +446,10 @@ export class WfcManager {
     }
 
     /**
-     * 获取群成员信息
-     * @param {string} groupId 群id
-     * @param {int} memberType 成员类型，0 普通成员；1 管理员；2 owner；3 禁言成员
-     * @returns {[GroupMember]} 群成员信息
+     * 根据群成员类型获取群成员列表
+     * @param {string} groupId
+     * @param {number} memberType，可选值参考{@link GroupMemberType}
+     * @return {[GroupMember]} 群成员列表
      */
     getGroupMembersByType(groupId, memberType) {
         return impl.getGroupMembersByType(groupId, memberType);
@@ -499,22 +499,22 @@ export class WfcManager {
      * @param {function ()} successCB 成功回调
      * @param {function (number)} failCB 失败回调
      */
-    muteGroupMembers(groupId, isSet, memberIds, notifyLines, notifyMsg, successCB, failCB){
-        impl.muteGroupMembers(groupId, isSet, memberIds, notifyLines, notifyMsg, successCB, failCB);
+    muteGroupMembers(groupId, isSet, memberIds= [], notifyLines = [], notifyMsg, successCB, failCB){
+        impl.muteOrAllowGroupMembers(groupId, isSet, false, memberIds, notifyLines, notifyMsg, successCB, failCB);
     }
 
     /**
-     * 群成员开启允许发言白名单。当群组禁言时，白名单中的用户可以发言
+     * 群全局禁言之后，允许白名单成员发言
      * @param {string} groupId 群id
-     * @param {boolean} isSet true，白名单；false，取消白名单
+     * @param {boolean} isSet true，加入白名单，允许发言；false，移除白名单，禁止发言
      * @param {[string]} memberIds 群成员id列表
      * @param {[number]} notifyLines 默认传[0]即可
      * @param {MessageContent} notifyMsg 默认传null即可
      * @param {function ()} successCB 成功回调
      * @param {function (number)} failCB 失败回调
      */
-    allowGroupMembers(groupId, isSet, memberIds, notifyLines, notifyMsg, successCB, failCB){
-        impl.allowGroupMembers(groupId, isSet, memberIds, notifyLines, notifyMsg, successCB, failCB);
+    allowGroupMembers(groupId, isSet, memberIds= [], notifyLines = [], notifyMsg, successCB, failCB){
+        impl.muteOrAllowGroupMembers(groupId, isSet, true, memberIds, notifyLines, notifyMsg, successCB, failCB);
     }
 
     /**
@@ -1206,6 +1206,20 @@ export class WfcManager {
         impl.connect(userId, token);
     }
 
+    getVersion(){
+        return impl.getVersion();
+    }
+    getAuthorizedMediaUrl(messageUid, mediaType, mediaPath, successCB, failCB){
+        impl.getAuthorizedMediaUrl(messageUid, mediaType, mediaPath, successCB, failCB)
+    }
+    /**
+     * 微信小程序切到前台时调用应用切到了前台
+     *
+     */
+    onForeground(){
+        impl.onForeground();
+    }
+
    /**
      *
      * 是否开启了已送达报告和已读报告功能
@@ -1224,7 +1238,17 @@ export class WfcManager {
     }
 
     isCommercialServer() {
-        return impl.isCommercialServer();
+        return true;
+    }
+
+    /**
+     * 设置当前用户是否开启消息回执
+     * @param enable
+     * @param successCB
+     * @param failCB
+     */
+    setUserEnableReceipt(enable, successCB, failCB){
+        impl.setUserEnableReceipt(enable, successCB, failCB);
     }
 
     /**
@@ -1246,49 +1270,36 @@ export class WfcManager {
     }
 
     /**
-     * 获取认证过的媒体信息url
-     *
-     * @param {Long} messageUid
-     * @param {number} mediaType
-     * @param {string} mediaPath
-     * @param {function ()} successCB
-     * @param {function (number)} failCB
+     * 获取会话中的文件记录
+     * @param {Conversation} conversation 会话
+     * @param {Long} beforeMessageUid 消息uid，表示获取此消息uid之前的文件记录
+     * @param {number} count 数量
+     * @param {function ([FileRecord])} successCB 成功回调
+     * @param {function (number)} failCB 失败回调
      */
-    getAuthorizedMediaUrl(messaggeUid, mediaType, mediaPath, successCB, failCB) {
-        impl.getAuthorizedMediaUrl(messaggeUid, mediaType, mediaPath, successCB, failCB);
+    getConversationFileRecords(conversation, beforeMessageUid, count, successCB, failCB){
+        impl.getConversationFileRecords(conversation, beforeMessageUid, count, successCB, failCB);
     }
 
     /**
-     * 获取会话的历史文件记录
-     * @param {Conversation} conversation 目标会话
-     * @param {number | Long} beforeUid 消息uid，表示拉取本条消息之前的消息
-     * @param {number} count
-     * @param {function (Message)} successCB
-     * @param failCB
+     * 获取我发送的文件记录
+     * @param {Long} beforeMessageUid 消息uid，表示获取此消息uid之前的文件记录
+     * @param {number} count 数量
+     * @param {function ([FileRecord])} successCB 成功回调
+     * @param {function (number)} failCB 失败回调
      */
-     getConversationFileRecords(conversation, beforeUid, count, successCB, failCB) {
-        impl.getConversationFileRecords(conversation, beforeUid, count, successCB, failCB);
+    getMyFileRecords(beforeMessageUid, count, successCB, failCB){
+        impl.getMyFileRecords(beforeMessageUid, count, successCB, failCB);
     }
 
     /**
-     * 获取当前用户发送的历史文件记录
-     * @param {number | Long} beforeUid 消息uid，表示拉取本条消息之前的消息
-     * @param {number} count
-     * @param {function (Message)} successCB
-     * @param failCB
+     * 删除文件记录
+     * @param {Long} messageUid 文件对应的消息的uid
+     * @param {function ()} successCB 成功回调
+     * @param {function (number)} failCB 失败回调
      */
-     getMyFileRecords(beforeUid, count, successCB, failCB) {
-        impl.getMyFileRecords(beforeUid, count, successCB, failCB);
-    }
-
-    /**
-     * 获取历史文件记录
-     * @param {number | Long} beforeUid 消息uid，表示拉取本条消息之前的消息
-     * @param {function (Message)} successCB
-     * @param failCB
-     */
-     deleteFileRecord(beforeUid, count, successCB, failCB) {
-        impl.deleteFileRecord(beforeUid, count, successCB, failCB);
+    deleteFileRecord(messageUid, successCB, failCB){
+        impl.deleteFileRecord(messageUid, successCB, failCB);
     }
 
     _getStore() {

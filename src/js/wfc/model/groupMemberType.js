@@ -4,4 +4,5 @@ export default class GroupMemberType {
     static Owner = 2;
     static Muted = 3;
     static Removed = 4;
+    static Allowed = 5;
 }
