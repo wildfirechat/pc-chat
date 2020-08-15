@@ -473,6 +473,8 @@ class Chat {
         let content = message.messageContent;
         content.localPath = filePath;
         wfc.updateMessageContent(messageId, content)
+        let msg = self.messageList.find(m => m.messageId === messageId);
+        msg.messageContent = content;
         self.forceRerenderMessage(messageId);
     }
 
