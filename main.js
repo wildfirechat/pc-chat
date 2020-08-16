@@ -589,6 +589,8 @@ const createMainWindow = () => {
     mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
         // 设置保存路径,使Electron不提示保存对话框。
         // item.setSavePath('/tmp/save.pdf')
+        let fileName = downloadFileMap.get(item.getURL()).fileName;
+        item.setSaveDialogOptions({defaultPath: fileName})
 
         item.on('updated', (event, state) => {
             if (state === 'interrupted') {
@@ -598,20 +600,21 @@ const createMainWindow = () => {
                     console.log('Download is paused')
                 } else {
                     console.log(`Received bytes: ${item.getReceivedBytes()}, ${item.getTotalBytes()}`)
-                    let messageId = downloadFileMap.get(item.getURL())
+                    let messageId = downloadFileMap.get(item.getURL()).messageId
                     mainWindow.webContents.send('file-download-progress', {
-                        messageId : messageId,
-                        receivedBytes : item.getReceivedBytes(),
-                        totalBytes :  item.getTotalBytes()}
+                            messageId: messageId,
+                            receivedBytes: item.getReceivedBytes(),
+                            totalBytes: item.getTotalBytes()
+                        }
                     );
                 }
             }
         })
         item.once('done', (event, state) => {
-            let messageId = downloadFileMap.get(item.getURL())
+            let messageId = downloadFileMap.get(item.getURL()).messageId
             if (state === 'completed') {
                 console.log('Download successfully')
-                mainWindow.webContents.send('file-downloaded', {messageId : messageId, filePath: item.getSavePath()});
+                mainWindow.webContents.send('file-downloaded', {messageId: messageId, filePath: item.getSavePath()});
             } else {
                 console.log(`Download failed: ${state}`)
             }
@@ -769,7 +772,7 @@ const createMainWindow = () => {
     ipcMain.on('file-download', async (event, args) => {
         var filename = args.remotePath;
         var messageId = args.messageId;
-        downloadFileMap.set(encodeURI(filename), messageId);
+        downloadFileMap.set(encodeURI(filename), {messageId: messageId, fileName: args.fileName});
 
         mainWindow.webContents.loadURL(filename)
 
