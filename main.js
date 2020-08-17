@@ -772,6 +772,7 @@ const createMainWindow = () => {
     ipcMain.on('file-download', async (event, args) => {
         var filename = args.remotePath;
         var messageId = args.messageId;
+        filename = filename.replace(':80', '');
         downloadFileMap.set(encodeURI(filename), {messageId: messageId, fileName: args.fileName});
 
         mainWindow.webContents.loadURL(filename)
