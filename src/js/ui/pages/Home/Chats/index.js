@@ -11,6 +11,7 @@ import ConversationType from '../../../../wfc/model/conversationType';
 import wfc from '../../../../wfc/client/wfc'
 import DismissGroupNotification from "../../../../wfc/messages/notification/dismissGroupNotification";
 import QuitGroupNotification from "../../../../wfc/messages/notification/quitGroupNotification";
+import KickoffGroupMemberNotification from "../../../../wfc/messages/notification/kickoffGroupMemberNotification";
 
 moment.updateLocale('en', {
     relativeTime: {
@@ -82,7 +83,9 @@ export default class Chats extends Component {
 
     onReceiveMessage = (msg) => {
         // this.props.reloadConversation(msg.conversation);
-        if(msg.messageContent instanceof DismissGroupNotification || msg.messageContent instanceof QuitGroupNotification){
+        if (msg.messageContent instanceof DismissGroupNotification
+            || msg.messageContent instanceof QuitGroupNotification
+            || msg.messageContent instanceof KickoffGroupMemberNotification) {
             wfc.removeConversation(msg.conversation, true);
         }
         this.props.loadConversations();
