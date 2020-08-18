@@ -744,9 +744,9 @@ export default class ChatContent extends Component {
                     xhr.open("GET", fileHref, true);
                     xhr.send();
                 }else {
-                    let anchor = document.createElement('a');
-                    anchor.setAttribute("download", true);
-                    anchor.setAttribute("href", fileHref);
+                    var anchor = document.createElement('a');
+                    anchor.download =  filename;
+                    anchor.href = fileHref;
                     anchor.click();
                 }
             }
