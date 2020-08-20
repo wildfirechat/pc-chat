@@ -181,10 +181,15 @@ export default class MessageInput extends Component {
         // )
 
 
-        if(!message.startsWith('<')){
-            message = message.replace(/<br>/g, '\n').trim()
-        }
-        // TODO 处理表情路径变化
+        // if(!message.startsWith('<')){
+        //     message = message.replace(/<br>/g, '\n').trim()
+        // }
+
+        message = message.replace(/<br>/g, '\n')
+            .replace(/<div>/g, '\n')
+            .replace(/<\/div>/g, '')
+            .replace('/&nbsp;/g', '');
+
         message = message.replace(/<img class="emoji" draggable="false" alt="/g, '')
             .replace(/" src="assets\/twemoji\/72x72\/[0-9a-z-]+\.png">/g, '')
 
@@ -297,6 +302,9 @@ export default class MessageInput extends Component {
                 this.batchProcess(result.file);
                 URL.revokeObjectURL(url);
             }
+            e.preventDefault();
+            let text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt('在这里输入文本');
+            document.execCommand('insertText', false, text);
             return;
         }
         var args = ipcRenderer.sendSync('file-paste');
@@ -318,6 +326,9 @@ export default class MessageInput extends Component {
 
             this.batchProcess(file);
         }
+        e.preventDefault();
+        let text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt('在这里输入文本');
+        document.execCommand('insertText', false, text);
     }
 
     readClipImage(event) {
