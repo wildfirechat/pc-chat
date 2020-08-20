@@ -1014,7 +1014,7 @@ export class WfcManager {
 
     /**
      * 获取会话消息
-     * @param {[number]} types 想获取的会话类型，可选值参考{@link ConversationType}
+     * @param {[number]} conversationTypes 想获取的会话类型，可选值参考{@link ConversationType}
      * @param {[0]} lines 想获取哪些会话线路的会话，默认传[0]即可
      * @param {number} fromIndex messageId，表示从那一条消息开始获取
      * @param {boolean} before  true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
@@ -1042,15 +1042,16 @@ export class WfcManager {
     /**
      * 获取用户消息
      * @param {string} userId 用户id
-     * @param {[number]} types 想获取的会话类型，可选值参考{@link ConversationType}
+     * @param {[number]} conversationTypes 想获取的会话类型，可选值参考{@link ConversationType}
      * @param {[0]} lines 想获取哪些会话线路的会话，默认传[0]即可
      * @param {number} fromIndex messageId，表示从那一条消息开始获取
      * @param {boolean} before  true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
      * @param {number} count 获取多少条消息
+     * @param {[number]} contentTypes 消息类型，可选值参考{@link MessageContentType}
      * @return
      */
-    getUserMessagesEx(userId, conversation, fromIndex, before = true, count = 20) {
-        return impl.getUserMessages(userId, conversation, fromIndex, before, count);
+    getUserMessagesEx(userId, conversationTypes, lines, fromIndex, before = true, count = 20, contentTypes = []) {
+        return impl.getUserMessagesEx(userId, conversationTypes, lines, fromIndex, before, count, contentTypes);
     }
 
     /**
