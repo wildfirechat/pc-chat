@@ -180,7 +180,7 @@ export class WfcManager {
     /**
      * 获取用户信息
      * @param {string} userId 用户ID
-     * @param {boolean} refresh 是否刷新用户
+     * @param {boolean} refresh 是否强制从服务器更新，如果本地没有或者强制，会从服务器刷新，然后发出通知UserInfosUpdate
      * @param {function (UserInfo)} success 成功回调
      * @param {function (number)} fail 失败回调
      */
@@ -1006,24 +1006,40 @@ export class WfcManager {
      * @param {boolean} before  true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
      * @param {number} count 获取多少条消息
      * @param {string} withUser 只有会话类型为{@link ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
-     * @return
+     * @return {[Message]} 会话消息列表，参考{@link Message}
      */
-    getMessages(conversation, fromIndex, before = true, count = 20, withUser = '') {
+    getMessages(conversation, fromIndex= 0, before = true, count = 20, withUser = '') {
         return impl.getMessages(conversation, fromIndex, before, count, withUser);
     }
 
     /**
-     * 获取会话消息
-     * @param {[number]} conversationTypes 想获取的会话类型，可选值参考{@link ConversationType}
-     * @param {[0]} lines 想获取哪些会话线路的会话，默认传[0]即可
-     * @param {number} fromIndex messageId，表示从那一条消息开始获取
-     * @param {boolean} before  true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
-     * @param {number} count 获取多少条消息
+     * 获取消息
+     * @param {[number]} conversationTypes 会话类型列表，可选值参考{@link  ConversationType}
+     * @param {[number]} lines 会话线路列表
+     * @param {number} fromIndex 本参数暂时无效! messageId，表示从那一条消息开始获取
+     * @param {boolean} before 本参数暂时无效! true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
+     * @param {number} count 本参数暂时无效! 获取多少条消息
      * @param {string} withUser 只有会话类型为{@link ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
-     * @return
+     * @param {[number]} contentTypes 消息类型列表，可选值参考{@link MessageContentType}
+     * @return {[Message]} 会话消息列表，参考{@link Message}
      */
-    getMessagesEx(conversationTypes, lines, fromIndex, before = true, count = 20, withUser = '') {
-        return impl.getMessagesEx(conversationTypes, lines, fromIndex, before, count, withUser);
+    getMessagesEx(conversationTypes, lines,  fromIndex= 0, before= true, count = 20, withUser = '', contentTypes = []) {
+        return impl.getMessagesEx(conversationTypes, lines, contentTypes, fromIndex, before, count, withUser);
+    }
+
+    /**
+     *
+     * @param {[number]} conversationTypes 会话类型列表，可选值参考{@link  ConversationType}
+     * @param {[number]} lines 会话线路列表
+     * @param messageStatus 消息状态，可选值参考{@link MessageStatus}
+     * @param {number} fromIndex 本参数暂时无效! messageId，表示从那一条消息开始获取
+     * @param {boolean} before 本参数暂时无效! true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
+     * @param {number} count 本参数暂时无效! 获取多少条消息
+     * @param {string} withUser 只有会话类型为{@link ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
+     * @return {[Message]} 会话消息列表，参考{@link Message}
+     */
+    getMessagesEx2(conversationTypes, lines, messageStatus, fromIndex= 0, before= true, count= 20, withUser= '') {
+        return impl.getMessagesEx2(conversationTypes, lines, messageStatus, fromIndex, before, count, withUser);
     }
 
     /**
@@ -1055,9 +1071,10 @@ export class WfcManager {
     }
 
     /**
-     * 加载远程历史消息
+     * 已废弃，请使用{@link loadRemoteConversationMessages}
+     * 获取会还的远程历史消息
      * @param {Conversation} conversation 目标会话
-     * @param {number} beforeUid 消息uid，表示拉取本条消息之前的消息
+     * @param {number | Long} beforeUid 消息uid，表示拉取本条消息之前的消息
      * @param {number} count
      * @param {function (Message)} successCB
      * @param failCB
