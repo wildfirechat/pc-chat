@@ -2,12 +2,6 @@ import Config from '../../../config.js'
 
 // 运行在新的voip window
 export default class CallSession {
-    static iceServers = [
-        {
-            urls: [Config.ICE_ADDRESS],
-            username: Config.ICE_USERNAME,
-            credential: Config.ICE_PASSWORD,
-        }]
     videoMuted = false
     audioOnly = false
     muted = false
