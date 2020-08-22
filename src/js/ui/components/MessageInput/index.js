@@ -188,7 +188,7 @@ export default class MessageInput extends Component {
         message = message.replace(/<br>/g, '\n')
             .replace(/<div>/g, '\n')
             .replace(/<\/div>/g, '')
-            .replace('/&nbsp;/g', '');
+            .replace(/&nbsp;/g, ' ');
 
         message = message.replace(/<img class="emoji" draggable="false" alt="/g, '')
             .replace(/" src="assets\/twemoji\/72x72\/[0-9a-z-]+\.png">/g, '')
