@@ -38,7 +38,13 @@ export default class MessageContent {
     decode(payload) {
         this.type = payload.type;
         this.mentionedType = payload.mentionedType;
-        this.mentionedTargets = payload.mentionedTargets;
+       if(payload.hasOwnProperty('mentionedTarget')){
+            // web
+            this.mentionedTargets = payload.mentionedTarget;
+        }else {
+            // pc
+            this.mentionedTargets = payload.mentionedTargets;
+        }
         this.extra = payload.extra;
         this.pushContent = payload.pushContent;
     }
