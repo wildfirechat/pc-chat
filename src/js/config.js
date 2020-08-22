@@ -13,7 +13,7 @@ export default class Config {
     static DEFAULT_PORTRAIT_URL = 'https://static.wildfirechat.cn/user-fallback.png';
     static APP_SERVER = 'http://wildfirechat.cn:8888';
     static QR_CODE_PREFIX_PC_SESSION = "wildfirechat://pcsession/";
-    // 可以添加多个
+    // turn server 配置，可以添加多个
     static ICE_SERVERS = [{uri: 'turn:turn.wildfirechat.cn:3478', userName: 'wfchat', password: 'wfchat'}];
     static LANGUAGE = 'zh_CN';
 
