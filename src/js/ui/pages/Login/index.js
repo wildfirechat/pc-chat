@@ -9,54 +9,44 @@ import PCSession from '../../../wfc/model/pcsession';
 import {observable} from 'mobx';
 import axios from 'axios';
 import {connect} from '../../../platform'
+import ConnectionStatus from "../../../wfc/client/connectionStatus";
+import EventType from "../../../wfc/client/wfcEvent";
 
-@inject(stores => ({
-    avatar: stores.sessions.avatar,
-    code: stores.sessions.code,
-}))
 @observer
 export default class Login extends Component {
     @observable qrCode;
     @observable desc = '扫码登录野火IM'
+    @observable scanToLogin = true;
+    @observable hasSentLoginRequest = false;
     appToken = '';
     loginTimer;
     qrCodeTimer;
     lastAppToken;
+    loginButton;
 
     componentDidMount() {
+        this.loginButton = this.refs.loginButton;
         axios.defaults.baseURL = Config.APP_SERVER;
 
         let userId = localStorage.getItem("userId");
-        this.createPCLoginSession(userId);
         if (!userId) {
             // 此前尚未登录过，需要手机端扫码登录
+            this.createPCLoginSession(null);
             this.refreshQrCode();
         } else {
-            // 此前已登录过，直接点登录，请求手机端确认登录
-            // TODO 渲染头像 按钮等
+            // 此前已登录过，显示此前登录的账号信息
+            this.scanToLogin = false;
+            this.qrCode = localStorage.getItem("userPortrait")
+            this.desc = localStorage.getItem("userName");
         }
-        // TODO 渲染切换账号，并且点击切换账号的时候，localStorage.setItem('userId', '')
+        wfc.eventEmitter.on(EventType.ConnectionStatusChanged, this.onConnectionStatusChange)
     }
 
     componentWillUnmount() {
         console.log('login will disappear');
         clearInterval(this.loginTimer);
         clearInterval(this.qrCodeTimer);
-    }
-
-    renderUser() {
-        return (
-            <div className={classes.inner}>
-                {
-                    <img
-                        className="disabledDrag"
-                        src={this.props.avatar}/>
-                }
-
-                <p>Scan successful</p>
-                <p>Confirm login on mobile WildfireChat</p>
-            </div>
-        );
+        wfc.eventEmitter.removeListener(EventType.ConnectionStatusChanged, this.onConnectionStatusChange)
     }
 
     async createPCLoginSession(userId) {
@@ -70,21 +60,19 @@ export default class Login extends Component {
         if (response.data) {
             let session = Object.assign(new PCSession(), response.data.result);
             this.appToken = session.token;
-            if (!userId) {
+            if (!userId || session.status === 0/*服务端pc login session不存在*/) {
                 this.qrCode = jrQRCode.getQrBase64(Config.QR_CODE_PREFIX_PC_SESSION + session.token);
                 this.desc = '扫码登录野火IM'
-            } else {
-                // TODO 渲染请求已发送
+                this.scanToLogin = true;
+
+                if (userId) {
+                    this.refreshQrCode();
+                }
             }
+
             this.login();
         }
     }
-
-    // async keepLogin() {
-    //     this.loginTimer = setInterval(() => {
-    //         this.login();
-    //     }, 1 * 1000);
-    // }
 
     async refreshQrCode() {
         this.qrCodeTimer = setInterval(() => {
@@ -111,13 +99,14 @@ export default class Login extends Component {
                     WildFireIM.config.token = this.appToken;
 
                     localStorage.setItem('userId', userId);
-                    // TODO store portrait etc
                     break;
                 case 9:
                     console.log('qrcode scaned', response.data);
                     this.desc = response.data.result.userName + ' 已扫码，等待确认';
                     this.qrCode = response.data.result.portrait;
                     // update login status ui
+                    localStorage.setItem("userName", response.data.result.userName);
+                    localStorage.setItem("userPortrait", response.data.result.portrait)
                     this.login();
                     break;
                 default:
@@ -129,27 +118,67 @@ export default class Login extends Component {
         }
     }
 
-    renderCode() {
+    onConnectionStatusChange = (status) => {
+        if (status === ConnectionStatus.ConnectionStatusLogout
+            || status === ConnectionStatus.ConnectionStatusRejected
+            || status === ConnectionStatus.ConnectionStatusSecretKeyMismatch
+            || status === ConnectionStatus.ConnectionStatusTokenIncorrect) {
+            localStorage.setItem("userId", '')
+        }
+    }
 
-        return (
-            <div className={classes.inner}>
-                {
-                    this.qrCode && (<img className="disabledDrag" src={this.qrCode}/>)
-                }
+    sendLoginRequest = () => {
+        let userId = localStorage.getItem("userId");
+        this.createPCLoginSession(userId);
+        this.hasSentLoginRequest = true;
+    }
 
-                <a href={window.location.pathname + '?' + +new Date()}>刷新二维码</a>
+    switchUser = () => {
+        localStorage.setItem("userId", "");
+        localStorage.setItem("userName", "");
+        localStorage.setItem("userPortrait", "");
 
-                <p>{this.desc}</p>
-            </div>
-        );
+        this.scanToLogin = true;
+        this.hasSentLoginRequest = false;
+        this.createPCLoginSession(null);
+        this.refreshQrCode();
     }
 
     render() {
         return (
             <div className={classes.container}>
                 {
-                    // this.props.avatar ? this.renderUser() : this.renderCode()
-                    this.renderCode()
+                    this.scanToLogin ? (
+                        <div className={classes.inner}>
+                            {
+                                this.qrCode && (<img className="disabledDrag" src={this.qrCode}/>)
+                            }
+
+                            <a href={window.location.pathname + '?' + +new Date()}>刷新二维码</a>
+
+                            <p>{this.desc}</p>
+                        </div>
+
+                    ) : (this.hasSentLoginRequest ? (
+                        <div className={classes.inner}>
+                            {
+                                <img className="disabledDrag" src={this.qrCode}/>
+                            }
+                            <p>请在手机上点击确认以登录</p>
+
+                            <button onClick={this.switchUser}> 取消登录</button>
+                        </div>
+
+                    ) : (
+                        <div className={classes.inner}>
+                            {
+                                <img className="disabledDrag" src={this.qrCode}/>
+                            }
+
+                            <button onClick={this.sendLoginRequest}> 登录</button>
+                            <button onClick={this.switchUser}>切换用户</button>
+                        </div>
+                    ))
                 }
             </div>
         );
