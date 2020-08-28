@@ -222,9 +222,9 @@ export default class MessageInput extends Component {
         }
         // let ret = wfc.screenShot();
         ipcRenderer.send('screenshots-start', {});
-        ipcRenderer.on('screenshots-ok', (args) => {
-            this.sendCapturedImage();
-        });
+        // ipcRenderer.on('screenshots-ok', (args) => {
+        //     this.sendCapturedImage();
+        // });
     }
 
     async sendCapturedImage() {
@@ -375,6 +375,14 @@ export default class MessageInput extends Component {
     componentDidMount() {
         wfc.eventEmitter.on(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
         wfc.eventEmitter.on('mention', this.updateMention);
+        if (isElectron()){
+            ipcRenderer.on('screenshots-ok', (args) => {
+                if(document.hasFocus()){
+                    this.sendCapturedImage();
+                }
+            });
+        }
+
         if (!this.shouldHandleMention(this.props.conversation)) {
             return;
         }
@@ -386,6 +394,9 @@ export default class MessageInput extends Component {
     componentWillUnmount() {
         wfc.eventEmitter.removeListener(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
         wfc.eventEmitter.removeListener('mention', this.updateMention);
+        if (isElectron()){
+            ipcRenderer.removeAllListeners('screenshots-ok')
+        }
     }
 
     shouldHandleMention(conversation) {
