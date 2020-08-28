@@ -77,7 +77,7 @@ export default class Login extends Component {
     async refreshQrCode() {
         this.qrCodeTimer = setInterval(() => {
             this.appToken = '';
-            this.getCode();
+            this.createPCLoginSession(null);
         }, 30 * 1000);
     }
 
