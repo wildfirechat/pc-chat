@@ -20,7 +20,7 @@ import GroupMemberType from '../../../wfc/model/groupMemberType';
 import avenginekitProxy from '../../../wfc/av/engine/avenginekitproxy';
 import CheckBox from "rc-checkbox";
 import Config from "../../../config";
-import { parser as emojiParse } from 'utils/emoji';
+import {parser as emojiParse} from 'utils/emoji';
 
 export default class MessageInput extends Component {
     static propTypes = {
@@ -195,7 +195,7 @@ export default class MessageInput extends Component {
 
         let textMessageContent = this.handleMention(message);
         this.props.sendMessage(textMessageContent);
-        this.refs.input.innerHTML= '';
+        this.refs.input.innerHTML = '';
         wfc.setConversationDraft(conversation, '');
         e.preventDefault();
     }
@@ -220,23 +220,28 @@ export default class MessageInput extends Component {
         if (!isElectron()) {
             return;
         }
-        let ret = wfc.screenShot();
-        if ('done' === ret) {
-            var args = ipcRenderer.sendSync('file-paste');
-            if (args.hasImage && this.canisend()) {
-                if ((await this.props.confirmSendImage(args.filename)) === false) {
-                    return;
-                }
+        // let ret = wfc.screenShot();
+        ipcRenderer.send('screenshots-start', {});
+        ipcRenderer.on('screenshots-ok', (args) => {
+            this.sendCapturedImage();
+        });
+    }
 
-                let parts = [
-                    new window.Blob([new window.Uint8Array(args.raw)], {type: 'image/png'})
-                ];
-                let file = new window.File(parts, args.filename, {
-                    lastModified: new Date(),
-                    type: 'image/png'
-                });
-                this.batchProcess(file);
+    async sendCapturedImage() {
+        let args = ipcRenderer.sendSync('file-paste');
+        if (args.hasImage && this.canisend()) {
+            if ((await this.props.confirmSendImage(args.filename)) === false) {
+                return;
             }
+
+            let parts = [
+                new window.Blob([new window.Uint8Array(args.raw)], {type: 'image/png'})
+            ];
+            let file = new window.File(parts, args.filename, {
+                lastModified: new Date(),
+                type: 'image/png'
+            });
+            this.batchProcess(file);
         }
     }
 
@@ -265,7 +270,7 @@ export default class MessageInput extends Component {
             if (sel.getRangeAt && sel.rangeCount) {
                 range = sel.getRangeAt(0);
                 range.deleteContents();
-                if(text.startsWith('<')){
+                if (text.startsWith('<')) {
                     let imgEmoji = this.createElementFromHTML(text);
                     range.insertNode(imgEmoji);
                     range = document.createRange();
@@ -273,8 +278,8 @@ export default class MessageInput extends Component {
                     range.collapse(true);
                     sel.removeAllRanges();
                     sel.addRange(range);
-                }else {
-                    range.insertNode( document.createTextNode(text) );
+                } else {
+                    range.insertNode(document.createTextNode(text));
                 }
             }
         } else if (document.selection && document.selection.createRange) {
@@ -404,7 +409,7 @@ export default class MessageInput extends Component {
             let text = input.innerHTML.trim();
             text = text.replace(/<br>/g, '\n').trim()
             let conversationInfo = wfc.getConversationInfo(this.props.conversation);
-            if(!conversationInfo){
+            if (!conversationInfo) {
                 return;
             }
             if (text !== conversationInfo.draft) {
@@ -424,7 +429,7 @@ export default class MessageInput extends Component {
             }
         } else if (nextProps.conversation) {
             let conversationInfo = wfc.getConversationInfo(nextProps.conversation);
-            if(!conversationInfo || (this.props.conversation && this.props.conversation.equal(nextProps.conversation))) {
+            if (!conversationInfo || (this.props.conversation && this.props.conversation.equal(nextProps.conversation))) {
                 return;
             }
             input.innerHTML = conversationInfo.draft ? conversationInfo.draft : '';
@@ -550,11 +555,11 @@ export default class MessageInput extends Component {
 
                         ) : (
                             !Config.ENABLE_SINGLE_VOIP_CALL ? '' :
-                            <i
-                                className="icon-ion-android-camera"
-                                id="videoCall"
+                                <i
+                                    className="icon-ion-android-camera"
+                                    id="videoCall"
                                     onClick={e => canisend && this.videoCall()}
-                            />
+                                />
                         )
                     }
 
@@ -578,11 +583,11 @@ export default class MessageInput extends Component {
                                 </Popup>
 
                         ) : (!Config.ENABLE_SINGLE_VOIP_CALL ? '' :
-                            <i
-                                className="icon-ion-ios-telephone"
-                                id="audioCall"
+                                <i
+                                    className="icon-ion-ios-telephone"
+                                    id="audioCall"
                                     onClick={e => canisend && this.audioCall()}
-                            />
+                                />
                         )
                     }
 
@@ -627,13 +632,13 @@ export default class MessageInput extends Component {
                 </div>
 
                 <div contentEditable={true}
-                    className={classes.messageInput}
-                    id="messageInput"
-                    ref="input"
-                    placeholder="输入内容发送，Ctrl + Enter 换行 ..."
-                    readOnly={!canisend}
-                    onPaste={e => this.handlePaste(e)}
-                    onKeyPress={e => this.handleEnter(e)}
+                     className={classes.messageInput}
+                     id="messageInput"
+                     ref="input"
+                     placeholder="输入内容发送，Ctrl + Enter 换行 ..."
+                     readOnly={!canisend}
+                     onPaste={e => this.handlePaste(e)}
+                     onKeyPress={e => this.handleEnter(e)}
                 />
             </div>
         );
