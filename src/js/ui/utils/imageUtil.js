@@ -6,8 +6,16 @@ import {lt} from "../../wfc/util/longUtil";
 import ConversationType from "../../wfc/model/conversationType";
 
 function mergeImages(sources = [], options = {}) {
+    // Defaults
+    let defaultOptions = {
+        format: 'image/png',
+        quality: 0.92,
+        width: undefined,
+        height: undefined,
+        Canvas: undefined
+    };
     return new Promise(resolve => {
-        // options = Object.assign({}, this.defaultOptions, options);
+        options = Object.assign({}, defaultOptions, options);
 
         sources = sources.filter(source => source !== null && source !== undefined);
 
@@ -245,7 +253,7 @@ function mergeImages(sources = [], options = {}) {
 
 let groupPortraitMap = new Map();
 
-async function getConversationPortrait(conversation){
+async function getConversationPortrait(conversation) {
     let portrait = '';
     switch (conversation.type) {
         case ConversationType.Single:

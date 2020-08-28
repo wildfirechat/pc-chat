@@ -14,14 +14,6 @@ class NewChat {
     @observable list = [];
     @observable alreadySelected='';
 
-    // Defaults
-    defaultOptions = {
-        format: 'image/png',
-        quality: 0.92,
-        width: undefined,
-        height: undefined,
-        Canvas: undefined
-    };
 
     @action toggle(show = !self.show,alreadySelected = [] ) {
         self.show = show;
