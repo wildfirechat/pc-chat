@@ -42,6 +42,7 @@ let tray;
 let downloadFileMap = new Map()
 let settings = {};
 let isFullScreen = false;
+let isMainWindowFocusedWhenStartScreenshot = false;
 let isOsx = process.platform === 'darwin';
 let isWin = !isOsx;
 
@@ -627,6 +628,7 @@ const createMainWindow = () => {
 
     ipcMain.on('screenshots-start', (event, args) => {
         // console.log('main voip-message event', args);
+        isMainWindowFocusedWhenStartScreenshot = true;
         screenshots.startCapture();
     });
 
@@ -891,13 +893,19 @@ app.on('second-instance', () => {
     }
 })
 
+
 app.on('ready', () => {
     createMainWindow();
     screenshots = new Screenshots()
-    globalShortcut.register('ctrl+shift+a', () => screenshots.startCapture())
+    globalShortcut.register('ctrl+shift+a', () =>{
+        isMainWindowFocusedWhenStartScreenshot = mainWindow.isFocused();
+        screenshots.startCapture()
+    });
     // 点击确定按钮回调事件
     screenshots.on('ok', (e, {viewer}) => {
-        mainWindow.webContents.send('screenshots-ok');
+        if(isMainWindowFocusedWhenStartScreenshot){
+            mainWindow.webContents.send('screenshots-ok');
+        }
         console.log('capture', viewer)
     })
     // 点击取消按钮回调事件

@@ -377,9 +377,7 @@ export default class MessageInput extends Component {
         wfc.eventEmitter.on('mention', this.updateMention);
         if (isElectron()){
             ipcRenderer.on('screenshots-ok', (args) => {
-                if(document.hasFocus()){
-                    this.sendCapturedImage();
-                }
+                this.sendCapturedImage();
             });
         }
 
