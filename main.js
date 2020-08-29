@@ -13,6 +13,8 @@ import {
     dialog,
     globalShortcut
 } from 'electron';
+// import debug from 'electron-debug'
+import Screenshots from "electron-screenshots";
 import windowStateKeeper from 'electron-window-state';
 import AutoLaunch from 'auto-launch';
 import {autoUpdater} from 'electron-updater';
@@ -35,6 +37,7 @@ global.sharedObj = {proto: proto};
 let forceQuit = false;
 let downloading = false;
 let mainWindow;
+let screenshots;
 let tray;
 let downloadFileMap = new Map()
 let settings = {};
@@ -622,6 +625,11 @@ const createMainWindow = () => {
         })
     })
 
+    ipcMain.on('screenshots-start', (event, args) => {
+        // console.log('main voip-message event', args);
+        screenshots.startCapture();
+    });
+
     ipcMain.on('voip-message', (event, args) => {
         // console.log('main voip-message event', args);
         mainWindow.webContents.send('voip-message', args);
@@ -883,7 +891,38 @@ app.on('second-instance', () => {
     }
 })
 
-app.on('ready', createMainWindow);
+app.on('ready', () => {
+    createMainWindow();
+    screenshots = new Screenshots()
+    globalShortcut.register('ctrl+shift+a', () => screenshots.startCapture())
+    // 点击确定按钮回调事件
+    screenshots.on('ok', (e, {viewer}) => {
+        mainWindow.webContents.send('screenshots-ok');
+        console.log('capture', viewer)
+    })
+    // 点击取消按钮回调事件
+    screenshots.on('cancel', () => {
+        // console.log('capture', 'cancel1')
+    })
+    screenshots.on('cancel', e => {
+        // 执行了preventDefault
+        // 点击取消不会关闭截图窗口
+        // e.preventDefault()
+        // console.log('capture', 'cancel2')
+    })
+    // 点击保存按钮回调事件
+    screenshots.on('save', (e, {viewer}) => {
+        console.log('capture', viewer)
+    })
+    // debug({showDevTools: true, devToolsMode: 'undocked'})
+});
+
+// app.on('window-all-closed', () => {
+//     if (process.platform !== 'darwin') {
+//         app.quit()
+//     }
+// })
+
 app.on('before-quit', () => {
     // Fix issues #14
     forceQuit = true;
