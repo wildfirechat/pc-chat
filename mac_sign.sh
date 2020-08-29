@@ -1,20 +1,4 @@
 if [ -n "$1" ];then
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/PlugIns/bearer/*.dylib
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/PlugIns/iconengines/*.dylib
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/PlugIns/imageformats/*.dylib
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/PlugIns/platforms/*.dylib
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/PlugIns/printsupport/*.dylib
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/PlugIns/styles/*.dylib
-
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/Frameworks/QtCore.framework
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/Frameworks/QtDBus.framework
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/Frameworks/QtGui.framework
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/Frameworks/QtNetwork.framework
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/Frameworks/QtPrintSupport.framework
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/Frameworks/QtSvg.framework
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app/Contents/Frameworks/QtWidgets.framework
-
-  codesign --sign $1 --force mac-qt-denpendency/app/wfshot.app
   codesign --sign $1 --force proto_addon/marswrapper.mac.node
 else
   echo "使用方法：sh $0 signcode"
