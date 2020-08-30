@@ -14,6 +14,9 @@ export default {
         'babel-polyfill',
         `./main.js`,
     ],
+    externals: {
+        'electron-screenshots': 'require("electron-screenshots")'
+    },
 
     output: {
         path: config.dist,
