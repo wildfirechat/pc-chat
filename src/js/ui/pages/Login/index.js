@@ -51,7 +51,7 @@ export default class Login extends Component {
 
     async createPCLoginSession(userId) {
         let response = await axios.post('/pc_session', {
-            userId: userId,
+            flag: 1,
             device_name: 'pc',
             clientId: wfc.getClientId(),
             platform: Config.getWFCPlatform()
