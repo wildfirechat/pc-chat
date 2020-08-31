@@ -109,6 +109,9 @@ export default class Login extends Component {
                     localStorage.setItem("userPortrait", response.data.result.portrait)
                     this.login();
                     break;
+                case 18:
+                    //session is cancled, need clear last time login status
+                    break;
                 default:
                     this.lastAppToken = '';
                     console.log(response.data);
