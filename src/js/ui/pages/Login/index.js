@@ -110,7 +110,8 @@ export default class Login extends Component {
                     this.login();
                     break;
                 case 18:
-                    //session is cancled, need clear last time login status
+                    //session is canceled, need clear last time login status
+                    this.switchUser();
                     break;
                 default:
                     this.lastAppToken = '';
