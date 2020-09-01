@@ -51,7 +51,7 @@ export default class Login extends Component {
 
     async createPCLoginSession(userId) {
         let response = await axios.post('/pc_session', {
-            userId: userId,
+            flag: 1,
             device_name: 'pc',
             clientId: wfc.getClientId(),
             platform: Config.getWFCPlatform()
@@ -108,6 +108,10 @@ export default class Login extends Component {
                     localStorage.setItem("userName", response.data.result.userName);
                     localStorage.setItem("userPortrait", response.data.result.portrait)
                     this.login();
+                    break;
+                case 18:
+                    //session is canceled, need clear last time login status
+                    this.switchUser();
                     break;
                 default:
                     this.lastAppToken = '';
