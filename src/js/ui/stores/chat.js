@@ -152,6 +152,23 @@ class Chat {
         }
     }
 
+    onSendMessage(message) {
+        if (self.conversation && message.messageId > 0 && self.conversation.equal(message.conversation)) {
+            if (message.messageId > 0) {
+                self.messageList.push(message);
+            }
+        }
+    }
+
+    onMessageStatusUpdate(message){
+        if (self.conversation && message.messageId > 0 && self.conversation.equal(message.conversation)) {
+            let index = self.messageList.findIndex(m => m.messageId === message.messageId);
+            if (index >= 0) {
+                self.messageList[index] = message;
+            }
+        }
+    }
+
     onUserInfosUpdate(userInfos) {
         for (const userInfo of userInfos) {
             if (self.conversation && self.conversation.type === ConversationType.Single && self.conversation.target === userInfo.uid) {
@@ -184,6 +201,8 @@ class Chat {
         // 第一次进入的时候订阅
         if (!self.initialized) {
             wfc.eventEmitter.on(EventType.ReceiveMessage, self.onReceiveMessage);
+            wfc.eventEmitter.on(EventType.SendMessage, self.onSendMessage)
+            wfc.eventEmitter.on(EventType.MessageStatusUpdate, self.onMessageStatusUpdate)
             wfc.eventEmitter.on(EventType.RecallMessage, self.onRecallMessage);
             wfc.eventEmitter.on(EventType.UserInfosUpdate, self.onUserInfosUpdate);
             wfc.eventEmitter.on(EventType.GroupInfosUpdate, self.onGroupInfosUpdate);
@@ -270,30 +289,7 @@ class Chat {
         let msg = new Message();
         msg.conversation = self.conversation;
         msg.messageContent = messageContent;
-        let m;
-        let flag = MessageConfig.getMessageContentPersitFlag(messageContent.type);
-        wfc.sendMessage(msg,
-            (messageId, timestamp) => {
-                if (messageId > 0) {
-                    m = wfc.getMessageById(messageId);
-                    self.messageList.push(m);
-                }
-            },
-            null,
-            (messageUid, timestamp) => {
-                if (PersistFlag.Persist === flag || PersistFlag.Persist_And_Count === flag) {
-                    m.messageUid = messageUid;
-                    m.status = 1;
-                    m.timestamp = timestamp;
-                }
-                if (m instanceof MediaMessageContent) {
-                    m.remotePath = wfc.getMessageByUid(messageUid).messageContent.remotePath;
-                }
-            },
-            (errorCode) => {
-                console.log('send message failed', errorCode);
-            }
-        );
+        wfc.sendMessage(msg,null, null, null, null);
         return true;
     }
 
@@ -432,34 +428,7 @@ class Chat {
                 return false;
         }
         msg.messageContent = messageContent;
-        wfc.sendMessage(msg,
-            function (messageId, timestamp) {
-                if (messageId > 0) {
-                    let m = wfc.getMessageById(messageId);
-                    self.messageList.push(m);
-                }
-            },
-            (current, total) => {
-                // progress
-            },
-            function (messageUid, timestamp) {
-                let msg = wfc.getMessageByUid(messageUid);
-                if (self.messageList.length > 0) {
-                    for (let i = self.messageList.length - 1; i > 0; i--) {
-                        if (self.messageList[i].messageId === msg.messageId) {
-                            self.messageList[i].messageUid = messageUid;
-                            self.messageList[i].messageContent = msg.messageContent;
-                            self.messageList[i].status = MessageStatus.Sent;
-                            self.messageList[i].timestamp = timestamp;
-                            break;
-                        }
-                    }
-                }
-            },
-            function (errorCode) {
-                console.log('send message failed', errorCode);
-            }
-        );
+        wfc.sendMessage(msg);
         return true;
     }
 
