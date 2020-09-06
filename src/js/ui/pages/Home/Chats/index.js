@@ -83,9 +83,11 @@ export default class Chats extends Component {
 
     onReceiveMessage = (msg) => {
         // this.props.reloadConversation(msg.conversation);
-        if (msg.messageContent instanceof DismissGroupNotification
-            || msg.messageContent instanceof QuitGroupNotification
-            || msg.messageContent instanceof KickoffGroupMemberNotification) {
+        let content = msg.messageContent;
+        if ((content instanceof QuitGroupNotification && content.operator === wfc.getUserId())
+            || (content instanceof DismissGroupNotification)
+            || (content instanceof KickoffGroupMemberNotification && content.kickedMembers.indexOf(wfc.getUserId()) > -1)
+        ) {
             wfc.removeConversation(msg.conversation, true);
         }
         this.props.loadConversations();
