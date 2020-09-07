@@ -988,6 +988,34 @@ export class WfcManager {
     }
 
     /**
+     * 获取星标用户id列表
+     * @returns {[string]}
+     */
+    getFavUsers() {
+        return impl.getFavUsers();
+    }
+
+    /**
+     *  判断用户是否是星标用户
+     * @param {string} userId
+     * @returns {boolean}
+     */
+     isFavUser(userId) {
+        return impl.isFavUser(userId);
+    }
+
+     /**
+     * 设置或取消星标用户
+     * @param {string} userId 用户id
+     * @param {boolean} fav true，保存到通讯录；false，从通讯录移除
+     * @param {function ()} successCB
+     * @param {function (number)} failCB
+     * @returns {Promise<void>}
+     */
+    async setFavUser(userId, fav, successCB, failCB) {
+        impl.setFavUser(userId, fav, successCB, failCB);
+    }
+    /**
      * 发送好友请求
      * @param {string} userId 目标用户id
      * @param {string} reason 发送好友请求的原因
