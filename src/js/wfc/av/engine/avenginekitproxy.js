@@ -21,10 +21,16 @@ export class AvEngineKitProxy {
     callId;
     participants = [];
     isSupportVoip = false;
+    hasMicrophone = false;
+    hasSpeaker = false;
+    hasWebcam = false;
 
     setup(wfc) {
         DetectRTC.load(() => {
-            this.isSupportVoip = (DetectRTC.isWebRTCSupported );
+            this.isSupportVoip = DetectRTC.isWebRTCSupported;
+            this.hasMicrophone = DetectRTC.hasMicrophone;
+            this.hasSpeaker = DetectRTC.hasSpeakers;
+            this.hasWebcam = DetectRTC.hasWebcam;
             console.log(`detectRTC, isWebRTCSupported: ${DetectRTC.isWebRTCSupported}, hasWebcam: ${DetectRTC.hasWebcam}, hasSpeakers: ${DetectRTC.hasSpeakers}, hasMicrophone: ${DetectRTC.hasMicrophone}`, this.isSupportVoip);
         });
         this.event = wfc.eventEmitter;
@@ -52,7 +58,7 @@ export class AvEngineKitProxy {
     }
 
     sendConferenceRequestListener = (event, request) =>{
-        wfc.sendConferenceRequest(request.sessionId ? request.sessionId : 0, request.roomId, request.request, request.data, (errorCode, res) => {
+        wfc.sendConferenceRequest(request.sessionId ? request.sessionId : 0, request.roomId ? request.roomId : '', request.request, request.data, (errorCode, res) => {
             this.emitToVoip('sendConferenceRequestResult', {error: errorCode, sendConferenceRequestId: request.sendConferenceRequestId, response: res})
         });
     }
@@ -96,7 +102,7 @@ export class AvEngineKitProxy {
     }
 
     onReceiveMessage = (msg) => {
-        if (!this.isSupportVoip) {
+        if (!this.isSupportVoip || !this.hasSpeaker || !this.hasMicrophone) {
             console.log('not support voip, just ignore voip message')
             return;
         }
@@ -108,10 +114,18 @@ export class AvEngineKitProxy {
             console.log('not enable multi call ');
             return;
         }
+        let content = msg.messageContent;
+        if(content.type === MessageContentType.VOIP_CONTENT_TYPE_START
+            || content.type === MessageContentType.VOIP_CONTENT_TYPE_ADD_PARTICIPANT ){
+            if(!content.audioOnly && !this.hasWebcam){
+                console.log('do not have webcam, can not start video call');
+                return ;
+            }
+        }
+
         let now = (new Date()).valueOf();
         let delta = wfc.getServerDeltaTime();
         if ((msg.conversation.type === ConversationType.Single || msg.conversation.type === ConversationType.Group) && now - (numberValue(msg.timestamp) - delta) < 90 * 1000) {
-            let content = msg.messageContent;
             if (content.type === MessageContentType.VOIP_CONTENT_TYPE_START
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_END
                 || content.type === MessageContentType.VOIP_CONTENT_TYPE_ACCEPT
@@ -235,8 +249,12 @@ export class AvEngineKitProxy {
     };
 
     startCall(conversation, audioOnly, participants) {
-        if(!this.isSupportVoip){
-            console.log('not support voip');
+        if(this.callWin){
+            console.log('voip call is ongoing');
+            return ;
+        }
+        if(!this.isSupportVoip || !this.hasSpeaker || !this.hasMicrophone || (!audioOnly && !this.hasWebcam)){
+            console.log('not support voip', this.isSupportVoip, this.hasSpeaker);
             return;
         }
         let callId = conversation.target + Math.floor(Math.random() * 10000);
@@ -262,9 +280,36 @@ export class AvEngineKitProxy {
         });
     }
 
-    showCallUI(conversation) {
+    startConference(callId, audioOnly, pin, host, title, desc, audience) {
+        if(this.callWin){
+            console.log('voip call is ongoing');
+            return ;
+        }
+        if(!this.isSupportVoip || !this.hasSpeaker || !this.hasMicrophone || (!audioOnly && !this.hasWebcam)){
+            console.log('not support voip', this.isSupportVoip, this.hasSpeaker);
+            return;
+        }
+
+        callId = callId  ? callId : wfc.getUserId() + Math.floor(Math.random() * 10000);
+        this.callId = callId;
+
+        let selfUserInfo = wfc.getUserInfo(wfc.getUserId());
+        this.showCallUI(null, true);
+        this.emitToVoip('startConference', {
+            audioOnly: audioOnly,
+            callId: callId,
+            pin: pin,
+            host: host,
+            title: title,
+            desc: desc,
+            audience:audience,
+            selfUserInfo: selfUserInfo,
+        });
+    }
+
+    showCallUI(conversation, isConference) {
         this.queueEvents = [];
-        let type = conversation.type === ConversationType.Single ? 'voip-single' : 'voip-multi';
+        let type = isConference ? 'voip-conference' : (conversation.type === ConversationType.Single ? 'voip-single' : 'voip-multi');
         if (isElectron()) {
             let win = new BrowserWindow(
                 {

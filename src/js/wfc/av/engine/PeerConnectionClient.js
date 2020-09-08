@@ -5,5 +5,5 @@ export default class PeerConnectionClient {
     joinTime = 0;
     acceptTime = 0;
     videoMuted;
-
+    audience = false;
 }
