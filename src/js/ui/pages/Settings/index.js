@@ -7,6 +7,7 @@ import Switch from 'components/Switch';
 import Avatar from 'components/Avatar';
 import helper from 'utils/helper';
 import Header from '../Header';
+import wfc from '../../../wfc/client/wfc'
 
 @inject(stores => ({
     alwaysOnTop: stores.settings.alwaysOnTop,
@@ -59,7 +60,7 @@ export default class Settings extends Component {
                 <div className={classes.column}>
                     <h2>设置</h2>
 
-                    <ul 
+                    <ul
                     style={{
                        webkitAppRegion:'no-drag'
                     }}>
@@ -118,10 +119,21 @@ export default class Settings extends Component {
                     <h2></h2>
                 </div>
 
-                <div className={classes.settings} 
+                <div className={classes.settings}
                     style={{
                        webkitAppRegion:'no-drag'
                     }}>
+                    <a
+                        className={classes.button}
+                        // href="mailto:imndxx@gmail.com?Subject=WildfireChat%20Feedback"
+                        onClick={()=>{
+                            localStorage.removeItem("userId");
+                            wfc.disconnect();
+                        }}
+                        target="_blank">
+                        切换账号
+                        {/*<i className="icon-ion-ios-email-outline" />*/}
+                    </a>
                     <a
                         className={classes.button}
                         href="mailto:imndxx@gmail.com?Subject=WildfireChat%20Feedback"
