@@ -23,7 +23,7 @@
     "package-linux-arm64": "npm run copy-linux-arm64 && npm run build && node scripts/del.js release && export USE_SYSTEM_FPM='true'  && electron-builder --linux --arm64 --projectDir ./dist -p never",
     "hot-server": "cross-env NODE_ENV=development node -r babel-register scripts/dev.js",
     "start-hot": "cross-env HOT=1 PORT=3000 NODE_ENV=development ./node_modules/.bin/electron --remote-debugging-port=9222 -r babel-register -r babel-polyfill ./main",
-    "dev": "concurrently --kill-others \"npm run hot-server\" \"node scripts/sleep.js & npm run start-hot\""
+    "dev": "concurrently --kill-others \"npm run hot-server\" \"npm run start-hot\""
   },
   "author": {
     "email": "imndxx@gmail.com"
@@ -193,7 +193,6 @@
     "postcss-modules": "^1.1.0",
     "react": "^16.0.0",
     "shelljs": "^0.8.3",
-    "sleep": "^6.1.0",
     "style-loader": "^0.21.0",
     "stylelint": "^9.3.0",
     "stylelint-config-standard": "^18.2.0",
