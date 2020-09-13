@@ -32,6 +32,7 @@ import nodePath from 'path';
 import UserCard from '../../../components/userCard';
 import {gt, gte, numberValue} from '../../../../wfc/util/longUtil'
 import {copyImg, copyText} from "../../../utils/clipboard";
+import CardMessageContent from "../../../../wfc/messages/cardMessageContent";
 
 @inject(stores => ({
     sticky: stores.sessions.sticky,
@@ -250,25 +251,26 @@ export default class ChatContent extends Component {
                     </div>
                 `;
 
-            case 42:
+            case MessageContentType.UserCard:
                 // Contact Card
-                let contact = message.contact;
-                let isFriend = this.props.isFriend(contact.UserName);
+                // TODO 非用户名片
+                let contact = message.messageContent;
+                // let isFriend = wfc.isMyFriend(contact.target);
                 let html = `
-                    <div class="${clazz(classes.contact, { 'is-friend': isFriend })}" data-userid="${contact.UserName}">
-                        <img src="${contact.image}" class="unload disabledDrag" />
+                    <div class="${clazz(classes.contact, { 'is-friend': true})}" data-userid="${contact.target}" >
+                        <img src="${contact.portrait}" class="unload disabledDrag" />
 
                         <div>
+                            <p>${contact.displayName}</p>
                             <p>${contact.name}</p>
-                            <p>${contact.address}</p>
                         </div>
                 `;
 
-                if (!isFriend) {
-                    html += `
-                        <i class="icon-ion-android-add" data-userid="${contact.UserName}"></i>
-                    `;
-                }
+                // if (!isFriend) {
+                //     html += `
+                //         <i class="icon-ion-android-add" data-userid="${contact.target}"></i>
+                //     `;
+                // }
 
                 html += '</div>';
 
@@ -452,6 +454,7 @@ export default class ChatContent extends Component {
                         [classes.isVoice]: type === MessageContentType.Voice,
                         [classes.isVideo]: type === MessageContentType.Video,
                         [classes.isFile]: type === MessageContentType.File,
+                        [classes.isContact]: type === MessageContentType.UserCard,
                         [classes.isVoip]: type === MessageContentType.VOIP_CONTENT_TYPE_START
                     })}>
 
@@ -666,24 +669,10 @@ export default class ChatContent extends Component {
 
         // Show contact card
         if (target.tagName === 'DIV'
-            && target.classList.contains('is-friend')) {
-            this.props.showContact(target.dataset.userid);
-        }
-
-        // Add new friend
-        if (target.tagName === 'I'
-            && target.classList.contains('icon-ion-android-add')) {
-            this.props.showAddFriend({
-                UserName: target.dataset.userid
-            });
-        }
-
-        // Add new friend
-        if (target.tagName === 'A'
-            && target.classList.contains('add-friend')) {
-            this.props.showAddFriend({
-                UserName: target.dataset.userid
-            });
+            && (target.classList.contains('is-friend') || target.classList.contains('add-friend'))) {
+            // this.props.showContact(target.dataset.userid);
+            let user = wfc.getUserInfo(target.dataset.userid);
+            this.showUserCard(user, e)
         }
 
         // Open file & open folder
