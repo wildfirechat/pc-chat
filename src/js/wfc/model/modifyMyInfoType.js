@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 export default class ModifyMyInfoType {
     static Modify_DisplayName = 0;
     static Modify_Portrait = 1;

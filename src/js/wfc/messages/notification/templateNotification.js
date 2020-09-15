@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 import NotificationMessageContent from './notificationMessageContent'
 export default class TemplateNotification extends NotificationMessageContent {
     tip = '';

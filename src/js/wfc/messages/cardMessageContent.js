@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 
 /*
  * Copyright © 2020 WildFireChat. All rights reserved.

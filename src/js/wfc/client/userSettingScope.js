@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 export default class UserSettingScope {
     //不能直接使用，调用setConversation:silent:方法会使用到此值。
     static ConversationSilent = 1;

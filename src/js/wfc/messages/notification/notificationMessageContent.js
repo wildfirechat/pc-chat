@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 import MessageContent from "../messageContent";
 
 export default class NotificationMessageContent extends MessageContent {

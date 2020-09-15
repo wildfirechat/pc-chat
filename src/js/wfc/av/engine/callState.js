@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 export default class CallState {
     static STATUS_IDLE = 0;
     static STATUS_OUTGOING = 1;

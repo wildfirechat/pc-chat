@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 export default class MessageContentMediaType {
     static General = 0;
     static Image = 1;

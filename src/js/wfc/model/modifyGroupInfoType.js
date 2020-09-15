@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 export default class ModifyGroupInfoType {
     static Modify_Group_Name = 0;
     static Modify_Group_Portrait = 1;
