@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 import MessageContent from './messageContent'
 import MessageContentType from './messageContentType';
 import wfc from '../../wfc/client/wfc'

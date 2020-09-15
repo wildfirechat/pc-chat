@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 import NotificationMessageContent from './notificationMessageContent'
 import MessageContentType from '../messageContentType';
 export default class TipNotificationMessageContent extends NotificationMessageContent {

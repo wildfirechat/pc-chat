@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 import Conversation from '../model/conversation';
 import {EventEmitter} from 'events';
 import MessageStatus from '../messages/messageStatus';

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 export default class ConnectionStatus {
     static ConnectionStatusSecretKeyMismatch = -6;
     static ConnectionStatusTokenIncorrect = -5;

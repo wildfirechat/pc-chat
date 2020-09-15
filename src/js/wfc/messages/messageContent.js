@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 import MessagePayload from "./messagePayload";
 
 export default class MessageContent {

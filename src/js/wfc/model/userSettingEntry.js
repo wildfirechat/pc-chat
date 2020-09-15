@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 import UserSettingScope from "../client/userSettingScope";
 
 export default class UserSettingEntry {

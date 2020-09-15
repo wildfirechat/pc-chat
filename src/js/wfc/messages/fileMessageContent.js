@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 import MessageContentMediaType from "./messageContentMediaType";
 import MediaMessageContent from "./mediaMessageContent";
 import MessageContentType from "./messageContentType";

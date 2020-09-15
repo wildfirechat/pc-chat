@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 export default class CallEndReason {
     static REASON_Unknown = 0;
     static REASON_Busy = 1;

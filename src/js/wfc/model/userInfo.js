@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
+/*
 {
     "uid": "uiuJuJcc", 
     "name": "13888888888", 

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 import Conversation from "./conversation";
 import Message from "../messages/message";
 

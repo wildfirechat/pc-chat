@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 export default class SearchType {
     //模糊搜索displayName，精确搜索name或电话号码
     static General = 0;

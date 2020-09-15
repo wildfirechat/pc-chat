@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 export default class MessageStatus {
     static All = -1;
     static Sending = 0;

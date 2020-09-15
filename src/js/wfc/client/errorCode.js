@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 export default class ErrorCode {
     //server error code
     static kEcServerSecrectKeyMismatch = 1;

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 import TextMessageContent from '../messages/textMessageContent'
 import PTextMessageContent from '../messages/ptextMessageContent'
 import ImageMessageContent from '../messages/imageMessageContent';

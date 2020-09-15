@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 import EventType from "../../client/wfcEvent";
 import {AppPath, BrowserWindow, ipcRenderer, isElectron, PostMessageEventEmitter} from "../../../platform";
 import ConversationType from "../../model/conversationType";

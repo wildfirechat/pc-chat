@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 import UserInfo from "./userInfo";
 
 export default class NullUserInfo extends UserInfo {

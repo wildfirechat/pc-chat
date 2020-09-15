@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 WildFireChat. All rights reserved.
+ */
+
 export default class ChannelStatus {
     //member can add quit change group name and portrait, owner can do all the operations
     static Public = 0;
