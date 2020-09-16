@@ -1393,6 +1393,11 @@ export class WfcManager {
         impl.deleteFileRecord(messageUid, successCB, failCB);
     }
 
+
+    sendConferenceRequest(sessionId, roomId, request, data, callback){
+        impl.sendConferenceRequest(sessionId, roomId, request, data, callback)
+    }
+
     _getStore() {
         return impl._getStore();
     }

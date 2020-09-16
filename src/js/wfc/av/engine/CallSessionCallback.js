@@ -4,7 +4,14 @@
 
 export default class CallSessionCallback {
 
-    onInitial(session, selfUserInfo, participantUserInfos) {
+    /**
+     * session 初始化回调
+     * @param {CallSession} session 会话信息
+     * @param {UserInfo} selfUserInfo 自己的用户信息
+     * @param {[UserInfo]} participantUserInfos
+     * @param {[UserInfo]} groupMemberUserInfos 多人音视频通话是有效。 发起音视频通话所在群的群成员信息。
+     */
+    onInitial(session, selfUserInfo, participantUserInfos, groupMemberUserInfos) {
 
     }
 
@@ -17,6 +24,10 @@ export default class CallSessionCallback {
     }
 
     didParticipantJoined(userId, userInfo) {
+
+    }
+
+    didParticipantConnected(userId) {
 
     }
 
