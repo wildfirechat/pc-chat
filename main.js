@@ -642,6 +642,11 @@ const createMainWindow = () => {
         mainWindow.webContents.send('update-call-start-message', args);
     });
 
+    ipcMain.on('conference-request', (event, args) => {
+        // console.log('main voip-message event', args);
+        mainWindow.webContents.send('conference-request', args);
+    });
+
     ipcMain.on('settings-apply', (event, args) => {
         settings = args.settings;
         mainWindow.setAlwaysOnTop(!!settings.alwaysOnTop);

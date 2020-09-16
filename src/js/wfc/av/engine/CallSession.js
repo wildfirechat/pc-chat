@@ -13,6 +13,14 @@ export default class CallSession {
     startTime
     startMsgUid
 
+    // conference 相关
+    defaultAudience = false;
+    audience = false;
+    conference = false;
+    host;
+    title;
+    desc;
+
     /**
      * 播放来电响铃
      */

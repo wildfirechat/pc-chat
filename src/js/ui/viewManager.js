@@ -19,6 +19,8 @@ class ViewManager extends Component {
             return (
                 <VoipApp type='multi'/>
             );
+        } else if ('conference' === name) {
+          // TODO conference
         } else {
             return (
                 <App/>
