@@ -572,12 +572,15 @@ const createMainWindow = () => {
 
     mainWindow.webContents.on('new-window', (event, url) => {
         event.preventDefault();
+        console.log('new-windows', url)
         shell.openExternal(url);
     });
 
     mainWindow.webContents.on('will-navigate', (event, url) => {
-        event.preventDefault();
-        shell.openExternal(url);
+        // do default action
+        // event.preventDefault();
+        // console.log('navigate', url)
+        // shell.openExternal(url);
     });
 
     mainWindow.on('close', e => {
