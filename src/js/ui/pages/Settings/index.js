@@ -146,7 +146,7 @@ export default class Settings extends Component {
                         className={classes.button}
                         href="https://github.com/wildfirechat/pc-chat"
                         target="_blank">
-                        Fork on Github
+                        Star on Github
                     <i className="icon-ion-social-github" />
                     </a>
                 </div>
