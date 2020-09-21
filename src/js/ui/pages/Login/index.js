@@ -16,8 +16,7 @@ import EventType from "../../../wfc/client/wfcEvent";
 export default class Login extends Component {
     @observable qrCode;
     @observable desc = '扫码登录野火IM'
-    @observable scanToLogin = true;
-    @observable hasSentLoginRequest = false;
+    @observable scanStatus = 0; //0 等待扫码； 1 已经扫码； 2 存在session，等待发送给客户端验证；3 已经发送登录请求
     appToken = '';
     loginTimer;
     qrCodeTimer;
@@ -35,7 +34,7 @@ export default class Login extends Component {
             this.refreshQrCode();
         } else {
             // 此前已登录过，显示此前登录的账号信息
-            this.scanToLogin = false;
+            this.scanStatus = 2;
             this.qrCode = localStorage.getItem("userPortrait")
             this.desc = localStorage.getItem("userName");
         }
@@ -63,8 +62,7 @@ export default class Login extends Component {
             this.appToken = session.token;
             if (!userId || session.status === 0/*服务端pc login session不存在*/) {
                 this.qrCode = jrQRCode.getQrBase64(Config.QR_CODE_PREFIX_PC_SESSION + session.token);
-                this.desc = '扫码登录野火IM'
-                this.scanToLogin = true;
+                this.scanStatus = 0;
 
                 if (userId) {
                     this.refreshQrCode();
@@ -79,7 +77,7 @@ export default class Login extends Component {
         this.qrCodeTimer = setInterval(() => {
             this.appToken = '';
             this.createPCLoginSession(null);
-        }, 30 * 1000);
+        }, 60 * 1000);
     }
 
     async login() {
@@ -103,12 +101,16 @@ export default class Login extends Component {
                     break;
                 case 9:
                     console.log('qrcode scaned', response.data);
-                    this.desc = response.data.result.userName + ' 已扫码，等待确认';
+                    this.desc = response.data.result.userName + ' 扫码成功';
                     this.qrCode = response.data.result.portrait;
                     // update login status ui
                     localStorage.setItem("userName", response.data.result.userName);
                     localStorage.setItem("userPortrait", response.data.result.portrait)
                     this.login();
+                    if(this.scanStatus === 0) {
+                      this.scanStatus = 1;
+                    }
+
                     break;
                 case 18:
                     //session is canceled, need clear last time login status
@@ -135,7 +137,7 @@ export default class Login extends Component {
     sendLoginRequest = () => {
         let userId = localStorage.getItem("userId");
         this.createPCLoginSession(userId);
-        this.hasSentLoginRequest = true;
+        this.scanStatus = 3;
     }
 
     switchUser = () => {
@@ -143,8 +145,7 @@ export default class Login extends Component {
         localStorage.setItem("userName", "");
         localStorage.setItem("userPortrait", "");
 
-        this.scanToLogin = true;
-        this.hasSentLoginRequest = false;
+        this.scanStatus = 0;
         this.createPCLoginSession(null);
         this.refreshQrCode();
     }
@@ -153,21 +154,30 @@ export default class Login extends Component {
         return (
             <div className={classes.container}>
                 {
-                    this.scanToLogin ? (
+                    this.scanStatus === 0 ? (
                         <div className={classes.inner}>
                             {
                                 this.qrCode && (<img className="disabledDrag" src={this.qrCode}/>)
                             }
-
-                            <a href={window.location.pathname + '?' + +new Date()}>刷新二维码</a>
-
-                            <p>{this.desc}</p>
+                            <p>扫码登录野火IM</p>
+                            <p>野火IM PC端登录需要配合您的手机客户端登录使用</p>
                         </div>
+                      ) : (this.scanStatus === 1 ? (
+                          <div className={classes.inner}>
+                              {
+                                  <img className={classes.portrait} src={this.qrCode}/>
+                              }
+                              <p>{this.desc}</p>
+                              <p>请在手机上点击确认登录</p>
 
-                    ) : (this.hasSentLoginRequest ? (
+                              <div className={classes.switchDiv}>
+                                <button onClick={this.switchUser} className={classes.switchBtn} >取消登录</button>
+                              </div>
+                          </div>
+                    ) : (this.scanStatus === 3 ? (
                         <div className={classes.inner}>
                             {
-                                <img className="disabledDrag" src={this.qrCode}/>
+                                <img className={classes.portrait} src={this.qrCode}/>
                             }
                             <p>请在手机上点击确认以登录</p>
 
@@ -177,13 +187,19 @@ export default class Login extends Component {
                     ) : (
                         <div className={classes.inner}>
                             {
-                                <img className="disabledDrag" src={this.qrCode}/>
+                                <img className={classes.portrait} src={this.qrCode}/>
                             }
 
-                            <button onClick={this.sendLoginRequest}> 登录</button>
-                            <button onClick={this.switchUser}>切换用户</button>
+                            <div className={classes.loginDiv}>
+                              <button onClick={this.sendLoginRequest} className={classes.loginBtn} >登录</button>
+                            </div>
+
+                            <div className={classes.switchDiv}>
+                              <button onClick={this.switchUser} className={classes.switchBtn} >切换用户</button>
+                            </div>
+
                         </div>
-                    ))
+                    )))
                 }
             </div>
         );

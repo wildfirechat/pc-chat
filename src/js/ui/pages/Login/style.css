@@ -18,18 +18,19 @@
 
     & img {
         display: block;
-        width: 100%;
+        margin: 0 auto;
     }
 
     & p {
         color: #000;
         font-family: "Helvetica-Light";
+        font-size: large;
     }
 
     & p:last-child {
         margin-top: 20px;
         color: #888;
-        font-size: 16px;
+        font-size: 12px;
     }
 
     & a {
@@ -42,6 +43,46 @@
     & a:hover {
         border-bottom-color: #777;
     }
+    .success {
+      color: green;
+      font-family: "Helvetica-Light";
+      font-size: large;
+    }
+    .hint {
+      margin-top: 20px;
+      color: #888;
+      font-size: 12px;
+    }
+}
+.portrait {
+  display: block;
+  width: 150px;
+  margin: 0 auto;
+  border-radius: 5px;
+}
+.loginDiv {
+  margin-top: 44px;
+  text-align: center;
+}
+
+.switchDiv {
+  text-align: center;
+  margin-top: 60px;
+}
+
+.loginBtn {
+  width: 260px;
+  height: 40px;
+  background-color: forestgreen;
+  font-size: large;
+  border-radius: 8px;
+  color: white;
+}
+
+.switchBtn {
+  border: none;
+  font-size: large;
+  color: gray;
 }
 
 @media (width <= 800px) {
