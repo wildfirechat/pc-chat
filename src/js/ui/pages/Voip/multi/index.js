@@ -6,7 +6,9 @@ import classes from './style.css';
 import {action, observable} from 'mobx';
 import CallState from "../../../../wfc/av/engine/callState";
 import CallSessionCallback from "../../../../wfc/av/engine/CallSessionCallback";
-import avenginekit from "../../../../wfc/av/internal/avenginekitImpl";
+// for debug
+// import avenginekit from "../../../../wfc/av/internal/avenginekitImpl";
+import avenginekit from "../../../../wfc/av/internal/engine.min";
 import Popup from "reactjs-popup";
 import Checkbox from "rc-checkbox";
 import {isElectron} from '../../../../platform'
