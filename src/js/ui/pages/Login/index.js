@@ -55,7 +55,7 @@ export default class Login extends Component {
             userId: userId,
             clientId: wfc.getClientId(),
             platform: Config.getWFCPlatform()
-        }, { withCredentials:true });
+        }, {withCredentials: true});
         console.log('----------- createPCLoginSession', response.data);
         if (response.data) {
             let session = Object.assign(new PCSession(), response.data.result);
@@ -85,7 +85,7 @@ export default class Login extends Component {
             console.log('-------- token is empty or invalid');
             return;
         }
-        var response = await axios.post('/session_login/' + this.appToken, "", { withCredentials:true });
+        var response = await axios.post('/session_login/' + this.appToken, "", {withCredentials: true});
         console.log('---------- login', response.data);
         if (response.data) {
             switch (response.data.code) {
@@ -107,8 +107,8 @@ export default class Login extends Component {
                     localStorage.setItem("userName", response.data.result.userName);
                     localStorage.setItem("userPortrait", response.data.result.portrait)
                     this.login();
-                    if(this.scanStatus === 0) {
-                      this.scanStatus = 1;
+                    if (this.scanStatus === 0) {
+                        this.scanStatus = 1;
                     }
 
                     break;
@@ -157,23 +157,22 @@ export default class Login extends Component {
                     this.scanStatus === 0 ? (
                         <div className={classes.inner}>
                             {
-                                this.qrCode && (<img className="disabledDrag" src={this.qrCode}/>)
+                                this.qrCode && (<img className={classes.portrait} src={this.qrCode}/>)
                             }
                             <p>扫码登录野火IM</p>
-                            <p>野火IM PC端登录需要配合您的手机客户端登录使用</p>
+                            <p>野火IM PC端需要配合您的手机客户端登录使用</p>
                         </div>
-                      ) : (this.scanStatus === 1 ? (
-                          <div className={classes.inner}>
-                              {
-                                  <img className={classes.portrait} src={this.qrCode}/>
-                              }
-                              <p>{this.desc}</p>
-                              <p>请在手机上点击确认登录</p>
-
-                              <div className={classes.switchDiv}>
-                                <button onClick={this.switchUser} className={classes.switchBtn} >取消登录</button>
-                              </div>
-                          </div>
+                    ) : (this.scanStatus === 1 ? (
+                        <div className={classes.inner}>
+                            {
+                                <img className={classes.portrait} src={this.qrCode}/>
+                            }
+                            <div>
+                                <p className={classes.success}>扫码成功</p>
+                                <p>请在手机上点击确认登录</p>
+                            </div>
+                            <button onClick={this.switchUser} className={classes.cancel}>取消登录 &gt;</button>
+                        </div>
                     ) : (this.scanStatus === 3 ? (
                         <div className={classes.inner}>
                             {
@@ -181,7 +180,7 @@ export default class Login extends Component {
                             }
                             <p>请在手机上点击确认以登录</p>
 
-                            <button onClick={this.switchUser}> 取消登录</button>
+                            <button className={classes.cancel} onClick={this.switchUser}> 取消登录 &gt;</button>
                         </div>
 
                     ) : (
@@ -190,14 +189,8 @@ export default class Login extends Component {
                                 <img className={classes.portrait} src={this.qrCode}/>
                             }
 
-                            <div className={classes.loginDiv}>
-                              <button onClick={this.sendLoginRequest} className={classes.loginBtn} >登录</button>
-                            </div>
-
-                            <div className={classes.switchDiv}>
-                              <button onClick={this.switchUser} className={classes.switchBtn} >切换用户</button>
-                            </div>
-
+                            <button onClick={this.sendLoginRequest} className={classes.confirm}>登录</button>
+                            <button onClick={this.switchUser} className={classes.cancel}>切换用户 &gt;</button>
                         </div>
                     )))
                 }
