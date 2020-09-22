@@ -76,24 +76,14 @@
     }
     & .portrait {
         display: block;
-        height: 256px;
-        max-width: 256px;
+        height: 200px;
+        max-width: 200px;
         margin: auto auto 0;
         border-radius: 5px;
         pointer-events: none;
 
     }
 }
-.loginDiv {
-  margin-top: 44px;
-  text-align: center;
-}
-
-.switchDiv {
-  text-align: center;
-  margin-top: 60px;
-}
-
 
 @media (width <= 800px) {
     .inner {
