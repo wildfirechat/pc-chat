@@ -3,9 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 
 import classes from './style.css';
-// import helper from 'utils/helper';
 import GroupInfo from '../../../wfc/model/groupInfo';
-// import UserInfo from '../../../wfc/model/userInfo';
 import wfc from '../../../wfc/client/wfc';
 import clazz from 'classname';
 

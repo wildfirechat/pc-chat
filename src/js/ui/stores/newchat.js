@@ -26,11 +26,6 @@ class NewChat {
             let name = contacts.contactItemName(e);
             var res = pinyin.letter(name, '', null).toLowerCase().indexOf(text) > -1;
 
-            // if (e.RemarkName) {
-            //     res = res || pinyin.letter(e.RemarkName, null).toLowerCase().indexOf(text) > -1;
-            // }
-
-            // return helper.isContact(e) && res;
             return e instanceof UserInfo && res;
         });
 

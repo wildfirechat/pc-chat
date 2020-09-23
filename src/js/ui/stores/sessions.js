@@ -1,29 +1,9 @@
 /* eslint-disable no-eval */
-import axios from 'axios';
 import { observable, action } from 'mobx';
-import { ipcRenderer } from '../../platform';
 
 import wfc from '../../wfc/client/wfc';
 import ConversationType from '../../wfc/model/conversationType';
 import pinyin from "../han/lib";
-
-async function updateMenus({ conversations = [], contacts = [] }) {
-    if (!ipcRenderer) {
-        return;
-    }
-    ipcRenderer.send('menu-update', {
-        conversations: conversations.map(e => ({
-            id: e.UserName,
-            name: e.RemarkName || e.NickName,
-            avatar: e.HeadImgUrl,
-        })),
-        contacts: contacts.map(e => ({
-            id: e.UserName,
-            name: e.RemarkName || e.NickName,
-            avatar: e.HeadImgUrl,
-        })),
-    });
-}
 
 class sessions {
     @observable conversations = [];
@@ -31,10 +11,15 @@ class sessions {
         query: '',
         result: [],
     };
+    @observable unreadCount = 0;
 
     @action genConversationKey(index) {
         let conversation = self.conversations[index]
         return conversation.type + conversation.target + conversation.line;
+    }
+
+    @action setUnreadCount(count){
+        self.unreadCount = count;
     }
 
     @action
@@ -58,33 +43,12 @@ class sessions {
     async loadConversations() {
         let cl = wfc.getConversationList([ConversationType.Single, ConversationType.Group, ConversationType.Channel], [0]);
         self.conversations = cl;
-        let counter = 0;
-        cl.forEach((e) => {
-            counter += e.unreadCount.unread;
-        });
-        console.log('loadConversations', counter);
-        if (ipcRenderer) {
-            ipcRenderer.send(
-                'message-unread',
-                {
-                    counter,
-                }
-            );
-        } else {
-            document.title = counter === 0 ? "野火IM" : (`野火IM(有${counter}条未读消息)`);
-        }
     }
 
 
     @action removeConversation(conversationInfo) {
-
         self.conversations = self.conversations.filter(e => !e.conversation.equal(conversationInfo.conversation));
-
         wfc.removeConversation(conversationInfo.conversation, true);
-
-        updateMenus({
-            conversations: self.conversations.slice(0, 10)
-        });
     }
 
     @action clearConversationUnreadStatus(conversationInfo) {
@@ -102,9 +66,7 @@ class sessions {
     @action
     async sticky(conversationInfo) {
         wfc.setConversationTop(conversationInfo.conversation, !conversationInfo.isTop, () => {
-            updateMenus({
-                conversations: self.conversations.slice(0, 10)
-            });
+
         }, (errorCode) => {
             // do nothing
         });
@@ -113,10 +75,7 @@ class sessions {
     @action
     async slient(conversationInfo, callback) {
         wfc.setConversationSlient(conversationInfo.conversation, conversationInfo.isSilent, () => {
-            updateMenus({
-                conversations: self.conversations.slice(0, 10)
-            });
-            callback(self.conversations.slice(0, 10));
+            callback();
         }, (errorCode) => {
             // do nothing
         });

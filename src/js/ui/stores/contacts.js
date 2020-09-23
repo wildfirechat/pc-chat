@@ -33,12 +33,6 @@ class Contacts {
                 return;
             }
 
-            // If 'showall' is false, just show your friends
-            // if (showall === false
-            //     && !(e instanceof UserInfo)) {
-            //     return;
-            // }
-
             let name = self.contactItemName(e);
             var prefix = (pinyin.letter(name, '', null).toString()[0] + '').replace('?', '#');
             var group = mappings[prefix];
@@ -90,17 +84,7 @@ class Contacts {
             });
         }
 
-        // if (self.showGroup) {
-        //     let groupList = wfc.getMyGroupList();
-        //     groupList.map(e => {
-        //         let g = wfc.getGroupInfo(e);
-        //         if (!(g instanceof NullGroupInfo)) {
-        //             self.memberList.push(g);
-        //         }
-        //     });
-        // }
-
-        console.log('contacts lenght', self.memberList.length);
+        console.log('contacts length', self.memberList.length);
         self.loading = false;
         self.filtered.result = self.group(self.memberList, true);
         self.filtered.count = self.memberList.length;
@@ -113,10 +97,6 @@ class Contacts {
         var list = self.memberList.filter(e => {
             let name = self.contactItemName(e);
             var res = pinyin.letter(name, '', null).toLowerCase().indexOf(pinyinText) > -1;
-
-            // if (e.RemarkName) {
-            //     res = res || pinyin.letter(e.RemarkName, null).toLowerCase().indexOf(text) > -1;
-            // }
 
             return res;
         });

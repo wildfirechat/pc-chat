@@ -5,7 +5,7 @@
 }
 
 .footer {
-  background: #27282b;
+  background: #46454b;
   width: 68px;
   left: 0;
   height: calc(100vh);
@@ -199,4 +199,24 @@
       left: 16px !important;
     }
   }
+}
+
+.dot {
+  position: relative;
+&::after {
+   position: absolute;
+   top: 0;
+   right: -8px;
+   width: 16px;
+   height: 16px;
+   border-radius: 8px;
+   color: white;
+   font-size: 10px;
+ }
+
+&.red::after {
+   content: attr(data-afterContent);
+   background: red;
+   text-align: center;
+ }
 }
