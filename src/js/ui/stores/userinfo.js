@@ -15,12 +15,6 @@ class UserInfo {
 
     // remove表示，是否有权限将其从group、channel、chatroom中删除
     @action async toggle(show = self.show, conversation = self.conversation, user = self.user, remove = false) {
-        // if (user.UserName === sessions.user.User.UserName) {
-        //     remove = false;
-        // }
-
-        // user = {}
-        // user.UserName = 'user Name';
 
         self.remove = remove;
         self.show = show;

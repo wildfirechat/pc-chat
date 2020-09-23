@@ -18,44 +18,6 @@ import DismissGroupNotification from '../../wfc/messages/notification/dismissGro
 import KickoffGroupMemberNotification from '../../wfc/messages/notification/kickoffGroupMemberNotification';
 import {eq} from "../../wfc/util/longUtil";
 
-function hasUnreadMessage(messages) {
-    var counter = 0;
-
-    Array.from(messages.keys()).map(
-        e => {
-            var item = messages.get(e);
-            counter += (item.data.length - item.unread);
-        }
-    );
-    if (isElectron()) {
-        ipcRenderer.send(
-            'message-unread',
-            {
-                counter,
-            }
-        );
-    } else {
-        // TODO
-
-    }
-}
-
-async function updateMenus({ conversations = [], contacts = [] }) {
-    ipcRenderer.send('menu-update', {
-        conversations: conversations.map(e => ({
-            id: e.UserName,
-            name: e.RemarkName || e.NickName,
-            avatar: e.HeadImgUrl,
-        })),
-        contacts: contacts.map(e => ({
-            id: e.UserName,
-            name: e.RemarkName || e.NickName,
-            avatar: e.HeadImgUrl,
-        })),
-        cookies: await helper.getCookie(),
-    });
-}
-
 class Chat {
     // TODO remove
     @observable sessions = [];
@@ -189,24 +151,13 @@ class Chat {
     @action
     setVisibility(visible= false){
         self.isVisible = visible;
+
         if(visible && self.conversation){
             setTimeout(()=>{
                 let conversationInfo = wfc.getConversationInfo(self.conversation);
                 sessions.clearConversationUnreadStatus(conversationInfo);
             }, 1000)
         }
-    }
-
-    @action
-    reset(){
-        self.conversation = null;
-        self.initialized = false;
-        wfc.eventEmitter.removeListener(EventType.ReceiveMessage, self.onReceiveMessage);
-        wfc.eventEmitter.removeListener(EventType.SendMessage, self.onSendMessage)
-        wfc.eventEmitter.removeListener(EventType.MessageStatusUpdate, self.onMessageStatusUpdate)
-        wfc.eventEmitter.removeListener(EventType.RecallMessage, self.onRecallMessage);
-        wfc.eventEmitter.removeListener(EventType.UserInfosUpdate, self.onUserInfosUpdate);
-        wfc.eventEmitter.removeListener(EventType.GroupInfosUpdate, self.onGroupInfosUpdate);
     }
 
     @action

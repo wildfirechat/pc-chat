@@ -6,8 +6,6 @@ import { ipcRenderer, remote, isElectron } from '../../platform';
 import classes from './Layout.css';
 import Header from './Header';
 import Footer from './Footer';
-// import Login from './Login';
-import Chats from './Home/Chats';
 import UserInfo from './UserInfo';
 import AddFriend from './AddFriend';
 import NewChat from './NewChat';
@@ -18,13 +16,17 @@ import Forward from './Forward';
 import ConfirmImagePaste from './ConfirmImagePaste';
 import Loader from 'components/Loader';
 import Snackbar from 'components/Snackbar';
-import Offline from 'components/Offline';
 import Login from './Login';
 import wfc from '../../wfc/client/wfc'
 import { observable, action } from 'mobx';
 import EventType from '../../wfc/client/wfcEvent';
 import ConnectionStatus from '../../wfc/client/connectionStatus';
 import clazz from 'classname';
+import ConversationType from "../../wfc/model/conversationType";
+import MessageConfig from "../../wfc/client/messageConfig";
+import PersistFlag from "../../wfc/messages/persistFlag";
+import Push from "push.js";
+import stores from "../stores";
 
 @inject(stores => ({
     isLogin: () => !!stores.sessions.auth,
@@ -34,7 +36,7 @@ import clazz from 'classname';
     process: stores.chat.process,
     reconnect: stores.sessions.checkTimeout,
     close: () => stores.snackbar.toggle(false),
-    canidrag: () => !!stores.chat.conversation && !stores.batchsend.show,
+    canidrag: () => !!stores.chat.conversation,
 }))
 @observer
 export default class Layout extends Component {
@@ -151,6 +153,9 @@ export default class Layout extends Component {
     onConnectionStatusChange = (status) => {
         console.log('layout connection status', status)
         this.updateConnectionStatus(status)
+        if(status === ConnectionStatus.ConnectionStatusConnected){
+            this.updateUnreadStatus();
+        }
     }
 
     @action
@@ -158,14 +163,61 @@ export default class Layout extends Component {
         this.connectionStatus = status;
     }
 
+    updateUnreadStatus =()=>{
+        let cl = wfc.getConversationList([ConversationType.Single, ConversationType.Group, ConversationType.Channel], [0]);
+        if(!cl){
+            return ;
+        }
+        let counter = 0;
+        cl.forEach((e) => {
+            counter += e.isSilent ? 0 : e.unreadCount.unread;
+        });
+        stores.sessions.setUnreadCount(counter)
+        if (ipcRenderer) {
+            ipcRenderer.send(
+                'message-unread',
+                {
+                    counter,
+                }
+            );
+        } else {
+            document.title = counter === 0 ? "野火IM" : (`野火IM(有${counter}条未读消息)`);
+        }
+    }
+
+    onReceiveMessage= (msg)=>{
+        if(!isElectron()) {
+            if (document.hidden) {
+                let content = msg.messageContent;
+                if (MessageConfig.getMessageContentPersitFlag(content.type) === PersistFlag.Persist_And_Count) {
+                    Push.create("新消息来了", {
+                        body: content.digest(),
+                        icon: '../../../../assets/images/icon.png',
+                        timeout: 4000,
+                        onClick: function () {
+                            window.focus();
+                            this.close();
+                        }
+                    });
+                }
+            }
+        }
+        this.updateUnreadStatus();
+    }
     componentWillMount() {
-        console.log('lyaout--------------wfc', wfc);
+        console.log('layout--------------wfc', wfc);
         wfc.eventEmitter.on(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
+        wfc.eventEmitter.on(EventType.ReceiveMessage, this.onReceiveMessage);
+        wfc.eventEmitter.on(EventType.RecallMessage, this.updateUnreadStatus);
+        wfc.eventEmitter.on(EventType.ConversationInfoUpdate, this.updateUnreadStatus);
     }
 
     componentWillUnmount() {
         console.log('layout', 'will unmount')
         wfc.eventEmitter.removeListener(EventType.ConnectionStatusChanged, this.onConnectionStatusChange);
+        wfc.eventEmitter.removeListener(EventType.ReceiveMessage, this.onReceiveMessage);
+        wfc.eventEmitter.removeListener(EventType.RecallMessage, this.updateUnreadStatus);
+        wfc.eventEmitter.removeListener(EventType.ConversationInfoUpdate, this.updateUnreadStatus);
     }
     isMac(){
         // var agent = navigator.userAgent.toLowerCase();
@@ -176,16 +228,7 @@ export default class Layout extends Component {
         return   (navigator.platform === "Win32") || (navigator.platform === "Windows");
       }
     render() {
-        var { isLogin, loading, show, close, message, location } = this.props;
-
-        // if (!window.navigator.onLine) {
-        //     return (
-        //         <Offline show={true} style={{
-        //             top: 0,
-        //             paddingTop: 30
-        //         }} />
-        //     );
-        // }
+        var { loading, show, close, message, location } = this.props;
 
         if (this.connectionStatus === ConnectionStatus.ConnectionStatusRejected
             || this.connectionStatus === ConnectionStatus.ConnectionStatusLogout

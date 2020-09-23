@@ -13,7 +13,6 @@ import settings from './settings';
 import snackbar from './snackbar';
 import OverallUserCard from './OverallUserCard';
 import wfc from '../../wfc/client/wfc'
-import batchsend from './batchsend'
 import confirmImagePaste from './confirmImagePaste';
 
 const stores = {
@@ -32,7 +31,6 @@ const stores = {
     OverallUserCard,
     confirmImagePaste,
     wfc,
-    batchsend,
 };
 
 export default stores;

@@ -14,7 +14,7 @@ export default class Header extends Component {
                 return '设置';
 
             default:
-                return '野火IM1';
+                return '野火IM';
         }
     }
 
