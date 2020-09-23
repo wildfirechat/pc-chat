@@ -10,7 +10,6 @@ import Avatar from 'components/Avatar';
 import PreviewImage from './PreviewImage'
 import helper from 'utils/helper';
 import { parser as emojiParse } from 'utils/emoji';
-import { on, off } from 'utils/event';
 import MessageContentType from '../../../../wfc/messages/messageContentType';
 import UnsupportMessageContent from '../../../../wfc/messages/unsupportMessageConten';
 import wfc from '../../../../wfc/client/wfc'
@@ -33,6 +32,7 @@ import UserCard from '../../../components/userCard';
 import {gt, gte, numberValue} from '../../../../wfc/util/longUtil'
 import {copyImg, copyText} from "../../../utils/clipboard";
 import CardMessageContent from "../../../../wfc/messages/cardMessageContent";
+import stores from "../../../stores";
 
 @inject(stores => ({
     sticky: stores.sessions.sticky,
@@ -638,7 +638,7 @@ export default class ChatContent extends Component {
                 }
             }
 
-  
+
             this.amr = new BenzAMRRecorder();
             this.amr.initWithUrl(voiceUrl).then(() => {
                 target.classList.add(classes.playing)
@@ -833,8 +833,13 @@ export default class ChatContent extends Component {
         return popMenu(templates, message, menuId);
     }
 
+    onVisibilityChange =()=>{
+        stores.chat.setVisibility(document.visibilityState === 'visible');
+    }
+
     componentWillMount() {
         console.log('componentWillMount');
+        document.addEventListener("visibilitychange", this.onVisibilityChange);
         wfc.eventEmitter.on(EventType.UserInfosUpdate, this.onUserInfosUpdate);
         wfc.eventEmitter.on(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
         wfc.eventEmitter.on(EventType.MessageReceived, this.onMessageDelivered)
@@ -842,6 +847,7 @@ export default class ChatContent extends Component {
     }
 
     componentWillUnmount() {
+        document.removeEventListener("visibilitychange", this.onVisibilityChange)
         this.lastBottomMessage = null;
         !this.props.rememberConversation && this.props.reset();
         this.stopAudio();
@@ -850,6 +856,8 @@ export default class ChatContent extends Component {
         wfc.eventEmitter.removeListener(EventType.GroupInfosUpdate, this.onGroupInfosUpdate);
         wfc.eventEmitter.removeListener(EventType.MessageReceived, this.onMessageDelivered)
         wfc.eventEmitter.removeListener(EventType.MessageRead, this.onMessageRead)
+
+        stores.chat.reset();
     }
 
     stopAudio() {
