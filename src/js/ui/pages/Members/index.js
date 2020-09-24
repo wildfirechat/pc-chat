@@ -254,7 +254,7 @@ export default class Members extends Component {
         }
     }
     componentDidUpdate(prevProps, prevState) {
-        let covnersationInfo = wfc.getConversationInfo(this.props.conversation);
+        let covnersationInfo = this.props.conversation ? wfc.getConversationInfo(this.props.conversation) : null;
         if (covnersationInfo && covnersationInfo.isTop !== this.state.isTop && !this.props.show) {
             this.setState({
                 isTop: covnersationInfo.isTop

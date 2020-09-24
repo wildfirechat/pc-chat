@@ -172,6 +172,9 @@ export default class Layout extends Component {
         cl.forEach((e) => {
             counter += e.isSilent ? 0 : e.unreadCount.unread;
         });
+        if(counter === 0){
+            return;
+        }
         stores.sessions.setUnreadCount(counter)
         if (ipcRenderer) {
             ipcRenderer.send(
@@ -186,6 +189,11 @@ export default class Layout extends Component {
     }
 
     onReceiveMessage= (msg)=>{
+        let conversationInfo = wfc.getConversationInfo(msg.conversation);
+        if(conversationInfo.isSilent){
+            return;
+        }
+
         if(!isElectron()) {
             if (document.hidden) {
                 let content = msg.messageContent;
