@@ -421,7 +421,6 @@
   }
 
   & .content {
-    position: absolute;
     left: 48px;
     top: 20px;
     display: flex;

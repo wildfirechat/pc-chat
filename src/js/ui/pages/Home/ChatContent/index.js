@@ -526,7 +526,8 @@ export default class ChatContent extends Component {
                             <p style={{
                                 fontSize:'10px',
                                 color:'#a9a9a9',
-                                userSelect:'none'
+                                userSelect:'none',
+                                textAlign:"right"
                             }}>{this.formatReceiptMessage(message.timestamp)}</p> : ''
                     }
                 </div>
