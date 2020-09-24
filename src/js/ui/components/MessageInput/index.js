@@ -548,7 +548,7 @@ export default class MessageInput extends Component {
                                 <Popup key={'voip-video'}
                                        trigger={
                                            <i
-                                               className="icon-ion-android-camera"
+                                               className="icon-ion-ios-videocam"
                                                id="videoCall"
                                            />
                                        }
@@ -565,7 +565,7 @@ export default class MessageInput extends Component {
                         ) : (
                             !Config.ENABLE_SINGLE_VOIP_CALL ? '' :
                                 <i
-                                    className="icon-ion-android-camera"
+                                    className="icon-ion-ios-videocam"
                                     id="videoCall"
                                     onClick={e => canisend && this.videoCall()}
                                 />
