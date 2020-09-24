@@ -172,9 +172,6 @@ export default class Layout extends Component {
         cl.forEach((e) => {
             counter += e.isSilent ? 0 : e.unreadCount.unread;
         });
-        if(counter === 0){
-            return;
-        }
         stores.sessions.setUnreadCount(counter)
         if (ipcRenderer) {
             ipcRenderer.send(
