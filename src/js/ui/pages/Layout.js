@@ -172,7 +172,7 @@ export default class Layout extends Component {
         cl.forEach((e) => {
             counter += e.isSilent ? 0 : e.unreadCount.unread;
         });
-        stores.sessions.setUnreadCount(counter)
+        stores.sessions.setUnreadMessageCount(counter)
         if (ipcRenderer) {
             ipcRenderer.send(
                 'message-unread',
@@ -215,6 +215,7 @@ export default class Layout extends Component {
         wfc.eventEmitter.on(EventType.ReceiveMessage, this.onReceiveMessage);
         wfc.eventEmitter.on(EventType.RecallMessage, this.updateUnreadStatus);
         wfc.eventEmitter.on(EventType.ConversationInfoUpdate, this.updateUnreadStatus);
+        // 多端会话同步，其他端已读之后，更新pc未读状态
         wfc.eventEmitter.on(EventType.SettingUpdate, this.updateUnreadStatus);
     }
 

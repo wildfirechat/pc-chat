@@ -204,6 +204,7 @@ export default class Contacts extends Component {
                 </div>
                 <div className={classes.userListContainer}>
                     {
+                        // TODO 未读好友请求数小红点
                         !query && (
                             <div className={classes.userList}>
                                 <div className={classes.userListTitle} onClick={() => { this.expandNewEvent(); }}>
