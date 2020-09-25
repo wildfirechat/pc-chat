@@ -47,8 +47,8 @@
 
 .contacts {
   height: auto; /* Height - Header - Footer - Search Input */
-  overflow-x: hidden;
-  overflow-y: auto;
+  /*overflow-x: hidden;*/
+  /*overflow-y: auto;*/
 }
 
 .notfound {
@@ -84,15 +84,18 @@
 .group {
   width: 100%;
   /* padding: 8px 5px 8px 20px; */
-  border-bottom: 1px solid #dcdbdb;
+  /*padding-left: 10px;*/
+  /*margin-right: 10px;*/
 }
 
 .header {
   /* position: relative;
     width: 100%;
     height: 36px; */
+  border-bottom: 1px solid #dcdbdb;
+  margin-left: 25px;
 
-  & label {
+& label {
     /* position: absolute;
         left: 12px;
         bottom: 8px; */
@@ -100,7 +103,6 @@
     font-size: 16px;
     font-weight: 300;
     color: #999999;
-    padding-left: 12px;
   }
 
   & span {
@@ -120,7 +122,7 @@
   display: flex;
   height: 20px;
   margin: 5px 0;
-  padding: 20px 10px 20px 20px;
+  padding: 20px 10px 20px 25px;
   align-items: center;
   cursor: pointer;
 
@@ -162,7 +164,6 @@
   margin: 0;
   margin-bottom: 4px;
 }
-
 .signature {
   font-family: "Helvetica";
   font-size: 12px;
@@ -176,11 +177,14 @@
 .userList {
   height: auto;
 
-  & .userListTitle {
+& .userListTitle {
+    background: #edeae8;
+    position: sticky;
+    top: 0;
+    z-index: 1;
     color: #000;
     margin-left: 10px;
     margin-bottom: 7px;
-    position: relative;
     height: 22px;
     font-family: 'SimHei';
     
@@ -260,17 +264,17 @@
 }
 @media (width <= 800px) {
   .searchBar {
-    & div {
-      width: 230px;
-    }
-
-    & i {
-      left: 16px;
-      top: 55%;
-    }
+& div {
+    width: 230px;
   }
-  .columns {
-    padding: 20px 17px 0;
+
+& i {
+    left: 16px;
+    top: 55%;
+  }
+}
+.columns {
+  padding: 20px 17px 0;
   }
 
   .notfound {
@@ -286,7 +290,6 @@
   .group {
     width: 100%;
     padding: 6px 0;
-    margin-bottom: 20px;
   }
 
   .header {
@@ -306,7 +309,7 @@
   .item {
     height: 36px;
     margin: 8px 0;
-    padding: 0 8px;
+    padding: 4px 25px;
 
     & img {
       margin-top: 4px;
