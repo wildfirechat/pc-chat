@@ -187,7 +187,7 @@
     margin-bottom: 7px;
     height: 22px;
     font-family: 'SimHei';
-    
+
     & svg {
       transform: scale(0.4);
       position: absolute;
@@ -232,7 +232,7 @@
 }
 .groupList {
   height: 60px;
-  padding-left: 20px;
+  padding-left: 25px;
   color: #000;
   position: relative;
 
@@ -262,6 +262,106 @@
 .groupList:hover {
   background: #d7d8d9;
 }
+
+.friendRequestItem{
+    height: 60px;
+    color: #000;
+    width: 100%;
+    position: relative;
+    min-width: 250px;
+    border-bottom: 1px solid #eee;
+
+    & .friendItem {
+          padding-left: 25px;
+        & img {
+              position: absolute;
+              width: 32px;
+              height: 32px;
+              margin-top: 3px;
+              margin-right: 19px;
+              border-radius: 3px;
+              top: 10px;
+          }
+        & .username {
+            position: absolute;
+            left: 70px;
+            top: 12px;
+          }
+        & .userReason {
+            position: absolute;
+            bottom: 8px;
+            left: 70px;
+            color: #999;
+        }
+    }
+
+& .statusButton {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 80px;
+    height: 100%;
+    align-items: center;
+    display: flex;
+    text-align:center;
+    & .enable {
+      background: #1aad19;
+      border: 1px solid #ddd;
+      color: #fff;
+      padding: 5px 5px;
+      margin: auto;
+      font-size: 12px;
+      font-weight: 600;
+      }
+    & .disable {
+        margin: auto;
+        color: #999;
+        background: inherit;
+        border: 0;
+    }
+ }
+
+& .statusButton:hover > .enable{
+    display: none;
+  }
+
+& .statusButton:hover div {
+      display: block;
+  }
+& .handleButton {
+      position: absolute;
+      right: 10px;
+      z-index: 1;
+      top: 0px;
+      width: 60px;
+      height: 100%;
+      align-items: center;
+      text-align:center;
+  display:none;
+
+ & .accept{
+      width: 90%;
+      background: #1aad19;
+      border: 1px solid #ddd;
+      color: #fff;
+      padding: 5px 10px;
+      font-weight: 600;
+  }
+& .reject{
+    width: 90%;
+    background: red;
+    border: 1px solid #ddd;
+    color: #fff;
+    padding: 5px 10px;
+    font-weight: 600;
+}
+}
+}
+
+.friendRequestItem:hover {
+    background: #d7d8d9;
+}
+
 @media (width <= 800px) {
   .searchBar {
 & div {

@@ -126,9 +126,9 @@ export default class Contacts extends Component {
         this.props.filter(text);
     }
     getAllNewFriend() {
-        var addUserList = this.props.getIncommingFriendRequest();
-        var userlist = addUserList.map(item => {
-            var user = this.props.getUserInfo(item.target);
+        let addUserList = this.props.getIncommingFriendRequest();
+        let userlist = addUserList.map(item => {
+            let user = wfc.getUserInfo(item.target);
             user.friendMsg = item;
             return user;
         });
@@ -148,6 +148,48 @@ export default class Contacts extends Component {
                 </div>
             );
         });
+    }
+    renderFriendRequest() {
+        let addUserList = wfc.getIncommingFriendRequest();
+        let userlist = addUserList.map(item => {
+            let user = wfc.getUserInfo(item.target);
+            user.friendMsg = item;
+            return user;
+        });
+        return (
+            userlist.map((item, index) => {
+                let friendMsg = item.friendMsg;
+                return (
+                    <div className={classes.friendRequestItem} key={index} onClick={ ()=> this.props.showUserinfo(true, item)}>
+                        <div className={classes.friendItem}>
+                            <img
+                            style={{
+                                height: 32,
+                                width: 32,
+                            }} src={item.portrait} />
+                            <span className={classes.username}>{item.displayName}</span>
+                            <span className={classes.userReason}>{item.friendMsg.reason}</span>
+                        </div>
+                        <div className={classes.statusButton}>
+                            {/*{friendMsg.status === 0 && <button onClick={()=>{this.acceptEvent(item)}}>接受/拒绝</button>}*/}
+                            {friendMsg.status === 0 && <p className={classes.enable}>接受/拒绝</p>}
+                            {friendMsg.status === 1 && <p className={classes.disable}>已添加</p>}
+                            {friendMsg.status === 3 && <p className={classes.disable}>已拒绝</p>}
+                            {
+                                friendMsg.status === 0 ? (
+                                    <div className={classes.handleButton}>
+                                        <ul style={{listStyleType:"none", margin:0, padding:0}}>
+                                            <li><button className={classes.accept} onClick={(e) => {e.stopPropagation(); console.log('accept')}}>接受</button></li>
+                                            <li><button className={classes.reject}>拒绝</button></li>
+                                        </ul>
+                                    </div>
+                                ):''
+                            }
+                        </div>
+                    </div>
+                );
+            })
+        );
     }
     expandIconEvent() {
         this.setState({
@@ -212,10 +254,7 @@ export default class Contacts extends Component {
                                     <span>新的朋友</span>
                                 </div>
                                 {
-                                    this.state.newExpand && (<div className={classes.adduser} onClick={() => { this.getAllNewFriend(); }}>
-                                        {addUserIcon}
-                                        <span >新的朋友</span>
-                                    </div>)
+                                    this.state.newExpand && this.renderFriendRequest()
                                 }
                             </div>
                         )
