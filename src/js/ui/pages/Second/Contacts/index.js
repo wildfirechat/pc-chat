@@ -57,7 +57,7 @@ export default class Contacts extends Component {
                                             }
                                             this.props.showUserinfo(true, e)
                                         }}>
-                                        <div className={classes.avatar}>
+                                        <div >
                                             <img
                                                 src={this.itemPortrait(e)}
                                                 style={{
