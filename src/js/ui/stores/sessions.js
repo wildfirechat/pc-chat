@@ -11,15 +11,15 @@ class sessions {
         query: '',
         result: [],
     };
-    @observable unreadCount = 0;
+    @observable unreadMessageCount = 0;
 
     @action genConversationKey(index) {
         let conversation = self.conversations[index]
         return conversation.type + conversation.target + conversation.line;
     }
 
-    @action setUnreadCount(count){
-        self.unreadCount = count;
+    @action setUnreadMessageCount(count){
+        self.unreadMessageCount = count;
     }
 
     @action
