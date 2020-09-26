@@ -190,21 +190,29 @@ export default class Layout extends Component {
         if(conversationInfo.isSilent){
             return;
         }
+        let toConversation = (conversation) =>{
+            stores.chat.chatToN(conversation);
+            if (this.props.history.location.pathname !== '/') {
+                this.props.history.push('/');
+            }
+            document.querySelector('#messageInput').focus();
+        }
 
-        if(!isElectron()) {
-            if (document.hidden) {
-                let content = msg.messageContent;
-                if (MessageConfig.getMessageContentPersitFlag(content.type) === PersistFlag.Persist_And_Count) {
-                    Push.create("新消息来了", {
-                        body: content.digest(),
-                        icon: '../../../../assets/images/icon.png',
-                        timeout: 4000,
-                        onClick: function () {
-                            window.focus();
-                            this.close();
-                        }
-                    });
-                }
+        if (document.hidden) {
+            let content = msg.messageContent;
+            let conversationInfo = wfc.getConversationInfo(msg.conversation);
+
+            if (MessageConfig.getMessageContentPersitFlag(content.type) === PersistFlag.Persist_And_Count) {
+                Push.create(conversationInfo.title(), {
+                    body: content.digest(),
+                    icon: conversationInfo.portrait(),
+                    timeout: 4000,
+                    onClick: function () {
+                        window.focus();
+                        this.close();
+                        toConversation(msg.conversation);
+                    }
+                });
             }
         }
         this.updateUnreadStatus();
