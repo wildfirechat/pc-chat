@@ -23,6 +23,8 @@ import i18n from 'i18n';
 import proto from './marswrapper.node';
 
 import pkg from './package.json';
+import Badge from 'electron-windows-badge';
+
 
 let Locales = {};
 i18n.configure({
@@ -557,6 +559,8 @@ const createMainWindow = () => {
         frame: !isWin,
         icon
     });
+    const badgeOptions = {}
+    new Badge(mainWindow, badgeOptions);
 
     mainWindow.setSize(400, 480);
     mainWindow.loadURL(
@@ -765,6 +769,7 @@ const createMainWindow = () => {
         var counter = args.counter;
         //if (settings.showOnTray) {
         updateTray(counter);
+        app.setBadgeCount(counter);
         //}
     });
 

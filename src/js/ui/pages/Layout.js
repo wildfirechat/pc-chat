@@ -174,12 +174,16 @@ export default class Layout extends Component {
         });
         stores.sessions.setUnreadMessageCount(counter)
         if (ipcRenderer) {
-            ipcRenderer.send(
-                'message-unread',
-                {
-                    counter,
-                }
-            );
+            if(this.isWin()){
+                ipcRenderer.sendSync('update-badge', counter > 0 ? counter : null);
+            }else {
+                ipcRenderer.send(
+                    'message-unread',
+                    {
+                        counter,
+                    }
+                );
+            }
         } else {
             document.title = counter === 0 ? "野火IM" : (`野火IM(有${counter}条未读消息)`);
         }
@@ -235,7 +239,7 @@ export default class Layout extends Component {
         wfc.eventEmitter.removeListener(EventType.ConversationInfoUpdate, this.updateUnreadStatus);
         wfc.eventEmitter.removeListener(EventType.SettingUpdate, this.updateUnreadStatus);
     }
-    isMac(){
+    isWin(){
         // var agent = navigator.userAgent.toLowerCase();
         // var isMac = /macintosh|mac os x/i.test(navigator.userAgent);
         // if(isMac){
@@ -270,7 +274,7 @@ export default class Layout extends Component {
                 <Loader show={loading} />
                 <div
                     className={clazz(classes.container,{
-                        [classes.winContainer]:this.isMac()
+                        [classes.winContainer]:this.isWin()
                     })}
                     ref="viewport">
                     {this.props.children}
@@ -278,7 +282,7 @@ export default class Layout extends Component {
                 <Footer
                     className={classes.footer}
                     location={location}
-                    isMac={this.isMac}
+                    isWin={this.isWin}
                     ref="footer" />
                 <UserInfo />
                 <AddFriend />
