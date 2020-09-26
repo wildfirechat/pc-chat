@@ -147,11 +147,10 @@ $ npm run dev
 1. nodejs10.16.X
 2. python2.7X
 3. fpm
-4. qt5
 
 ```
 sudo apt-get update
-sudo apt-get install ruby-dev build-essential qt5-default
+sudo apt-get install ruby-dev build-essential
 sudo gem install fpm -v 1.10.2
 ```
 > fpm 1.11版本有问题，需要使用1.10.2版本
@@ -180,7 +179,7 @@ $ npm run dev
    或者提示下载什么之类的，可将```dep```目录下对应平台的electron依赖，解压到对应的目录。
    ```
    // windows
-   C:\Users\<你的用户名>/.electron-gyp
+   C:\Users\<你的用户名>\.electron-gyp
    // mac/linux
    ~/.electron-gyp
     ```
@@ -198,11 +197,6 @@ https://www.microsoft.com/zh-CN/download/details.aspx?id=48145 。注意这个�
 
 8. 使用```cnpm```后打包失败，在某些平台```cnpm```是会出现问题的，请使用npm。
 
-9. Linux版本对Qt5有依赖，如果客户端无法运行，请安装Qt5。
-```
-sudo apt-get update
-sudo apt-get install qt5-default
-```
 
 ## MAC 签名
 如果本地存在合法的mac签名，打包程序会尝试进行签名。签名会失败，提示如下
