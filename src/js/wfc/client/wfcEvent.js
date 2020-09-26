@@ -31,7 +31,7 @@ export default class EventType {
     static GroupInfosUpdate = 'groupInfosUpdate';
     // function (updatedFriendIds) {}
     static FriendListUpdate = 'friendListUpdate';
-    // function () {}
+    // function ([string]) {}
     static FriendRequestUpdate = 'friendRequestUpdate';
     // function (conversationInfo) {}
     static ConversationInfoUpdate = 'conversationInfoUpdate';
