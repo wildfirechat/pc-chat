@@ -109,6 +109,7 @@ class UserContactInfo extends Component {
 
         console.warn(user);
 
+        let isFriend = wfc.isMyFriend(user.uid);
         return (
             <div className={classes.container}>
                 {
@@ -127,42 +128,68 @@ class UserContactInfo extends Component {
                                     <div className={classes.image}><img src={user.portrait} /></div>
                                 </div>
                                 <div className={classes.bottom} >
-                                    <div className={classes.area}><span>备注:</span>
-                                    <span className={!user.friendAlias && classes.editbtn} 
-                                    onClick={(ev) => { this.editDesc(ev, user) }}
-                                    onBlur={(e) => { this.editChange(e, user) }}
-                                    > {user.friendAlias}</span></div>
+                                    {
+                                       isFriend ? (
+                                           <div className={classes.area}>
+                                               <span>备注:</span>
+                                               <span className={!user.friendAlias && classes.editbtn}
+                                                     onClick={(ev) => { this.editDesc(ev, user) }}
+                                                     onBlur={(e) => { this.editChange(e, user) }}
+                                               > {user.friendAlias}</span>
+                                           </div>
+                                       ) :''
+                                    }
 
                                     <div className={classes.area}><span>地区:</span><span> China</span></div>
-
-                                    <div className={classes.area}><span>野火号:</span> <span> {user.uid}</span></div>
-
-                                    {/* <div className={classes.area}>来源： <span> China</span></div> */}
-                                    {/* <div className={classes.btns}>
-                                        {
-                                            this.props.isCurrentUser ? <span onClick={() => { this.handleAction(user) }}>{addUser}</span> :
-                                                <span onClick={() => { this.handleAction(user) }}>{message}</span>
-                                        }
-                                    </div> */}
+                                    <div className={classes.area}><span>野火号:</span> <span> {user.name}</span></div>
                                 </div>
                             </div>
                         </div>
-                        {/* 
-                        <div
-                            className={classes.username}
-                            dangerouslySetInnerHTML={{ __html: wfc.getUserDisplayName(user.uid) }} /> */}
-                        <div
-                            className={classes.action}
-                            onClick={() => this.handleAction(this.props.user)}
-                            style={{
-                                color: buttonColor,
-                                opacity: .6,
-                                background: buttonBackground,
-                                borderRadius: '5px',
-                                fontSize: '19px'
-                            }}>
-                            发送消息
-                        </div>
+                            {
+                               isFriend ? (
+                                   <div
+                                       className={classes.action}
+                                       onClick={() => this.handleAction(this.props.user)}
+                                       style={{
+                                           color: buttonColor,
+                                           opacity: .6,
+                                           background: buttonBackground,
+                                           borderRadius: '5px',
+                                           fontSize: '19px'
+                                       }}>
+                                       发送消息
+                                   </div>
+                               ) :(
+                                   <div style={{display:'none'}}>
+                                       <div
+                                           className={classes.action}
+                                           onClick={() => this.handleAction(this.props.user)}
+                                           style={{
+                                               color: buttonColor,
+                                               opacity: .6,
+                                               background: buttonBackground,
+                                               borderRadius: '5px',
+                                               fontSize: '19px',
+                                               marginRight: '20px',
+                                           }}>
+                                           接受
+                                       </div>
+                                       <div
+                                           className={classes.action}
+                                           onClick={() => this.handleAction(this.props.user)}
+                                           style={{
+                                               color: buttonColor,
+                                               opacity: .6,
+                                               background: "red",
+                                               borderRadius: '5px',
+                                               fontSize: '19px',
+                                               marginLeft: '20px'
+                                           }}>
+                                           拒绝
+                                       </div>
+                                   </div>
+                               )
+                            }
                     </div>
                     ) : (
                             <div className={clazz({

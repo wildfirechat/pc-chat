@@ -852,6 +852,7 @@ const createMainWindow = () => {
     ipcMain.once('logined', event => {
         mainWindow.setResizable(true);
         mainWindow.setSize(mainWindowState.width, mainWindowState.height);
+        mainWindow.setMinimumSize(830, 710);
         mainWindowState.manage(mainWindow);
     });
 

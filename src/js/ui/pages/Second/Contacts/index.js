@@ -7,7 +7,6 @@ import classes from './style.css';
 import EventType from '../../../../wfc/client/wfcEvent';
 import stores from '../../../stores';
 import wfc from '../../../../wfc/client/wfc';
-import connectionStatus from "../../../../wfc/client/connectionStatus";
 
 @inject(stores => ({
     filter: stores.contacts.filter,
@@ -125,30 +124,30 @@ export default class Contacts extends Component {
         text = text.trim();
         this.props.filter(text);
     }
-    getAllNewFriend() {
-        let addUserList = this.props.getIncommingFriendRequest();
-        let userlist = addUserList.map(item => {
-            let user = wfc.getUserInfo(item.target);
-            user.friendMsg = item;
-            return user;
-        });
-        stores.contactInfo.toggle(true, userlist);
-    }
-    changeGroup(group) {
+    showGroupInfo(group) {
         console.warn(group);
-
         stores.contactInfo.toggle(true, group);
     }
     renderGroupColumns() {
         return this.state.groupList.map((item, index) => {
             return (
-                <div className={classes.groupList} onClick={() => { this.changeGroup(item); }} key={index}>
+                <div className={classes.groupList} onClick={() => { this.showGroupInfo(item); }} key={index}>
                     <img src={item.portrait}></img>
                     <span >{item.name}</span>
                 </div>
             );
         });
     }
+
+    handleFriendRequest(friendUid, accept){
+        wfc.handleFriendRequest(friendUid, accept, '', () =>{
+            this.forceUpdate();
+        }, (err) =>{
+            this.forceUpdate();
+        });
+    }
+
+
     renderFriendRequest() {
         let addUserList = wfc.getIncommingFriendRequest();
         let userlist = addUserList.map(item => {
@@ -179,8 +178,15 @@ export default class Contacts extends Component {
                                 friendMsg.status === 0 ? (
                                     <div className={classes.handleButton}>
                                         <ul style={{listStyleType:"none", margin:0, padding:0}}>
-                                            <li><button className={classes.accept} onClick={(e) => {e.stopPropagation(); console.log('accept')}}>接受</button></li>
-                                            <li><button className={classes.reject}>拒绝</button></li>
+                                            <li><button className={classes.accept} onClick={(e) =>
+                                            {
+                                                e.stopPropagation();
+                                                this.handleFriendRequest(friendMsg.target, true)
+                                            }}>接受</button></li>
+                                            <li><button className={classes.reject} onClick={(e) => {
+                                                e.stopPropagation();
+                                                this.handleFriendRequest(friendMsg.target, false)
+                                            }}>拒绝</button></li>
                                         </ul>
                                     </div>
                                 ):''
@@ -197,6 +203,7 @@ export default class Contacts extends Component {
         });
     }
     expandNewEvent() {
+        wfc.clearUnreadFriendRequestStatus();
         this.setState({
             newExpand: !this.state.newExpand
         });
@@ -251,7 +258,11 @@ export default class Contacts extends Component {
                             <div className={classes.userList}>
                                 <div className={classes.userListTitle} onClick={() => { this.expandNewEvent(); }}>
                                     {this.state.newExpand ? expandIcon : closeIcon}
-                                    <span>新的朋友</span>
+                                    <span>新的朋友</span>{
+                                        wfc.getUnreadFriendRequestCount() > 0 ? (
+                                            <i style={{color:'red'}}>{wfc.getUnreadFriendRequestCount()}</i>
+                                        ) : ''
+                                    }
                                 </div>
                                 {
                                     this.state.newExpand && this.renderFriendRequest()

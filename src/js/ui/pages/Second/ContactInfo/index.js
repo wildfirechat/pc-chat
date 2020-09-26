@@ -65,42 +65,9 @@ class ContactInfo extends Component {
             console.log('添加好友失败');
         });
     }
-    getUserList() {
-        return (
-            this.props.user.map((item, index) => {
-                var friendMsg = item.friendMsg;
-                return (
-                    <div className={classes.userList} key={index}>
-                        <div className={classes.userItem}>
-                            <img src={item.portrait} />
-                            <span className={classes.username}>{item.displayName}</span>
-                            <span className={classes.userReason}>{item.friendMsg.reason}</span>
-                        </div>
-                        <div className={classes.userBtns}>
-                            {friendMsg.status === 0 && !this.state.status[item.uid]&& <button onClick={()=>{this.acceptEvent(item)}}>接受</button>}
-                            {(friendMsg.status === 1 || this.state.status[item.uid])&& <button disabled>已添加</button>}
-                            {friendMsg.status === 3 && <button disabled>已拒绝</button>}
-                        </div>
-                        <div />
-                    </div>
-                );
-            })
-        );
-    }
-    getGroupList() {
+    getGroupInfo() {
         var buttonColor = '#fff';
         var buttonBackground = '#1aad19';
-        // var list = this.props.users.map((item, index) => {
-        //     return (
-        //         <div className={classes.groupList} key={index}>
-        //             <div className={classes.groupItem}>
-        //                 <img src={item.portrait}></img>
-        //                 <span className={classes.groupName}>{item.displayName}</span>
-        //             </div>
-        //             <div></div>
-        //         </div>
-        //     )
-        // });
         return (
             <div style={{
                 height: '100%'
@@ -139,32 +106,19 @@ class ContactInfo extends Component {
         );
     }
     render() {
-        var user = this.props.user;
-        var users = this.props.users;
-        // var gradient = 'none';
-        // var fontColor = '#777';
-        // var buttonColor = '#fff';
-        // var buttonBackground = '#1aad19';
-        // var background = '#f5f5f5';
-        var _userinfo = ()=>{return <UserContactInfo />};
-        var userInfo = user instanceof UserInfo ? _userinfo() : '';
-        var groupInfo = user instanceof GroupInfo ? this.getGroupList() : '';
-        var userList = this.props.isNewFriend ? this.getUserList() : '';
+        let user = this.props.user;
+        let _userinfo = ()=>{return <UserContactInfo />};
+        let userInfo = user instanceof UserInfo ? _userinfo() : '';
+        let groupInfo = user instanceof GroupInfo ? this.getGroupInfo() : '';
         return (
             <div className={classes.container}>
-                {
-                    this.props.isNewFriend ? (<div className={classes.newFriendtitle}>新的朋友</div>) : ''
-                }
-                {/* {
-                    user instanceof GroupInfo ? (<div className={classes.newFriendtitle}>{user.name}({users.length + 1})</div>) : ''
-                } */}
                 <div style={{
                     height: 'calc(100vh - 70px)',
                     overflow: 'auto'
                 }}>
 
                     {
-                        userInfo || userList || groupInfo || (
+                        userInfo || groupInfo || (
                             <div className={clazz({
                                 [classes.noselected]: true,
                             })}>
