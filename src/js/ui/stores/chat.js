@@ -54,8 +54,10 @@ class Chat {
                 if (imageMsgs[i].messageId === messageId) {
                     current = i;
                 }
-                // when in electron, can not load local path
-                let src = imageMsgs[i].messageContent.remotePath;
+                let src = imageMsgs[i].messageContent.localPath;
+                if(!src){
+                    src = imageMsgs[i].messageContent.remotePath;
+                }
                 imgs.push({ src: src });
             }
 
