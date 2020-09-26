@@ -17,9 +17,9 @@
         background: #dbd9d8;
         width:240px;
         border-radius:10px;
-        margin-left:-10px;
+        margin-left:10px;
         transform: scale(0.83);
-
+        transform-origin: 0 0;
         }
 & input {
     -webkit-app-region: no-drag;
@@ -32,7 +32,7 @@
     font-family: 'Helvetica';
     font-size: 18px;
     font-weight: 100;
-    text-indent: 19px;
+    text-indent: 20px;
     margin-left:18px ;
   }
 

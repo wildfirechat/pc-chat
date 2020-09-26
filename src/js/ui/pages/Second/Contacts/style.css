@@ -9,7 +9,7 @@
   height: 30px;
   width: 250px;
   box-shadow: inset 0 -1px 0 0 #eaedea;
-  padding: 20px 0 15px 0;
+  padding: 20px 0 14px 0;
   -webkit-user-select: auto;
   -webkit-app-region: drag;
   & div {
@@ -31,7 +31,7 @@
     font-family: "Helvetica";
     font-size: 18px;
     font-weight: 100;
-    text-indent: 16px;
+    text-indent: 20px;
     margin-left: 18px;
   }
 
