@@ -279,12 +279,6 @@ let mainMenu = [
             {
                 type: 'separator'
             },
-            // {
-            //     label: '💕 Follow me on Twitter 👏',
-            //     click() {
-            //         shell.openExternal('https://twitter.com/var_darling');
-            //     }
-            // }
             {
                 role: 'reload',
                 label: Locales.__('Help').Reload
@@ -375,50 +369,8 @@ let trayMenu = [
         }
     }
 ];
-let avatarPath = tmp.dirSync();
-let avatarCache = {};
-let avatarPlaceholder = `${__dirname}/src/assets/images/user-fallback.png`;
 const icon = `${__dirname}/src/assets/images/dock.png`;
 let blink = null
-
-async function getIcon(cookies, userid, src) {
-    var cached = avatarCache[userid];
-    var icon;
-
-    if (cached) {
-        return cached;
-    }
-
-    if (cookies && src) {
-        try {
-            let response = await axios({
-                url: src,
-                method: 'get',
-                responseType: 'arraybuffer',
-                headers: {
-                    Cookie: cookies,
-                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/603.3.8 (KHTML, like Gecko) Version/10.1.2 Safari/603.3.8',
-                },
-            });
-            // eslint-disable-next-line
-            let base64 = new Buffer(response.data, 'binary').toString('base64');
-
-            icon = `${avatarPath.name}/${userid}.jpg`;
-            fs.writeFileSync(icon, base64.replace(/^data:image\/png;base64,/, ''), 'base64');
-        } catch (ex) {
-            console.error(ex);
-            icon = avatarPlaceholder;
-        }
-    }
-
-    var image = nativeImage.createFromPath(icon);
-
-    image = image.resize({width: 24, height: 24});
-
-    avatarCache[userid] = image;
-
-    return image;
-}
 
 function checkForUpdates() {
     if (downloading) {
@@ -467,17 +419,15 @@ function updateTray(unread = 0) {
                 tray = new Tray(icon);
 
                 tray.on('right-click', () => {
-                    tray.popUpContextMenu();
+                    tray.popUpContextMenu(contextmenu);
                 });
 
                 tray.on('click', () => {
-                    let isVisible = mainWindow.isVisible();
-                    isVisible ? mainWindow.hide() : mainWindow.show();
+                    mainWindow.show();
                 });
             }
 
             tray.setImage(icon);
-            tray.setContextMenu(contextmenu);
             execBlink(unread > 0);
             // Avoid tray icon been recreate
             updateTray.lastUnread = unread;
@@ -701,68 +651,6 @@ const createMainWindow = () => {
     ipcMain.on('exec-blink', (event, args) => {
         var isBlink = args.isBlink;
         execBlink(isBlink, args.interval);
-    });
-
-    // TODO 不明白这儿是做什么？
-    ipcMain.on('menu-update', async (event, args) => {
-        var {cookies, contacts = [], conversations = []} = args;
-        var conversationsMenu = mainMenu.find(e => e.label === 'Conversations');
-        var contactsMenu = mainMenu.find(e => e.label === 'Contacts');
-        var shouldUpdate = false;
-
-        if (!isOsx) {
-            return;
-        }
-
-        if (conversations.length
-            && conversations.map(e => e.name).join() !== conversationsMenu.submenu.map(e => e.label).join()) {
-            shouldUpdate = true;
-
-            conversations = await Promise.all(
-                conversations.map(async (e, index) => {
-                    let icon = await getIcon(cookies, e.id, e.avatar);
-
-                    return {
-                        label: e.name,
-                        accelerator: `Cmd+${index}`,
-                        icon,
-                        click() {
-                            mainWindow.show();
-                            mainWindow.webContents.send('message-chatto', {
-                                id: e.id,
-                            });
-                        }
-                    };
-                })
-            );
-            conversationsMenu.submenu = conversations;
-        }
-
-        if (contacts.length) {
-            shouldUpdate = true;
-
-            contacts = await Promise.all(
-                contacts.map(async e => {
-                    let icon = await getIcon(cookies, e.id, e.avatar);
-
-                    return {
-                        label: e.name,
-                        icon,
-                        click() {
-                            mainWindow.show();
-                            mainWindow.webContents.send('show-userinfo', {
-                                id: e.id,
-                            });
-                        }
-                    };
-                })
-            );
-            contactsMenu.submenu = contacts;
-        }
-
-        if (shouldUpdate) {
-            createMenu();
-        }
     });
 
     ipcMain.on('message-unread', (event, args) => {
