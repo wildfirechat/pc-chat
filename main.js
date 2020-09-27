@@ -39,6 +39,7 @@ global.sharedObj = {proto: proto};
 let forceQuit = false;
 let downloading = false;
 let mainWindow;
+let winBadge;
 let screenshots;
 let tray;
 let downloadFileMap = new Map()
@@ -510,7 +511,7 @@ const createMainWindow = () => {
         icon
     });
     const badgeOptions = {}
-    new Badge(mainWindow, badgeOptions);
+    winBadge = new Badge(mainWindow, badgeOptions);
 
     mainWindow.setSize(400, 480);
     mainWindow.loadURL(
@@ -745,7 +746,7 @@ const createMainWindow = () => {
     ipcMain.once('logined', event => {
         mainWindow.setResizable(true);
         mainWindow.setSize(mainWindowState.width, mainWindowState.height);
-        mainWindow.setMinimumSize(830, 710);
+        mainWindow.setMinimumSize(800, 600);
         mainWindowState.manage(mainWindow);
     });
 

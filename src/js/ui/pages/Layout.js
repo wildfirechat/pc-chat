@@ -176,14 +176,13 @@ export default class Layout extends Component {
         if (ipcRenderer) {
             if(this.isWin()){
                 ipcRenderer.sendSync('update-badge', counter > 0 ? counter : null);
-            }else {
-                ipcRenderer.send(
-                    'message-unread',
-                    {
-                        counter,
-                    }
-                );
             }
+            ipcRenderer.send(
+                'message-unread',
+                {
+                    counter,
+                }
+            );
         } else {
             document.title = counter === 0 ? "野火IM" : (`野火IM(有${counter}条未读消息)`);
         }
