@@ -4,6 +4,7 @@ import { observable, action } from 'mobx';
 import wfc from '../../wfc/client/wfc';
 import ConversationType from '../../wfc/model/conversationType';
 import pinyin from "../han/lib";
+import stores from "./index";
 
 class sessions {
     @observable conversations = [];
@@ -49,6 +50,7 @@ class sessions {
     @action removeConversation(conversationInfo) {
         self.conversations = self.conversations.filter(e => !e.conversation.equal(conversationInfo.conversation));
         wfc.removeConversation(conversationInfo.conversation, true);
+        stores.chat.removeConversation(conversationInfo.conversation);
     }
 
     @action clearConversationUnreadStatus(conversationInfo) {

@@ -19,10 +19,6 @@ import KickoffGroupMemberNotification from '../../wfc/messages/notification/kick
 import {eq} from "../../wfc/util/longUtil";
 
 class Chat {
-    // TODO remove
-    @observable sessions = [];
-    @observable messages = new Map();
-    // TODO remove end
 
     @observable showConversation = false;
 
@@ -68,6 +64,13 @@ class Chat {
 
     @action toggleConversation(show = !self.showConversation) {
         self.showConversation = show;
+    }
+
+    @action removeConversation(conversation) {
+        if(self.conversation && self.conversation.equal(conversation)){
+            self.conversation = null;
+            self.target = null;
+        }
     }
 
     onRecallMessage(operatorUid, messageUid) {
@@ -442,26 +445,6 @@ class Chat {
             var list = self.messageList;
             self.messageList = list.filter(e => e.messageId !== messageId);
         }
-    }
-
-    @action markedRead(userid) {
-        var list = self.messages.get(userid);
-
-        // Update the unread message need the chat in chat list
-        if (!self.sessions.map(e => e.UserName).includes(userid)) {
-            return;
-        }
-
-        if (list) {
-            list.unread = list.data.length;
-        } else {
-            list = {
-                data: [],
-                unread: 0,
-            };
-        }
-
-        self.messages.set(userid, list);
     }
 
     @action empty(conversation) {
