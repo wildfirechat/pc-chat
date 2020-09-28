@@ -199,6 +199,10 @@ https://www.microsoft.com/zh-CN/download/details.aspx?id=48145 。注意这个�
 
 9. 使用```cnpm```后打包失败，在某些平台```cnpm```是会出现问题的，请使用npm。
 
+10. ```npm install``` 报```Unexpected end of JSON input while parsing near...```错误
+    
+    如果常见问题4解决不了，可以尝试```　 npm config set registry http://registry.npm.taobao.org/ ```，然后在按常见问题4的步骤进行
+
 
 ## MAC 签名
 如果本地存在合法的mac签名，打包程序会尝试进行签名。签名会失败，提示如下
