@@ -101,10 +101,11 @@ $ npm run dev
 
 
 ##### 开发
-1. 执行```node -p "process.arch"```, 确认node架构
-2. ```node```为32位时，执行```npm run copy-win32```
-3. ```node```为64位时，执行```npm run copy-win```
-4. ```npm install```（不能在管理员权限下运行，要用普通权限）
+0. 启动CMD终端 **（不能以管理员权限启动，要用普通权限）**
+1. ```npm install```
+2. 执行```node -p "process.arch"```, 确认node架构
+3. ```node```为32位时，执行```npm run copy-win32```
+4. ```node```为64位时，执行```npm run copy-win```
 5. ```npm run dev```
 > npm run copy-XXX 是用来拷贝平台相关的功能库，如果功能库有更新，一定要再次运行拷贝。常见的错误是客户收到新的功能库，放到功能库目录后，忘记运行次命令，导致运行结果不正确。
 
