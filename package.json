@@ -166,7 +166,7 @@
     "cross-env": "^5.2.1",
     "css-loader": "^1.0.0",
     "del-cli": "^3.0.1",
-    "electron": "8.2.3",
+    "electron": "8.5.2",
     "electron-builder": "^21.2.0",
     "electron-updater": "^3.0.1",
     "eslint": "^5.1.0",
