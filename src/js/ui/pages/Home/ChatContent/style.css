@@ -114,6 +114,7 @@
   & .content {
     border-radius: 4px;
     opacity: 1;
+    width: fit-content;
   }
   & > div {
     position: relative;
@@ -626,6 +627,10 @@
 }
 .message.isme {
   max-width: 100%;
+
+  & .content {
+    margin-left: auto;
+  }
 }
 .message.isme.isText {
   & > div {
