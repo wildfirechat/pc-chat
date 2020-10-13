@@ -3,12 +3,12 @@
  */
 
 import MessageContent from './messageContent'
-import MessagePayload from './messagePayload';
 import MessageContentType from './messageContentType';
-// fixme 下面这行，不知道为什么，会有问题，可能是因为循环import
-// import { ContentType.Text } from '../client/messageConfig';
+import wfc from '../client/wfc'
+import QuoteInfo from "../model/quoteInfo";
 export default class TextMessageContent extends MessageContent {
     content;
+    quoteInfo;
 
     constructor(content, mentionedType = 0, mentionedTargets = []) {
         super(MessageContentType.Text, mentionedType, mentionedTargets);
@@ -22,12 +22,27 @@ export default class TextMessageContent extends MessageContent {
     encode() {
         let payload = super.encode();
         payload.searchableContent = this.content;
+        if(this.quoteInfo){
+            let obj = {
+                "quote": this.quoteInfo.encode()
+            }
+            let orgStr = JSON.stringify(obj);
+            let str= orgStr.replace(/"u":"([0-9]+)"/, "\"u\":$1");
+
+            payload.binaryContent = wfc.utf8_to_b64(str);
+        }
         return payload;
     };
 
     decode(payload) {
         super.decode(payload);
         this.content = payload.searchableContent;
+        if(payload.binaryContent && payload.binaryContent.length > 0){
+            let obj = JSON.parse(wfc.b64_to_utf8(payload.binaryContent)).quote;
+
+            this.quoteInfo = new QuoteInfo();
+            this.quoteInfo.decode(obj);
+        }
     }
 
 

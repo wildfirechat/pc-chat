@@ -33,6 +33,7 @@ import {gt, gte, numberValue} from '../../../../wfc/util/longUtil'
 import {copyImg, copyText} from "../../../utils/clipboard";
 import CardMessageContent from "../../../../wfc/messages/cardMessageContent";
 import stores from "../../../stores";
+import TextMessageContent from "../../../../wfc/messages/textMessageContent";
 
 @inject(stores => ({
     sticky: stores.sessions.sticky,
@@ -513,20 +514,34 @@ export default class ChatContent extends Component {
 
     messageContentLayout(message) {
         if (isElectron()) {
+            console.log(message.messageContent instanceof TextMessageContent , message.messageContent.quoteInfo, message.messageContent);
             return (
                 <div>
                     <div className={classes.content} data-message-id={message.messageId}
                         onClick={e => this.handleClick(e)}>
-                        <p
+                        <p style={{width:'fit-content'}}
                             onContextMenu={e => this.showMessageAction(message)}
                             dangerouslySetInnerHTML={{ __html: this.getMessageContent(message) }} />
                     </div>
+                    {
+                        (message.messageContent instanceof TextMessageContent && message.messageContent.quoteInfo)
+                        ? (
+                            <p style={{
+                                fontSize:'10px',
+                                color:'#a9a9a9',
+                                userSelect:'none',
+                                paddingTop:0,
+                                textAlign:"left"
+                            }}> {message.messageContent.quoteInfo.userDisplayName + ':' + message.messageContent.quoteInfo.messageDigest} </p>
+                        ) : ''
+                    }
                     {
                         message.direction === 0 && wfc.isCommercialServer() && wfc.isReceiptEnabled() && wfc.isUserReceiptEnabled() ?
                             <p style={{
                                 fontSize:'10px',
                                 color:'#a9a9a9',
                                 userSelect:'none',
+                                paddingBottom:0,
                                 textAlign:"right"
                             }}>{this.formatReceiptMessage(message.timestamp)}</p> : ''
                     }
