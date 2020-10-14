@@ -54,10 +54,7 @@ import TextMessageContent from "../../../../wfc/messages/textMessageContent";
     reset: () => {
         //stores.chat.user = false;
     },
-    isFriend: (id) => {
-        var user = stores.contacts.memberList.find(e => e.UserName === id) || {};
-        return helper.isContact(user);
-    },
+
     isMyFriend: wfc.isMyFriend,
     showUserinfo: async (isme, user) => {
         var caniremove = false;
@@ -103,10 +100,6 @@ import TextMessageContent from "../../../../wfc/messages/textMessageContent";
         } else {
             stores.members.toggle(isShow);
         }
-    },
-    showContact: (userid) => {
-        var user = stores.contacts.memberList.find(e => e.UserName === userid);
-        stores.userinfo.toggle(true, user);
     },
     showForward: (message) => stores.forward.toggle(true, message),
     showAddFriend: (user) => stores.addfriend.toggle(true, user),
@@ -885,6 +878,9 @@ export default class ChatContent extends Component {
 
     componentDidUpdate() {
         this.scrollToBottom();
+        if(this.props.target && this.props.target instanceof GroupInfo){
+            stores.members.changeShowUserName(wfc.isHiddenGroupMemberName(this.props.target.target))
+        }
     }
 
     componentWillReceiveProps(nextProps) {
