@@ -1363,13 +1363,14 @@ export class WfcManager {
     /**
      * 获取会话中的文件记录
      * @param {Conversation} conversation 会话
+     * @param {String} fromUser 来源用户
      * @param {Long} beforeMessageUid 消息uid，表示获取此消息uid之前的文件记录
      * @param {number} count 数量
      * @param {function ([FileRecord])} successCB 成功回调
      * @param {function (number)} failCB 失败回调
      */
-    getConversationFileRecords(conversation, beforeMessageUid, count, successCB, failCB){
-        impl.getConversationFileRecords(conversation, beforeMessageUid, count, successCB, failCB);
+    getConversationFileRecords(conversation, fromUser, beforeMessageUid, count, successCB, failCB){
+        impl.getConversationFileRecords(conversation, fromUser, beforeMessageUid, count, successCB, failCB);
     }
 
     /**
