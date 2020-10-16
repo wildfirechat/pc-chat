@@ -1385,6 +1385,14 @@ export class WfcManager {
     }
 
     /**
+     * 获取会话最早一条未读消息的消息id
+     * @param {Conversation} conversation 会话
+     */
+    getConversationFirstUnreadMessageId(conversation){
+        impl.getConversationFirstUnreadMessageId(conversation)
+    }
+
+    /**
      * 删除文件记录
      * @param {Long} messageUid 文件对应的消息的uid
      * @param {function ()} successCB 成功回调
