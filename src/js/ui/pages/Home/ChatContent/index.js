@@ -104,6 +104,7 @@ import TextMessageContent from "../../../../wfc/messages/textMessageContent";
     showForward: (message) => stores.forward.toggle(true, message),
     showAddFriend: (user) => stores.addfriend.toggle(true, user),
     recallMessage: stores.chat.recallMessage,
+    quoteMessage: stores.chat.quoteMessage,
     rememberConversation: stores.settings.rememberConversation,
     showConversation: stores.chat.showConversation,
     toggleConversation: stores.chat.toggleConversation,
@@ -808,6 +809,13 @@ export default class ChatContent extends Component {
                 label: 'Forward',
                 click: () => {
                     this.props.showForward(message);
+                }
+            });
+
+            templates.unshift({
+                label: 'Quote',
+                click: () => {
+                    this.props.quoteMessage(message);
                 }
             });
         }

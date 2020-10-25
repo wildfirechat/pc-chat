@@ -15,7 +15,7 @@ export default class QuoteInfo {
             info.userId = message.from;
             let userInfo = wfc.getUserInfo(message.from, false);
             info.userDisplayName = userInfo.displayName;
-            info.messageDigest = message.messageContent.encode();
+            info.messageDigest = message.messageContent.digest();
             if (info.messageDigest.length > 48) {
                 info.messageDigest = info.messageDigest.substr(0, 48);
             }

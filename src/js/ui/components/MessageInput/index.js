@@ -9,7 +9,6 @@ import classes from './style.css';
 import Emoji from './Emoji';
 import Tribute from "tributejs";
 import TextMessageContent from '../../../wfc/messages/textMessageContent';
-import PTextMessageContent from '../../../wfc/messages/ptextMessageContent';
 import ConversationType from '../../../wfc/model/conversationType';
 import wfc from '../../../wfc/client/wfc'
 import pinyin from '../../han';
@@ -18,10 +17,15 @@ import GroupInfo from '../../../wfc/model/groupInfo';
 import GroupType from '../../../wfc/model/groupType';
 import GroupMemberType from '../../../wfc/model/groupMemberType';
 import avenginekitProxy from '../../../wfc/av/engine/avenginekitproxy';
-import CheckBox from "rc-checkbox";
 import Config from "../../../config";
 import {parser as emojiParse} from 'utils/emoji';
+import {inject} from "mobx-react";
+import stores from "../../stores";
+import QuoteInfo from "../../../wfc/model/quoteInfo";
 
+@inject(stores => ({
+    quotedMessage: stores.chat.quotedMessage,
+}))
 export default class MessageInput extends Component {
     static propTypes = {
         me: PropTypes.object,
@@ -194,8 +198,14 @@ export default class MessageInput extends Component {
             .replace(/" src="assets\/twemoji\/72x72\/[0-9a-z-]+\.png">/g, '')
 
         let textMessageContent = this.handleMention(message);
+        let quotedMessage = this.props.quotedMessage;
+        if(quotedMessage){
+            let quoteInfo = QuoteInfo.initWithMessage(quotedMessage);
+            textMessageContent.setQuoteInfo(quoteInfo);
+        }
         this.props.sendMessage(textMessageContent);
         this.refs.input.innerHTML = '';
+        stores.chat.cancelQuote();
         wfc.setConversationDraft(conversation, '');
         e.preventDefault();
     }
@@ -640,15 +650,53 @@ export default class MessageInput extends Component {
                     />
                 </div>
 
-                <div contentEditable={true}
-                     className={classes.messageInput}
-                     id="messageInput"
-                     ref="input"
-                     placeholder="输入内容发送，Ctrl + Enter 换行 ..."
-                     readOnly={!canisend}
-                     onPaste={e => this.handlePaste(e)}
-                     onKeyPress={e => this.handleEnter(e)}
-                />
+                <div id="messageInputContainer"
+                     className={classes.messageInputContainer}
+                >
+                    <div contentEditable={true}
+                         style={{overflowY:'scroll'}}
+                         className={classes.messageInput}
+                         id="messageInput"
+                         ref="input"
+                         placeholder="输入内容发送，Ctrl + Enter 换行 ..."
+                         readOnly={!canisend}
+                         onPaste={e => this.handlePaste(e)}
+                         onKeyPress={e => this.handleEnter(e)}
+                    />
+
+                    {
+                        this.props.quotedMessage ? (
+                            <div id="messageRefContainer"
+                                 style={{display:'inline-block'}}
+                                 contentEditable={false}
+                                 ref="messageRefContainer">
+                                <p id="quotedMessageContent"
+                                   ref="quotedMessageContent"
+                                   style={{
+                                       display:'inline-block',
+                                       marginRight:'10px',
+                                       padding:'5px',
+                                       background:'lightgray'
+                                   }}
+                                >
+                                    {
+                                        this.props.quotedMessage.messageContent.digest().length > 50
+                                            ? this.props.quotedMessage.messageContent.digest().substr(0, 50) + '...' : this.props.quotedMessage.messageContent.digest()}
+                                </p>
+                                <i
+                                    className="icon-ion-android-close"
+                                    id="cancelQuote"
+                                    onClick={ ()=>{
+                                        stores.chat.cancelQuote();
+                                    }}
+                                />
+                            </div>
+                        ) :''
+
+                    }
+                </div>
+
+
             </div>
         );
     }

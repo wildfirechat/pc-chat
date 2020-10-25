@@ -45,5 +45,8 @@ export default class TextMessageContent extends MessageContent {
         }
     }
 
+    setQuoteInfo(quoteInfo){
+        this.quoteInfo = quoteInfo;
+    }
 
 }

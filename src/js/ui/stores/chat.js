@@ -27,6 +27,7 @@ class Chat {
 
     @observable conversation;
     @observable conversationInfo;
+    @observable quotedMessage;
 
     initialized = false;
 
@@ -71,6 +72,14 @@ class Chat {
             self.conversation = null;
             self.target = null;
         }
+    }
+
+    @action quoteMessage(msg){
+        self.quotedMessage = msg;
+    }
+
+    @action cancelQuote(){
+        self.quotedMessage = null;
     }
 
     onRecallMessage(operatorUid, messageUid) {

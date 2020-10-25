@@ -20,7 +20,7 @@
     }
 }
 
-.messageInput{
+.messageInputContainer{
     height: 100px;
     width: 100%;
     margin-left: 24px;
@@ -34,6 +34,19 @@
     font-size: 14px;
     outline: 0;
 }
+
+.messageInput{
+    height: 80px;
+    width: 100%;
+    line-height: 150%;
+    border: 0;
+    background: 0;
+    color: #333;
+    resize: none;
+    font-size: 14px;
+    outline: 0;
+}
+
 /*为空时显示 element attribute content*/
 .messageInput:empty:before{
     content: attr(placeholder);   /* element attribute*/
