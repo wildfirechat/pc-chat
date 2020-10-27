@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Popup from "reactjs-popup";
-import PropTypes from 'prop-types';
+import PropTypes, {number} from 'prop-types';
 import Checkbox from 'rc-checkbox';
 import {ipcRenderer, isElectron} from '../../../platform';
 import clazz from 'classname';
@@ -22,6 +22,9 @@ import {parser as emojiParse} from 'utils/emoji';
 import {inject} from "mobx-react";
 import stores from "../../stores";
 import QuoteInfo from "../../../wfc/model/quoteInfo";
+import {stringValue} from "../../../wfc/util/longUtil";
+import chat from "../../stores/chat";
+import Draft from "../../utils/draft";
 
 @inject(stores => ({
     quotedMessage: stores.chat.quotedMessage,
@@ -206,7 +209,7 @@ export default class MessageInput extends Component {
         this.props.sendMessage(textMessageContent);
         this.refs.input.innerHTML = '';
         stores.chat.cancelQuote();
-        wfc.setConversationDraft(conversation, '');
+        Draft.setConversationDraft(conversation, '', null);
         e.preventDefault();
     }
 
@@ -432,11 +435,14 @@ export default class MessageInput extends Component {
                 return;
             }
             if (text !== conversationInfo.draft) {
-                wfc.setConversationDraft(this.props.conversation, text)
+                Draft.setConversationDraft(this.props.conversation, text, this.props.quotedMessage)
             }
 
-            conversationInfo = wfc.getConversationInfo(nextProps.conversation);
-            input.innerHTML = conversationInfo ? conversationInfo.draft : '';
+            let draft = Draft.getConversationDraft(nextProps.conversation);
+            input.innerHTML = draft ? draft.text : '';
+            if(draft.quotedMessage){
+                chat.quoteMessage(draft.quotedMessage);
+            }
 
             if (this.tribute) {
                 this.tribute.detach(document.getElementById('messageInput'));
@@ -451,13 +457,17 @@ export default class MessageInput extends Component {
             if (!conversationInfo || (this.props.conversation && this.props.conversation.equal(nextProps.conversation))) {
                 return;
             }
-            input.innerHTML = conversationInfo.draft ? conversationInfo.draft : '';
+
+            let draft = Draft.getConversationDraft(nextProps.conversation);
+            input.innerHTML = draft ? draft.text : '';
+            if(draft.quotedMessage){
+                chat.quoteMessage(draft.quotedMessage);
+            }
 
             if (!this.tribute && this.shouldHandleMention(nextProps.conversation)) {
                 this.initMention(nextProps.conversation);
             }
         }
-
     }
 
     updateMention = (mentionUser) => {

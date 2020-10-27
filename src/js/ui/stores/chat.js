@@ -196,6 +196,7 @@ class Chat {
         self.loading = false;
         self.hasMore = true;
         self.conversationInfo = wfc.getConversationInfo(conversation);
+        self.quotedMessage = null;
         self.loadConversationMessages(conversation, 0);
 
         // TODO update observable for chat content
