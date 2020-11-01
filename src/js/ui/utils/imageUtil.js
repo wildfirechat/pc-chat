@@ -4,6 +4,7 @@ import GroupInfo from "../../wfc/model/groupInfo";
 import GroupMember from "../../wfc/model/groupMember";
 import {lt} from "../../wfc/util/longUtil";
 import ConversationType from "../../wfc/model/conversationType";
+import Config from "../../config";
 
 function mergeImages(sources = [], options = {}) {
     // Defaults
@@ -296,6 +297,9 @@ async function getGroupPortrait(groupId) {
     let portrait = groupPortraitMap.get(groupId);
     if (!portrait || lt(portrait.timestamp, groupInfo.updateDt)) {
         let groupMembers = wfc.getGroupMembers(groupId, false);
+        if(!groupMembers || groupMembers.length === 0){
+            return Config.DEFAULT_PORTRAIT_URL;
+        }
         let groupMemberPortraits = [];
         for (let i = 0; i < Math.min(9, groupMembers.length); i++) {
             groupMemberPortraits.push(groupMembers[i].getPortrait())

@@ -12,6 +12,12 @@ export default class RecallMessageNotification extends NotificationMessageConten
     operatorId = '';
     messageUid = new Long(0);
 
+    originalSender;
+    originalContentType;
+    originalSearchableContent;
+    originalContent;
+    originalExtra;
+    originalMessageTimestamp;
     constructor(operatorId, messageUid) {
         super(MessageContentType.RecallMessage_Notification);
         this.operatorId = operatorId;
@@ -31,11 +37,24 @@ export default class RecallMessageNotification extends NotificationMessageConten
         payload.content = this.operatorId;
         payload.binaryContent = wfc.utf8_to_b64(this.messageUid.toString());
         return payload;
-    };
+    }
 
     decode(payload) {
         super.decode(payload);
         this.operatorId = payload.content;
         this.messageUid = Long.fromString(wfc.b64_to_utf8(payload.binaryContent));
+        this.setExtra(payload.extra);
+    }
+
+    setExtra(extra){
+        if (extra) {
+            let obj = JSON.parse(extra);
+            this.originalSender = obj["s"];
+            this.originalContentType = obj["t"];
+            this.originalSearchableContent = obj["sc"];
+            this.originalContent = obj["c"];
+            this.originalExtra = obj["e"];
+            this.originalMessageTimestamp = Long.fromValue(obj["ts"]);
+        }
     }
 }
