@@ -253,8 +253,11 @@ export default class Layout extends Component {
             || this.connectionStatus === ConnectionStatus.ConnectionStatusLogout
             || this.connectionStatus === ConnectionStatus.ConnectionStatusSecretKeyMismatch
             || this.connectionStatus === ConnectionStatus.ConnectionStatusTokenIncorrect
-            || this.connectionStatus === ConnectionStatus.ConnectionStatusUnconnected
             || wfc.getUserId() === '') {
+            if(wfc.getUserId() !== '' && this.connectionStatus !== ConnectionStatus.ConnectionStatusLogout){
+                console.log('to disconnect')
+                wfc.disconnect();
+            }
             return <Login />;
         }
 
