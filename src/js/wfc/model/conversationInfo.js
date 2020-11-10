@@ -82,8 +82,8 @@ export default class ConversationInfo {
         let unreadCount1 = info1.unreadCount;
         let unreadCount2 = info2.unreadCount;
         if (unreadCount1.unread !== unreadCount2.unread
-            || unreadCount1.unreadMention === unreadCount2.unreadMention
-            || unreadCount1.unreadMentionAll === unreadCount2.unreadMentionAll) {
+            || unreadCount1.unreadMention !== unreadCount2.unreadMention
+            || unreadCount1.unreadMentionAll !== unreadCount2.unreadMentionAll) {
             return false;
         }
 
