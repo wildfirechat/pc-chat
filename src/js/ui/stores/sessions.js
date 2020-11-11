@@ -5,6 +5,7 @@ import wfc from '../../wfc/client/wfc';
 import ConversationType from '../../wfc/model/conversationType';
 import pinyin from "../han/lib";
 import stores from "./index";
+import ConversationInfo from "../../wfc/model/conversationInfo";
 
 class sessions {
     @observable conversations = [];
@@ -41,11 +42,19 @@ class sessions {
     }
 
     @action
-    async loadConversations() {
+    loadConversations() {
         let cl = wfc.getConversationList([ConversationType.Single, ConversationType.Group, ConversationType.Channel], [0]);
-        self.conversations = cl;
+        if(cl.length !== self.conversations.length){
+            self.conversations = cl;
+        }else {
+            for (let i = 0; i < cl.length; i++) {
+                if(!ConversationInfo.equals(cl[i], self.conversations[i])) {
+                    self.conversations = cl;
+                    break
+                }
+            }
+        }
     }
-
 
     @action removeConversation(conversationInfo) {
         self.conversations = self.conversations.filter(e => !e.conversation.equal(conversationInfo.conversation));
