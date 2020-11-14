@@ -82,6 +82,15 @@ export function stringValue(l){
 }
 
 /**
+ * 将数值l转换成long类型
+ * @param {long |  number | string} l
+ * @return {long} 数值表示
+ */
+export function longValue(value){
+    return Long.fromValue(value);
+}
+
+/**
  * 将数值l转换成number类型
  * @param {long | number | string} l
  * @return {number|l} 如果数值l小于等于{@code Number.MAX_SAFE_INTEGER}则返回对应的number，否则原样返回

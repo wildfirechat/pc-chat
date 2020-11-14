@@ -5,7 +5,8 @@ import helper from 'utils/helper';
 import ConversationType from '../../../../wfc/model/conversationType';
 import classes from './style.css';
 import ConversationInfo from '../../../../wfc/model/conversationInfo';
-import { isElectron, popMenu, ContextMenuTrigger, hideMenu } from '../../../../platform'
+import { isElectron} from '../../../../platform'
+import { popMenu, ContextMenuTrigger, hideMenu } from '../../../../ui'
 import {eq} from "../../../../wfc/util/longUtil";
 import {getConversationPortrait} from "../../../utils/imageUtil";
 import userInfo from "../../../../wfc/model/userInfo";

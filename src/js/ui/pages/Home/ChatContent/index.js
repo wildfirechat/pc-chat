@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
-import { ipcRenderer, popMenu, isElectron, fs, ContextMenuTrigger, hideMenu } from '../../../../platform';
+import { ipcRenderer, isElectron, fs} from '../../../../platform';
+import { popMenu, ContextMenuTrigger, hideMenu } from '../../../../ui';
 import clazz from 'classname';
 import moment from 'moment';
 import axios from 'axios';
@@ -536,6 +537,7 @@ export default class ChatContent extends Component {
                                 color:'#a9a9a9',
                                 userSelect:'none',
                                 paddingBottom:0,
+                                width:'fit-content',
                                 textAlign:"right"
                             }}>{this.formatReceiptMessage(message.timestamp)}</p> : ''
                     }
@@ -556,11 +558,25 @@ export default class ChatContent extends Component {
                         this.showMessageAction(message, `menu_item_${message.messageId}`)
                     }
                     {
-                        message.direction === 0 ?
+                        (message.messageContent instanceof TextMessageContent && message.messageContent.quoteInfo)
+                            ? (
                         <p style={{
                             fontSize:'10px',
                             color:'#a9a9a9',
-                            userSelect:'none'
+                                    userSelect:'none',
+                                    paddingTop:0,
+                                    textAlign:"left"
+                                }}> {message.messageContent.quoteInfo.userDisplayName + ':' + message.messageContent.quoteInfo.messageDigest} </p>
+                            ) : ''
+                    }
+                    {
+                        message.direction === 0 && wfc.isReceiptEnabled() && wfc.isUserReceiptEnabled() ?
+                        <p style={{
+                            fontSize:'10px',
+                            color:'#a9a9a9',
+                            userSelect:'none',
+                            paddingBottom:0,
+                            textAlign:"right"
                         }}>{this.formatReceiptMessage(message.timestamp)}</p> : ''
                     }
                 </div>
