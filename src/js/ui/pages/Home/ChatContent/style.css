@@ -176,9 +176,6 @@
 }
 
 .message.isText {
-  & > div > div {
-    max-width: 90%;
-  }
   & .content {
     white-space: pre-wrap;
     position: relative;
@@ -638,10 +635,6 @@
     justify-content: flex-end;
   }
 
-  & > div > div{
-    max-width: 90%;
-  }
-
   & .avatar {
     left: auto;
     right: -16px;
@@ -652,7 +645,7 @@
     border-radius: 4px;
     left: auto;
     right: 25px;
-    max-width: 100%;
+    max-width: 90%;
   }
   & .content::after {
     content: "";
@@ -891,9 +884,6 @@
   }
 
   .message.isText {
-    & > div > div{
-      max-width: 90%;
-    }
     & .content {
       border-radius: 5px;
       left: 26px;
@@ -1107,15 +1097,12 @@
   }
 
   .message.isme.isText {
-    & > div > div{
-        max-width: 90%;
-      }
     & .content {
       background: #9eea6a;
       border-radius: 7px;
       left: auto;
       right: 25px;
-      max-width: 100%;
+      max-width: 90%;
     }
     & .content::after {
       content: "";
