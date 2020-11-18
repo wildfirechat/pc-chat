@@ -147,6 +147,7 @@
     padding: 0 12px;
     margin-top: -10px;
     border-radius: 1px;
+    user-select: none;
     white-space: nowrap;
     transition: 0.15s cubic-bezier(0, 0, 0.2, 1);
     transform: translateX(32px) scale(0.8);
@@ -208,6 +209,10 @@
     line-height: 22.65px;
     user-select: text;
     word-break: break-all;
+  }
+
+  & a {
+    user-select: all;
   }
 
   & .times {
