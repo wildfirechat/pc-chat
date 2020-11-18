@@ -11,7 +11,8 @@ import {
     shell,
     nativeImage,
     dialog,
-    globalShortcut
+    globalShortcut,
+    session,
 } from 'electron';
 // import debug from 'electron-debug'
 import Screenshots from "electron-screenshots";
@@ -825,6 +826,13 @@ app.on('ready', () => {
     screenshots.on('save', (e, {viewer}) => {
         console.log('capture', viewer)
     })
+    session.defaultSession.webRequest.onBeforeSendHeaders(
+         (details, callback) => {
+             // 可根据实际需求，配置 Origin，默认置为空
+            details.requestHeaders.Origin = '';
+            callback({ cancel: false, requestHeaders: details.requestHeaders });
+        }
+    );
     // debug({showDevTools: true, devToolsMode: 'undocked'})
 });
 
