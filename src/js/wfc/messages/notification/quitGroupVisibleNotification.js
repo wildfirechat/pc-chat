@@ -7,22 +7,19 @@ import MessageContentType from '../messageContentType';
 
 import GroupNotificationContent from './groupNotification';
 
-export default class ModifyGroupAliasNotification extends GroupNotificationContent {
+export default class QuitGroupVisibleNotification extends GroupNotificationContent {
     operator = '';
-    alias = '';
-    memberId = '';
 
-    constructor(creator, alias) {
-        super(MessageContentType.ModifyGroupAlias_Notification);
-        this.operator = creator;
-        this.alias = alias;
+    constructor(operator) {
+        super(MessageContentType.QuitGroup_Visible_Notification);
+        this.operator = operator;
     }
 
     formatNotification() {
         if (this.fromSelf) {
-            return '您修改群昵称为 ' + this.alias;
+            return '您退出了群组';
         } else {
-            return wfc.getUserDisplayName(this.operator) + '修改群昵称为 ' + this.alias;
+            return wfc.getGroupMemberDisplayName(this.groupId, this.operator) + '退出了群组';
         }
     }
 
@@ -30,9 +27,7 @@ export default class ModifyGroupAliasNotification extends GroupNotificationConte
         let payload = super.encode();
         let obj = {
             g: this.groupId,
-            n: this.alias,
             o: this.operator,
-            m: this.memberId,
         };
         payload.binaryContent = wfc.utf8_to_b64(JSON.stringify(obj));
         return payload;
@@ -44,7 +39,5 @@ export default class ModifyGroupAliasNotification extends GroupNotificationConte
         let obj = JSON.parse(json);
         this.groupId = obj.g;
         this.operator = obj.o;
-        this.alias = obj.n;
-        this.memberId = obj.m;
     }
 }

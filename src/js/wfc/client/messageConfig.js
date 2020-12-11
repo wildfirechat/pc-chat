@@ -14,12 +14,14 @@ import UnknownMessageContent from '../messages/unknownMessageContent';
 import UnsupportMessageContent from '../messages/unsupportMessageConten';
 import ChangeGroupNameNotification from '../messages/notification/changeGroupNameNotification';
 import KickoffGroupMemberNotification from '../messages/notification/kickoffGroupMemberNotification';
+import KickoffGroupMemberVisibleNotification from '../messages/notification/kickoffGroupMemberVisibleNotification';
 import AddGroupMemberNotification from '../messages/notification/addGroupMemberNotification';
 import ChangeGroupPortraitNotification from '../messages/notification/changeGroupPortraitNotification';
 import CreateGroupNotification from '../messages/notification/createGroupNotification';
 import DismissGroupNotification from '../messages/notification/dismissGroupNotification';
 import ModifyGroupAliasNotification from '../messages/notification/modifyGroupAliasNotification';
 import QuitGroupNotification from '../messages/notification/quitGroupNotification';
+import QuitGroupVisibleNotification from '../messages/notification/quitGroupVisibleNotification';
 import TransferGroupOwnerNotification from '../messages/notification/transferGroupOwnerNotification';
 import FileMessageContent from '../messages/fileMessageContent';
 import VideoMessageContent from '../messages/videoMessageContent';
@@ -217,6 +219,12 @@ export default class MessageConfig {
             contentClazz: KickoffGroupMemberNotification,
         },
         {
+            name: 'kickoffGroupMemberVisibleNotification',
+            flag: PersistFlag.Persist,
+            type: MessageContentType.KickOffGroupMember_Visible_Notification,
+            contentClazz: KickoffGroupMemberVisibleNotification,
+        },
+        {
             name: 'modifyGroupAliasNotification',
             flag: PersistFlag.Persist,
             type: MessageContentType.ModifyGroupAlias_Notification,
@@ -227,6 +235,12 @@ export default class MessageConfig {
             flag: PersistFlag.Persist,
             type: MessageContentType.QuitGroup_Notification,
             contentClazz: QuitGroupNotification,
+        },
+        {
+            name: 'quitGroupVisibleNotification',
+            flag: PersistFlag.Persist,
+            type: MessageContentType.QuitGroup_Visible_Notification,
+            contentClazz: QuitGroupVisibleNotification,
         },
         {
             name: 'transferGroupOwnerNotification',
