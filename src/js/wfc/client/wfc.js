@@ -12,6 +12,7 @@ import Long from 'long';
 import impl from '../proto/proto.min';
 import Config from "../../config";
 import avenginekit from "../av/engine/avenginekitproxy";
+import ConversationType from "../model/conversationType";
 
 export class WfcManager {
 
@@ -253,6 +254,16 @@ export class WfcManager {
      */
     getOutgoingFriendRequest() {
         return impl.getOutgoingFriendRequest();
+    }
+
+    /**
+     * 获取单条好友请求
+     * @param {string} userId 对方的用户id
+     * @param {boolean} incoming 是否是收到的好友请求
+     * @return {FriendRequest|null}
+     */
+    getOneFriendRequest(userId, incoming = true){
+        return impl.getOneFriendRequest(userId, incoming);
     }
 
     /**
@@ -1100,6 +1111,15 @@ export class WfcManager {
      */
     getUserMessagesEx(userId, conversationTypes, lines, fromIndex, before = true, count = 20, contentTypes = []) {
         return impl.getUserMessagesEx(userId, conversationTypes, lines, fromIndex, before, count, contentTypes);
+    }
+
+    /**
+     * 获取会话第一条未读消息的消息id
+     * @param {Conversation} conversation
+     * @return {number}
+     */
+    getFirstUnreadMessageId(conversation){
+        return impl.getFirstUnreadMessageId(conversation);
     }
 
     /**

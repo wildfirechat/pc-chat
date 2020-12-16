@@ -21,6 +21,7 @@ export default class UserSettingScope {
     static UserSettingConversationReaded = 11;
     static WebOnline = 12;
     static DisableReceipt = 13;
+    static FavoriteUser = 14;
 
     // 用户自定义的scope需从1000开始，以防冲突
     static kUserSettingCustomBegin = 1000;

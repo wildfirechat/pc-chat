@@ -8,7 +8,7 @@
  */
 
 import MessageContent from './messageContent'
-import MessageContentType from "./messageContentType";
+import MessageContentType from './messageContentType'
 import wfc from '../client/wfc'
 
 export default class CardMessageContent extends MessageContent{
