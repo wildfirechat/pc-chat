@@ -119,6 +119,24 @@ export class WfcManager {
     }
 
     /**
+     * 设置网络策略
+     * @param {int} strategy 网络策略。0 是自动选择；1 选择主网络；2选择备用网络
+     *
+     */
+    setBackupAddressStrategy(strategy) {
+        impl.setBackupAddressStrategy(strategy);
+    }
+
+    /**
+     * 设置备选网络信息
+     * @param {String} backupHost 备选网络主机地址
+     * @param {int} backupPort 备选网络主机端口
+     */
+    setBackupAddress(backupHost, backupPort) {
+        impl.setBackupAddress(backupHost, backupPort);
+    }
+
+    /**
      * 已废弃，请使用{@link getFavGroupList}
      * 获取我保存到通讯录的群组信息列表
      * @returns {[GroupInfo]} 参考{@link GroupInfo}
