@@ -14,12 +14,12 @@ import stores from './js/ui/stores';
 var sharedObj = remote.getGlobal('sharedObj');
 
 export default class App extends Component {
-    async componentWillMount() {
+    componentWillMount() {
         if (window.navigator.onLine) {
             // await stores.sessions.hasLogin();
             // await stores.settings.init();
             // await stores.search.getHistory();
-            await stores.wfc.init([sharedObj.proto]);
+            stores.wfc.init([sharedObj.proto]);
         }
     }
 
