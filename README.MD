@@ -67,7 +67,8 @@
 2. nodejs 10.16.X
 3. npm 6.9.0
 4. python 2.7.X
-5. npm install -g node-gyp
+5. git
+6. npm install -g node-gyp
 
 ##### 开发
 
@@ -95,9 +96,10 @@ $ npm run dev
 
 1. nodejs v10.16.x
 2. python 2.7.X
-3. npm 6.9.0
-4. npm install --global --vs2015 windows-build-tools # 安装内容较多，如果网络情况不好可能需要等较长时间，选择早上网络较好时安装是个好的选择
-5. npm install -g node-gyp
+3. git
+4. npm 6.9.0
+5. npm install --global --vs2015 windows-build-tools # 安装内容较多，如果网络情况不好可能需要等较长时间，选择早上网络较好时安装是个好的选择
+6. npm install -g node-gyp
 
 
 ##### 开发
@@ -124,6 +126,7 @@ $ npm run dev
 
 1. nodejs10.16.X
 2. python2.7X
+3. git
 
 ##### 开发
 > 具体开发、集成相关说明，请参考[pc开发](https://docs.wildfirechat.cn/pc/)
@@ -147,7 +150,8 @@ $ npm run dev
 
 1. nodejs10.16.X
 2. python2.7X
-3. fpm
+3. git
+4. fpm
 
 ```
 sudo apt-get update
