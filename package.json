@@ -95,7 +95,7 @@
     "anchorme": "^1.1.2",
     "atob": "^2.1.2",
     "auto-launch": "^5.0.1",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "base64-arraybuffer": "^0.2.0",
     "base64-img": "^1.0.4",
     "benz-amr-recorder": "^1.0.13",
