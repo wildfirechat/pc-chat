@@ -24,6 +24,11 @@ export default class MessageContentType {
     static DeleteMessage_Notification = 81; //不存储的
     static Tip_Notification = 90;
     static Typing = 91;
+    //以上是打招呼的内容
+    static Friend_Greeting_Notification = 92;
+    //您已经添加XXX为好友了，可以愉快地聊天了
+    static Friend_Added_Notification = 93;
+    static Pc_Login_Request = 94;
 
     // 群相关消息
     static CreateGroup_Notification = 104;

@@ -46,7 +46,12 @@ import GroupPrivateChatNotificationContent from "../messages/notification/groupP
 import LocationMessageContent from "../messages/locationMessageContent";
 import MuteGroupMemberNotification from '../messages/notification/muteGroupMemberNotification'
 import AllowGroupMemberNotification from '../messages/notification/allowGroupMemberNotification'
+import FriendAddedNotification from '../messages/notification/friendAddedNotification'
+import FriendGreetingNotification from '../messages/notification/friendGreetingNotification'
 import CardMessageContent from '../messages/cardMessageContent'
+import PCLoginRequestMessageContent from '../messages/pcLoginRequestMessageContent'
+
+
 export default class MessageConfig {
     static getMessageContentClazz(type) {
         for (const content of MessageConfig.MessageContents) {
@@ -283,6 +288,24 @@ export default class MessageConfig {
             flag: PersistFlag.Persist,
             type: MessageContentType.AllowGroupMember_Notification,
             contentClazz: AllowGroupMemberNotification,
+        },
+        {
+            name: 'friendAddedNotification',
+            flag: PersistFlag.Persist,
+            type: MessageContentType.Friend_Added_Notification,
+            contentClazz: FriendAddedNotification,
+        },
+        {
+            name: 'friendGreetingNotification',
+            flag: PersistFlag.Persist,
+            type: MessageContentType.Friend_Greeting_Notification,
+            contentClazz: FriendGreetingNotification,
+        },
+        {
+            name: 'pcLoginRequestMessageContent',
+            flag: PersistFlag.No_Persist,
+            type: MessageContentType.Pc_Login_Request,
+            contentClazz: PCLoginRequestMessageContent,
         },
         {
             name: 'recall',
