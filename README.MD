@@ -16,6 +16,6 @@
 1. [vue-pc-chat](https://github.com/wildfirechat/vue-pc-chat),
    基于```vue```技术栈开发，支持 Vue2 和 Vue3，是未来开发的重心。
 2. [react-pc-chat](https://github.com/wildfirechat/react-pc-chat),
-   基于```react```技术栈开发，功能完善，目前处于***维护阶段***，只修复严重bug，不开发新功能。
+   基于```react```技术栈开发，功能完善，不在维护，请使用 vue 版本。
 
 **建议大家选择```vue```版本进行二次开发!**
